@@ -37,3 +37,11 @@ curvature changes continuously and its sides bulge outward).
 - Controls: radio buttons are round (N9), checkboxes and fields have small radii, switch tracks are pills.
 - Large surfaces: cards, sheets, banners use `--hd-radius-card` (EXT) or are square-edged (N9 pages).
 - Task cards (open applications) are screen-shaped rectangles with tiny radii (N9).
+
+## Squircle controls and highlights
+
+Icon-only buttons (ToolIcon, icon-only Button, TaskCard close, field clear, pagination) and the selected /
+hover highlight behind toolbar and tab icons are squircles too. Use `.hd-sq` (base.css): the element keeps
+its rectangular hit area, `::before` draws `--hd-sq-fill` and `::after` the border / focus ring
+(`--hd-sq-ring`), both clipped to the n = 2.8 squircle, sized `--hd-sq-size` (capped at the element height).
+The Quasar theme does the same for flat round `q-btn` focus helpers and toolbar `q-tab` highlights.

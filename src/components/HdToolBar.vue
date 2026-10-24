@@ -28,6 +28,8 @@ defineEmits<{ back: []; menu: [] }>();
   background: var(--hd-surface-chrome); color: var(--hd-c-fg);
 }
 .hd-toolbar--landscape { height: var(--hd-size-toolbar-landscape); }
+/* landscape: icons fit the 56 n9px bar (the squircle highlight shrinks with it) instead of overflowing */
+.hd-toolbar--landscape .hd-tool-icon, .hd-toolbar--landscape .hd-tab-button--icon { height: var(--hd-size-toolbar-landscape); min-height: 0; }
 .hd-toolbar--fixed { position: fixed; left: 0; right: 0; bottom: 0; z-index: var(--hd-z-toolbar); }
 .hd-toolbar__side { flex: 1 1 0; display: flex; align-items: center; min-width: var(--hd-size-touch-target); }
 .hd-toolbar__side--end { justify-content: flex-end; }

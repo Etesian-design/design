@@ -25,7 +25,7 @@ const describedBy = computed(() => [props.helper && `${id}-help`, props.error &&
       <input v-else :id="id" class="hd-field__input" :type="type" :value="modelValue" :placeholder="placeholder" :disabled="disabled" :readonly="readonly"
         :required="required" :name="name" :autocomplete="autocomplete" :aria-invalid="error ? 'true' : undefined" :aria-describedby="describedBy" :aria-label="label ? undefined : ariaLabel"
         @input="emit('update:modelValue', ($event.target as HTMLInputElement).value)" />
-      <button v-if="clearable && modelValue && !disabled" type="button" class="hd-field__clear hd-focusable" aria-label="Clear" @click="emit('update:modelValue', '')">
+      <button v-if="clearable && modelValue && !disabled" type="button" class="hd-field__clear hd-sq hd-focusable" aria-label="Clear" @click="emit('update:modelValue', '')">
         <HdIcon name="close" :size="16" />
       </button>
     </div>
@@ -49,7 +49,7 @@ const describedBy = computed(() => [props.helper && `${id}-help`, props.error &&
 .hd-field__input::placeholder { color: var(--hd-c-fg-secondary); opacity: .8; }
 .hd-field__input::selection { background: var(--hd-color-palette-select); color: #000; }
 .hd-field__icon { color: var(--hd-c-fg-secondary); }
-.hd-field__clear { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border: 0; border-radius: 50%; background: var(--hd-c-pressed); color: var(--hd-c-fg-secondary); cursor: pointer; }
+.hd-field__clear { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border: 0; --hd-sq-size: 28px; --hd-sq-fill: var(--hd-c-pressed); color: var(--hd-c-fg-secondary); cursor: pointer; }
 .hd-field__helper, .hd-field__error { margin: 0; font-size: var(--hd-font-size-xsmall); color: var(--hd-c-fg-secondary); }
 .hd-field__error { color: var(--hd-color-palette-warning); font-weight: 400; display: flex; align-items: center; gap: 4px; }
 </style>

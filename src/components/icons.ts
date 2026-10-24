@@ -36,5 +36,10 @@ export const icons: Record<string, string> = {
   star: 'M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z',
   bluetooth: 'M7 7l10 10-5 4V3l5 4L7 17',
   play: 'M7 4l13 8-13 8z',
+  split: 'M4 5h16v14H4zM12 5v14',
+  maximize: 'M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5',
+  minimize: 'M5 18h14',
+  window: 'M4 5h16v14H4zM4 9h16',
+  grid: 'M5 5h5v5H5zM14 5h5v5h-5zM5 14h5v5H5zM14 14h5v5h-5z',
 };
 export type IconName = keyof typeof icons;

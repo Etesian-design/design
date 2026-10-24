@@ -14,7 +14,7 @@ defineEmits<{ click: [e: MouseEvent] }>();
 </script>
 <template>
   <component :is="href ? 'a' : 'button'" class="hd-button hd-focusable"
-    :class="[`hd-button--${variant}`, { 'hd-button--block': block, 'hd-button--fixed': fixedWidth, 'hd-button--checked': checked, 'hd-button--icon-only': icon && !$slots.default }]"
+    :class="[`hd-button--${variant}`, { 'hd-button--block': block, 'hd-button--fixed': fixedWidth, 'hd-button--checked': checked, 'hd-button--icon-only hd-sq': icon && !$slots.default }]"
     :type="href ? undefined : type" :href="href && !disabled ? href : undefined"
     :disabled="href ? undefined : disabled" :aria-disabled="disabled ? 'true' : undefined"
     :aria-pressed="checked === undefined ? undefined : String(checked)"
@@ -41,6 +41,10 @@ defineEmits<{ click: [e: MouseEvent] }>();
 .hd-button--plain { background: transparent; border-color: transparent; color: var(--hd-c-link); }
 .hd-button--block { display: flex; width: 100%; }
 .hd-button--fixed { width: var(--hd-size-button-width); }
-.hd-button--icon-only { padding: 0; width: var(--hd-size-button); }
+.hd-button--icon-only { padding: 0; width: var(--hd-size-button); --hd-sq-size: var(--hd-size-button); --hd-sq-fill: var(--hd-c-button-bg); --hd-sq-ring: var(--hd-c-button-border); }
+.hd-button--icon-only.hd-button--accent, .hd-button--icon-only.hd-button--checked { --hd-sq-fill: var(--hd-accent); --hd-sq-ring: transparent; }
+.hd-button--icon-only.hd-button--negative { --hd-sq-fill: var(--hd-color-palette-warning); --hd-sq-ring: transparent; }
+.hd-button--icon-only.hd-button--plain { --hd-sq-fill: transparent; --hd-sq-ring: transparent; }
+.hd-button--icon-only.hd-button--plain:hover:not(:disabled) { --hd-sq-fill: var(--hd-c-pressed); }
 .hd-button:disabled, .hd-button[aria-disabled='true'] { opacity: var(--hd-opacity-disabled); cursor: default; }
 </style>
