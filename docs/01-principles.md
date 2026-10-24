@@ -12,7 +12,7 @@
    It tints the header, selected states and primary buttons. Nothing else is coloured.
 6. **Squircles for things you can hold.** (N9/canon) Every thumb-sized object (app icon, avatar,
    contact photo, thumbnail, file icon, loading ring) is a superellipse squircle; never a circle,
-   never a rounded rectangle.
+   never a rounded rectangle (superellipse n = 2.8).
 7. **No shadows, except overlays.** (N9/canon) Surfaces are flat. Only things floating above the
    page (dialogs, menus, banners, toasts) get a single soft shadow.
 8. **One-handed.** (N9) Primary actions live at the bottom, within thumb reach.

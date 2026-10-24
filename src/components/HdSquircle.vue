@@ -1,5 +1,5 @@
 <script setup lang="ts">
-/** Base squircle shape (|x|^4+|y|^4=1). Used by Avatar, AppIcon, Thumbnail. */
+/** Base squircle shape (|x|^2.8+|y|^2.8=1). Used by Avatar, AppIcon, Thumbnail. */
 import { computed } from 'vue';
 const props = withDefaults(defineProps<{ size?: number | string; src?: string; alt?: string; color?: string; tag?: string }>(), { size: 43, tag: 'span' });
 const px = computed(() => (typeof props.size === 'number' ? `${props.size}px` : props.size));

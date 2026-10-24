@@ -54,6 +54,6 @@ export type { HdNavLink } from './components/HdSiteHeader.vue';
 export type { HdFooterColumn } from './components/HdFooter.vue';
 export type { HdColumn } from './components/HdTable.vue';
 export { icons } from './components/icons';
-export { squirclePath, SQUIRCLE_PATH_100, SQUIRCLE_MASK } from './squircle';
+export { squirclePath, SQUIRCLE_EXPONENT, SQUIRCLE_PATH_100, SQUIRCLE_MASK } from './squircle';
 export { tokens, tokenOrigins, cssVar } from './tokens';
 export { useModal, useId } from './composables/useModal';

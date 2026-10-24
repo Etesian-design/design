@@ -4,19 +4,28 @@
 icons and the busy/loading ring) is a **superellipse squircle**:
 
 ```
-|x|^4 + |y|^4 = 1
+|x|^2.8 + |y|^2.8 = 1
 ```
 
-Not a circle. Not a rounded rectangle (whose corners have a sudden curvature change; the squircle's
-curvature changes continuously and the sides are flatter).
+**n = 2.8**, measured by alpha-coverage fit of 108 stock N9 icons (fits ranged 2.74-2.82).
+The sides bulge visibly; there is no flat straight edge with a small corner arc.
+
+**n = 4 or 5 is wrong**: at those exponents the superellipse has long flat sides and tight corners
+and reads as a rounded square, which is exactly what the N9 does not look like. (An earlier version
+of this library used n = 4; that was a bug.)
+
+Not a circle. Not a rounded rectangle (whose corners have a sudden curvature change; the N9 squircle's
+curvature changes continuously and its sides bulge outward).
 
 ## Implementation
 
-- `src/squircle.ts`: `squirclePath(size, n = 4, samples, inset)` returns an SVG path;
+- `src/squircle.ts`: `squirclePath(size, n = SQUIRCLE_EXPONENT (2.8), samples, inset)` returns an SVG path;
   `SQUIRCLE_PATH_100` is a pre-computed 100 x 100 path; `SQUIRCLE_MASK` a CSS `mask-image` value.
 - CSS: add class `.hd-squircle` to any element (uses `--hd-squircle-mask`).
 - Components: `HdSquircle` (base), `HdAvatar`, `HdAppIcon`, `HdThumbnail`, `HdBusyIndicator variant="squircle"`,
-  plus the notification/event/lock-screen tiles.
+  plus list thumbnails, events-feed items, lock-screen card icons and notification/info banner icons.
+- Always a CSS mask (`mask-image` + `-webkit-mask-image`, `mask-size: 100% 100%`, `mask-repeat: no-repeat`), never
+  `border-radius`. Do not wrap a squircle in an element with `border-radius` + `overflow: hidden`.
 
 ```vue
 <HdSquircle :size="64" src="/photo.jpg" alt="Anna" />
