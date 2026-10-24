@@ -57,7 +57,7 @@ describe('behaviour', () => {
   });
   it('Avatar is a squircle with initials', () => {
     const w = mount(Hd.HdAvatar, { props: { name: 'Ada Lovelace' } });
-    expect(w.classes()).toContain('hd-squircle');
+    expect(w.find('.hd-squircle').exists()).toBe(true);
     expect(w.text()).toBe('AL');
   });
   it('squircle path is a closed superellipse', () => {

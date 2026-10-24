@@ -22,3 +22,5 @@ Rules:
 
 Alternative: any outline set with a similar weight (e.g. Lucide, ISC licence; Tabler, MIT) works with
 `HdIcon` if you register its paths in `icons`; credit the licence.
+
+App icon tiles are lit (top-lit emboss) by default: see [Icon lighting](06b-icon-lighting.md).

@@ -47,3 +47,57 @@ a.hd-link, :where(.hd-root) a:where(:not([class])) { color: var(--hd-c-link); }
     transition-duration: 1ms !important;
   }
 }
+
+/* ------------------------------------------------------------------------------------------
+ * N9 icon lighting ("top-lit emboss"). See docs/06b-icon-lighting.md.
+ * Put .hd-icon-lit on a squircle tile; set --hd-icon-accent (one colour) and --hd-icon-size.
+ * Wrap it in .hd-icon-lit-shadow for the soft outer shadow (masks clip shadows on the tile itself).
+ * Exact gradients: set --hd-icon-top / --hd-icon-bottom (litPalette() in JS); otherwise the
+ * color-mix() fallback below is used. .hd-icon-flat (or no class) is the flat option.
+ * ---------------------------------------------------------------------------------------- */
+.hd-icon-lit {
+  --hd-icon-accent: var(--hd-accent);
+  --_top: var(--hd-icon-top, color-mix(in oklab, var(--hd-icon-accent) 80%, #fff));
+  --_bottom: var(--hd-icon-bottom, color-mix(in oklab, var(--hd-icon-accent) 84%, #000));
+  --_s: var(--hd-icon-size, 48px);
+  position: relative;
+  isolation: isolate;
+  background: linear-gradient(180deg, var(--_top) var(--hd-icon-lighting-gradient-start), var(--_bottom) var(--hd-icon-lighting-gradient-end)) !important;
+  color: var(--hd-icon-lighting-glyph-top);
+}
+.hd-icon-lit--light {
+  --_top: var(--hd-icon-light-tile-top);
+  --_bottom: var(--hd-icon-light-tile-bottom);
+  background: linear-gradient(180deg, var(--_top), var(--_bottom)) !important;
+  color: var(--hd-icon-light-tile-glyph-top);
+}
+/* top rim: squircle minus the squircle moved down by rim-size = a crescent that follows the curved top edge */
+.hd-icon-lit::before, .hd-icon-lit::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none; z-index: -1;
+  -webkit-mask-image: var(--hd-squircle-mask), var(--hd-squircle-mask);
+  mask-image: var(--hd-squircle-mask), var(--hd-squircle-mask);
+  -webkit-mask-size: 100% 100%; mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+  -webkit-mask-composite: source-out; mask-composite: subtract;
+}
+.hd-icon-lit::before {
+  background: linear-gradient(180deg, rgba(255,255,255,var(--hd-icon-lighting-rim-opacity)), rgba(255,255,255,0) 35%);
+  -webkit-mask-position: 0 0, 0 var(--hd-icon-lighting-rim-size); mask-position: 0 0, 0 var(--hd-icon-lighting-rim-size);
+}
+/* faint reflected line along the bottom edge (EXT) */
+.hd-icon-lit::after {
+  background: linear-gradient(0deg, rgba(255,255,255,var(--hd-icon-lighting-bottom-line-opacity)), rgba(255,255,255,0) 30%);
+  -webkit-mask-position: 0 0, 0 calc(-1 * var(--hd-icon-lighting-rim-size)); mask-position: 0 0, 0 calc(-1 * var(--hd-icon-lighting-rim-size));
+}
+.hd-icon-lit--light::before { opacity: .5; }
+/* glyph cast shadow for any child that is not an HdIcon lit glyph (font icons, initials, svg): straight down */
+.hd-icon-lit > :not(img):not(.hd-icon--lit) {
+  filter: drop-shadow(0 calc(var(--_s) * 0.015) calc(var(--_s) * 0.03) rgba(0,0,0,var(--hd-icon-lighting-cast-opacity)));
+}
+.hd-icon-lit--light > :not(img):not(.hd-icon--lit) {
+  filter: drop-shadow(0 calc(var(--_s) * 0.012) calc(var(--_s) * 0.02) rgba(0,0,0,.12));
+}
+.hd-icon-lit-shadow {
+  display: inline-flex; flex: none; position: relative;
+  filter: drop-shadow(0 calc(var(--hd-icon-size, 48px) * 0.015) calc(var(--hd-icon-size, 48px) * 0.025) rgba(0,0,0,var(--hd-icon-lighting-outer-shadow-opacity)));
+}

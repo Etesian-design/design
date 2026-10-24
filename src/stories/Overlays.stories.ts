@@ -22,7 +22,7 @@ export const Sheet: S = { render: () => ({ components: { HdSheet, HdButton, HdTe
 export const QueryDialog: S = { render: () => ({ components: { HdQueryDialog, HdButton, HdSquircle, HdIcon }, setup: () => ({ o: ref(true) }),
   template: `<div style="${frame}"><div style="padding:16px"><HdButton variant="negative" @click="o = true">Delete</HdButton></div>
   <HdQueryDialog v-model:open="o" inline title="Delete conversation?" message="All 12 messages will be deleted." accept-label="Delete" reject-label="Cancel" destructive>
-  <template #icon><HdSquircle :size="64" color="#DA201E"><HdIcon name="delete" :size="32" /></HdSquircle></template></HdQueryDialog></div>` }) };
+  <template #icon><HdSquircle :size="64" color="#DA201E" lighting="lit"><HdIcon name="delete" :size="32" lit /></HdSquircle></template></HdQueryDialog></div>` }) };
 export const SelectionDialog: S = { render: () => ({ components: { HdSelectionDialog, HdButton }, setup: () => ({ o: ref(true), i: ref(1), opts: ['Ringing', 'Beep', 'Silent'] }),
   template: `<div style="${frame}"><div style="padding:16px"><HdButton @click="o = true">Profile: {{ opts[i] }}</HdButton></div>
   <HdSelectionDialog v-model:open="o" v-model="i" inline title="Profile" :options="opts" /></div>` }) };

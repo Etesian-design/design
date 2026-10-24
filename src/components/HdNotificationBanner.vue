@@ -3,7 +3,7 @@
 import { onBeforeUnmount, watch } from 'vue';
 import HdSquircle from './HdSquircle.vue';
 import HdIcon from './HdIcon.vue';
-const props = withDefaults(defineProps<{ open: boolean; title: string; body?: string; icon?: string; image?: string; accent?: string; timeout?: number; inline?: boolean }>(), { timeout: 5000, icon: 'message' });
+const props = withDefaults(defineProps<{ open: boolean; title: string; body?: string; icon?: string; image?: string; accent?: string; lighting?: 'lit' | 'flat'; timeout?: number; inline?: boolean }>(), { timeout: 5000, icon: 'message', lighting: 'lit' });
 const emit = defineEmits<{ 'update:open': [v: boolean]; activate: [] }>();
 let t: ReturnType<typeof setTimeout> | undefined;
 watch(() => props.open, (v) => { clearTimeout(t); if (v && props.timeout > 0) t = setTimeout(() => emit('update:open', false), props.timeout); }, { immediate: true });
@@ -13,7 +13,7 @@ onBeforeUnmount(() => clearTimeout(t));
   <div class="hd-notif-region" :class="{ 'is-inline': inline }" aria-live="polite">
     <Transition name="hd-notif">
       <button v-if="open" type="button" class="hd-notif hd-focusable" @click="emit('activate'); emit('update:open', false)">
-        <HdSquircle :size="40" :src="image" :color="image ? undefined : (accent ?? 'var(--hd-accent)')"><HdIcon :name="icon" :size="20" /></HdSquircle>
+        <HdSquircle :size="40" :src="image" :color="image ? undefined : (accent ?? 'var(--hd-accent)')" :lighting="lighting"><HdIcon :name="icon" :size="20" :lit="lighting === 'lit' && !image" /></HdSquircle>
         <span class="hd-notif__text"><strong>{{ title }}</strong><span v-if="body">{{ body }}</span></span>
       </button>
     </Transition>

@@ -18,7 +18,7 @@ describe('N9 squircle exponent', () => {
 });
 
 const cases: [string, any, Record<string, unknown>, string][] = [
-  ['HdAppIcon', Hd.HdAppIcon, { label: 'A', icon: 'phone' }, '.hd-app-icon__shape > .hd-squircle'],
+  ['HdAppIcon', Hd.HdAppIcon, { label: 'A', icon: 'phone' }, '.hd-app-icon__shape .hd-squircle'],
   ['HdAvatar', Hd.HdAvatar, { name: 'Ada L' }, '.hd-squircle'],
   ['HdThumbnail', Hd.HdThumbnail, {}, '.hd-squircle'],
   ['HdLockScreenNotificationCard', Hd.HdLockScreenNotificationCard, { message: 'm', source: 's', time: 't' }, '.hd-squircle'],

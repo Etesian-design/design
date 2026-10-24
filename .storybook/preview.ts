@@ -31,7 +31,7 @@ const preview: Preview = {
   parameters: {
     layout: 'fullscreen',
     controls: { matchers: { color: /(background|color|accent)$/i } },
-    options: { storySort: { order: ['Guide', ['Introduction', 'Principles', 'Colour', 'Typography', 'Spacing & sizing', 'Shape (squircle)', 'Iconography', 'Motion', 'Sound & haptics', 'Layout & grids', 'Components', 'Patterns', 'Accessibility', 'Contributing & gaps'], 'OS', 'Controls', 'Overlays', 'Web', 'Examples'] } },
+    options: { storySort: { order: ['Guide', ['Introduction', 'Principles', 'Colour', 'Typography', 'Spacing & sizing', 'Shape (squircle)', 'Iconography', 'Icon lighting', 'Motion', 'Sound & haptics', 'Layout & grids', 'Components', 'Patterns', 'Accessibility', 'Contributing & gaps'], 'OS', 'Controls', 'Overlays', 'Web', 'Examples'] } },
   },
 };
 export default preview;

@@ -1,0 +1,12 @@
+import { Meta, Markdown, Canvas } from '@storybook/blocks';
+import md from '../../../docs/06b-icon-lighting.md?raw';
+import * as L from '../IconLighting.stories';
+
+<Meta title="Guide/Icon lighting" />
+
+## Before / after
+
+<Canvas of={L.FlatVsLit} />
+<Canvas of={L.Zoomed} />
+
+<Markdown>{md}</Markdown>
