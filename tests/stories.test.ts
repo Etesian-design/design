@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import { mount, config } from '@vue/test-utils';
 import { quasarPlugin } from '../src/stories/quasar/quasar-app';
-import { composeStories, setProjectAnnotations } from '@storybook/vue3';
+import { composeStories, setProjectAnnotations } from '@storybook/vue3-vite';
 import preview from '../.storybook/preview';
 
 setProjectAnnotations(preview);
