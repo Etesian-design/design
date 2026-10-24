@@ -23,6 +23,34 @@
   mask-repeat: no-repeat;
 }
 
+/* Squircle control (icon-only buttons, toolbar/tab selection highlight). The element itself stays
+ * rectangular (hit area); ::before draws the fill and ::after the border / focus ring, both clipped to the
+ * n = 2.8 squircle, centred, sized min(--hd-sq-size, 100% of the height). Set --hd-sq-fill / --hd-sq-ring. */
+.hd-sq {
+  --hd-sq-size: 40px; --hd-sq-fill: transparent; --hd-sq-ring: transparent; --hd-sq-ring-width: 1px; --hd-sq-ring-offset: 0px;
+  position: relative; isolation: isolate;
+  background: transparent !important; border-color: transparent !important; border-radius: 0 !important;
+}
+.hd-sq::before, .hd-sq::after {
+  content: ''; position: absolute; left: 50%; top: 50%; z-index: -1; pointer-events: none;
+  height: min(var(--hd-sq-size), 100%); aspect-ratio: 1; transform: translate(-50%, -50%);
+  -webkit-mask-image: var(--hd-squircle-mask); mask-image: var(--hd-squircle-mask);
+  -webkit-mask-size: 100% 100%; mask-size: 100% 100%; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+  -webkit-mask-position: center; mask-position: center;
+  transition: background var(--hd-motion-duration-instant) var(--hd-motion-easing-out);
+}
+.hd-sq::before { background: var(--hd-sq-fill); }
+.hd-sq::after {
+  height: calc(min(var(--hd-sq-size), 100%) + 2 * var(--hd-sq-ring-offset)); background: var(--hd-sq-ring);
+  -webkit-mask-image: var(--hd-squircle-mask), var(--hd-squircle-mask); mask-image: var(--hd-squircle-mask), var(--hd-squircle-mask);
+  -webkit-mask-size: 100% 100%, calc(100% - 2 * var(--hd-sq-ring-width)) calc(100% - 2 * var(--hd-sq-ring-width));
+  mask-size: 100% 100%, calc(100% - 2 * var(--hd-sq-ring-width)) calc(100% - 2 * var(--hd-sq-ring-width));
+  -webkit-mask-composite: xor; mask-composite: exclude;
+}
+.hd-sq.hd-focusable:focus-visible, .hd-sq:focus-visible {
+  outline: none; --hd-sq-ring: var(--hd-c-focus); --hd-sq-ring-width: var(--hd-size-focus-ring); --hd-sq-ring-offset: 3px;
+}
+
 /* Focus (extrapolated): visible only for keyboard users, 2px ring in focus colour, 2px offset. */
 .hd-focusable:focus { outline: none; }
 .hd-focusable:focus-visible {

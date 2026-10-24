@@ -10,7 +10,7 @@ defineEmits<{ open: []; close: [] }>();
       <span class="hd-task-card__preview" :style="accent ? { '--hd-accent': accent } : undefined"><slot><span class="hd-task-card__placeholder"></span></slot></span>
       <span class="hd-task-card__title">{{ title }}</span>
     </button>
-    <button v-if="editing" type="button" class="hd-task-card__close hd-focusable" :aria-label="`Close ${title}`" @click="$emit('close')"><HdIcon name="close" :size="16" /></button>
+    <button v-if="editing" type="button" class="hd-task-card__close hd-sq hd-focusable" :aria-label="`Close ${title}`" @click="$emit('close')"><HdIcon name="close" :size="16" /></button>
   </div>
 </template>
 <style>
@@ -22,6 +22,6 @@ defineEmits<{ open: []; close: [] }>();
 .hd-task-card__placeholder { display: block; height: 18%; background: var(--hd-accent); }
 .hd-task-card__title { font-size: var(--hd-font-size-xsmall); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .hd-task-card.is-editing .hd-task-card__preview { animation: hd-wobble .3s ease-in-out infinite alternate; }
-.hd-task-card__close { position: absolute; top: -8px; left: -8px; width: 28px; height: 28px; border-radius: 50%; border: 0; background: var(--hd-color-palette-warning); color: #fff; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; }
+.hd-task-card__close { position: absolute; top: -8px; left: -8px; width: 28px; height: 28px; border: 0; --hd-sq-size: 28px; --hd-sq-fill: var(--hd-color-palette-warning); color: #fff; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; }
 @keyframes hd-wobble { from { transform: rotate(-.6deg); } to { transform: rotate(.6deg); } }
 </style>
