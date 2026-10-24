@@ -1,0 +1,46 @@
+<script setup lang="ts">
+/**
+ * SiteHeader / NavBar (extrapolated, web). >= 600px: top bar with brand + links + actions.
+ * < 600px: the links collapse into an N9-style dark bottom ToolBar (icons + tiny labels), one-handed.
+ */
+import HdIcon from './HdIcon.vue';
+export interface HdNavLink { label: string; href: string; icon?: string; current?: boolean }
+withDefaults(defineProps<{ brand: string; links: HdNavLink[]; brandHref?: string; sticky?: boolean }>(), { brandHref: '#', sticky: true });
+</script>
+<template>
+  <header class="hd-site-header" :class="{ 'is-sticky': sticky }">
+    <a class="hd-site-header__skip" href="#main">Skip to content</a>
+    <div class="hd-site-header__bar">
+      <a class="hd-site-header__brand hd-focusable" :href="brandHref"><slot name="logo" />{{ brand }}</a>
+      <nav class="hd-site-header__nav hd-inverted-mobile" aria-label="Main">
+        <a v-for="l in links" :key="l.href" :href="l.href" class="hd-site-header__link hd-focusable" :aria-current="l.current ? 'page' : undefined">
+          <HdIcon :name="l.icon ?? 'chevron-right'" :size="22" class="hd-site-header__icon" /><span>{{ l.label }}</span>
+        </a>
+      </nav>
+      <div class="hd-site-header__actions"><slot name="actions" /></div>
+    </div>
+  </header>
+</template>
+<style>
+.hd-site-header { background: var(--hd-c-bg); border-bottom: 1px solid var(--hd-c-divider); z-index: var(--hd-z-toolbar); }
+.hd-site-header.is-sticky { position: sticky; top: 0; }
+.hd-site-header__skip { position: absolute; left: 8px; top: -60px; padding: 8px 12px; background: var(--hd-c-fg); color: var(--hd-c-bg); border-radius: 6px; z-index: 2; }
+.hd-site-header__skip:focus { top: 8px; }
+.hd-site-header__bar { display: flex; align-items: center; gap: 24px; max-width: calc(var(--hd-container-default) + 64px); margin: 0 auto; height: 56px; padding: 0 var(--hd-space-page); }
+.hd-site-header__brand { display: inline-flex; align-items: center; gap: 8px; color: inherit; text-decoration: none; font: var(--hd-font-weight-bold) var(--hd-font-size-default)/1 var(--hd-font-family-base); text-transform: uppercase; letter-spacing: .02em; border-radius: 4px; }
+.hd-site-header__nav { display: flex; gap: 4px; flex: 1; }
+.hd-site-header__link { display: inline-flex; align-items: center; min-height: 40px; padding: 0 12px; border-radius: var(--hd-radius-control); color: var(--hd-c-fg); text-decoration: none; font-weight: 400; transition: background var(--hd-motion-duration-instant); }
+.hd-site-header__link:hover { background: var(--hd-c-pressed); }
+.hd-site-header__link[aria-current='page'] { color: var(--hd-c-accent-text); font-weight: 700; }
+.hd-site-header__icon { display: none; }
+.hd-site-header__actions { display: flex; gap: 8px; margin-left: auto; }
+@media (max-width: 599.98px) {
+  .hd-site-header__nav { position: fixed; left: 0; right: 0; bottom: 0; height: var(--hd-size-toolbar); justify-content: space-around; gap: 0;
+    background: linear-gradient(#3a3a3a, #141414); padding-bottom: env(safe-area-inset-bottom); }
+  .hd-site-header__link { flex-direction: column; justify-content: center; gap: 2px; padding: 0 8px; color: #fff; font-size: 11px; opacity: .7; min-height: 48px; }
+  .hd-site-header__link:hover { background: rgba(255,255,255,.1); }
+  .hd-site-header__link[aria-current='page'] { color: #fff; opacity: 1; }
+  .hd-site-header__icon { display: block; }
+  .hd-site-header__actions .hd-button:not(.hd-button--icon-only) { display: none; }
+}
+</style>
