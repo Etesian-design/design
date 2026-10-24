@@ -96,21 +96,23 @@ export interface HarmattanQuasarOptions {
   bodyClass?: boolean;
   /** apply harmattanDefaultProps (default true; needs Quasar components registered globally) */
   defaults?: boolean | Record<string, AnyObj>;
-  /** keep [data-hd-theme] on <html> in sync with Quasar Dark (default true) */
+  /** keep [data-hd-mode] on <html> in sync with Quasar Dark (default true): dark when $q.dark is active, else `mode` */
   syncDark?: boolean;
+  /** colour mode when Quasar Dark is off: 'hybrid' (default, N9), 'light' or 'auto' */
+  mode?: 'hybrid' | 'light' | 'auto';
 }
 
 /** Vue plugin: install AFTER Quasar. */
 export const HarmattanQuasar = {
   install(app: App, opts: HarmattanQuasarOptions = {}) {
-    const { bodyClass = true, defaults = true, syncDark = true } = opts;
+    const { bodyClass = true, defaults = true, syncDark = true, mode = 'hybrid' } = opts;
     if (defaults) patchDefaults(app, defaults === true ? harmattanDefaultProps : defaults);
     app.component('HdQSpinnerSquircle', HdQSpinnerSquircle);
     if (typeof document === 'undefined') return;
     if (bodyClass) document.body.classList.add('hd-quasar');
     const $q = app.config.globalProperties.$q as AnyObj | undefined;
     if (syncDark && $q?.dark) {
-      watch(() => $q.dark.isActive as boolean, (dark) => { document.documentElement.setAttribute('data-hd-theme', dark ? 'dark' : 'light'); }, { immediate: true });
+      watch(() => $q.dark.isActive as boolean, (dark) => { document.documentElement.setAttribute('data-hd-mode', dark ? 'dark' : mode); }, { immediate: true });
     }
   },
 };

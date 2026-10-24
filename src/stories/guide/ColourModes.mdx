@@ -1,0 +1,11 @@
+import { Meta, Markdown, Canvas } from '@storybook/blocks';
+import md from '../../../docs/15-colour-modes.md?raw';
+import * as M from '../pages/Modes.stories';
+
+<Meta title="Guide/Colour modes" />
+
+## The three modes side by side
+
+<Canvas of={M.SurfacesAllModes} />
+
+<Markdown>{md}</Markdown>

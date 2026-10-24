@@ -24,7 +24,7 @@ function pick(it: HdMenuItem) { if (it.disabled) return; emit('select', it.id); 
 <template>
   <Transition name="hd-menu">
     <div v-if="open" class="hd-menu" :class="{ 'hd-menu--inline': inline }" @click.self="emit('update:open', false)">
-      <div ref="panel" class="hd-menu__panel hd-inverted" role="menu" :aria-label="label" @keydown="onKey">
+      <div ref="panel" class="hd-menu__panel hd-on-overlay" role="menu" :aria-label="label" @keydown="onKey">
         <p v-if="title" class="hd-menu__title">{{ title }}</p>
         <button v-for="it in items" :key="it.id" type="button" role="menuitem" class="hd-menu__item hd-focusable" :class="{ 'is-destructive': it.destructive }"
           :disabled="it.disabled" tabindex="-1" @click="pick(it)">{{ it.label }}</button>
@@ -35,11 +35,11 @@ function pick(it: HdMenuItem) { if (it.disabled) return; emit('select', it.id); 
 <style>
 .hd-menu { position: fixed; inset: 0; z-index: var(--hd-z-overlay); background: rgba(0,0,0,.4); display: flex; align-items: flex-end; justify-content: center; }
 .hd-menu--inline { position: absolute; }
-.hd-menu__panel { width: 100%; max-width: 480px; padding: var(--hd-space-double) 0 var(--hd-space-xxlarge); background: rgba(20,20,20,.97); color: #fff; border-radius: var(--hd-radius-card) var(--hd-radius-card) 0 0; box-shadow: var(--hd-shadow-overlay); }
+.hd-menu__panel { width: 100%; max-width: 480px; padding: var(--hd-space-double) 0 var(--hd-space-xxlarge); background: var(--hd-surface-overlay); color: var(--hd-c-fg); border-radius: var(--hd-radius-card) var(--hd-radius-card) 0 0; box-shadow: var(--hd-shadow-overlay); }
 .hd-menu__title { margin: 0; padding: var(--hd-space-double) var(--hd-space-xxlarge); color: var(--hd-c-fg-secondary); font-size: var(--hd-font-size-small); }
 .hd-menu__item { display: block; width: 100%; min-height: var(--hd-size-list-item-small); padding: 0 var(--hd-space-xxlarge); border: 0; background: none; color: inherit; text-align: left;
   font: var(--hd-font-weight-light) var(--hd-font-size-large)/1.2 var(--hd-font-family-light); cursor: pointer; }
-.hd-menu__item:hover:not(:disabled), .hd-menu__item:focus-visible { background: rgba(255,255,255,.1); outline-offset: -2px; }
+.hd-menu__item:hover:not(:disabled), .hd-menu__item:focus-visible { background: var(--hd-c-pressed); outline-offset: -2px; }
 .hd-menu__item:disabled { opacity: var(--hd-opacity-disabled); cursor: default; }
 .hd-menu__item.is-destructive { color: #ff6b69; }
 .hd-menu-enter-active, .hd-menu-leave-active { transition: opacity var(--hd-motion-duration-default) var(--hd-motion-easing-out); }

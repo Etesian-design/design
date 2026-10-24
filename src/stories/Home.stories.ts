@@ -17,7 +17,7 @@ export const apps = [
   ['Clock', 'clock', '#F77219'], ['Feeds', 'globe', '#FF8500'], ['Notes', 'edit', '#F2B111'], ['Settings', 'settings', '#505050'],
 ];
 
-export const LockScreenCard: S = { render: () => ({ components: { HdLockScreenNotificationCard }, template: `<div style="display:grid;gap:8px;max-width:360px;padding:16px;background:#223">
+export const LockScreenCard: S = { render: () => ({ components: { HdLockScreenNotificationCard }, template: `<div style="display:grid;gap:8px;max-width:360px;padding:16px;background:linear-gradient(160deg,color-mix(in srgb,#1d6bba 35%,var(--hd-surface-home)),var(--hd-surface-home))">
   <HdLockScreenNotificationCard message="Are we still on for lunch?" source="Anna Virtanen" time="12:02" accent="#09A7CC" />
   <HdLockScreenNotificationCard message="2 missed calls" source="Phone" time="11:40" icon="phone" accent="#62B700" :count="2" /></div>` }) };
 export const TaskCards: S = { render: () => ({ components: { HdTaskCard }, setup: () => ({ edit: ref(false) }), template: `<label><input type="checkbox" v-model="edit"> Edit mode (long-press)</label>

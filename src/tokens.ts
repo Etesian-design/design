@@ -212,6 +212,41 @@ export const tokens = {
       "glyph-top": "#231F20",
       "glyph-bottom": "#5E5E60"
     }
+  },
+  "mode": {
+    "hybrid": {
+      "page": "#E0E1E2",
+      "card": "#FFFFFF",
+      "field": "#FFFFFF",
+      "chrome": "linear-gradient(#3A3A3A, #141414)",
+      "overlay": "rgba(20,20,20,0.97)",
+      "scrim": "rgba(0,0,0,0.88)",
+      "home": "#000000",
+      "banner": "rgba(30,30,30,0.92)",
+      "media": "#000000"
+    },
+    "dark": {
+      "page": "#000000",
+      "card": "#161616",
+      "field": "#1C1C1C",
+      "chrome": "linear-gradient(#2E2E2E, #101010)",
+      "overlay": "#1E1E1E",
+      "scrim": "rgba(0,0,0,0.8)",
+      "home": "#000000",
+      "banner": "rgba(44,44,44,0.96)",
+      "media": "#000000"
+    },
+    "light": {
+      "page": "#E0E1E2",
+      "card": "#FFFFFF",
+      "field": "#FFFFFF",
+      "chrome": "linear-gradient(#F7F8F8, #D5D6D8)",
+      "overlay": "#FFFFFF",
+      "scrim": "rgba(224,225,226,0.92)",
+      "home": "#E0E1E2",
+      "banner": "rgba(255,255,255,0.97)",
+      "media": "#F2F3F4"
+    }
   }
 } as const;
 export type Origin = 'n9' | 'ext';
@@ -378,7 +413,34 @@ export const tokenOrigins: Record<string, Origin> = {
   "theme.dark.focus": "ext",
   "theme.dark.overlay": "ext",
   "theme.dark.toolbar-from": "ext",
-  "theme.dark.toolbar-to": "ext"
+  "theme.dark.toolbar-to": "ext",
+  "mode.hybrid.page": "n9",
+  "mode.hybrid.card": "ext",
+  "mode.hybrid.field": "ext",
+  "mode.hybrid.chrome": "n9",
+  "mode.hybrid.overlay": "n9",
+  "mode.hybrid.scrim": "n9",
+  "mode.hybrid.home": "n9",
+  "mode.hybrid.banner": "n9",
+  "mode.hybrid.media": "n9",
+  "mode.dark.page": "n9",
+  "mode.dark.card": "ext",
+  "mode.dark.field": "ext",
+  "mode.dark.chrome": "ext",
+  "mode.dark.overlay": "ext",
+  "mode.dark.scrim": "ext",
+  "mode.dark.home": "n9",
+  "mode.dark.banner": "ext",
+  "mode.dark.media": "n9",
+  "mode.light.page": "n9",
+  "mode.light.card": "ext",
+  "mode.light.field": "ext",
+  "mode.light.chrome": "ext",
+  "mode.light.overlay": "ext",
+  "mode.light.scrim": "ext",
+  "mode.light.home": "ext",
+  "mode.light.banner": "ext",
+  "mode.light.media": "ext"
 };
 export const cssVar = (path: string) => `var(--hd-${path.replace(/\./g, '-')})`;
 export default tokens;

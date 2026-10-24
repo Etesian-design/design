@@ -9,9 +9,9 @@ setup((app) => installQuasar(app));
 
 const preview: Preview = {
   globalTypes: {
-    theme: {
-      description: 'Harmattan theme',
-      toolbar: { title: 'Theme', icon: 'mirror', items: [{ value: 'light', title: 'Light (blanco)' }, { value: 'dark', title: 'Dark (inverted)' }, { value: 'both', title: 'Side by side' }], dynamicTitle: true },
+    mode: {
+      description: 'Colour mode',
+      toolbar: { title: 'Mode', icon: 'mirror', items: [{ value: 'hybrid', title: 'Hybrid (N9, default)' }, { value: 'dark', title: 'Dark' }, { value: 'light', title: 'Light' }, { value: 'all', title: 'All three side by side' }], dynamicTitle: true },
     },
     accent: {
       description: 'Accent colour',
@@ -21,21 +21,20 @@ const preview: Preview = {
         { value: '#EF5500', title: 'Calendar' }, { value: '#F2B111', title: 'Notes' }], dynamicTitle: true },
     },
   },
-  initialGlobals: { theme: 'light', accent: '' },
+  initialGlobals: { mode: 'hybrid', accent: '' },
   decorators: [
     (story, ctx) => ({
       components: { story, HdTheme },
-      setup: () => ({ theme: ctx.globals.theme ?? 'light', accent: ctx.globals.accent || undefined, full: ctx.parameters.layout === 'fullscreen' }),
-      template: `<div v-if="theme === 'both'" style="display:grid;grid-template-columns:1fr 1fr;min-height:100%">
-          <HdTheme theme="light" :accent="accent" style="padding:24px;position:relative"><story /></HdTheme>
-          <HdTheme theme="dark" :accent="accent" style="padding:24px;position:relative"><story /></HdTheme></div>
-        <HdTheme v-else :theme="theme" :accent="accent" :style="full ? 'min-height:100vh;position:relative' : 'padding:24px;position:relative;min-height:120px'"><story /></HdTheme>`,
+      setup: () => ({ mode: ctx.globals.mode ?? 'hybrid', accent: ctx.globals.accent || undefined, full: ctx.parameters.layout === 'fullscreen' }),
+      template: `<div v-if="mode === 'all'" style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));min-height:100%">
+          <HdTheme v-for="m in ['hybrid','dark','light']" :key="m" :mode="m" :accent="accent" style="padding:16px;position:relative;overflow:hidden"><div style="font:700 11px/1 sans-serif;opacity:.6;margin-bottom:8px;text-transform:uppercase">{{ m }}</div><story /></HdTheme></div>
+        <HdTheme v-else :mode="mode" :accent="accent" :style="full ? 'min-height:100vh;position:relative' : 'padding:24px;position:relative;min-height:120px'"><story /></HdTheme>`,
     }),
   ],
   parameters: {
     layout: 'fullscreen',
     controls: { matchers: { color: /(background|color|accent)$/i } },
-    options: { storySort: { order: ['Guide', ['Introduction', 'Principles', 'Colour', 'Typography', 'Spacing & sizing', 'Shape (squircle)', 'Iconography', 'Icon lighting', 'Motion', 'Sound & haptics', 'Layout & grids', 'Components', 'Patterns', 'Accessibility', 'Contributing & gaps'], 'OS', 'Controls', 'Overlays', 'Web', 'Examples', 'Quasar', ['Using with Quasar', 'Examples', 'Components']] } },
+    options: { storySort: { order: ['Guide', ['Introduction', 'Principles', 'Colour', 'Colour modes', 'Typography', 'Spacing & sizing', 'Shape (squircle)', 'Iconography', 'Icon lighting', 'Motion', 'Sound & haptics', 'Layout & grids', 'Components', 'Patterns', 'Accessibility', 'Contributing & gaps'], 'OS', 'Controls', 'Overlays', 'Web', 'Examples', 'Quasar', ['Using with Quasar', 'Examples', 'Components']] } },
   },
 };
 export default preview;

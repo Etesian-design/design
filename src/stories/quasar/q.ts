@@ -9,18 +9,18 @@ type S = StoryObj;
 export function qs(template: string, setup: () => Record<string, unknown> = () => ({}), extra: Partial<S> = {}): S {
   return { render: () => ({ setup: () => ({ ic: hdIcon, ...setup() }), template: `<div class="hd-quasar hd-q-story" style="padding:16px;min-height:100%">${template}</div>` }), ...extra };
 }
-/** Overlay stories teleport to <body>: render one theme at a time and set [data-hd-theme] on <html> for the popup. */
-export function overlay(template: string, dark: boolean, setup: () => Record<string, unknown> = () => ({})): S {
+/** Overlay stories teleport to <body>: render one theme at a time and set [data-hd-mode] on <html> for the popup. */
+export function overlay(template: string, mode: 'hybrid' | 'dark' | 'light', setup: () => Record<string, unknown> = () => ({})): S {
   return {
-    globals: { theme: dark ? 'dark' : 'light' },
+    globals: { mode },
     render: () => ({
       setup: () => {
-        onMounted(() => document.documentElement.setAttribute('data-hd-theme', dark ? 'dark' : 'light'));
-        onBeforeUnmount(() => document.documentElement.removeAttribute('data-hd-theme'));
+        onMounted(() => document.documentElement.setAttribute('data-hd-mode', mode));
+        onBeforeUnmount(() => document.documentElement.removeAttribute('data-hd-mode'));
         return { ic: hdIcon, ...setup() };
       },
       template: `<div class="hd-quasar hd-q-story" style="padding:16px;min-height:480px">${template}</div>`,
     }),
   };
 }
-export const both = { globals: { theme: 'both' } };
+export const both = { globals: { mode: 'all' } };

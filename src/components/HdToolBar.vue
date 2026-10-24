@@ -10,7 +10,7 @@ withDefaults(defineProps<{ back?: boolean; menu?: boolean; label?: string; lands
 defineEmits<{ back: []; menu: [] }>();
 </script>
 <template>
-  <nav class="hd-toolbar hd-inverted" :class="{ 'hd-toolbar--landscape': landscape, 'hd-toolbar--fixed': fixed }" :aria-label="label">
+  <nav class="hd-toolbar hd-on-chrome" :class="{ 'hd-toolbar--landscape': landscape, 'hd-toolbar--fixed': fixed }" :aria-label="label">
     <div class="hd-toolbar__side">
       <HdToolIcon v-if="back" icon="back" label="Back" @click="$emit('back')" />
       <slot name="left" />
@@ -25,7 +25,7 @@ defineEmits<{ back: []; menu: [] }>();
 <style>
 .hd-toolbar {
   display: flex; align-items: center; height: var(--hd-size-toolbar); padding: 0 var(--hd-space-medium);
-  background: linear-gradient(var(--hd-c-toolbar-from), var(--hd-c-toolbar-to)); color: #fff;
+  background: var(--hd-surface-chrome); color: var(--hd-c-fg);
 }
 .hd-toolbar--landscape { height: var(--hd-size-toolbar-landscape); }
 .hd-toolbar--fixed { position: fixed; left: 0; right: 0; bottom: 0; z-index: var(--hd-z-toolbar); }
