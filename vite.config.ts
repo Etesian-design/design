@@ -5,7 +5,7 @@ import { resolve } from 'node:path';
 export default defineConfig({
   plugins: [vue()],
   build: {
-    lib: { entry: resolve(__dirname, 'src/index.ts'), name: 'Harmattan', fileName: 'harmattan' },
+    lib: { entry: resolve(import.meta.dirname, 'src/index.ts'), name: 'Harmattan', fileName: 'harmattan' },
     cssFileName: 'harmattan',
     rollupOptions: { external: ['vue'], output: { globals: { vue: 'Vue' }, assetFileNames: 'harmattan.[ext]' } },
   },
