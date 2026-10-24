@@ -5,12 +5,12 @@
  *  - classic (N9-original look): rotating arc. Sizes 24/32/96 n9px -> 16/21/64 css px.
  */
 import { computed } from 'vue';
-import { squirclePath } from '../squircle';
+import { squirclePath, SQUIRCLE_EXPONENT } from '../squircle';
 const props = withDefaults(defineProps<{ size?: number | 'small' | 'default' | 'large'; variant?: 'squircle' | 'classic'; label?: string }>(), {
   size: 'default', variant: 'squircle', label: 'Loading',
 });
 const px = computed(() => (typeof props.size === 'number' ? props.size : { small: 16, default: 21, large: 64 }[props.size]));
-const path = squirclePath(100, 4, 96, 4);
+const path = squirclePath(100, SQUIRCLE_EXPONENT, 96, 4);
 </script>
 <template>
   <span class="hd-busy" :class="`hd-busy--${variant}`" role="progressbar" :aria-label="label" aria-busy="true" :style="{ width: `${px}px`, height: `${px}px` }">

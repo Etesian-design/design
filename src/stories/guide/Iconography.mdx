@@ -1,6 +1,9 @@
 import { Meta, Markdown, IconGallery, IconItem } from '@storybook/blocks';
 import md from '../../../docs/06-iconography.md?raw';
 import { icons } from '../../components/icons';
+import { SQUIRCLE_MASK } from '../../squircle';
+
+export const tile = { width: 40, height: 40, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', background: '#4591FF', color: '#fff', WebkitMaskImage: SQUIRCLE_MASK, maskImage: SQUIRCLE_MASK, WebkitMaskSize: '100% 100%', maskSize: '100% 100%', WebkitMaskRepeat: 'no-repeat', maskRepeat: 'no-repeat' };
 
 <Meta title="Guide/Iconography" />
 
@@ -10,6 +13,6 @@ import { icons } from '../../components/icons';
 
 <IconGallery>
   {Object.entries(icons).map(([n, d]) => (
-    <IconItem key={n} name={n}><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d={d} /></svg></IconItem>
+    <IconItem key={n} name={n}><span className="hd-squircle" style={tile}><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d={d} /></svg></span></IconItem>
   ))}
 </IconGallery>
