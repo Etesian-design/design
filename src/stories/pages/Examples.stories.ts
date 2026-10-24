@@ -92,8 +92,8 @@ export const WebLanding: S = {
       <main id="main">
         <HdHero eyebrow="Design language" title="The content is the interface." lead="A calm, light, gesture-first design system inspired by the Nokia N9, for apps and the web.">
           <template #actions><HdButton variant="accent" @click="toast = true">Get started</HdButton><HdButton>Read the guide</HdButton></template>
-          <template #media><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;justify-items:center;padding:24px;background:var(--hd-surface-home);border-radius:var(--hd-radius-card)" class="hd-on-home">
-            <HdAppIcon v-for="a in apps.slice(0, 8)" :key="a[0]" :label="a[0]" :icon="a[1]" :color="a[2]" /></div></template>
+          <template #media><HdAppGrid class="hd-on-home" style="background:var(--hd-surface-home);border-radius:var(--hd-radius-card)">
+            <li v-for="a in apps.slice(0, 8)" :key="a[0]"><HdAppIcon :label="a[0]" :icon="a[1]" :color="a[2]" /></li></HdAppGrid></template>
         </HdHero>
         <section id="features" style="padding:48px 0"><HdContainer>
           <h2 style="font:300 var(--hd-font-size-xxlarge)/1.1 var(--hd-font-family-light);margin:0 0 32px">Three ideas</h2>
