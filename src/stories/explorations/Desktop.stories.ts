@@ -4,14 +4,13 @@ import HdTabBar from '../../components/HdTabBar.vue';
 import XStage from './parts/XStage.vue';
 import DesktopWorkspace from './desktop/DesktopWorkspace.vue';
 import DesktopColumns from './desktop/DesktopColumns.vue';
-import DesktopClassic from './desktop/DesktopClassic.vue';
 import DesktopHome from './desktop/DesktopHome.vue';
 import DesktopDetails from './desktop/DesktopDetails.vue';
 
 /** Explorations: the Harmattan look on a 1920 x 1080 desktop with mouse and keyboard. Mockups only, not library API. */
 const meta: Meta = {
   title: 'Explorations/Desktop',
-  parameters: { layout: 'fullscreen', docs: { description: { component: 'Desktop directions (mouse + keyboard) for the Harmattan Design Language, at 1920 x 1080 scaled to fit. Keyboard shortcuts are shown as small key hints on the mockups; several also work in the canvas (Super/Meta, Escape, Super+Arrows). Hybrid colour mode by default.' } } },
+  parameters: { layout: 'fullscreen', docs: { description: { component: 'Desktop directions (mouse + keyboard) for the Harmattan Design Language, at 1920 x 1080 scaled to fit. Keyboard shortcuts are shown as small key hints on the mockups; several also work in the canvas (Super/Meta, Escape, Super+Arrows). Hybrid colour mode by default. C (classic taskbar) was dropped after review; see Desktop v2 for the merged direction.' } } },
 };
 export default meta;
 type S = StoryObj;
@@ -56,25 +55,6 @@ export const BDockedColumns: S = {
   }),
 };
 
-const C = {
-  title: 'C · Classic + Harmattan look',
-  idea: 'The familiar desktop: a taskbar with pinned and running apps, overlapping windows. Only the parts are Harmattan: the start menu is the Applications grid (with search), the notification panel is the Events feed, icons are lit squircles, chrome is dark.',
-  gain: 'zero learning curve for desktop users; running apps always visible; works with every existing desktop habit.',
-  cost: 'most of what makes Harmattan different: the home views become pop-ups, and the taskbar takes a permanent 52px.',
-};
-export const CClassic: S = {
-  name: 'C Classic + Harmattan look',
-  args: { panel: 'none' },
-  argTypes: { panel: { control: { type: 'inline-radio' }, options: ['none', 'start', 'events'] } },
-  parameters: desc(C.idea, C.gain, C.cost),
-  render: (args) => ({
-    components: { XStage, HdTabBar, DesktopClassic },
-    setup: () => { const s = ref(args.panel); return { C, s, T: tabs({ none: 'Desktop', start: 'Start menu (Super)', events: 'Notifications' }) }; },
-    template: `<XStage v-bind="C"><template #controls><HdTabBar v-model="s" :tabs="T" label="State" id-prefix="dc" /></template>
-      <DesktopClassic :key="s" :panel="s" /></XStage>`,
-  }),
-};
-
 const D = {
   title: 'D · Home is the desktop',
   idea: 'The N9 model kept whole: one app full screen with the top bar. Super minimises it (it slides away) to reveal the three home views side by side as the desktop itself. Two apps can split the screen and a third can float as a pop-up. A hidden peek dock slides up one row of favourites while the pointer is held at the bottom edge; Open-app cards show their ✕ on hover.',
@@ -97,7 +77,7 @@ export const DHomeIsDesktop: S = {
 const E = {
   title: 'Shared desktop details',
   idea: 'Details every desktop direction shares: the toolbar becomes a header bar inside the window (Back on the left, actions and a menu button on the right), right-click opens a context menu with shortcuts, pointer density (32px rows) next to touch density (53px), hover / focus / pressed states and tooltips. Every icon button and selection highlight is a squircle.',
-  gain: 'one set of rules for A–D; mouse users get compact rows and shortcuts, touch laptops keep N9 sizes.',
+  gain: 'one set of rules for A, B and D; mouse users get compact rows and shortcuts, touch laptops keep N9 sizes.',
   cost: 'the bottom toolbar of the phone (Back moves from bottom-left to top-left on the desktop); two densities to maintain.',
 };
 export const ESharedDetails: S = {

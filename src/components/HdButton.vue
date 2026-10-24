@@ -3,18 +3,19 @@
  * Button. N9-original: bold 22px label (FONT_BUTTON), fixed 322 n9px width in dialogs,
  * white blanco button with black text, pressed text #8C8C8C, disabled opacity.
  * Variants accent/negative come from Qt Components extras (Positive/NegativeButtonStyle).
+ * Lighting (default lit): top-lit gradient + bright top rim like the icon tiles, corners ~21% of the height; lighting="flat" opts out.
  */
 import HdIcon from './HdIcon.vue';
 const props = withDefaults(defineProps<{
   variant?: 'default' | 'accent' | 'negative' | 'plain';
   disabled?: boolean; icon?: string; block?: boolean; fixedWidth?: boolean;
-  type?: 'button' | 'submit' | 'reset'; href?: string; checked?: boolean;
-}>(), { variant: 'default', type: 'button' });
+  type?: 'button' | 'submit' | 'reset'; href?: string; checked?: boolean; lighting?: 'lit' | 'flat';
+}>(), { variant: 'default', type: 'button', lighting: 'lit' });
 defineEmits<{ click: [e: MouseEvent] }>();
 </script>
 <template>
   <component :is="href ? 'a' : 'button'" class="hd-button hd-focusable"
-    :class="[`hd-button--${variant}`, { 'hd-button--block': block, 'hd-button--fixed': fixedWidth, 'hd-button--checked': checked, 'hd-button--icon-only hd-sq': icon && !$slots.default }]"
+    :class="[`hd-button--${variant}`, { 'hd-button--block': block, 'hd-button--fixed': fixedWidth, 'hd-button--checked': checked, 'hd-button--flat': lighting === 'flat', 'hd-button--icon-only hd-sq': icon && !$slots.default }]"
     :type="href ? undefined : type" :href="href && !disabled ? href : undefined"
     :disabled="href ? undefined : disabled" :aria-disabled="disabled ? 'true' : undefined"
     :aria-pressed="checked === undefined ? undefined : String(checked)"
@@ -46,5 +47,11 @@ defineEmits<{ click: [e: MouseEvent] }>();
 .hd-button--icon-only.hd-button--negative { --hd-sq-fill: var(--hd-color-palette-warning); --hd-sq-ring: transparent; }
 .hd-button--icon-only.hd-button--plain { --hd-sq-fill: transparent; --hd-sq-ring: transparent; }
 .hd-button--icon-only.hd-button--plain:hover:not(:disabled) { --hd-sq-fill: var(--hd-c-pressed); }
+.hd-button { --hd-btn-base: var(--hd-c-button-bg); border-radius: calc(var(--hd-size-button) * .21); }
+.hd-button--accent, .hd-button--checked { --hd-btn-base: var(--hd-accent); }
+.hd-button--negative { --hd-btn-base: var(--hd-color-palette-warning); }
+.hd-button:not(.hd-button--plain):not(.hd-button--flat):not(.hd-sq) { background: var(--hd-lit-fill); border-color: var(--hd-btn-rim); box-shadow: inset 0 1px 0 var(--hd-btn-rim-top); }
+.hd-button--icon-only:not(.hd-button--plain):not(.hd-button--flat) { --hd-sq-fill: var(--hd-lit-fill); --hd-sq-ring: var(--hd-btn-rim); }
+.hd-button:active:not(:disabled):not(.hd-button--plain):not(.hd-button--flat):not(.hd-sq) { background: linear-gradient(var(--hd-btn-bot), var(--hd-btn-base)); }
 .hd-button:disabled, .hd-button[aria-disabled='true'] { opacity: var(--hd-opacity-disabled); cursor: default; }
 </style>

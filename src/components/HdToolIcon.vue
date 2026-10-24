@@ -18,7 +18,8 @@ defineEmits<{ click: [e: MouseEvent] }>();
   width: var(--hd-size-touch-target); height: var(--hd-size-touch-target);
   border: 0; color: inherit; cursor: pointer; --hd-sq-size: 40px;
 }
-.hd-tool-icon:hover:not(:disabled), .hd-tool-icon.is-active { --hd-sq-fill: var(--hd-c-pressed); }
+.hd-tool-icon { --hd-btn-base: var(--hd-c-pressed); }
+.hd-tool-icon:hover:not(:disabled), .hd-tool-icon.is-active { --hd-sq-fill: var(--hd-lit-fill); }
 .hd-tool-icon:active:not(:disabled) { --hd-sq-fill: var(--hd-c-pressed); opacity: .7; }
 .hd-tool-icon:disabled { opacity: var(--hd-opacity-disabled); cursor: default; }
 .hd-tool-icon__badge {

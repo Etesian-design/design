@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from '@storybook/vue3-vite';
 import { ref } from 'vue';
 import HdLockScreenNotificationCard from '../components/HdLockScreenNotificationCard.vue';
 import HdTaskCard from '../components/HdTaskCard.vue';
+import HdTaskEditBar from '../components/HdTaskEditBar.vue';
 import HdAppGrid from '../components/HdAppGrid.vue';
 import HdAppIcon from '../components/HdAppIcon.vue';
 import HdEventsFeedItem from '../components/HdEventsFeedItem.vue';
@@ -20,9 +21,10 @@ export const apps = [
 export const LockScreenCard: S = { render: () => ({ components: { HdLockScreenNotificationCard }, template: `<div style="display:grid;gap:8px;max-width:360px;padding:16px;background:linear-gradient(160deg,color-mix(in srgb,#1d6bba 35%,var(--hd-surface-home)),var(--hd-surface-home))">
   <HdLockScreenNotificationCard message="Are we still on for lunch?" source="Anna Virtanen" time="12:02" accent="#09A7CC" />
   <HdLockScreenNotificationCard message="2 missed calls" source="Phone" time="11:40" icon="phone" accent="#62B700" :count="2" /></div>` }) };
-export const TaskCards: S = { render: () => ({ components: { HdTaskCard }, setup: () => ({ edit: ref(false) }), template: `<label><input type="checkbox" v-model="edit"> Edit mode (long-press)</label>
-  <div style="display:grid;grid-template-columns:repeat(2,140px);gap:24px;padding:16px">
-  <HdTaskCard title="Messages" accent="#09A7CC" :editing="edit" /><HdTaskCard title="Mail" accent="#0067BC" :editing="edit" /><HdTaskCard title="Music" accent="#CC09BA" :editing="edit" /><HdTaskCard title="Calendar" accent="#EF5500" :editing="edit" /></div>` }) };
+export const TaskCards: S = { args: { editing: true }, render: (args) => ({ components: { HdTaskCard, HdTaskEditBar }, setup: () => ({ edit: ref(!!args.editing) }), template: `<label><input type="checkbox" v-model="edit"> Edit mode (long-press)</label>
+  <div style="width:480px;background:var(--hd-surface-home);margin-top:8px"><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:24px;padding:24px 16px">
+  <HdTaskCard title="Messages" accent="#09A7CC" :editing="edit" /><HdTaskCard title="Mail" accent="#0067BC" :editing="edit" /><HdTaskCard title="Music" accent="#CC09BA" :editing="edit" /><HdTaskCard title="Calendar" accent="#EF5500" :editing="edit" /></div>
+  <HdTaskEditBar v-if="edit" @done="edit = false" /></div>` }) };
 export const AppGrid: S = { render: () => ({ components: { HdAppGrid, HdAppIcon }, setup: () => ({ apps }), template: '<div style="max-width:360px"><HdAppGrid><li v-for="a in apps" :key="a[0]"><HdAppIcon :label="a[0]" :icon="a[1]" :color="a[2]" /></li></HdAppGrid></div>' }) };
 export const EventsFeed: S = { render: () => ({ components: { HdEventsFeedItem, HdSectionHeader, HdPageHeader }, template: `<div style="max-width:420px"><HdPageHeader title="Events" />
   <HdSectionHeader title="Messages" /><HdEventsFeedItem title="Anna Virtanen" body="Are we still on for lunch? I can be there by 12:30." time="5 min ago" accent="#09A7CC" />
