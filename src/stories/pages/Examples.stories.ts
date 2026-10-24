@@ -1,68 +1,88 @@
 import type { Meta, StoryObj } from '@storybook/vue3-vite';
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
 import * as Hd from '../../index';
-import { apps } from '../Home.stories';
+import { apps, lockItems } from '../Home.stories';
 import { links } from '../Web.stories';
 
 const meta: Meta = { title: 'Examples/Full pages', parameters: { layout: 'fullscreen' } };
 export default meta;
 type S = StoryObj;
+const lockShell = (cards: string) => `<HdTheme mode="dark" :fill="false" style="max-width:400px;height:760px;margin:0 auto;display:flex;flex-direction:column;color:#fff;background:linear-gradient(160deg,#0e1418 10%,#2f6b6b 55%,#0d2a2c 90%)">
+      <HdStatusBar transparent time="12:45" />
+      <div style="text-align:right;padding:28px 18px 0"><div style="font:300 88px/1 var(--hd-font-family-light);font-variant-numeric:tabular-nums">12:45</div>
+        <div style="margin-top:10px;font:700 1.125rem/1.3 var(--hd-font-family-base)">Saturday, 24 October 2026</div></div>
+      <div style="margin-top:auto;padding:16px 16px 12px">${cards}
+        <p style="margin:18px 0 0;text-align:center;color:rgba(255,255,255,.6);font:700 .8125rem/1 var(--hd-font-family-base)">Swipe sideways to unlock</p></div></HdTheme>`;
 const components = { ...Object.fromEntries(Object.entries(Hd).filter(([k]) => k.startsWith('Hd'))) } as any;
 
+const settingsMain = [
+  ['wifi', 'Network and Internet', 'Mobile, Wi-Fi, hotspot'], ['bluetooth', 'Connected devices', 'Bluetooth, pairing'], ['grid', 'Apps', 'Recent apps, default apps'],
+  ['info', 'Notifications', 'Notification history, conversations'], ['music', 'Sound and vibration', 'Volume and vibration'], ['lock', 'Modes', 'Do Not Disturb, Sleeping'],
+  ['star', 'Display', 'Dark theme, font size, brightness'], ['photo', 'Wallpaper and style', 'Home, lock screen'], ['window', 'Storage', '10% used – 231 GB free'],
+  ['battery', 'Battery', '100%'], ['settings', 'System', 'Languages, gestures, time'],
+];
+const settingsShell = (inner: string, toolbar = '') => `<HdTheme mode="dark" style="max-width:400px;height:760px;margin:0 auto;display:flex;flex-direction:column;position:relative;overflow:hidden;background:#000;color:#fff">
+  <HdStatusBar time="14:16" />${inner}${toolbar}</HdTheme>`;
+const mainList = `<ul class="x-set__list">
+    <li v-for="r in rows" :key="r[1]" class="x-set__row"><HdIcon :name="r[0]" :size="22" /><span><b>{{ r[1] }}</b><small>{{ r[2] }}</small></span></li></ul>`;
+const setStyle = `<component is="style">
+  .x-set__list { list-style: none; margin: 0; padding: 4px 0 0; flex: 1; min-height: 0; overflow: hidden; }
+  .x-set__row { display: flex; align-items: center; gap: 28px; padding: 14px 20px; }
+  .x-set__row span { display: flex; flex-direction: column; gap: 4px; }
+  .x-set__row b { font: 700 1.25rem/1.15 var(--hd-font-family-base); }
+  .x-set__row small { font: 700 .875rem/1.2 var(--hd-font-family-base); color: rgba(255,255,255,.62); }
+  .x-set__pull { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 14px 0 10px; color: rgba(255,255,255,.75); font: 700 .875rem/1 var(--hd-font-family-base); }
+  .x-set__pull svg { transition: transform .2s; }
+  .x-set__pull.is-release svg { transform: rotate(180deg); }
+  .x-set__search { margin: 0 16px 8px; }
+  .x-set__head { padding: 20px 16px 12px; font: 700 1.5rem/1 var(--hd-font-family-base); border-bottom: 2px solid var(--hd-accent); }
+  .x-set__sh { display: flex; align-items: center; gap: 12px; padding: 18px 16px 8px; font: 700 .9375rem/1 var(--hd-font-family-base); color: rgba(255,255,255,.6); }
+  .x-set__sh::after { content: ''; flex: 1; height: 1px; background: rgba(255,255,255,.25); }
+  .x-set__item { display: flex; align-items: center; gap: 20px; min-height: 56px; padding: 8px 16px; font: 700 1.0625rem/1.2 var(--hd-font-family-base); }
+  .x-set__item small { display: block; margin-top: 3px; font-size: .9375rem; color: rgba(255,255,255,.6); }
+  .x-set__item > span { flex: 1; }
+</component>`;
 export const OSSettings: S = {
-  name: 'OS: Settings page',
-  render: () => ({
-    components,
-    setup() {
-      const titles = ref(['Settings']);
-      const wifi = ref(true), bt = ref(false), flight = ref(false), vol = ref(60), profile = ref(1), pick = ref(false), banner = ref(false);
-      const profiles = ['Ringing', 'Beep', 'Silent'];
-      return { titles, wifi, bt, flight, vol, profile, pick, banner, profiles, push: (t: string) => titles.value.push(t), pop: () => titles.value.length > 1 && titles.value.pop() };
-    },
-    template: `<div style="max-width:400px;height:720px;margin:0 auto;display:flex;flex-direction:column;position:relative;overflow:hidden;border-inline:1px solid var(--hd-c-divider)">
-      <HdStatusBar time="12:45" />
-      <HdPageStack :titles="titles" style="flex:1" @back="pop">
-        <template #default="{ depth }">
-          <template v-if="depth === 1">
-            <HdSectionHeader title="Connectivity" />
-            <HdListItem title="Flight mode"><template #trailing><HdSwitch v-model="flight" aria-label="Flight mode" /></template></HdListItem>
-            <HdListItem title="Wi-Fi" :subtitle="wifi ? 'Home network' : 'Off'" drilldown @click="push('Wi-Fi')" />
-            <HdListItem title="Bluetooth"><template #trailing><HdSwitch v-model="bt" aria-label="Bluetooth" /></template></HdListItem>
-            <HdSectionHeader title="Sounds" />
-            <HdListItem title="Profile" :subtitle="profiles[profile]" clickable @click="pick = true" />
-            <div style="padding:0 16px 8px"><HdSlider v-model="vol" label="Ringing volume" /></div>
-            <HdSectionHeader title="Device" />
-            <HdListItem title="Display" subtitle="Brightness, lock" drilldown @click="push('Display')" />
-            <HdListItem title="About product" drilldown @click="push('About product')" />
-          </template>
-          <template v-else-if="titles[titles.length - 1] === 'Wi-Fi'">
-            <HdListItem title="Wi-Fi"><template #trailing><HdSwitch v-model="wifi" aria-label="Wi-Fi" /></template></HdListItem>
-            <HdSectionHeader title="Networks" />
-            <HdListItem v-for="n in ['Home network', 'Cafe Harmattan', 'Office']" :key="n" :title="n" :subtitle="n === 'Home network' ? 'Connected' : 'Secured'" clickable @click="banner = true">
-              <template #leading><HdThumbnail icon="wifi" :size="32" /></template></HdListItem>
-          </template>
-          <div v-else style="padding:16px"><HdBusyIndicator size="large" label="Loading" /></div>
-        </template>
-      </HdPageStack>
-      <HdSelectionDialog v-model:open="pick" v-model="profile" inline title="Profile" :options="profiles" />
-      <HdInfoBanner v-model:open="banner" text="Connecting..." icon="wifi" style="position:absolute" />
-    </div>`,
-  }),
+  name: 'OS: Settings (main page)',
+  render: () => ({ components, setup: () => ({ rows: settingsMain }),
+    template: setStyle + settingsShell(mainList) }),
+};
+export const OSSettingsPull: S = {
+  name: 'OS: Settings (pull down to search)',
+  render: () => ({ components, setup: () => ({ rows: settingsMain, release: ref(true), q: ref('') }),
+    template: setStyle + settingsShell(`<div class="x-set__pull" :class="{ 'is-release': release }" role="status" @click="release = !release">
+      <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v14m0 0l-6-6m6 6l6-6" stroke="currentColor" stroke-width="2.4" fill="none" stroke-linecap="round" /></svg>
+      {{ release ? 'Release to search' : 'Pull down to search' }}</div>
+      <HdSearchField v-if="release" v-model="q" class="x-set__search" placeholder="Search settings" label="Search settings" />` + mainList) }),
+};
+export const OSSettingsSub: S = {
+  name: 'OS: Settings (sub page, dark toolbar with Back)',
+  render: () => ({ components, setup: () => ({ wifi: ref(true) }),
+    template: setStyle + settingsShell(`<div style="flex:1;min-height:0;overflow:hidden">
+      <div class="x-set__head">Internet</div>
+      <div class="x-set__sh">Mobile data</div>
+      <div class="x-set__item"><HdIcon name="wifi" :size="20" /><span>COSMOTE<small>Mobile data won't auto-connect</small></span><HdIcon name="settings" :size="22" style="color:var(--hd-accent)" /></div>
+      <div class="x-set__sh">Wi-Fi</div>
+      <div class="x-set__item"><span>Use Wi-Fi</span><HdSwitch v-model="wifi" aria-label="Use Wi-Fi" /></div>
+      <div class="x-set__item"><HdIcon name="wifi" :size="20" style="color:var(--hd-accent)" /><span>ASUS<small>Connected</small></span><HdIcon name="settings" :size="22" style="color:var(--hd-accent)" /></div>
+      <div class="x-set__sh">Networks</div>
+      <div v-for="n in ['RPiDev', 'DIRECT-sAC48x Series', 'mesh']" :key="n" class="x-set__item"><HdIcon name="wifi" :size="20" /><span>{{ n }}</span><HdIcon name="lock" :size="20" /></div>
+      <div class="x-set__item"><HdIcon name="add" :size="22" /><span>Add network</span></div></div>`,
+      `<HdToolBar variant="dark" back label="Settings toolbar" />`) }),
 };
 
 export const OSLockScreen: S = {
-  name: 'OS: Lock screen',
+  name: 'OS: Lock screen (stacked carousel, default)',
   render: () => ({
-    components,
-    template: `<div class="hd-on-home" style="max-width:400px;height:720px;margin:0 auto;display:flex;flex-direction:column;background:linear-gradient(160deg,color-mix(in srgb,#1d6bba 35%,var(--hd-surface-home)),var(--hd-surface-home));color:var(--hd-c-fg)">
-      <HdStatusBar transparent time="12:45" />
-      <div style="text-align:right;padding:32px 24px 0"><div style="font:300 72px/1 var(--hd-font-family-light);font-variant-numeric:tabular-nums">12:45</div>
-        <div style="font:300 var(--hd-font-size-large)/1.4 var(--hd-font-family-light);color:var(--hd-c-fg-secondary)">Monday 24 October</div></div>
-      <div style="margin-top:auto;display:grid;gap:8px;padding:16px">
-        <HdLockScreenNotificationCard message="Are we still on for lunch?" source="Anna Virtanen" time="12:02" accent="#09A7CC" />
-        <HdLockScreenNotificationCard message="2 missed calls" source="Phone" time="11:40" icon="phone" accent="#62B700" :count="2" />
-        <p style="margin:4px 0 0;text-align:right;color:var(--hd-c-fg-secondary);font-size:var(--hd-font-size-small)">More</p>
-        <p style="margin:16px 0 0;text-align:center;color:var(--hd-c-fg-secondary);font-size:var(--hd-font-size-xsmall)">Swipe sideways to unlock</p></div></div>`,
+    components, setup: () => ({ items: lockItems }),
+    template: lockShell(`<HdLockScreenStack :items="items" :visible="3" />`),
+  }),
+};
+export const OSLockScreenMore: S = {
+  name: 'OS: Lock screen (N9 "More" style, optional)',
+  render: () => ({
+    components, setup: () => ({ items: lockItems }),
+    template: lockShell(`<HdLockScreenStack :items="items" :visible="3" variant="more" />`),
   }),
 };
 

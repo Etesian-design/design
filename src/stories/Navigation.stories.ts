@@ -9,19 +9,22 @@ import HdPageIndicator from '../components/HdPageIndicator.vue';
 import HdPageStack from '../components/HdPageStack.vue';
 import HdListItem from '../components/HdListItem.vue';
 
-const meta: Meta = { title: 'OS/Navigation', tags: ['autodocs'], parameters: { docs: { description: { component: 'ToolBar, TabBar, PageHeader, StatusBar, PageIndicator and the drill-down PageStack. **N9**: toolbar 72/56 n9px with Back bottom-left, header 72 n9px, status bar 36 n9px. **EXT**: toolbar gradient values, keyboard support.' } } } };
+const meta: Meta = { title: 'OS/Navigation', tags: ['autodocs'], parameters: { docs: { description: { component: 'ToolBar, TabBar, PageHeader, StatusBar, PageIndicator and the drill-down PageStack. **N9**: toolbar 72/56 n9px, light grey by default (dark per app), Back as a lit squircle button bottom-left, selected tab a lighter squircle, header 72 n9px, status bar 36 n9px. **EXT**: toolbar gradient values, keyboard support.' } } } };
 export default meta;
 type S = StoryObj;
 
 export const ToolBar: S = {
-  render: () => ({ components: { HdToolBar, HdToolIcon }, template: `<HdToolBar back menu>
-    <HdToolIcon icon="add" label="New message" /><HdToolIcon icon="search" label="Search" /></HdToolBar>` }),
+  name: 'ToolBar (light default + dark per-app)',
+  render: () => ({ components: { HdToolBar, HdToolIcon }, template: `<div style="display:grid;gap:16px;max-width:400px">
+    <HdToolBar back><HdToolIcon icon="refresh" label="Reload" /><HdToolIcon icon="star" label="Bookmark" /><template #right><HdToolIcon icon="more" label="Page menu" /></template></HdToolBar>
+    <HdToolBar back variant="dark" label="Dark toolbar (Settings, Gallery)"><HdToolIcon icon="share" label="Share" /><HdToolIcon icon="delete" label="Delete" /></HdToolBar>
+    <HdToolBar back variant="dark" label="Settings sub page" /></div>` }),
 };
-export const ToolBarLandscape: S = { render: () => ({ components: { HdToolBar, HdToolIcon }, template: '<HdToolBar back menu landscape><HdToolIcon icon="share" label="Share" /></HdToolBar>' }) };
+export const ToolBarLandscape: S = { render: () => ({ components: { HdToolBar, HdToolIcon }, template: '<HdToolBar back landscape><HdToolIcon icon="share" label="Share" /></HdToolBar>' }) };
 export const ToolBarWithTabs: S = {
   name: 'ToolBar with icon tabs',
   render: () => ({ components: { HdToolBar, HdTabBar }, setup: () => ({ t: ref('calls'), tabs: [{ id: 'calls', label: 'Call log', icon: 'clock' }, { id: 'pad', label: 'Dialer', icon: 'phone' }, { id: 'people', label: 'Contacts', icon: 'person' }] }),
-    template: '<HdToolBar menu><HdTabBar v-model="t" :tabs="tabs" label="Phone views" /></HdToolBar>' }),
+    template: '<div style="display:grid;gap:16px;max-width:400px"><HdToolBar><HdTabBar v-model="t" :tabs="tabs" label="Phone views" /></HdToolBar><HdToolBar variant="dark"><HdTabBar v-model="t" :tabs="tabs" label="Phone views (dark)" id-prefix="hd-dtab" /></HdToolBar></div>' }),
 };
 export const TextTabs: S = {
   name: 'TabBar (text segments)',
