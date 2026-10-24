@@ -1,4 +1,4 @@
-import type { Meta } from '@storybook/vue3';
+import type { Meta } from '@storybook/vue3-vite';
 import { qs, both } from './q';
 const meta: Meta = { title: 'Quasar/Components/Lists & data', ...both };
 export default meta;

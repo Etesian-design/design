@@ -1,4 +1,4 @@
-import type { Meta } from '@storybook/vue3';
+import type { Meta } from '@storybook/vue3-vite';
 import { useQuasar } from 'quasar';
 import { onMounted, onBeforeUnmount } from 'vue';
 import { overlay } from './q';

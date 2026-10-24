@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/vue3';
+import type { Meta, StoryObj } from '@storybook/vue3-vite';
 import { ref } from 'vue';
 import HdToolBar from '../components/HdToolBar.vue';
 import HdToolIcon from '../components/HdToolIcon.vue';

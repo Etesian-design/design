@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/vue3';
+import type { Meta, StoryObj } from '@storybook/vue3-vite';
 import { FONT_ALTERNATIVES, fontVars } from '../../fonts';
 import HdListItem from '../../components/HdListItem.vue';
 import HdButton from '../../components/HdButton.vue';

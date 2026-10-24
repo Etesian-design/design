@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/vue3';
+import type { Meta, StoryObj } from '@storybook/vue3-vite';
 import HdAppIcon from '../components/HdAppIcon.vue';
 import HdAvatar from '../components/HdAvatar.vue';
 import HdThumbnail from '../components/HdThumbnail.vue';

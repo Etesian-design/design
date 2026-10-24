@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/vue3';
+import type { Meta, StoryObj } from '@storybook/vue3-vite';
 import HdListItem from '../components/HdListItem.vue';
 import HdSectionHeader from '../components/HdSectionHeader.vue';
 import HdSwitch from '../components/HdSwitch.vue';
