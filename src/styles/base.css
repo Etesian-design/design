@@ -133,11 +133,19 @@ a.hd-link, :where(.hd-root) a:where(:not([class])) { color: var(--hd-c-link); }
 /* Button lighting (top-lit, like the icon tiles; see docs/06b-icon-lighting.md "Buttons").
  * Set --hd-btn-base; the fill is a vertical gradient (top ~10% lighter, darker bottom), a 1px rim that is
  * brightest along the top edge. Measured on the N9 dark buttons: #1C1C1C -> #101010 -> #080808, rim #393839. */
-.hd-button, .hd-tool-icon, .hd-quasar .q-btn, .hd-task-edit-bar__btn {
+.hd-button, .hd-tool-icon, .hd-quasar .q-btn, .hd-task-edit-bar__btn, .hd-tab-bar, .hd-quasar .q-btn-group {
   --hd-btn-top: color-mix(in srgb, var(--hd-btn-base, #fff) 90%, #fff);
   --hd-btn-bot: color-mix(in srgb, var(--hd-btn-base, #fff) 88%, #000);
   --hd-btn-rim: color-mix(in srgb, var(--hd-btn-base, #fff) 70%, #000);
   --hd-btn-rim-top: color-mix(in srgb, var(--hd-btn-base, #fff) 60%, #fff);
   --hd-lit-fill: linear-gradient(var(--hd-btn-top), var(--hd-btn-base, #fff) 50%, var(--hd-btn-bot));
   --hd-lit-shadow: inset 0 1px 0 var(--hd-btn-rim-top), inset 0 0 0 1px var(--hd-btn-rim);
+}
+
+/* Button groups read as ONE item: one shared rim and top-lit gradient on the group, square inner edges,
+ * a single 1px divider between buttons, rounded outer corners only (radius ~21% of the button height).
+ * The selected segment is the accent with the same top lighting. Used by HdTabBar (text) and QBtnGroup/QBtnToggle. */
+.hd-btn-group-lit {
+  --hd-btn-base: var(--hd-c-button-bg); display: inline-flex; overflow: hidden; border: 1px solid var(--hd-btn-rim);
+  border-radius: calc(var(--hd-size-button) * .21); background: var(--hd-lit-fill); box-shadow: inset 0 1px 0 var(--hd-btn-rim-top);
 }
