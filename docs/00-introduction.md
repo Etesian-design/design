@@ -44,6 +44,7 @@ In `tokens/tokens.json` every token has `"origin": "n9"` or `"origin": "ext"` an
   - [Using with Quasar](14-quasar.md)
   - [Colour modes: Hybrid, Dark, Light](15-colour-modes.md)
   - [The phone: reference for every form factor, read it first](20-phone.md)
+  - [The desktop: decisions so far](21-desktop.md)
 - Storybook: `npm run storybook`.
 
 ## Legal

@@ -1,9 +1,11 @@
 <script setup lang="ts">
 /**
- * Desktop v2 dock. Default: a light floating strip of app icons only (v1 D's peek dock), centred on its edge and hugging its
- * icons — Unity's left position, the macOS dock's shape. Running apps get a small dot. Left by default; any edge.
- * Options (Edit dock): panel = full-height KDE Plasma-style panel; launcher / trash / clock widgets; size; auto-hide.
- * thumbs: running windows show as live thumbnails in their real aspect ratio (not squircles) with a small app squircle badge.
+ * Desktop v2 dock. Default: a light floating strip (v1 D's peek dock), centred on its edge and hugging its icons — Unity's
+ * left position, the macOS dock's shape. Order: launcher | separator | pinned and running apps | separator | trash (always last).
+ * Running apps get a small dot. Left by default; any edge.
+ * Options (Edit dock): panel = full-height KDE Plasma-style panel; clock widget; size; auto-hide; previews.
+ * previews (optional): items stay squircle app icons; hovering a running app shows its live window preview in the window's
+ * exact aspect ratio (peekThumb forces it open for the mockup).
  * editing: "Edit dock" mode with a move handle and remove badges.
  */
 import { computed } from 'vue';
@@ -14,10 +16,10 @@ import XMiniApp from '../parts/XMiniApp.vue';
 import { app as appOf } from '../parts/data';
 import { GAP, OPEN_WINDOWS, fitInto, type DockPos } from './geometry';
 const props = withDefaults(defineProps<{
-  position?: DockPos; size?: number; autoHide?: boolean; revealed?: boolean; editing?: boolean; thumbs?: boolean;
+  position?: DockPos; size?: number; autoHide?: boolean; revealed?: boolean; editing?: boolean; previews?: boolean;
   panel?: boolean; launcher?: boolean; trash?: boolean; clock?: boolean;
   pinned?: string[]; running?: string[]; active?: string; launcherActive?: boolean; peekThumb?: string;
-}>(), { position: 'left', size: 44, pinned: () => ['Browser', 'Mail', 'Messages', 'Calendar', 'Music', 'Notes'], running: () => ['Mail', 'Browser', 'Messages'] });
+}>(), { position: 'left', size: 44, launcher: true, trash: true, pinned: () => ['Browser', 'Mail', 'Messages', 'Calendar', 'Music', 'Notes'], running: () => ['Mail', 'Browser', 'Messages'] });
 const emit = defineEmits<{ launcher: []; open: [name: string]; settings: [] }>();
 const vertical = computed(() => props.position === 'left' || props.position === 'right');
 const hidden = computed(() => props.autoHide && !props.revealed);
@@ -29,7 +31,6 @@ const style = computed(() => {
 });
 const tipPlace = computed(() => (props.position === 'top' ? 'bottom' : 'top') as 'top' | 'bottom');
 const items = computed(() => [...props.pinned, ...props.running.filter((r) => !props.pinned.includes(r))]);
-const isThumb = (n: string) => !!props.thumbs && props.running.includes(n);
 const shape = (n: string) => OPEN_WINDOWS.find((o) => o.app === n) ?? { app: n, w: 900, h: 600 };
 /** thumbnail box: the window's exact aspect ratio fitted into a square box */
 const thumb = (n: string, box = props.size + 8) => { const o = shape(n); return { ...fitInto(o.w, o.h, box, box), ow: o.w, oh: o.h }; };
@@ -45,19 +46,15 @@ const thumb = (n: string, box = props.size + 8) => { const o = shape(n); return 
       </span>
       <span class="x-dock__div" aria-hidden="true"></span>
     </template>
-    <span v-for="n in items" :key="n" class="x-dock__slot" :class="{ 'is-running': running.includes(n), 'is-active': active === n, 'is-thumb': isThumb(n) }">
+    <span v-for="n in items" :key="n" class="x-dock__slot" :class="{ 'is-running': running.includes(n), 'is-active': active === n }">
       <HdTooltip :text="running.includes(n) ? `${n} · running` : n" :placement="tipPlace">
         <button type="button" class="x-dock__item hd-sq hd-focusable" :aria-label="n" @click="emit('open', n)">
-          <span v-if="isThumb(n)" class="x-dock__thumb" :style="{ width: `${thumb(n).w}px`, height: `${thumb(n).h}px` }">
-            <span class="x-dock__clip"><span class="x-dock__live" inert :style="{ width: `${thumb(n).ow}px`, height: `${thumb(n).oh}px`, transform: `scale(${thumb(n).s})` }"><XMiniApp :name="n" chrome="none" density="pointer" :hints="false" :id-prefix="`xdt-${n}`" /></span></span>
-            <HdSquircle class="x-dock__badge" :size="18" :color="appOf(n).color" lighting="lit" :tone="appOf(n).tone"><HdIcon :name="appOf(n).icon" :size="11" :lit="true" /></HdSquircle>
-          </span>
-          <HdSquircle v-else :size="size" :color="appOf(n).color" lighting="lit" :tone="appOf(n).tone"><HdIcon :name="appOf(n).icon" :size="Math.round(size * 0.5)" :lit="appOf(n).tone === 'light' ? 'dark' : true" /></HdSquircle>
+          <HdSquircle :size="size" :color="appOf(n).color" lighting="lit" :tone="appOf(n).tone"><HdIcon :name="appOf(n).icon" :size="Math.round(size * 0.5)" :lit="appOf(n).tone === 'light' ? 'dark' : true" /></HdSquircle>
         </button>
       </HdTooltip>
       <span v-if="running.includes(n)" class="x-dock__run" aria-hidden="true"></span>
       <span v-if="editing" class="x-dock__rm hd-sq" aria-hidden="true">×</span>
-      <div v-if="peekThumb === n" class="x-dock__peek hd-on-overlay" role="tooltip">
+      <div v-if="previews && peekThumb === n && running.includes(n)" class="x-dock__peek hd-on-overlay" role="tooltip">
         <div class="x-dock__peekwin" :style="{ width: `${thumb(n, 280).w}px`, height: `${thumb(n, 280).h}px` }">
           <span class="x-dock__live" inert :style="{ width: `${thumb(n).ow}px`, height: `${thumb(n).oh}px`, transform: `scale(${thumb(n, 280).s})` }"><XMiniApp :name="n" chrome="none" density="pointer" :hints="false" id-prefix="xdp" /></span>
         </div>
@@ -65,15 +62,17 @@ const thumb = (n: string, box = props.size + 8) => { const o = shape(n); return 
       </div>
     </span>
     <span v-if="panel" class="x-dock__sp"></span>
-    <span v-if="(trash || clock) && !panel" class="x-dock__div" aria-hidden="true"></span>
-    <span v-if="trash" class="x-dock__slot">
-      <HdTooltip text="Trash · 3 items" :placement="tipPlace"><button type="button" class="x-dock__applet hd-sq hd-focusable" aria-label="Trash"><HdIcon name="delete" :size="Math.round(size * 0.5)" /></button></HdTooltip>
-      <span v-if="editing" class="x-dock__rm hd-sq" aria-hidden="true">×</span>
-    </span>
     <span v-if="clock" class="x-dock__slot">
       <span class="x-dock__clock" aria-label="Clock widget, 12:45"><b>12</b><b>45</b><small>Sat 24</small></span>
       <span v-if="editing" class="x-dock__rm hd-sq" aria-hidden="true">×</span>
     </span>
+    <template v-if="trash">
+      <span class="x-dock__div" aria-hidden="true"></span>
+      <span class="x-dock__slot x-dock__trash">
+        <HdTooltip text="Recycle bin · 3 items" :placement="tipPlace"><button type="button" class="x-dock__applet hd-sq hd-focusable" aria-label="Trash"><HdIcon name="delete" :size="Math.round(size * 0.5)" /></button></HdTooltip>
+        <span v-if="editing" class="x-dock__rm hd-sq" aria-hidden="true">×</span>
+      </span>
+    </template>
     <template v-if="editing">
       <span class="x-dock__move" title="Drag to any screen edge" aria-hidden="true"><i></i><i></i><i></i></span>
       <button type="button" class="x-dock__gear hd-sq hd-focusable" aria-label="Dock settings" @click="emit('settings')"><HdIcon name="settings" :size="16" /></button>
@@ -101,15 +100,13 @@ const thumb = (n: string, box = props.size + 8) => { const o = shape(n); return 
 .x-dock.is-editing { outline: 2px dashed var(--hd-accent); outline-offset: 5px; }
 .x-dock__slot { position: relative; display: inline-flex; align-items: center; justify-content: center; }
 .x-dock__item, .x-dock__launcher, .x-dock__applet { display: inline-flex; align-items: center; justify-content: center; width: calc(var(--x-dock-i) + 8px); height: calc(var(--x-dock-i) + 8px); padding: 0; border: 0; color: inherit; cursor: pointer; --hd-sq-size: calc(var(--x-dock-i) + 8px); }
-.x-dock__slot.is-thumb .x-dock__item { width: calc(var(--x-dock-i) + 16px); height: auto; padding: 6px 0; --hd-sq-size: calc(var(--x-dock-i) + 8px); }
-.x-dock:not(.is-vertical) .x-dock__slot.is-thumb .x-dock__item { width: auto; height: calc(var(--x-dock-i) + 16px); padding: 0 6px; }
-.x-dock__item:hover, .x-dock__applet:hover, .x-dock__slot.is-active:not(.is-thumb) .x-dock__item { --hd-sq-fill: var(--hd-c-pressed); }
+.x-dock__item:hover, .x-dock__applet:hover, .x-dock__slot.is-active .x-dock__item { --hd-sq-fill: var(--hd-c-pressed); }
 .x-dock__item:hover .hd-icon-lit-shadow { transform: translateY(-1px); }
 .x-dock__launcher { --hd-sq-size: var(--x-dock-i); --hd-sq-fill: var(--hd-accent); color: #fff; }
 .x-dock__launcher:hover, .x-dock__launcher.is-active { --hd-sq-fill: color-mix(in srgb, var(--hd-accent) 75%, #fff); }
 .x-dock__applet { --hd-sq-size: var(--x-dock-i); --hd-sq-fill: color-mix(in srgb, var(--hd-c-fg) 10%, transparent); }
-.x-dock__div { flex: none; width: 60%; height: 1px; margin: 2px 0; background: var(--hd-c-divider); }
-.x-dock:not(.is-vertical) .x-dock__div { width: 1px; height: 60%; margin: 0 2px; }
+.x-dock__div { flex: none; width: 70%; height: 1px; margin: 4px 0; background: var(--hd-c-divider); }
+.x-dock:not(.is-vertical) .x-dock__div { width: 1px; height: 70%; margin: 0 4px; }
 .x-dock__sp { flex: 1; }
 /* running indicator: a small dot on the screen-edge side */
 .x-dock__run { position: absolute; width: 4px; height: 4px; border-radius: 50%; background: var(--hd-c-fg-secondary); }
@@ -120,12 +117,7 @@ const thumb = (n: string, box = props.size + 8) => { const o = shape(n); return 
 .x-dock.is-panel.x-dock--left .x-dock__run { left: -8px; }
 .x-dock.is-panel.x-dock--right .x-dock__run { right: -8px; }
 .x-dock__slot.is-active .x-dock__run { width: 5px; height: 5px; background: var(--hd-accent); }
-/* thumbnails keep the window's exact shape and a card radius; only the badge is a squircle */
-.x-dock__thumb { position: relative; display: block; }
-.x-dock__clip { position: absolute; inset: 0; overflow: hidden; border-radius: 4px; background: var(--hd-c-bg); box-shadow: 0 0 0 1px var(--hd-c-divider), 0 2px 6px rgba(0,0,0,.3); }
-.x-dock__slot.is-active .x-dock__clip { box-shadow: 0 0 0 2px var(--hd-accent), 0 2px 6px rgba(0,0,0,.3); }
 .x-dock__live { position: absolute; left: 0; top: 0; display: flex; transform-origin: 0 0; pointer-events: none; background: var(--hd-c-bg); color: var(--hd-c-fg); }
-.x-dock__badge { position: absolute !important; right: -5px; bottom: -5px; z-index: 1; }
 .x-dock__clock { display: inline-flex; flex-direction: column; align-items: center; gap: 1px; font: var(--hd-font-weight-light) 20px/1 var(--hd-font-family-light); font-variant-numeric: tabular-nums; }
 .x-dock__clock small { margin-top: 4px; font: 400 10px/1 var(--hd-font-family-base); color: var(--hd-c-fg-secondary); }
 .x-dock:not(.is-vertical) .x-dock__clock { flex-direction: row; gap: 0; padding: 0 6px; }

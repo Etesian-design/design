@@ -7,7 +7,7 @@ import HdSwitch from '../../../components/HdSwitch.vue';
 import HdButton from '../../../components/HdButton.vue';
 import HdIcon from '../../../components/HdIcon.vue';
 import type { DockPos } from './geometry';
-const props = withDefaults(defineProps<{ position?: DockPos; size?: number; visibility?: 'always' | 'autohide' | 'dodge'; panel?: boolean }>(), { position: 'left', size: 44, visibility: 'always', panel: false });
+const props = withDefaults(defineProps<{ position?: DockPos; size?: number; visibility?: 'always' | 'autohide' | 'dodge'; panel?: boolean; previews?: boolean }>(), { position: 'left', size: 44, visibility: 'always', panel: false });
 const emit = defineEmits<{ done: []; 'update:position': [p: DockPos]; 'update:panel': [on: boolean] }>();
 const style = ref(props.panel ? 'panel' : 'strip');
 const STYLES = [{ id: 'strip', label: 'Floating strip' }, { id: 'panel', label: 'Full-height panel' }] as const;
@@ -18,9 +18,9 @@ const vis = ref(props.visibility);
 const POS: DockPos[] = ['left', 'bottom', 'right', 'top'];
 const VIS = [{ id: 'always', label: 'Always visible' }, { id: 'autohide', label: 'Auto-hide' }, { id: 'dodge', label: 'Dodge windows' }] as const;
 const widgets = ref([
-  { id: 'launcher', label: 'Launcher button', icon: 'grid', on: props.panel },
-  { id: 'thumbs', label: 'Running windows as thumbnails', icon: 'window', on: false },
-  { id: 'trash', label: 'Trash', icon: 'delete', on: props.panel },
+  { id: 'launcher', label: 'Launcher button (first)', icon: 'grid', on: true },
+  { id: 'previews', label: 'Window previews on hover', icon: 'window', on: props.previews },
+  { id: 'trash', label: 'Recycle bin (last)', icon: 'delete', on: true },
   { id: 'clock', label: 'Clock', icon: 'clock', on: props.panel },
   { id: 'battery', label: 'Battery', icon: 'battery', on: false },
 ]);
@@ -45,7 +45,7 @@ function setPos(p: DockPos) { pos.value = p; emit('update:position', p); }
     <div class="x-dset__seg" role="radiogroup" aria-label="Visibility">
       <button v-for="v in VIS" :key="v.id" type="button" role="radio" class="x-dset__segbtn hd-focusable" :class="{ 'is-on': vis === v.id }" :aria-checked="vis === v.id ? 'true' : 'false'" @click="vis = v.id">{{ v.label }}</button>
     </div>
-    <h3 class="x-dset__sh">Widgets · off by default</h3>
+    <h3 class="x-dset__sh">Widgets</h3>
     <ul class="x-dset__list">
       <li v-for="w in widgets" :key="w.id"><span class="x-dset__wi hd-sq"><HdIcon :name="w.icon" :size="16" /></span><span class="x-dset__wl">{{ w.label }}</span><HdSwitch v-model="w.on" :aria-label="w.label" /></li>
     </ul>
