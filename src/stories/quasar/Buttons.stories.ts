@@ -1,0 +1,20 @@
+import type { Meta } from '@storybook/vue3';
+import { qs, both } from './q';
+const meta: Meta = { title: 'Quasar/Components/Buttons & badges', ...both };
+export default meta;
+export const Btn = qs(`<div class="q-gutter-sm row items-center">
+  <q-btn label="Default" /><q-btn color="primary" label="Accent" /><q-btn color="negative" label="Delete" /><q-btn flat label="Flat link" />
+  <q-btn outline label="Outline" /><q-btn label="Disabled" disable /><q-btn color="primary" round :icon="ic('add')" aria-label="Add" /><q-btn flat round :icon="ic('more')" aria-label="More" />
+  <q-btn color="primary" label="Loading" loading /></div>`, undefined, { name: 'QBtn' });
+export const BtnGroup = qs(`<q-btn-group outline><q-btn label="Day" /><q-btn label="Week" /><q-btn label="Month" /></q-btn-group>`, undefined, { name: 'QBtnGroup' });
+export const BtnToggle = qs(`<q-btn-toggle :model-value="'week'" :options="[{label:'Day',value:'day'},{label:'Week',value:'week'},{label:'Month',value:'month'}]" />`, undefined, { name: 'QBtnToggle (TabButton row)' });
+export const BtnDropdown = qs(`<div class="q-gutter-sm row"><q-btn-dropdown label="Sort by" /><q-btn-dropdown split color="primary" label="Send" /></div>`, undefined, { name: 'QBtnDropdown' });
+export const Fab = qs(`<div style="height:220px;position:relative"><q-fab :model-value="true" color="primary" :icon="ic('add')" direction="up" style="position:absolute;bottom:0;left:0"><q-fab-action color="primary" :icon="ic('mail')" aria-label="Mail" /><q-fab-action color="positive" :icon="ic('phone')" aria-label="Call" /></q-fab></div>`, undefined, { name: 'QFab / QFabAction' });
+export const Badge = qs(`<div class="q-gutter-md row items-center"><q-badge>3</q-badge><q-badge color="negative">12</q-badge><q-badge outline>new</q-badge><q-btn label="Inbox">&nbsp;<q-badge floating>4</q-badge></q-btn></div>`, undefined, { name: 'QBadge' });
+export const Chip = qs(`<div class="row q-gutter-sm"><q-chip>Work</q-chip><q-chip removable>Family</q-chip><q-chip color="primary" text-color="white" :icon="ic('star')">Favourite</q-chip><q-chip><q-avatar color="primary" text-color="white">AV</q-avatar>Anna</q-chip></div>`, undefined, { name: 'QChip' });
+export const Avatar = qs(`<div class="row q-gutter-md items-end"><q-avatar color="primary" text-color="white" size="64px">AV</q-avatar><q-avatar color="positive" text-color="white" size="64px" :icon="ic('phone')" />
+  <q-avatar color="orange" text-color="white" size="64px" :icon="ic('calendar')" /><q-avatar size="64px"><img :src="img" alt="" /></q-avatar><q-avatar size="43px" :icon="ic('person')" /><q-avatar color="primary" text-color="white" size="64px" class="hd-flat">FL</q-avatar></div>
+  <p class="text-caption q-mt-md">n = 2.8 squircle; coloured avatars get the lit treatment; class="hd-flat" turns it off.</p>`,
+  () => ({ img: `data:image/svg+xml,${encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10"><defs><linearGradient id="g" x2="1" y2="1"><stop offset="0" stop-color="#f6d365"/><stop offset="1" stop-color="#fda085"/></linearGradient></defs><rect width="10" height="10" fill="url(#g)"/></svg>')}` }), { name: 'QAvatar (squircle)' });
+export const Icon = qs(`<div class="row q-gutter-md"><q-icon v-for="n in ['phone','message','mail','calendar','clock','settings','star','search']" :key="n" :name="ic(n)" size="28px" /></div>`, undefined, { name: 'QIcon (HDL icon set)' });
+export const Rating = qs(`<q-rating :model-value="3" :max="5" size="28px" />`, undefined, { name: 'QRating' });

@@ -1,7 +1,11 @@
 import type { Preview } from '@storybook/vue3';
+import { setup } from '@storybook/vue3';
+import { installQuasar } from '../src/stories/quasar/quasar-app';
 import '../src/styles/tokens.css';
 import '../src/styles/base.css';
 import HdTheme from '../src/components/HdTheme.vue';
+
+setup((app) => installQuasar(app));
 
 const preview: Preview = {
   globalTypes: {
@@ -31,7 +35,7 @@ const preview: Preview = {
   parameters: {
     layout: 'fullscreen',
     controls: { matchers: { color: /(background|color|accent)$/i } },
-    options: { storySort: { order: ['Guide', ['Introduction', 'Principles', 'Colour', 'Typography', 'Spacing & sizing', 'Shape (squircle)', 'Iconography', 'Icon lighting', 'Motion', 'Sound & haptics', 'Layout & grids', 'Components', 'Patterns', 'Accessibility', 'Contributing & gaps'], 'OS', 'Controls', 'Overlays', 'Web', 'Examples'] } },
+    options: { storySort: { order: ['Guide', ['Introduction', 'Principles', 'Colour', 'Typography', 'Spacing & sizing', 'Shape (squircle)', 'Iconography', 'Icon lighting', 'Motion', 'Sound & haptics', 'Layout & grids', 'Components', 'Patterns', 'Accessibility', 'Contributing & gaps'], 'OS', 'Controls', 'Overlays', 'Web', 'Examples', 'Quasar', ['Using with Quasar', 'Examples', 'Components']] } },
   },
 };
 export default preview;

@@ -1,9 +1,11 @@
 import { describe, it, expect, vi } from 'vitest';
-import { mount } from '@vue/test-utils';
+import { mount, config } from '@vue/test-utils';
+import { quasarPlugin } from '../src/stories/quasar/quasar-app';
 import { composeStories, setProjectAnnotations } from '@storybook/vue3';
 import preview from '../.storybook/preview';
 
 setProjectAnnotations(preview);
+config.global.plugins = [quasarPlugin];
 const modules = import.meta.glob('../src/stories/**/*.stories.ts', { eager: true }) as Record<string, any>;
 
 describe('all stories render', () => {
