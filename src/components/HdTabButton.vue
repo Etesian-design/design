@@ -20,6 +20,12 @@ defineEmits<{ click: [] }>();
 .hd-tab-button:first-child { border-radius: var(--hd-radius-control) 0 0 var(--hd-radius-control); margin-left: 0; }
 .hd-tab-button:last-child { border-radius: 0 var(--hd-radius-control) var(--hd-radius-control) 0; }
 .hd-tab-button.is-selected { background: var(--hd-accent); color: #fff; border-color: transparent; }
+/* inside a segmented group: square inner edges, one 1px divider, the group owns the rim and lighting */
+.hd-tab-bar--segments > .hd-tab-button { margin: 0; border: 0; border-radius: 0; background: transparent; }
+.hd-tab-bar--segments > .hd-tab-button + .hd-tab-button { border-left: 1px solid var(--hd-btn-rim); }
+.hd-tab-bar--vertical > .hd-tab-button + .hd-tab-button { border-left: 0; border-top: 1px solid var(--hd-btn-rim); }
+.hd-tab-bar--segments > .hd-tab-button.is-selected { background: linear-gradient(color-mix(in srgb, var(--hd-accent) 88%, #fff), var(--hd-accent) 50%, color-mix(in srgb, var(--hd-accent) 88%, #000)); box-shadow: inset 0 1px 0 rgba(255,255,255,.3); color: #fff; }
+.hd-tab-bar--segments > .hd-tab-button:hover:not(.is-selected) { background: color-mix(in srgb, var(--hd-c-fg) 6%, transparent); }
 /* Icon tab (toolbar): the selection highlight is a squircle (n = 2.8) behind the icon, drawn by .hd-sq. */
 .hd-tab-button--icon { border: 0; color: inherit; opacity: .6; --hd-sq-size: 40px; }
 .hd-tab-button--icon:hover { --hd-sq-fill: color-mix(in srgb, var(--hd-c-pressed) 50%, transparent); }

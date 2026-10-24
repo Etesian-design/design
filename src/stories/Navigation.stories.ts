@@ -26,7 +26,7 @@ export const ToolBarWithTabs: S = {
 export const TextTabs: S = {
   name: 'TabBar (text segments)',
   render: () => ({ components: { HdTabBar }, setup: () => ({ t: ref('all'), tabs: [{ id: 'all', label: 'All' }, { id: 'unread', label: 'Unread' }, { id: 'flagged', label: 'Flagged' }] }),
-    template: '<HdTabBar v-model="t" :tabs="tabs" label="Filter" /><p :id="`hd-tab-${t}-panel`" role="tabpanel">Showing: {{ t }}</p>' }),
+    template: '<div style="display:flex;gap:32px;align-items:flex-start"><div><HdTabBar v-model="t" :tabs="tabs" label="Filter" /><p :id="`hd-tab-${t}-panel`" role="tabpanel">Showing: {{ t }}</p></div><HdTabBar v-model="t" :tabs="tabs" label="Filter (vertical)" vertical id-prefix="hd-vtab" /></div>' }),
 };
 export const PageHeaders: S = {
   render: () => ({ components: { HdPageHeader }, template: `<div style="display:grid;gap:16px">
