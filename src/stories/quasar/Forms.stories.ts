@@ -1,6 +1,9 @@
 import type { Meta } from '@storybook/vue3-vite';
 import { ref } from 'vue';
 import { qs, both } from './q';
+import HdTimePicker from '../../components/HdTimePicker.vue';
+import HdColorPicker from '../../components/HdColorPicker.vue';
+import HdSwitch from '../../components/HdSwitch.vue';
 const meta: Meta = { title: 'Quasar/Components/Forms', ...both };
 export default meta;
 export const Input = qs(`<div class="q-gutter-md" style="max-width:360px"><q-input outlined label="Name" :model-value="'Anna'" /><q-input outlined label="Email" placeholder="you@example.com" :model-value="''" hint="We never share it" />
@@ -16,9 +19,17 @@ export const OptionGroup = qs(`<q-option-group :model-value="'op1'" :options="[{
 export const Slider = qs(`<div style="max-width:360px"><q-slider :model-value="40" :min="0" :max="100" /><q-slider :model-value="70" label label-always :min="0" :max="100" /></div>`, undefined, { name: 'QSlider' });
 export const Range = qs(`<q-range :model-value="{min:20,max:70}" :min="0" :max="100" style="max-width:360px" />`, undefined, { name: 'QRange' });
 export const Knob = qs(`<q-knob :model-value="60" size="72px" show-value :thickness="0.15" />`, undefined, { name: 'QKnob' });
-export const Date = qs(`<q-date :model-value="'2026/10/24'" />`, undefined, { name: 'QDate' });
-export const Time = qs(`<q-time :model-value="'10:45'" />`, undefined, { name: 'QTime' });
-export const Color = qs(`<q-color :model-value="'#4591FF'" style="max-width:260px" />`, undefined, { name: 'QColor' });
+export const Date = qs(`<div class="column q-gutter-md items-start"><q-date :model-value="'2026/10/24'" /><q-date :model-value="'2026/10/24'" default-view="Months" /><q-date :model-value="'2026/10/24'" default-view="Years" /></div>`, undefined, { name: 'QDate' });
+export const Time = qs(`<div class="row q-gutter-lg items-start">
+  <HdTimePicker v-model="t" />
+  <section class="hd-alarms" aria-label="Alarms">
+    <h2 class="hd-alarms__title">Alarms</h2>
+    <div v-for="a in alarms" :key="a.t" class="hd-alarms__row"><span class="hd-alarms__t"><b>{{ a.t }}</b><small>{{ a.d }}</small></span><HdSwitch v-model="a.on" :aria-label="'Alarm ' + a.t" /></div>
+  </section>
+  <div class="column q-gutter-sm"><div class="text-caption">QTime (Quasar API, N9 skin) · {{ t }}</div><q-time v-model="t" /></div>
+</div>`, () => ({ t: ref('10:45'), alarms: ref([{ t: '06:45', d: 'Weekdays · Wake up', on: true }, { t: '08:30', d: 'Sat, Sun', on: false }, { t: '13:50', d: 'Today · Design review', on: true }]) }), { name: 'QTime + N9 time picker' }, { HdTimePicker, HdSwitch });
+export const Color = qs(`<div class="row q-gutter-lg items-start"><HdColorPicker v-model="c" /><div class="column q-gutter-sm"><div class="text-caption">QColor (Quasar API, N9 skin) · {{ c }}</div><q-color v-model="c" style="width:280px" /></div></div>`,
+  () => ({ c: ref('#4591FF') }), { name: 'QColor + N9 colour picker' }, { HdColorPicker });
 export const Editor = qs(`<q-editor :model-value="'<p>Hello <b>N9</b></p>'" min-height="5rem" />`, undefined, { name: 'QEditor' });
 export const PopupEdit = qs(`<div>Tap the name: <span style="cursor:pointer;border-bottom:1px dashed">{{ name }}<q-popup-edit v-model="name" auto-save v-slot="scope"><q-input v-model="scope.value" dense autofocus outlined @keyup.enter="scope.set" /></q-popup-edit></span></div>`, () => ({ name: ref('Anna') }), { name: 'QPopupEdit' });
 export const Uploader = qs(`<q-uploader label="Upload photos" url="" style="max-width:320px" />`, undefined, { name: 'QUploader' });

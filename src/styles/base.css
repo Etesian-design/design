@@ -133,7 +133,7 @@ a.hd-link, :where(.hd-root) a:where(:not([class])) { color: var(--hd-c-link); }
 /* Button lighting (top-lit, like the icon tiles; see docs/06b-icon-lighting.md "Buttons").
  * Set --hd-btn-base; the fill is a vertical gradient (top ~10% lighter, darker bottom), a 1px rim that is
  * brightest along the top edge. Measured on the N9 dark buttons: #1C1C1C -> #101010 -> #080808, rim #393839. */
-.hd-button, .hd-tool-icon, .hd-quasar .q-btn, .hd-task-edit-bar__btn, .hd-tab-bar, .hd-quasar .q-btn-group {
+.hd-button, .hd-tool-icon, .hd-quasar .q-btn, .hd-task-edit-bar__btn, .hd-tab-bar, .hd-btn-group-lit, .hd-quasar .q-btn-group {
   --hd-btn-top: color-mix(in srgb, var(--hd-btn-base, #fff) 90%, #fff);
   --hd-btn-bot: color-mix(in srgb, var(--hd-btn-base, #fff) 88%, #000);
   --hd-btn-rim: color-mix(in srgb, var(--hd-btn-base, #fff) 70%, #000);
