@@ -10,9 +10,9 @@ type S = StoryObj;
 const lockShell = (cards: string) => `<HdTheme mode="dark" :fill="false" style="max-width:400px;height:760px;margin:0 auto;display:flex;flex-direction:column;color:#fff;background:linear-gradient(160deg,#0e1418 10%,#2f6b6b 55%,#0d2a2c 90%)">
       <HdStatusBar transparent time="12:45" />
       <div style="text-align:right;padding:28px 18px 0"><div style="font:300 88px/1 var(--hd-font-family-light);font-variant-numeric:tabular-nums">12:45</div>
-        <div style="margin-top:10px;font:700 1.125rem/1.3 var(--hd-font-family-base)">Saturday, 24 October 2026</div></div>
+        <div style="margin-top:10px;font:400 1.125rem/1.3 var(--hd-font-family-base)">Saturday, 24 October 2026</div></div>
       <div style="margin-top:auto;padding:16px 16px 12px">${cards}
-        <p style="margin:18px 0 0;text-align:center;color:rgba(255,255,255,.6);font:700 .8125rem/1 var(--hd-font-family-base)">Swipe sideways to unlock</p></div></HdTheme>`;
+        <p style="margin:18px 0 0;text-align:center;color:rgba(255,255,255,.6);font:400 .8125rem/1 var(--hd-font-family-base)">Swipe sideways to unlock</p></div></HdTheme>`;
 const components = { ...Object.fromEntries(Object.entries(Hd).filter(([k]) => k.startsWith('Hd'))) } as any;
 
 const settingsMain = [
@@ -29,8 +29,8 @@ const setStyle = `<component is="style">
   .x-set__list { list-style: none; margin: 0; padding: 4px 0 0; flex: 1; min-height: 0; overflow: hidden; }
   .x-set__row { display: flex; align-items: center; gap: 28px; padding: 14px 20px; }
   .x-set__row span { display: flex; flex-direction: column; gap: 4px; }
-  .x-set__row b { font: 700 1.25rem/1.15 var(--hd-font-family-base); }
-  .x-set__row small { font: 700 .875rem/1.2 var(--hd-font-family-base); color: rgba(255,255,255,.62); }
+  .x-set__row b { font: 400 1.25rem/1.15 var(--hd-font-family-base); }
+  .x-set__row small { font: 400 .875rem/1.2 var(--hd-font-family-base); color: rgba(255,255,255,.62); }
   .x-set__pull { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 14px 0 10px; color: rgba(255,255,255,.75); font: 700 .875rem/1 var(--hd-font-family-base); }
   .x-set__pull svg { transition: transform .2s; }
   .x-set__pull.is-release svg { transform: rotate(180deg); }
@@ -38,7 +38,7 @@ const setStyle = `<component is="style">
   .x-set__head { padding: 20px 16px 12px; font: 700 1.5rem/1 var(--hd-font-family-base); border-bottom: 2px solid var(--hd-accent); }
   .x-set__sh { display: flex; align-items: center; gap: 12px; padding: 18px 16px 8px; font: 700 .9375rem/1 var(--hd-font-family-base); color: rgba(255,255,255,.6); }
   .x-set__sh::after { content: ''; flex: 1; height: 1px; background: rgba(255,255,255,.25); }
-  .x-set__item { display: flex; align-items: center; gap: 20px; min-height: 56px; padding: 8px 16px; font: 700 1.0625rem/1.2 var(--hd-font-family-base); }
+  .x-set__item { display: flex; align-items: center; gap: 20px; min-height: 56px; padding: 8px 16px; font: 400 1.0625rem/1.2 var(--hd-font-family-base); }
   .x-set__item small { display: block; margin-top: 3px; font-size: .9375rem; color: rgba(255,255,255,.6); }
   .x-set__item > span { flex: 1; }
 </component>`;

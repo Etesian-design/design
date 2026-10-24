@@ -25,7 +25,7 @@ const extra = computed(() => props.more ?? (props.count && props.count > 1 ? pro
 .hd-lock-card { display: flex; gap: 18px; align-items: center; padding: 14px 16px; border-radius: 8px; background: rgba(12, 15, 18, .70); color: #fff; -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
 .hd-lock-card__text { min-width: 0; }
 .hd-lock-card__text p { margin: 0; }
-.hd-lock-card__msg { font: 700 1.125rem/1.3 var(--hd-font-family-base); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-.hd-lock-card__from { margin-top: 2px !important; font: 700 .875rem/1.3 var(--hd-font-family-base); color: rgba(255,255,255,.72); }
-.hd-lock-card__time { font: 700 .8125rem/1.4 var(--hd-font-family-base); color: rgba(255,255,255,.55); }
+.hd-lock-card__msg { font: 400 1.125rem/1.3 var(--hd-font-family-base); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.hd-lock-card__from { margin-top: 2px !important; font: 400 .875rem/1.3 var(--hd-font-family-base); color: rgba(255,255,255,.8); }
+.hd-lock-card__time { font: 400 .875rem/1.4 var(--hd-font-family-base); color: rgba(255,255,255,.6); }
 </style>
