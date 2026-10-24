@@ -1,0 +1,13 @@
+import { Meta, Markdown, Canvas } from '@storybook/addon-docs/blocks';
+import md from '../../../docs/20-phone.md?raw';
+import * as H from '../Home.stories';
+
+<Meta title="Guide/Phone (reference)" />
+
+## Live parts
+
+<Canvas of={H.LockScreenCard} />
+<Canvas of={H.TaskCards} />
+<Canvas of={H.EventsFeed} />
+
+<Markdown>{md}</Markdown>

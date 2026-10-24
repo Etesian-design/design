@@ -1,0 +1,166 @@
+# 20 · The phone (reference for every form factor)
+
+This chapter records everything already built and decided for the phone (the Harmattan launcher on Android). It is the reference for tablet, desktop and any later form factor. If something here conflicts with an exploration, this chapter wins unless the change is made here first.
+
+Units: all sizes are in **dp**, and type is in **sp**.
+
+---
+
+## 1. Gestures and the OS
+
+| Gesture | Result |
+|---|---|
+| **Swipe in from the left or right edge** | Minimises the app to home. The app shrinks away and the last home view shows. The app keeps running and appears in Open apps. |
+| **Swipe down from the top edge** | Closes the app (the N9 swipe-down close). |
+| **Swipe up from the bottom edge and hold** | Peeks the first row of the app grid over the app. Release on an icon to launch it; release elsewhere to cancel. |
+| **Tap the status bar** | Opens the status menu: connectivity toggles, Silent, volume, brightness and battery. It is never part of Events. |
+| **Swipe sideways on the lock screen** | Unlocks. There is no unlock button. |
+| **Pinch in Open apps** | Zooms between the levels: carousel (one card), 2, 3 and 4 per row. |
+
+The system gesture areas belong to the OS. Apps never put interactive controls within the edge-swipe zone, and nothing in an app may imitate an edge swipe.
+
+### Lock screen
+
+- **Default notification style: a stacked carousel (iPhone style).**
+  - The newest **N** notifications show in full at the bottom. N defaults to 3; the setting allows 1–10.
+  - The rest appear as stacked strips under them.
+  - Sliding up moves the cards like a carousel over the clock, and the clock fades out as they cover it.
+- **Optional style: N9.** The N9 "More" label replaces the stacked strips.
+- **Groups:** tapping a group opens it in place into separate N9 cards. It does not navigate away.
+- **Notification cards:**
+  - N9 dark translucent cards with an **8dp** radius.
+  - A **44dp squircle** app icon or contact photo.
+  - The message in large type, with the sender and time beneath it.
+
+### Animations on every interaction
+
+- **App launch:** a loading ring runs on the tapped icon. When the app is ready, it slides in. There is **no splash screen**.
+- **Restore from Open apps:** the card is sucked away, then the app slides in from the left.
+- **Minimise (edge swipe):** the app slides off in the direction of the swipe and home is revealed underneath.
+- **Close (swipe down):** the app follows the finger down and fades out.
+- **Open apps zoom (pinch):** cards reflow between carousel, 2, 3 and 4 per row. Cards keep their identity; there is no cross-fade.
+
+Durations and easings come from the motion tokens (see [07 Motion](07-motion.md)).
+
+---
+
+## 2. Home views
+
+There are three horizontal views. Swiping moves between them, with page dots.
+
+### Events
+
+From top to bottom:
+
+1. **Day and date.**
+2. **Weather**, centred on its line:
+   - the city in small bold type, centred above a hairline rule;
+   - the temperature and weather icon centred under the rule.
+3. **Notifications.**
+4. **Feeds.**
+
+Section headers are the N9 SectionHeader: a small bold secondary label, right-aligned, with a hairline to its left.
+
+Item type sizes:
+
+| Element | Size |
+|---|---|
+| Title | 16sp bold |
+| Summary | 14sp regular |
+| Time | 12sp |
+
+Thumbnails are 43–44dp squircles.
+
+### Applications
+
+- The app grid uses squircle icons, 4 columns on a phone.
+- Long-press starts the edit or move mode.
+
+### Open apps
+
+- Live cards of the running apps.
+- Zoom levels: carousel, 2, 3 and 4 per row, changed by pinching.
+- The default is 2 per row.
+
+### Open apps edit mode (long press)
+
+- **Close button:** a red lit squircle ✕ at each card's **top-right**.
+  - Gradient #F78673 → #EF2C10, with a thick white rounded ✕.
+  - Its width is about 0.28 × the card width.
+  - It sits slightly outside the card's corner.
+- **Previews** dim to exactly 50% (black at 50% alpha, no tint).
+- **Bottom bar:** lit **Done** and **Close all** buttons.
+- **In the carousel:** the same bar appears automatically. There is also **one shared action row** for the centred card: Split view, Pop-up, Screenshot, App info. The row is not repeated on each card.
+- **Done** returns to 2 per row.
+
+---
+
+## 3. The bottom toolbar
+
+- **Contents:**
+  - Back sits on the left as a lit squircle icon button.
+  - App actions and tabs follow it.
+  - The selected tab is a squircle highlight.
+- **Style:** light N9 grey by default. An app may ask for the dark style (Settings does).
+  - Within one flow the style never flips. Settings and its search use the same toolbar.
+- **Apps can hide it.** The Settings main page has no toolbar; its sub-pages show one with Back.
+- **Keyboard behaviour:**
+  - The toolbar **hides while the keyboard is up**.
+  - The keyboard has its own ⌄ hide key next to the microphone.
+  - There is **no system strip under the keyboard**.
+
+## 4. Settings
+
+- There is **no search button**.
+- Pulling down at the top of any Settings page reveals search.
+- A hint follows the pull: "Pull down to search", then "Release to search".
+
+---
+
+## 5. Type follows the OS
+
+- Everything is set in sp and dp.
+- Respect Android's font size, display size and **Bold text** settings.
+- Events use 16sp bold titles, 14sp regular summaries and 12sp times.
+- **Do not hard-code bigger or bolder sizes "to look N9".** The N9 look comes from the typeface, weights and spacing, not from oversized text.
+
+## 6. Shape and lighting
+
+### Squircle
+
+- **Exponent:** n = **2.8** exactly (see `src/squircle.ts` and `.hd-sq`).
+- **Use it for:**
+  - app icons;
+  - avatars and contact photos;
+  - notification icons;
+  - icon buttons;
+  - selected highlights (tabs, list selections, the calendar day).
+- **Never use circles or rounded squares** for these.
+- **Android adaptive icons** are drawn unmasked (the full foreground and background layers) and clipped to the squircle. Never use the system circle mask.
+- **Not squircles:** windows, panels, cards and window thumbnails keep the card radius, `--hd-radius-card` (8dp).
+
+### Top lighting
+
+**Every button is top-lit like the icons** (see [06b Icon lighting](06b-icon-lighting.md) and `src/lighting.ts`). The measured dark button is:
+
+| Property | Value |
+|---|---|
+| Gradient | #1C1C1C → #101010 → #080808 |
+| Rim | 1px #393839 |
+| Corner radius | about 21% of the button height |
+
+Accent and negative buttons use the same structure with their base colour.
+
+---
+
+## 7. Mistakes not to repeat
+
+1. **Guessed squircle exponents** (n = 4 or 5). The measured value is **2.8**.
+2. **Circle masks on adaptive icons.** Draw the icon unmasked and clip it to the squircle.
+3. **Rounded-rectangle buttons and selection highlights.** Icon buttons and highlights are squircles, and text buttons are lit with a radius of about 21% of their height.
+4. **Oversized bold text** used "to look N9". Follow the OS type scale and the user's settings.
+5. **A toolbar fighting the keyboard.** Hide the toolbar while the keyboard is up; the keyboard has its own hide key.
+6. **A toolbar style flipping between screens of one flow** (Settings in dark, its search in light). Keep one style per flow.
+7. **The ✕ on the wrong side.** The Open apps close button is at the **top-right**.
+8. **Per-card action buttons repeated on every card.** Use one shared action row for the centred card.
+9. (Desktop v2) **Squircle window thumbnails.** Thumbnails keep the window's aspect ratio and the card radius; only the app badge is a squircle.
