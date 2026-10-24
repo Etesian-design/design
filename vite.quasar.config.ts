@@ -6,7 +6,7 @@ export default defineConfig({
   plugins: [vue()],
   build: {
     emptyOutDir: false,
-    lib: { entry: resolve(__dirname, 'src/quasar/index.ts'), formats: ['es'], fileName: () => 'quasar.js' },
+    lib: { entry: resolve(import.meta.dirname, 'src/quasar/index.ts'), formats: ['es'], fileName: () => 'quasar.js' },
     cssFileName: 'quasar-components',
     rollupOptions: { external: ['vue', 'quasar'] },
   },
