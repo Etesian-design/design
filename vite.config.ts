@@ -9,5 +9,5 @@ export default defineConfig({
     cssFileName: 'harmattan',
     rollupOptions: { external: ['vue'], output: { globals: { vue: 'Vue' }, assetFileNames: 'harmattan.[ext]' } },
   },
-  test: { environment: 'jsdom', include: ['tests/**/*.test.ts'] },
+  test: { environment: 'jsdom', include: ['tests/**/*.test.ts'], alias: [{ find: /^quasar$/, replacement: 'quasar/dist/quasar.client.js' }], css: false, setupFiles: ['tests/setup.ts'] },
 });

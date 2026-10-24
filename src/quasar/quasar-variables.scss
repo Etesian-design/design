@@ -1,0 +1,46 @@
+// Harmattan Design Language -> Quasar SCSS variables.
+// Quasar CLI: put `@import 'harmattan-design/quasar/variables.scss';` in src/css/quasar.variables.scss
+// (Vite plugin: sassVariables: 'node_modules/harmattan-design/src/quasar/quasar-variables.scss').
+// Values are the static N9 colours; at runtime the theme CSS re-points --q-* to --hd-* so the
+// accent can still change per app.
+$primary   : #4591FF; // COLOR_ACCENT1 (n9)
+$secondary : #1C51AF; // COLOR_LINK_ACTIVE (n9)
+$accent    : #09A7CC; // COLOR_ACCENT6 conversations (n9)
+$dark      : #161616; // dark surface (ext)
+$dark-page : #000000; // COLOR_INVERTED_BACKGROUND (n9)
+$positive  : #62B700; // COLOR_ACCENT2 phone (n9)
+$negative  : #DA201E; // COLOR_WARNING (n9)
+$info      : #4591FF;
+$warning   : #CC9900; // COLOR_ATTENTION (n9)
+
+$typography-font-family : "Open Sans", "Source Sans 3", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+$body-font-size         : 16px;
+$button-border-radius   : 6px;
+$button-font-size       : 15px;
+$button-font-weight     : 700;
+$button-padding         : 0 24px;
+$button-rounded-border-radius : 999px;
+$generic-border-radius  : 8px;
+$shadow-color           : #000;
+$shadow-transition      : none;
+$separator-color        : rgba(0, 0, 0, .12);
+$separator-dark-color   : rgba(255, 255, 255, .16);
+$toolbar-min-height     : 48px;
+$toolbar-padding        : 0 16px;
+$toolbar-title-font-size : 21px;
+$toolbar-title-font-weight : 300;
+$item-base-color        : #505050;
+$chip-height            : 28px;
+$tooltip-color          : #fff;
+$tooltip-background     : rgba(20, 20, 20, .94);
+$tooltip-padding        : 6px 10px;
+$tooltip-border-radius  : 6px;
+$tooltip-fontsize       : 13px;
+$menu-background        : #141414;
+$menu-box-shadow        : 0 8px 32px rgba(0, 0, 0, .28);
+$layout-border          : 1px solid rgba(0, 0, 0, .12);
+$layout-shadow          : none;
+$layout-shadow-dark     : none;
+$dialog-title-font-size : 21px;
+$dialog-title-letter-spacing : 0;
+$text-weights           : (thin: 100, light: 300, regular: 400, medium: 500, bold: 700, bolder: 900);

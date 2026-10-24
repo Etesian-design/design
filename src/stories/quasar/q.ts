@@ -1,0 +1,26 @@
+import 'quasar/dist/quasar.css';
+import '../../quasar/harmattan-quasar.css';
+import { onMounted, onBeforeUnmount } from 'vue';
+import type { StoryObj } from '@storybook/vue3';
+import { hdIcon } from '../../quasar/icon-set';
+
+type S = StoryObj;
+/** A Quasar story wrapped in .hd-quasar; rendered light + dark side by side by default. */
+export function qs(template: string, setup: () => Record<string, unknown> = () => ({}), extra: Partial<S> = {}): S {
+  return { render: () => ({ setup: () => ({ ic: hdIcon, ...setup() }), template: `<div class="hd-quasar hd-q-story" style="padding:16px;min-height:100%">${template}</div>` }), ...extra };
+}
+/** Overlay stories teleport to <body>: render one theme at a time and set [data-hd-theme] on <html> for the popup. */
+export function overlay(template: string, dark: boolean, setup: () => Record<string, unknown> = () => ({})): S {
+  return {
+    globals: { theme: dark ? 'dark' : 'light' },
+    render: () => ({
+      setup: () => {
+        onMounted(() => document.documentElement.setAttribute('data-hd-theme', dark ? 'dark' : 'light'));
+        onBeforeUnmount(() => document.documentElement.removeAttribute('data-hd-theme'));
+        return { ic: hdIcon, ...setup() };
+      },
+      template: `<div class="hd-quasar hd-q-story" style="padding:16px;min-height:480px">${template}</div>`,
+    }),
+  };
+}
+export const both = { globals: { theme: 'both' } };
