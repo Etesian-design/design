@@ -34,11 +34,17 @@ describe('colour modes', () => {
     expect(css).toMatch(/@media \(prefers-color-scheme: dark\)\s*{\s*\[data-hd-mode="auto"\]/);
   });
   it('chrome/overlay components consume semantic surface tokens', () => {
-    for (const f of ['HdToolBar', 'HdMenu', 'HdDialog', 'HdInfoBanner', 'HdToast', 'HdNotificationBanner', 'HdTooltip', 'HdStatusBar', 'HdLockScreenNotificationCard']) {
+    for (const f of ['HdMenu', 'HdDialog', 'HdInfoBanner', 'HdToast', 'HdNotificationBanner', 'HdTooltip', 'HdStatusBar']) {
       const src = readFileSync(`src/components/${f}.vue`, 'utf8');
       expect(src, f).toMatch(/var\(--hd-surface-(chrome|overlay|scrim|banner|home)\)/);
       expect(src, f).toMatch(/hd-on-(chrome|overlay|banner|home)/);
     }
+  });
+  it('measured phone surfaces keep their ROM values in every mode: light toolbar, lock cards', () => {
+    const tb = readFileSync('src/components/HdToolBar.vue', 'utf8');
+    expect(tb).toContain('#D6D6D8, #ADADB0');
+    expect(tb).toContain("variant: 'light'");
+    expect(readFileSync('src/components/HdLockScreenNotificationCard.vue', 'utf8')).toContain('rgba(12, 15, 18, .70)');
   });
   it('HdTheme sets data-hd-mode, legacy theme maps light->hybrid', () => {
     expect(mount(Hd.HdTheme, { props: { mode: 'light' } }).attributes('data-hd-mode')).toBe('light');

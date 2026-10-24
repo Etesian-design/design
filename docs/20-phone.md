@@ -164,3 +164,14 @@ Accent and negative buttons use the same structure with their base colour.
 7. **The ✕ on the wrong side.** The Open apps close button is at the **top-right**.
 8. **Per-card action buttons repeated on every card.** Use one shared action row for the centred card.
 9. (Desktop v2) **Squircle window thumbnails.** Thumbnails keep the window's aspect ratio and the card radius; only the app badge is a squircle.
+
+## Matched to the ROM (round 3 phone fixes)
+
+- **Lock screen**: the default is the stacked carousel. The newest 3 notifications show as cards; the rest show as strips beneath, each narrower and fainter. The N9 "More" label is optional. Each card has a #B30C0F12 tile with an 8dp radius and a 44dp lit squircle. The message is large and bold. The sender is on the next line, as "Sender · N more" for a group, and the time is on its own line.
+- **Settings**: the main page is black with white text. It has no title bar and no toolbar, and it scrolls to the bottom. Pulling down shows "Pull down to search" and then "Release to search". Sub pages have a dark toolbar with only the lit squircle Back.
+- **Events**: black background.
+  - Header: the day (large) and the date (small, grey) on the left. On the right, the city sits centred over a thin rule, with the temperature and weather icon under it.
+  - Section headers: grey bold with a rule, and a lit "Clear" or "Refresh" button.
+  - Rows: 48dp squircle, title 16sp bold, summary 14sp regular, time 12sp grey.
+- **Open apps**: 2 per row by default, showing app screenshots as previews. Labels are white. Edit mode dims only the previews, to 50%. In the carousel, one action row (Split view, Pop-up, Screenshot, App info) sits above the Done / Close all bar.
+- **Tool bar**: light grey by default (#D6D6D8 to #ADADB0, with a dark top edge). Dark is a per-app variant. Back is a lit squircle button. A selected tab has a lighter squircle behind its icon. There is no system menu button.

@@ -5,7 +5,7 @@ import { squirclePath } from '../src/squircle';
 import tokensJson from '../tokens/tokens.json';
 
 const required: Record<string, Record<string, unknown>> = {
-  HdIcon: { name: 'back' }, HdToolIcon: { icon: 'add', label: 'Add' }, HdPageHeader: { title: 'T' },
+  HdIcon: { name: 'back' }, HdLockScreenStack: { items: [] }, HdEventsHeader: { day: 'Saturday', date: '24 October' }, HdToolIcon: { icon: 'add', label: 'Add' }, HdPageHeader: { title: 'T' },
   HdTabBar: { tabs: [{ id: 'a', label: 'A' }, { id: 'b', label: 'B' }], modelValue: 'a' }, HdTabButton: { label: 'A' },
   HdListItem: { title: 'T' }, HdSectionHeader: { title: 'S' }, HdAvatar: { name: 'Ada Lovelace' }, HdAppIcon: { label: 'App' },
   HdRadioButton: { value: 'a', name: 'n' }, HdSlider: { label: 'Vol' }, HdSheet: { open: true }, HdQueryDialog: { open: true, title: 'Q' },
@@ -68,5 +68,30 @@ describe('behaviour', () => {
   it('tokens match the N9 palette', () => {
     expect(Hd.tokens.color.palette.background).toBe('#E0E1E2');
     expect((tokensJson as any).color.accent.default.origin).toBe('n9');
+  });
+});
+
+describe('phone parts matched to the ROM', () => {
+  it('lock stack: 3 full cards, the rest as strips; "more" variant shows the label; grouped card reads "Sender · N more"', () => {
+    const items = Array.from({ length: 6 }, (_, i) => ({ message: `M${i}`, source: `S${i}`, time: '12:00' }));
+    const w = mount(Hd.HdLockScreenStack, { props: { items } });
+    expect(w.findAll('.hd-lock-card')).toHaveLength(3);
+    expect(w.findAll('.hd-lock-stack__strip')).toHaveLength(3);
+    expect(w.find('.hd-lock-stack__more').exists()).toBe(false);
+    const m = mount(Hd.HdLockScreenStack, { props: { items, variant: 'more' } });
+    expect(m.get('.hd-lock-stack__more').text()).toContain('More');
+    const c = mount(Hd.HdLockScreenNotificationCard, { props: { message: 'Hi', source: 'Test 6', time: '14:43', more: 5 } });
+    expect(c.get('.hd-lock-card__from').text()).toBe('Test 6 · 5 more');
+    expect(c.get('.hd-lock-card__time').text()).toBe('14:43');
+  });
+  it('toolbar: light by default, Back is a lit squircle button, dark variant', () => {
+    const t = mount(Hd.HdToolBar, { props: { back: true } });
+    expect(t.classes()).toContain('hd-toolbar--light');
+    expect(t.get('.hd-toolbar__back').classes()).toContain('hd-sq');
+    expect(mount(Hd.HdToolBar, { props: { variant: 'dark' } }).classes()).toContain('hd-toolbar--dark');
+  });
+  it('edit bar renders one shared action row', () => {
+    const b = mount(Hd.HdTaskEditBar, { props: { actions: ['Split view', 'Pop-up', 'Screenshot', 'App info'] } });
+    expect(b.findAll('.hd-task-edit-bar__actions button').map((x) => x.text())).toEqual(['Split view', 'Pop-up', 'Screenshot', 'App info']);
   });
 });

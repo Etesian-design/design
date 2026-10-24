@@ -26,10 +26,11 @@ export const SurfacesAllModes: S = {
       <div class="hd-on-overlay" style="background:var(--hd-surface-overlay);padding:12px 16px;border-radius:8px">Menu / dialog (surface/overlay) <HdButton style="margin-left:8px">Button</HdButton></div>
       <HdInfoBanner :open="true" text="Banner (surface/banner)" inline :timeout="0" />
       <div class="hd-on-home" style="background:var(--hd-surface-home);padding:12px 16px">Home / lock (surface/home)</div>
-      <HdToolBar label="Toolbar"><HdToolIcon icon="back" label="Back" /><HdToolIcon icon="add" label="Add" /></HdToolBar></div>`,
+      <HdToolBar back label="Toolbar (light, default)"><HdToolIcon icon="add" label="Add" /></HdToolBar><HdToolBar back variant="dark" label="Toolbar (dark, per app)"><HdToolIcon icon="add" label="Add" /></HdToolBar></div>`,
   }),
 };
 export const OSSettings: S = { ...Ex.OSSettings, ...all, name: 'OS: Settings' };
+export const OSSettingsSub: S = { ...Ex.OSSettingsSub, ...all, name: 'OS: Settings sub page' };
 export const OSHome: S = { ...Ex.OSHome, ...all, name: 'OS: Home' };
 export const OSLockScreen: S = { ...Ex.OSLockScreen, ...all, name: 'OS: Lock screen' };
 export const WebLanding: S = { ...Ex.WebLanding, ...all, name: 'Web: Landing page' };
