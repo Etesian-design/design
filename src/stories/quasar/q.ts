@@ -1,7 +1,7 @@
 import 'quasar/dist/quasar.css';
 import '../../quasar/harmattan-quasar.css';
 import { onMounted, onBeforeUnmount } from 'vue';
-import type { StoryObj } from '@storybook/vue3';
+import type { StoryObj } from '@storybook/vue3-vite';
 import { hdIcon } from '../../quasar/icon-set';
 
 type S = StoryObj;

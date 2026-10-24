@@ -1,4 +1,4 @@
-import type { Meta } from '@storybook/vue3';
+import type { Meta } from '@storybook/vue3-vite';
 import { qs, both } from './q';
 const meta: Meta = { title: 'Quasar/Components/Layout & navigation', ...both, parameters: { docs: { description: { component: 'Quasar layout components in the Harmattan theme. N9 bottom toolbar = QFooter + QToolbar; page header = QHeader (accent) or `class="hd-plain"`.' } } } };
 export default meta;

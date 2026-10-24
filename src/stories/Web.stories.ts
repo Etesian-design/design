@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/vue3';
+import type { Meta, StoryObj } from '@storybook/vue3-vite';
 import { ref } from 'vue';
 import HdSiteHeader from '../components/HdSiteHeader.vue';
 import HdFooter from '../components/HdFooter.vue';

@@ -1,5 +1,5 @@
-import type { Preview } from '@storybook/vue3';
-import { setup } from '@storybook/vue3';
+import type { Preview } from '@storybook/vue3-vite';
+import { setup } from '@storybook/vue3-vite';
 import { installQuasar } from '../src/stories/quasar/quasar-app';
 import '../src/styles/tokens.css';
 import '../src/styles/base.css';

@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/vue3';
+import type { Meta, StoryObj } from '@storybook/vue3-vite';
 import * as Ex from './Examples.stories';
 import * as QEx from '../quasar/Examples.stories';
 import HdToolBar from '../../components/HdToolBar.vue';
