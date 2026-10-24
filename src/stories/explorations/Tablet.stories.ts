@@ -32,19 +32,19 @@ const T1 = {
 };
 export const T1HomeViews: S = {
   name: 'T1 Home views',
-  args: { view: 1, grid: '3x3', orientation: 'both' },
+  args: { view: 1, grid: '3x3', orientation: 'both', editing: false },
   argTypes: { view: { control: { type: 'inline-radio' }, options: [0, 1, 2] }, grid: { control: { type: 'inline-radio' }, options: ['3x3', '4x3'] }, orientation: { control: { type: 'inline-radio' }, options: ['landscape', 'portrait', 'both'] } },
   parameters: desc(T1.idea, T1.gain, T1.cost),
   render: (args) => ({
     components: { ...base, TabletHome },
     setup: () => {
-      const view = ref(String(args.view)); const grid = ref(args.grid); const o = ref<Orient>(args.orientation);
-      return { T1, view, grid, o, list: computed(() => orients(o.value)), ORIENT,
+      const view = ref(String(args.view)); const edit = ref(!!args.editing); const grid = ref(args.grid); const o = ref<Orient>(args.orientation);
+      return { T1, edit, view, grid, o, list: computed(() => orients(o.value)), ORIENT,
         VIEWS: [{ id: '0', label: 'Events' }, { id: '1', label: 'Applications' }, { id: '2', label: 'Open apps' }], GRIDS: [{ id: '3x3', label: '3×3' }, { id: '4x3', label: '4×3' }] };
     },
     template: `<XStage v-bind="T1">
-      <template #controls><HdTabBar v-model="view" :tabs="VIEWS" label="Home view" id-prefix="t1v" /><HdTabBar v-model="grid" :tabs="GRIDS" label="Open apps grid" id-prefix="t1g" /><HdTabBar v-model="o" :tabs="ORIENT" label="Orientation" id-prefix="t1o" /></template>
-      <XTablet v-for="x in list" :key="x + view + grid" :orientation="x"><TabletHome :orientation="x" :view="Number(view)" :grid="grid" /></XTablet>
+      <template #controls><HdTabBar v-model="view" :tabs="VIEWS" label="Home view" id-prefix="t1v" /><HdTabBar v-model="grid" :tabs="GRIDS" label="Open apps grid" id-prefix="t1g" /><HdTabBar v-model="o" :tabs="ORIENT" label="Orientation" id-prefix="t1o" /><label style="font-size:13px"><input type="checkbox" v-model="edit"> Open apps edit mode</label></template>
+      <XTablet v-for="x in list" :key="x + view + grid" :orientation="x"><TabletHome :orientation="x" :view="Number(view)" :grid="grid" :editing="edit" /></XTablet>
     </XStage>`,
   }),
 };

@@ -106,3 +106,31 @@ e.g. for tiny (< 24 px) icons, print, or high-contrast contexts.
 
 Do not: add gloss/specular "shine" bands, light from the top left, coloured glyphs on colour tiles,
 pure-white glyphs, or inner shadows at the top.
+
+## Buttons
+
+Every button uses the same light from straight above as the icon tiles. Measured on the N9's dark
+"Done" / "Close all" buttons (Open applications edit mode):
+
+| Part | Value |
+| --- | --- |
+| Fill | vertical gradient, lighter at the top: `#1C1C1C` → `#101010` (middle) → `#080808` |
+| Rim | 1px `#393839` all round, brightest along the top edge |
+| Corners | soft radius ≈ 21% of the height (8px on a 40px button), never a pill |
+
+Light (blanco) and accent buttons follow the same pattern, derived from their base colour exactly as
+the icon tiles are: the top is ~10–12% lighter, a 1–2px lighter top rim, a darker bottom.
+
+In CSS (`src/styles/base.css`) set `--hd-btn-base`; `--hd-lit-fill` and `--hd-lit-shadow` follow:
+
+```css
+--hd-btn-top: color-mix(in srgb, var(--hd-btn-base) 90%, #fff);
+--hd-btn-bot: color-mix(in srgb, var(--hd-btn-base) 88%, #000);
+--hd-lit-fill: linear-gradient(var(--hd-btn-top), var(--hd-btn-base) 50%, var(--hd-btn-bot));
+```
+
+- `HdButton` is lit by default (all variants and colour modes); `lighting="flat"` keeps a flat fill, as for icons.
+- Icon-only buttons (`.hd-sq`) use the lit gradient as the squircle fill and the rim as the squircle ring.
+- Toolbar icons (`HdToolIcon`) light their hover / pressed / active squircle highlight the same way.
+- The Quasar theme lights `q-btn` (standard, unelevated, push, and coloured `bg-*` buttons).
+- `HdTaskEditBar` ("Done" / "Close all") uses the measured dark values above.

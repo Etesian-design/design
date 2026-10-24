@@ -4,3 +4,4 @@ storybook-static
 *.log
 screenshots/upgrade/
 screenshots/explorations/
+screenshots/explorations-v2/

@@ -40,6 +40,7 @@ export { default as HdTabBar } from './components/HdTabBar.vue';
 export { default as HdTabButton } from './components/HdTabButton.vue';
 export { default as HdTable } from './components/HdTable.vue';
 export { default as HdTaskCard } from './components/HdTaskCard.vue';
+export { default as HdTaskEditBar } from './components/HdTaskEditBar.vue';
 export { default as HdTextArea } from './components/HdTextArea.vue';
 export { default as HdTextField } from './components/HdTextField.vue';
 export { default as HdTheme } from './components/HdTheme.vue';

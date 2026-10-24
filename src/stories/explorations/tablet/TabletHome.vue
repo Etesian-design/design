@@ -9,10 +9,14 @@ import XEvents from '../parts/XEvents.vue';
 import XAppsView from '../parts/XAppsView.vue';
 import XOpenApps from '../parts/XOpenApps.vue';
 import XMiniApp from '../parts/XMiniApp.vue';
-const props = withDefaults(defineProps<{ orientation?: 'landscape' | 'portrait'; view?: number; grid?: '3x3' | '4x3'; eventsBeside?: boolean }>(), { orientation: 'landscape', view: 1, grid: '3x3' });
+import HdTaskEditBar from '../../../components/HdTaskEditBar.vue';
+const props = withDefaults(defineProps<{ orientation?: 'landscape' | 'portrait'; view?: number; grid?: '3x3' | '4x3'; eventsBeside?: boolean; editing?: boolean }>(), { orientation: 'landscape', view: 1, grid: '3x3' });
 const current = ref(props.view);
 watch(() => props.view, (v) => (current.value = v));
 const opened = ref<string | null>(null);
+const edit = ref(props.editing);
+watch(() => props.editing, (v) => (edit.value = v));
+const closed = ref<string[]>([]);
 const land = computed(() => props.orientation === 'landscape');
 const beside = computed(() => props.eventsBeside && land.value);
 const W = computed(() => (land.value ? 1280 : 800));
@@ -44,10 +48,11 @@ const views = ['Events', 'Applications', 'Open applications'];
         <XEvents v-else-if="current === 0" :columns="2" class="x-thome__pad" />
         <div v-else-if="current === 1" class="x-thome__pad"><h2 class="x-thome__h">Applications</h2><XAppsView :columns="6" :size="land ? 64 : 72" @open="opened = $event" /></div>
         <div v-else class="x-thome__open">
-          <XOpenApps :apps="openApps" :cols="cols" :w="W" :h="H" :gap="24" :style="{ maxWidth: `${gridWidth}px` }" @open="opened = $event" />
+          <XOpenApps :apps="openApps.filter((_, i) => !closed.includes(String(i)))" :editing="edit && current === 2" @close="(n: string) => closed.push(String(openApps.indexOf(n)))" :cols="cols" :w="W" :h="H" :gap="24" :style="{ maxWidth: `${gridWidth}px` }" @open="opened = $event" />
         </div>
       </div>
-      <HdPageIndicator class="x-thome__dots" :total="beside ? 2 : 3" :current="beside ? (current === 2 ? 1 : 0) : current" interactive label="Home views"
+      <HdTaskEditBar v-if="edit && current === 2" class="x-thome__editbar" @done="edit = false" @close-all="closed = openApps.map((_, i) => String(i))" />
+      <HdPageIndicator v-else class="x-thome__dots" :total="beside ? 2 : 3" :current="beside ? (current === 2 ? 1 : 0) : current" interactive label="Home views"
         @select="(i: number) => (current = beside ? (i === 1 ? 2 : 1) : i)" />
       <p class="x-thome__label" aria-live="polite">{{ beside && current !== 2 ? 'Events + Applications' : views[current] }}</p>
     </template>
@@ -58,13 +63,14 @@ const views = ['Events', 'Applications', 'Open applications'];
 .x-thome__view { flex: 1; min-height: 0; overflow: hidden; margin-bottom: 40px; }
 .x-thome__pad { padding: 8px 24px; }
 .x-thome__h { margin: 0; padding: 18px 16px 0; font: var(--hd-font-weight-light) var(--hd-font-size-xxlarge)/1 var(--hd-font-family-light); }
-.x-thome__open { height: 100%; display: flex; align-items: center; justify-content: center; padding: 16px 32px; }
+.x-thome__open { --hd-task-card-close-max: 56px; height: 100%; display: flex; align-items: center; justify-content: center; padding: 16px 32px; }
 .x-thome__open .x-open { width: 100%; }
 .x-thome__beside { display: grid; grid-template-columns: 420px 1fr; height: 100%; }
 .x-thome__events-col { border-right: 1px solid var(--hd-c-divider); overflow: hidden; background: color-mix(in srgb, var(--hd-c-fg) 4%, transparent); }
 .x-thome__apps-col { min-width: 0; padding: 8px 16px; }
 .x-thome__dots { position: absolute; left: 0; right: 0; bottom: 14px; justify-content: center; }
 .x-thome__label { position: absolute; left: 24px; bottom: 12px; margin: 0; font-size: var(--hd-font-size-xsmall); color: var(--hd-c-fg-secondary); }
+.x-thome__editbar { position: absolute; left: 0; right: 0; bottom: 0; z-index: 5; }
 .x-thome__app { flex: 1; min-height: 0; display: flex; }
 .x-thome__edge { position: absolute; top: 8px; left: 50%; transform: translateX(-50%); padding: 6px 14px; border: 0; border-radius: 999px; background: var(--hd-surface-banner); color: var(--hd-surface-banner-fg); font: 400 var(--hd-font-size-xsmall)/1 var(--hd-font-family-base); cursor: pointer; opacity: .9; }
 </style>
