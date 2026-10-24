@@ -1,23 +1,27 @@
 <script setup lang="ts">
-/** "Edit dock" settings popover (KDE Plasma panel settings, Harmattan look): position, size, visibility, widgets. */
+/** "Edit dock" settings popover, Harmattan look. Defaults = the light floating strip (icons only); every extra is opt-in:
+ * full-height panel, launcher / thumbnails / trash / clock / battery widgets, icon size, auto-hide, position. */
 import { ref } from 'vue';
 import HdSlider from '../../../components/HdSlider.vue';
 import HdSwitch from '../../../components/HdSwitch.vue';
 import HdButton from '../../../components/HdButton.vue';
 import HdIcon from '../../../components/HdIcon.vue';
 import type { DockPos } from './geometry';
-const props = withDefaults(defineProps<{ position?: DockPos; size?: number; visibility?: 'always' | 'autohide' | 'dodge' }>(), { position: 'left', size: 44, visibility: 'always' });
-const emit = defineEmits<{ done: []; 'update:position': [p: DockPos] }>();
+const props = withDefaults(defineProps<{ position?: DockPos; size?: number; visibility?: 'always' | 'autohide' | 'dodge'; panel?: boolean }>(), { position: 'left', size: 44, visibility: 'always', panel: false });
+const emit = defineEmits<{ done: []; 'update:position': [p: DockPos]; 'update:panel': [on: boolean] }>();
+const style = ref(props.panel ? 'panel' : 'strip');
+const STYLES = [{ id: 'strip', label: 'Floating strip' }, { id: 'panel', label: 'Full-height panel' }] as const;
+function setStyle(v: 'strip' | 'panel') { style.value = v; emit('update:panel', v === 'panel'); }
 const pos = ref<DockPos>(props.position);
 const size = ref(props.size);
 const vis = ref(props.visibility);
 const POS: DockPos[] = ['left', 'bottom', 'right', 'top'];
 const VIS = [{ id: 'always', label: 'Always visible' }, { id: 'autohide', label: 'Auto-hide' }, { id: 'dodge', label: 'Dodge windows' }] as const;
 const widgets = ref([
-  { id: 'launcher', label: 'Launcher (opens the overview)', icon: 'grid', on: true },
+  { id: 'launcher', label: 'Launcher button', icon: 'grid', on: props.panel },
   { id: 'thumbs', label: 'Running windows as thumbnails', icon: 'window', on: false },
-  { id: 'trash', label: 'Trash', icon: 'delete', on: true },
-  { id: 'clock', label: 'Clock', icon: 'clock', on: true },
+  { id: 'trash', label: 'Trash', icon: 'delete', on: props.panel },
+  { id: 'clock', label: 'Clock', icon: 'clock', on: props.panel },
   { id: 'battery', label: 'Battery', icon: 'battery', on: false },
 ]);
 function setPos(p: DockPos) { pos.value = p; emit('update:position', p); }
@@ -25,6 +29,10 @@ function setPos(p: DockPos) { pos.value = p; emit('update:position', p); }
 <template>
   <section class="x-dset hd-on-overlay" role="dialog" aria-label="Dock settings">
     <h2 class="x-dset__h">Dock</h2>
+    <h3 class="x-dset__sh">Style</h3>
+    <div class="x-dset__seg" role="radiogroup" aria-label="Style">
+      <button v-for="v in STYLES" :key="v.id" type="button" role="radio" class="x-dset__segbtn hd-focusable" :class="{ 'is-on': style === v.id }" :aria-checked="style === v.id ? 'true' : 'false'" @click="setStyle(v.id)">{{ v.label }}</button>
+    </div>
     <h3 class="x-dset__sh">Position</h3>
     <div class="x-dset__pos" role="radiogroup" aria-label="Position">
       <button v-for="p in POS" :key="p" type="button" role="radio" class="x-dset__posbtn hd-focusable" :class="{ 'is-on': pos === p }" :aria-checked="pos === p ? 'true' : 'false'" @click="setPos(p)">
@@ -37,7 +45,7 @@ function setPos(p: DockPos) { pos.value = p; emit('update:position', p); }
     <div class="x-dset__seg" role="radiogroup" aria-label="Visibility">
       <button v-for="v in VIS" :key="v.id" type="button" role="radio" class="x-dset__segbtn hd-focusable" :class="{ 'is-on': vis === v.id }" :aria-checked="vis === v.id ? 'true' : 'false'" @click="vis = v.id">{{ v.label }}</button>
     </div>
-    <h3 class="x-dset__sh">Widgets</h3>
+    <h3 class="x-dset__sh">Widgets · off by default</h3>
     <ul class="x-dset__list">
       <li v-for="w in widgets" :key="w.id"><span class="x-dset__wi hd-sq"><HdIcon :name="w.icon" :size="16" /></span><span class="x-dset__wl">{{ w.label }}</span><HdSwitch v-model="w.on" :aria-label="w.label" /></li>
     </ul>
@@ -61,7 +69,7 @@ function setPos(p: DockPos) { pos.value = p; emit('update:position', p); }
 .x-dset__seg { display: flex; border: 1px solid var(--hd-c-divider); border-radius: 6px; overflow: hidden; }
 .x-dset__segbtn { flex: 1; height: 34px; border: 0; background: none; color: inherit; font: inherit; font-size: var(--hd-font-size-xsmall); cursor: pointer; }
 .x-dset__segbtn + .x-dset__segbtn { border-left: 1px solid var(--hd-c-divider); }
-.x-dset__segbtn.is-on { background: var(--hd-accent); color: #fff; font-weight: 700; }
+.x-dset__segbtn.is-on { background: linear-gradient(color-mix(in srgb, var(--hd-accent) 78%, #fff), var(--hd-accent)); box-shadow: inset 0 1px 0 rgba(255,255,255,.35); color: #fff; font-weight: 700; }
 .x-dset__list { list-style: none; margin: 0; padding: 0; }
 .x-dset__list li { display: flex; align-items: center; gap: 10px; height: 40px; }
 .x-dset__wi { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; --hd-sq-size: 28px; --hd-sq-fill: color-mix(in srgb, var(--hd-c-fg) 12%, transparent); }

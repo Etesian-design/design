@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { mount } from '@vue/test-utils';
 import { nextTick } from 'vue';
-import { workArea, zoneRects, LAYOUTS, SCREEN, BAR_H } from '../src/stories/explorations/desktop2/geometry';
+import { workArea, zoneRects, LAYOUTS, SCREEN, BAR_H, zoomStep, fitInto, OPEN_WINDOWS } from '../src/stories/explorations/desktop2/geometry';
 import { chromeOf } from '../src/stories/explorations/desktop2/chrome';
 import { STATES, CORE, IDEAS } from '../src/stories/explorations/desktop2/states';
 import XWin from '../src/stories/explorations/desktop2/XWin.vue';
@@ -10,7 +10,9 @@ import XDock from '../src/stories/explorations/desktop2/XDock.vue';
 import XDockSettings from '../src/stories/explorations/desktop2/XDockSettings.vue';
 import XLayoutPicker from '../src/stories/explorations/desktop2/XLayoutPicker.vue';
 import XZones from '../src/stories/explorations/desktop2/XZones.vue';
-import XOverview2 from '../src/stories/explorations/desktop2/XOverview2.vue';
+import XWindows from '../src/stories/explorations/desktop2/XWindows.vue';
+import XEventsPanel from '../src/stories/explorations/desktop2/XEventsPanel.vue';
+import XStatusPanel from '../src/stories/explorations/desktop2/XStatusPanel.vue';
 import DesktopV2 from '../src/stories/explorations/desktop2/DesktopV2.vue';
 
 const key = async (k: string, meta = false) => { window.dispatchEvent(new KeyboardEvent('keydown', { key: k, metaKey: meta })); await nextTick(); };
@@ -35,6 +37,17 @@ describe('desktop v2 geometry', () => {
     }
     const t = zoneRects('thirds', a);
     expect(t[1]!.x - (t[0]!.x + t[0]!.w)).toBe(8);
+  });
+  it('Super + wheel steps through the phone zoom levels 1..4; fitInto keeps the aspect ratio', () => {
+    expect(zoomStep(3, 100)).toBe(4);
+    expect(zoomStep(4, 100)).toBe(4);
+    expect(zoomStep(2, -100)).toBe(1);
+    expect(zoomStep(1, -100)).toBe(1);
+    expect(zoomStep(2, 0)).toBe(2);
+    const f = fitInto(1200, 600, 100, 100);
+    expect([f.w, f.h]).toEqual([100, 50]);
+    const t = fitInto(400, 800, 100, 100);
+    expect([t.w, t.h]).toEqual([50, 100]);
   });
   it('every state has a tab and a trade-off, with at least 3 new ideas', () => {
     for (const s of [...CORE, ...IDEAS]) { expect(STATES[s].gain).toBeTruthy(); expect(STATES[s].cost).toBeTruthy(); }
@@ -68,9 +81,8 @@ describe('desktop v2 parts', () => {
     expect(w.emitted('view')?.[0]).toEqual(['Sent']);
     expect(w.get('.x-win__title').text()).toBe('Sent');
   });
-  it('XWin emits close and drag-down close shrinks it', async () => {
-    const w = mount(XWin, { props: { app: 'Notes', closing: 0.5 } });
-    expect(w.attributes('style')).toContain('translateY(110px)');
+  it('XWin emits close', async () => {
+    const w = mount(XWin, { props: { app: 'Notes' } });
     await w.get('[aria-label="Close"]').trigger('click');
     expect(w.emitted('close')).toHaveLength(1);
   });
@@ -86,18 +98,27 @@ describe('desktop v2 parts', () => {
     expect(w.emitted('menu')?.[0]).toEqual(['File']);
     expect(mount(XMenuBar, { props: { app: 'Mail', openMenu: 'View' } }).find('.x-cmenu').exists()).toBe(true);
   });
-  it('XDock is vertical on the left by default with launcher, pinned apps, trash and clock', async () => {
+  it('XDock default is a light floating strip on the left: icons only, running dots, no panel or widgets', async () => {
     const w = mount(XDock);
-    expect(w.get('.x-dock').classes()).toEqual(expect.arrayContaining(['x-dock--left', 'is-vertical']));
-    expect(w.find('[aria-label="Overview"]').exists()).toBe(true);
-    expect(w.find('[aria-label="Trash"]').exists()).toBe(true);
-    expect(w.find('.x-dock__clock').exists()).toBe(true);
+    const d = w.get('.x-dock');
+    expect(d.classes()).toEqual(expect.arrayContaining(['x-dock--left', 'is-vertical']));
+    expect(d.classes()).not.toContain('is-panel');
+    expect(d.attributes('style')).not.toContain('bottom');
+    for (const sel of ['[aria-label="Launcher"]', '[aria-label="Trash"]', '.x-dock__clock']) expect(w.find(sel).exists()).toBe(false);
+    expect(w.findAll('.x-dock__item')).toHaveLength(6);
     expect(w.findAll('.x-dock__item').every((b) => b.classes().includes('hd-sq'))).toBe(true);
     expect(w.findAll('.x-dock__run').length).toBe(3);
-    await w.get('[aria-label="Overview"]').trigger('click');
-    expect(w.emitted('launcher')).toHaveLength(1);
+    await w.get('[aria-label="Mail"]').trigger('click');
+    expect(w.emitted('open')?.[0]).toEqual(['Mail']);
   });
-  it('XDock positions, auto-hide, edit mode and thumbnails', () => {
+  it('XDock options: full-height panel with launcher, trash and clock; positions; auto-hide; edit mode', async () => {
+    const p = mount(XDock, { props: { panel: true, launcher: true, trash: true, clock: true } });
+    expect(p.get('.x-dock').classes()).toContain('is-panel');
+    expect(p.get('.x-dock').attributes('style')).toContain('bottom: 8px');
+    expect(p.find('.x-dock__clock').exists()).toBe(true);
+    expect(p.find('[aria-label="Trash"]').exists()).toBe(true);
+    await p.get('[aria-label="Launcher"]').trigger('click');
+    expect(p.emitted('launcher')).toHaveLength(1);
     expect(mount(XDock, { props: { position: 'bottom' } }).get('.x-dock').classes()).not.toContain('is-vertical');
     const hid = mount(XDock, { props: { autoHide: true } });
     expect(hid.get('.x-dock').classes()).toContain('is-hidden');
@@ -105,16 +126,34 @@ describe('desktop v2 parts', () => {
     expect(mount(XDock, { props: { autoHide: true, revealed: true } }).get('.x-dock').classes()).not.toContain('is-hidden');
     const ed = mount(XDock, { props: { editing: true } });
     expect(ed.find('.x-dock__move').exists()).toBe(true);
-    expect(ed.find('.x-dock__resize').exists()).toBe(true);
-    expect(ed.findAll('.x-dock__rm').length).toBeGreaterThan(3);
-    const th = mount(XDock, { props: { thumbs: true } });
-    expect(th.findAll('.x-dock__thumb.hd-squircle')).toHaveLength(3);
+    expect(ed.findAll('.x-dock__rm').length).toBe(6);
+  });
+  it('XDock thumbnails keep each window\'s aspect ratio, are not squircles, and carry a squircle app badge', () => {
+    const th = mount(XDock, { props: { thumbs: true, peekThumb: 'Mail' } });
+    const thumbs = th.findAll('.x-dock__thumb');
+    expect(thumbs).toHaveLength(3);
+    for (const t of thumbs) {
+      expect(t.classes()).not.toContain('hd-squircle');
+      expect(t.classes()).not.toContain('hd-sq');
+      expect(t.find('.x-dock__badge').exists()).toBe(true);
+    }
+    const px = (t: { attributes: (k: string) => string | undefined }) => { const m = /width: (\d+)px; height: (\d+)px/.exec(t.attributes('style')!)!; return Number(m[1]) / Number(m[2]); };
+    const mail = OPEN_WINDOWS.find((o) => o.app === 'Mail')!, msg = OPEN_WINDOWS.find((o) => o.app === 'Messages')!;
+    expect(px(th.get('[aria-label="Mail"] .x-dock__thumb'))).toBeCloseTo(mail.w / mail.h, 1);
+    expect(px(th.get('[aria-label="Messages"] .x-dock__thumb'))).toBeCloseTo(msg.w / msg.h, 1);
+    expect(px(th.get('[aria-label="Mail"] .x-dock__thumb'))).toBeGreaterThan(1);
+    expect(px(th.get('[aria-label="Messages"] .x-dock__thumb'))).toBeLessThan(1);
+    expect(th.get('.x-dock__peekwin').classes()).not.toContain('hd-squircle');
   });
   it('XDockSettings switches position', async () => {
     const w = mount(XDockSettings);
-    expect(w.get('[role=radio][aria-checked=true]').text()).toBe('Left');
+    expect(w.get('[aria-label=Position] [aria-checked=true]').text()).toBe('Left');
+    expect(w.get('[aria-label=Style] [aria-checked=true]').text()).toBe('Floating strip');
     await w.findAll('.x-dset__posbtn')[1]!.trigger('click');
     expect(w.emitted('update:position')?.[0]).toEqual(['bottom']);
+    expect(w.findAll('.hd-switch input:checked, [role=switch][aria-checked=true]')).toHaveLength(0);
+    await w.findAll('[aria-label=Style] [role=radio]')[1]!.trigger('click');
+    expect(w.emitted('update:panel')?.[0]).toEqual([true]);
   });
   it('XLayoutPicker lists every layout and emits the picked zone', async () => {
     const w = mount(XLayoutPicker, { props: { layout: 'thirds', zone: 1 } });
@@ -128,38 +167,87 @@ describe('desktop v2 parts', () => {
     expect(w.findAll('.x-zones__n').map((n) => n.text())).toEqual(['1', '2', '3']);
     expect(w.get('.is-hot').text()).toContain('Release to snap Mail here');
   });
-  it('XOverview2 is a horizontal track of three views with page dots', async () => {
-    const w = mount(XOverview2, { props: { page: 1 } });
-    expect(w.findAll('.x-ov2__view').map((v) => v.attributes('aria-label'))).toEqual(['Events', 'Windows', 'Applications']);
-    expect(w.get('.x-ov2__view.is-on').attributes('aria-label')).toBe('Windows');
-    expect(w.findAll('.hd-page-indicator__dot')).toHaveLength(3);
-    await w.findAll('.hd-page-indicator__dot')[2]!.trigger('click');
-    expect(w.emitted('update:page')?.[0]).toEqual([2]);
+  it('XWindows lays out 1 / 2 / 3 / 4 per row and Super or Ctrl + wheel zooms', async () => {
+    const tops = (w: ReturnType<typeof mount>) => new Set(w.findAll('.x-wins__card').map((c) => /top: (\d+)/.exec(c.attributes('style')!)![1])).size;
+    expect(tops(mount(XWindows, { props: { level: 4 } }))).toBe(2);
+    expect(tops(mount(XWindows, { props: { level: 3 } }))).toBe(2);
+    expect(tops(mount(XWindows, { props: { level: 2 } }))).toBe(3);
+    const c = mount(XWindows, { props: { level: 1, selected: 1 } });
+    expect(c.findAll('.x-wins__card.is-side')).toHaveLength(4);
+    expect(c.get('.x-wins__card.is-sel').attributes('aria-label')).toContain('Browser');
+    const w = mount(XWindows, { props: { level: 3 } });
+    expect(w.findAll('.x-wins__card')).toHaveLength(OPEN_WINDOWS.length);
+    expect(w.find('.hd-squircle.x-wins__prev, .x-wins__prev.hd-sq').exists()).toBe(false);
+    const wheel = async (init: WheelEventInit) => { w.element.dispatchEvent(new WheelEvent('wheel', { cancelable: true, ...init })); await nextTick(); };
+    await wheel({ deltaY: 100, metaKey: true });
+    expect(w.emitted('update:level')?.[0]).toEqual([4]);
+    await wheel({ deltaY: -100, ctrlKey: true });
+    expect(w.emitted('update:level')?.[1]).toEqual([2]);
+    await wheel({ deltaY: 100 });
+    expect(w.emitted('update:level')).toHaveLength(2);
+    await w.findAll('.x-wins__z')[0]!.trigger('click');
+    expect(w.emitted('update:level')?.[2]).toEqual([1]);
+  });
+  it('XEventsPanel follows the phone order with no toggles; the date expands into a month', async () => {
+    const w = mount(XEventsPanel);
+    expect(w.get('.x-ev__day').text()).toBe('Saturday');
+    expect(w.get('.x-ev__time').text()).toBe('12:45');
+    expect(w.get('.x-ev__wx').text()).toContain('Helsinki');
+    expect(w.findAll('.hd-section-header').map((h) => h.text())).toEqual(['Notifications', 'Calendar', 'Feeds']);
+    expect(w.find('.hd-slider').exists()).toBe(false);
+    expect(w.find('[aria-pressed]').exists()).toBe(false);
+    expect(w.find('.x-ev__month').exists()).toBe(false);
+    await w.get('.x-ev__date').trigger('click');
+    expect(w.emitted('update:month')?.[0]).toEqual([true]);
+    expect(w.findAll('.x-ev__cell:not(.is-empty)')).toHaveLength(31);
+    expect(w.get('.x-ev__cell.is-sel').text()).toBe('24');
+    expect(w.findAll('.x-ev__lines li')).toHaveLength(3);
+    await w.get('[aria-label="26 October"]').trigger('click');
+    expect(w.get('.x-ev__selh').text()).toBe('Monday 26 October');
+    expect(w.findAll('.x-ev__lines li').map((l) => l.text())).toEqual(['09:00Sprint planning', '16:00Swipe UI workshop']);
+  });
+  it('XStatusPanel holds the connectivity toggles and volume', () => {
+    const w = mount(XStatusPanel);
+    expect(w.findAll('.x-stat__tg').map((b) => b.get('b').text())).toEqual(['Wi-Fi', 'Bluetooth', 'Silent', 'Focus']);
+    expect(w.findAll('.hd-slider').length).toBe(2);
   });
 });
 
 describe('DesktopV2 scene', () => {
-  it('Super opens the overview, arrows flick, typing searches apps, Esc closes', async () => {
+  it('Super+Tab opens Windows, Tab moves, Enter switches; Super opens the launcher and typing filters; Esc closes', async () => {
     const w = mount(DesktopV2, { attachTo: document.body });
-    expect(w.find('.x-ov2').exists()).toBe(false);
+    expect(w.find('.x-wins').exists()).toBe(false);
     expect(w.findAll('.x-win')).toHaveLength(3);
+    await key('Tab', true);
+    expect(w.find('.x-wins').exists()).toBe(true);
+    expect(w.findAll('.x-wins__card')).toHaveLength(OPEN_WINDOWS.length);
+    expect(w.find('.x-ev, .x-apps').exists()).toBe(false);
+    await key('Tab');
+    expect(w.get('.x-wins__card.is-sel').attributes('aria-label')).toContain('Browser');
+    await key('Enter');
+    expect(w.find('.x-wins').exists()).toBe(false);
+    expect(w.get('.x-mbar__app').text()).toBe('Browser');
     await key('Meta');
-    expect(w.get('.x-ov2__view.is-on').attributes('aria-label')).toBe('Windows');
-    await key('ArrowLeft');
-    expect(w.get('.x-ov2__view.is-on').attributes('aria-label')).toBe('Events');
+    expect(w.find('.x-launch').exists()).toBe(true);
     await key('m'); await key('u');
-    expect(w.get('.x-ov2__view.is-on').attributes('aria-label')).toBe('Applications');
-    expect(w.findAll('.x-ov2__apps .hd-app-icon').map((a) => a.text())).toEqual(['Music']);
+    expect(w.findAll('.x-launch .hd-app-icon').map((a) => a.text())).toEqual(['Music']);
     await key('Escape');
-    expect(w.find('.x-ov2').exists()).toBe(false);
+    expect(w.find('.x-launch').exists()).toBe(false);
+    w.unmount();
+  });
+  it('the status icons open the status menu, separate from Events', async () => {
+    const w = mount(DesktopV2, { attachTo: document.body });
+    await w.get('.x-mbar__sicons').trigger('click');
+    expect(w.find('.x-stat').exists()).toBe(true);
+    expect(w.find('.x-ev').exists()).toBe(false);
     w.unmount();
   });
   it('Super+N toggles the Events panel; Super+Z the layout picker; Super+Left snaps', async () => {
     const w = mount(DesktopV2, { attachTo: document.body });
     await key('n', true);
-    expect(w.find('.x-epanel2').exists()).toBe(true);
+    expect(w.find('.x-ev').exists()).toBe(true);
     await key('n', true);
-    expect(w.find('.x-epanel2').exists()).toBe(false);
+    expect(w.find('.x-ev').exists()).toBe(false);
     await key('z', true);
     expect(w.find('.x-lpick').exists()).toBe(true);
     await key('Escape');
@@ -177,6 +265,12 @@ describe('DesktopV2 scene', () => {
     expect(mount(DesktopV2, { props: { state: 'drag' } }).find('.x-zones .is-hot').exists()).toBe(true);
     expect(mount(DesktopV2, { props: { state: 'dock-bottom' } }).find('.x-dock--bottom').exists()).toBe(true);
     expect(mount(DesktopV2, { props: { state: 'idea-viewmenu' } }).find('.x-viewmenu').exists()).toBe(true);
+    expect(mount(DesktopV2, { props: { state: 'dock-panel' } }).find('.x-dock.is-panel .x-dock__clock').exists()).toBe(true);
+    expect(mount(DesktopV2).find('.x-dock.is-panel').exists()).toBe(false);
+    expect(mount(DesktopV2, { props: { state: 'events-month' } }).find('.x-ev__month').exists()).toBe(true);
+    expect(mount(DesktopV2, { props: { state: 'windows-carousel' } }).find('.x-wins--1').exists()).toBe(true);
+    expect(mount(DesktopV2, { props: { state: 'windows-4' } }).find('.x-wins--4').exists()).toBe(true);
+    expect((STATES as Record<string, unknown>)['idea-close']).toBeUndefined();
   });
 });
 
