@@ -13,7 +13,7 @@ import { app as appOf } from '../parts/data';
 import { chromeOf } from './chrome';
 import { SCREEN, BAR_H, OPEN_WINDOWS, ZOOM_LEVELS, zoomStep, fitInto, type OpenWin, type ZoomLevel } from './geometry';
 const props = withDefaults(defineProps<{ level?: ZoomLevel; selected?: number; left?: number; windows?: OpenWin[] }>(), { level: 3, selected: 0, left: 0, windows: () => OPEN_WINDOWS });
-const emit = defineEmits<{ 'update:level': [l: ZoomLevel]; 'update:selected': [i: number]; open: [app: string] }>();
+const emit = defineEmits<{ 'update:level': [l: ZoomLevel]; 'update:selected': [i: number]; open: [app: string]; zoom: [] }>();
 const W = SCREEN.w, H = SCREEN.h - BAR_H, TOP = 76, TITLE = 34, PAD = 56;
 interface Card { app: string; title: string; x: number; y: number; w: number; h: number; s: number; ow: number; oh: number; side: number }
 const cards = computed<Card[]>(() => {
@@ -41,7 +41,7 @@ const cards = computed<Card[]>(() => {
   });
 });
 function onWheel(e: WheelEvent) {
-  if (e.metaKey || e.ctrlKey) { e.preventDefault(); const l = zoomStep(props.level, e.deltaY); if (l !== props.level) emit('update:level', l); }
+  if (e.metaKey || e.ctrlKey) { e.preventDefault(); emit('zoom'); const l = zoomStep(props.level, e.deltaY); if (l !== props.level) emit('update:level', l); }
   else if (props.level === 1 && e.deltaY) emit('update:selected', Math.min(props.windows.length - 1, Math.max(0, props.selected + (e.deltaY > 0 ? 1 : -1))));
 }
 const LEVEL_LABEL: Record<ZoomLevel, string> = { 1: 'One at a time', 2: '2 per row', 3: '3 per row', 4: '4 per row' };

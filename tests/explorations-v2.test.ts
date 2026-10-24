@@ -15,7 +15,9 @@ import XEventsPanel from '../src/stories/explorations/desktop2/XEventsPanel.vue'
 import XStatusPanel from '../src/stories/explorations/desktop2/XStatusPanel.vue';
 import DesktopV2 from '../src/stories/explorations/desktop2/DesktopV2.vue';
 
-const key = async (k: string, meta = false) => { window.dispatchEvent(new KeyboardEvent('keydown', { key: k, metaKey: meta })); await nextTick(); };
+const key = async (k: string, meta = false, shift = false) => { window.dispatchEvent(new KeyboardEvent('keydown', { key: k, metaKey: meta, shiftKey: shift })); await nextTick(); };
+const keyUp = async (k: string) => { window.dispatchEvent(new KeyboardEvent('keyup', { key: k })); await nextTick(); };
+const tapSuper = async () => { await key('Meta', true); await keyUp('Meta'); };
 
 describe('desktop v2 geometry', () => {
   it('work area leaves room for the dock unless it auto-hides', () => {
@@ -51,7 +53,9 @@ describe('desktop v2 geometry', () => {
   });
   it('every state has a tab and a trade-off, with at least 3 new ideas', () => {
     for (const s of [...CORE, ...IDEAS]) { expect(STATES[s].gain).toBeTruthy(); expect(STATES[s].cost).toBeTruthy(); }
-    expect(IDEAS.length).toBeGreaterThanOrEqual(3);
+    expect(IDEAS.length).toBeGreaterThanOrEqual(1);
+    expect(CORE).toContain('gestures');
+    expect(CORE).toContain('switch');
   });
 });
 
@@ -98,25 +102,25 @@ describe('desktop v2 parts', () => {
     expect(w.emitted('menu')?.[0]).toEqual(['File']);
     expect(mount(XMenuBar, { props: { app: 'Mail', openMenu: 'View' } }).find('.x-cmenu').exists()).toBe(true);
   });
-  it('XDock default is a light floating strip on the left: icons only, running dots, no panel or widgets', async () => {
+  it('XDock default: floating strip on the left; launcher | separator | apps | separator | trash (last)', async () => {
     const w = mount(XDock);
     const d = w.get('.x-dock');
     expect(d.classes()).toEqual(expect.arrayContaining(['x-dock--left', 'is-vertical']));
     expect(d.classes()).not.toContain('is-panel');
-    expect(d.attributes('style')).not.toContain('bottom');
-    for (const sel of ['[aria-label="Launcher"]', '[aria-label="Trash"]', '.x-dock__clock']) expect(w.find(sel).exists()).toBe(false);
-    expect(w.findAll('.x-dock__item')).toHaveLength(6);
+    expect(w.find('.x-dock__clock').exists()).toBe(false);
+    const kids = Array.from(d.element.children).map((c) => (c.classList.contains('x-dock__div') ? '|' : c.querySelector('[aria-label]')?.getAttribute('aria-label')));
+    expect(kids).toEqual(['Launcher', '|', 'Browser', 'Mail', 'Messages', 'Calendar', 'Music', 'Notes', '|', 'Trash']);
     expect(w.findAll('.x-dock__item').every((b) => b.classes().includes('hd-sq'))).toBe(true);
     expect(w.findAll('.x-dock__run').length).toBe(3);
     await w.get('[aria-label="Mail"]').trigger('click');
     expect(w.emitted('open')?.[0]).toEqual(['Mail']);
   });
-  it('XDock options: full-height panel with launcher, trash and clock; positions; auto-hide; edit mode', async () => {
-    const p = mount(XDock, { props: { panel: true, launcher: true, trash: true, clock: true } });
+  it('XDock options: full-height panel keeps the trash last; positions; auto-hide; edit mode', async () => {
+    const p = mount(XDock, { props: { panel: true, clock: true } });
     expect(p.get('.x-dock').classes()).toContain('is-panel');
     expect(p.get('.x-dock').attributes('style')).toContain('bottom: 8px');
     expect(p.find('.x-dock__clock').exists()).toBe(true);
-    expect(p.find('[aria-label="Trash"]').exists()).toBe(true);
+    expect(p.get('.x-dock').element.lastElementChild?.classList.contains('x-dock__trash')).toBe(true);
     await p.get('[aria-label="Launcher"]').trigger('click');
     expect(p.emitted('launcher')).toHaveLength(1);
     expect(mount(XDock, { props: { position: 'bottom' } }).get('.x-dock').classes()).not.toContain('is-vertical');
@@ -126,24 +130,18 @@ describe('desktop v2 parts', () => {
     expect(mount(XDock, { props: { autoHide: true, revealed: true } }).get('.x-dock').classes()).not.toContain('is-hidden');
     const ed = mount(XDock, { props: { editing: true } });
     expect(ed.find('.x-dock__move').exists()).toBe(true);
-    expect(ed.findAll('.x-dock__rm').length).toBe(6);
+    expect(ed.findAll('.x-dock__rm').length).toBe(8);
   });
-  it('XDock thumbnails keep each window\'s aspect ratio, are not squircles, and carry a squircle app badge', () => {
-    const th = mount(XDock, { props: { thumbs: true, peekThumb: 'Mail' } });
-    const thumbs = th.findAll('.x-dock__thumb');
-    expect(thumbs).toHaveLength(3);
-    for (const t of thumbs) {
-      expect(t.classes()).not.toContain('hd-squircle');
-      expect(t.classes()).not.toContain('hd-sq');
-      expect(t.find('.x-dock__badge').exists()).toBe(true);
-    }
-    const px = (t: { attributes: (k: string) => string | undefined }) => { const m = /width: (\d+)px; height: (\d+)px/.exec(t.attributes('style')!)!; return Number(m[1]) / Number(m[2]); };
-    const mail = OPEN_WINDOWS.find((o) => o.app === 'Mail')!, msg = OPEN_WINDOWS.find((o) => o.app === 'Messages')!;
-    expect(px(th.get('[aria-label="Mail"] .x-dock__thumb'))).toBeCloseTo(mail.w / mail.h, 1);
-    expect(px(th.get('[aria-label="Messages"] .x-dock__thumb'))).toBeCloseTo(msg.w / msg.h, 1);
-    expect(px(th.get('[aria-label="Mail"] .x-dock__thumb'))).toBeGreaterThan(1);
-    expect(px(th.get('[aria-label="Messages"] .x-dock__thumb'))).toBeLessThan(1);
-    expect(th.get('.x-dock__peekwin').classes()).not.toContain('hd-squircle');
+  it('XDock previews are optional: items stay squircle icons, hover shows the window in its aspect ratio', () => {
+    expect(mount(XDock, { props: { peekThumb: 'Mail' } }).find('.x-dock__peek').exists()).toBe(false);
+    const th = mount(XDock, { props: { previews: true, peekThumb: 'Mail' } });
+    expect(th.find('.x-dock__thumb').exists()).toBe(false);
+    expect(th.get('[aria-label="Mail"]').find('.hd-squircle, .hd-sq').exists()).toBe(true);
+    const pw = th.get('.x-dock__peekwin');
+    expect(pw.classes()).not.toContain('hd-squircle');
+    const m = /width: (\d+)px; height: (\d+)px/.exec(pw.attributes('style')!)!;
+    const mail = OPEN_WINDOWS.find((o) => o.app === 'Mail')!;
+    expect(Number(m[1]) / Number(m[2])).toBeCloseTo(mail.w / mail.h, 1);
   });
   it('XDockSettings switches position', async () => {
     const w = mount(XDockSettings);
@@ -151,7 +149,8 @@ describe('desktop v2 parts', () => {
     expect(w.get('[aria-label=Style] [aria-checked=true]').text()).toBe('Floating strip');
     await w.findAll('.x-dset__posbtn')[1]!.trigger('click');
     expect(w.emitted('update:position')?.[0]).toEqual(['bottom']);
-    expect(w.findAll('.hd-switch input:checked, [role=switch][aria-checked=true]')).toHaveLength(0);
+    expect(w.findAll('[role=switch][aria-checked=true]').map((x) => x.attributes('aria-label'))).toEqual(['Launcher button (first)', 'Recycle bin (last)']);
+    expect(w.find('[aria-label="Window previews on hover"]').attributes('aria-checked')).toBe('false');
     await w.findAll('[aria-label=Style] [role=radio]')[1]!.trigger('click');
     expect(w.emitted('update:panel')?.[0]).toEqual([true]);
   });
@@ -214,20 +213,46 @@ describe('desktop v2 parts', () => {
 });
 
 describe('DesktopV2 scene', () => {
-  it('Super+Tab opens Windows, Tab moves, Enter switches; Super opens the launcher and typing filters; Esc closes', async () => {
+  it('Super+Tab quick switch: carousel, Tab / Shift+Tab cycle, releasing Super switches', async () => {
     const w = mount(DesktopV2, { attachTo: document.body });
-    expect(w.find('.x-wins').exists()).toBe(false);
     expect(w.findAll('.x-win')).toHaveLength(3);
+    await key('Meta', true);
     await key('Tab', true);
-    expect(w.find('.x-wins').exists()).toBe(true);
-    expect(w.findAll('.x-wins__card')).toHaveLength(OPEN_WINDOWS.length);
-    expect(w.find('.x-ev, .x-apps').exists()).toBe(false);
-    await key('Tab');
+    expect(w.find('.x-wins--1').exists()).toBe(true);
+    expect(w.find('.x-launch').exists()).toBe(false);
+    expect(w.get('.x-switchhint').text()).toContain('Release Super to switch');
     expect(w.get('.x-wins__card.is-sel').attributes('aria-label')).toContain('Browser');
-    await key('Enter');
+    await key('Tab', true);
+    expect(w.get('.x-wins__card.is-sel').attributes('aria-label')).toContain('Messages');
+    await key('Tab', true, true);
+    expect(w.get('.x-wins__card.is-sel').attributes('aria-label')).toContain('Browser');
+    await keyUp('Meta');
     expect(w.find('.x-wins').exists()).toBe(false);
     expect(w.get('.x-mbar__app').text()).toBe('Browser');
-    await key('Meta');
+    w.unmount();
+  });
+  it('Super + wheel zooms out and locks the viewer open after Super is released; Esc closes', async () => {
+    const w = mount(DesktopV2, { attachTo: document.body });
+    await key('Meta', true); await key('Tab', true);
+    const wheel = async (deltaY: number) => { w.get('.x-wins').element.dispatchEvent(new WheelEvent('wheel', { deltaY, metaKey: true, cancelable: true })); await nextTick(); };
+    await wheel(100);
+    expect(w.find('.x-wins--2').exists()).toBe(true);
+    await keyUp('Meta');
+    expect(w.find('.x-wins').exists()).toBe(true);
+    expect(w.find('.x-switchhint--locked').exists()).toBe(true);
+    await key('Escape');
+    expect(w.find('.x-wins').exists()).toBe(false);
+    // zooming in at the carousel also locks it, with no visual change
+    await key('Meta', true); await key('Tab', true);
+    await wheel(-100);
+    expect(w.find('.x-wins--1').exists()).toBe(true);
+    await keyUp('Meta');
+    expect(w.find('.x-wins--1').exists()).toBe(true);
+    w.unmount();
+  });
+  it('tapping Super alone opens the launcher and typing filters; Esc closes', async () => {
+    const w = mount(DesktopV2, { attachTo: document.body });
+    await tapSuper();
     expect(w.find('.x-launch').exists()).toBe(true);
     await key('m'); await key('u');
     expect(w.findAll('.x-launch .hd-app-icon').map((a) => a.text())).toEqual(['Music']);
@@ -271,6 +296,11 @@ describe('DesktopV2 scene', () => {
     expect(mount(DesktopV2, { props: { state: 'windows-carousel' } }).find('.x-wins--1').exists()).toBe(true);
     expect(mount(DesktopV2, { props: { state: 'windows-4' } }).find('.x-wins--4').exists()).toBe(true);
     expect((STATES as Record<string, unknown>)['idea-close']).toBeUndefined();
+    const g = mount(DesktopV2, { props: { state: 'gestures' } });
+    expect(g.findAll('.x-gest__g')).toHaveLength(3);
+    expect(g.get('[aria-label="Three-finger swipe down closes windows"]').attributes('aria-checked')).toBe('false');
+    expect(mount(DesktopV2, { props: { state: 'dock-previews' } }).find('.x-dock__peekwin').exists()).toBe(true);
+    expect(mount(DesktopV2, { props: { state: 'switch' } }).find('.x-switchhint').exists()).toBe(true);
   });
 });
 

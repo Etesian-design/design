@@ -5,13 +5,14 @@
  * (Super+Tab, Super + wheel zooms like the phone's Open apps), a launcher (Super), the Events panel (Super+N) and a status menu.
  * Live keys: Super, Super+Tab, Tab, Super+N, Super+Z, Super+Left/Right/Down, typing in the launcher, Esc.
  */
-import { ref, computed, watch } from 'vue';
+import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue';
 import XDesktop from '../desktop/XDesktop.vue';
 import XHints from '../desktop/XHints.vue';
 import XCursor from '../desktop/XCursor.vue';
 import XKey from '../parts/XKey.vue';
 import HdIcon from '../../../components/HdIcon.vue';
 import HdToolIcon from '../../../components/HdToolIcon.vue';
+import HdSwitch from '../../../components/HdSwitch.vue';
 import XMenuBar from './XMenuBar.vue';
 import XDock from './XDock.vue';
 import XDockSettings from './XDockSettings.vue';
@@ -29,9 +30,13 @@ const props = withDefaults(defineProps<{ state?: V2State; query?: string }>(), {
 const st = ref<V2State>(props.state);
 watch(() => props.state, (v) => (st.value = v));
 const q = ref(props.query || (props.state === 'search' ? 'mu' : ''));
-const LEVEL: Partial<Record<V2State, ZoomLevel>> = { windows: 3, 'windows-carousel': 1, 'windows-4': 4, 'idea-gestures': 2 };
+const LEVEL: Partial<Record<V2State, ZoomLevel>> = { switch: 1, windows: 3, 'windows-carousel': 1, 'windows-4': 4 };
 const level = ref<ZoomLevel>(LEVEL[props.state] ?? 3);
-const sel = ref(props.state === 'windows-carousel' ? 1 : 0);
+const sel = ref(props.state === 'windows-carousel' || props.state === 'switch' ? 1 : 0);
+/** Super+Tab: held = Super is down and the quick switcher is open; locked = the wheel/pinch turned it into a task viewer */
+const held = ref(props.state === 'switch');
+const locked = ref(props.state in LEVEL && props.state !== 'switch');
+let metaDown = false, metaUsed = false;
 watch(st, (v) => { if (LEVEL[v]) level.value = LEVEL[v]!; });
 const focused = ref('Mail');
 const picker = ref(props.state === 'drag');
@@ -73,19 +78,28 @@ const wins = computed<W[]>(() => {
 const dragApp = computed(() => (st.value === 'drag' ? 'Mail' : null));
 const barApp = computed(() => (winView.value || launcher.value ? '' : st.value === 'snapped' ? 'Calendar' : focused.value));
 const barLabel = computed(() => (winView.value ? 'Windows' : launcher.value ? 'Launcher' : ''));
-function open(n: string) { focused.value = n; q.value = ''; st.value = 'desktop'; }
+function open(n: string) { focused.value = n; q.value = ''; held.value = false; locked.value = false; st.value = 'desktop'; }
 
 function snapFocused(i: number) { snap.value = { ...snap.value, [focused.value]: i }; }
+const N = RUNNING.length;
+function step(d: number) { sel.value = (sel.value + d + N) % N; }
 useDesktopKeys((e) => {
   const k = e.key;
-  if (e.metaKey && k === 'Tab') { e.preventDefault(); if (winView.value) sel.value = (sel.value + 1) % RUNNING.length; else st.value = 'windows'; return; }
-  if ((k === 'Meta' || k === 'OS') && !e.ctrlKey) { st.value = launcher.value ? 'desktop' : 'search'; return; }
+  if (k === 'Meta' || k === 'OS') { metaDown = true; metaUsed = false; return; }
+  if (e.metaKey) metaUsed = true;
+  if (e.metaKey && k === 'Tab') {
+    e.preventDefault();
+    if (winView.value) step(e.shiftKey ? -1 : 1);
+    else { level.value = 1; locked.value = false; held.value = true; sel.value = (RUNNING.indexOf(focused.value) + (e.shiftKey ? N - 1 : 1)) % N; st.value = 'switch'; }
+    return;
+  }
   if (e.metaKey && (k === 'n' || k === 'N')) { st.value = events.value ? 'desktop' : 'events'; return; }
   if (e.metaKey && (k === 'z' || k === 'Z')) { picker.value = !picker.value; return; }
   if (k === 'Escape') { picker.value = false; q.value = ''; st.value = 'desktop'; return; }
   if (winView.value) {
-    if (k === 'Tab' || k === 'ArrowRight') { e.preventDefault(); sel.value = (sel.value + 1) % RUNNING.length; }
-    else if (k === 'ArrowLeft') sel.value = (sel.value + RUNNING.length - 1) % RUNNING.length;
+    if (k === 'Tab') { e.preventDefault(); step(e.shiftKey ? -1 : 1); }
+    else if (k === 'ArrowRight') step(1);
+    else if (k === 'ArrowLeft') step(-1);
     else if (k === 'Enter') open(RUNNING[sel.value]!);
     return;
   }
@@ -98,15 +112,35 @@ useDesktopKeys((e) => {
   else if (e.metaKey && k === 'ArrowRight') snapFocused(1);
   else if (e.metaKey && k === 'ArrowDown') { const s = { ...snap.value }; delete s[focused.value]; snap.value = s; }
 });
+/** Super released: a tap alone opens the launcher; after Super+Tab it switches, unless the wheel locked the viewer */
+function onKeyUp(e: KeyboardEvent) {
+  if (e.key !== 'Meta' && e.key !== 'OS') return;
+  const used = metaUsed; metaDown = false; metaUsed = false;
+  if (held.value) { held.value = false; if (winView.value && !locked.value) open(RUNNING[sel.value]!); return; }
+  if (!used && !e.ctrlKey) st.value = launcher.value ? 'desktop' : 'search';
+}
+function onZoom() { locked.value = true; }
+onMounted(() => window.addEventListener('keyup', onKeyUp));
+onBeforeUnmount(() => window.removeEventListener('keyup', onKeyUp));
+void metaDown;
 function pickLayout(_l: LayoutId, z: number) { picker.value = false; snapFocused(Math.min(z, 1)); }
 const dockT = dockThickness(44) + GAP;
+/** three-finger swipe down to close: a setting, OFF by default */
+const swipeClose = ref(false);
+const GESTURES = [
+  { k: 'side', t: '3 fingers sideways', d: 'Minimise to the desktop; keep swiping to switch windows' },
+  { k: 'down', t: '3 fingers down', d: 'Close the window (N9 swipe-down). Optional: off by default so nobody is surprised' },
+  { k: 'pinch', t: 'Pinch', d: 'Zoom the Windows view: carousel · 2 · 3 · 4 per row' },
+];
 const info = computed(() => STATES[st.value]);
 const hints = computed<[string, string][]>(() => {
   switch (st.value) {
-    case 'desktop': case 'idea-thumbs': case 'dock-panel': case 'dock-bottom': return [['Super+Tab', 'Windows'], ['Super+Wheel', 'Zoom windows'], ['Super', 'Launcher'], ['Super+N', 'Events'], ['Super+Z', 'Snap layouts'], ['Super+Left', 'Snap left'], ['Super+Right', 'Snap right'], ['Super+Up', 'Maximise'], ['Alt', 'Menus']];
+    case 'desktop': case 'dock-previews': case 'dock-panel': case 'dock-bottom': return [['Super+Tab', 'Switch'], ['Super+Wheel', 'Task viewer'], ['Super', 'Launcher'], ['Super+N', 'Events'], ['Super+Z', 'Snap layouts'], ['Super+Left', 'Snap left'], ['Super+Right', 'Snap right'], ['Alt', 'Menus'], ['3 fingers ←→', 'Minimise / switch'], ['Pinch', 'Zoom windows']];
+    case 'gestures': return [['3 fingers ←→', 'Minimise / switch'], ['Pinch', 'Zoom windows'], ['3 fingers ↓', 'Close (setting, off by default)']];
+    case 'switch': return [];
     case 'drag': return [['Shift', 'Show zones while dragging'], ['Super+Z', 'Layouts'], ['Ctrl', 'Span two zones'], ['Esc', 'Cancel']];
     case 'snapped': return [['Super+Left', 'Move to left zone'], ['Super+Right', 'Move to right zone'], ['Super+Up', 'Maximise'], ['Super+Down', 'Float again'], ['Super+Tab', 'Windows']];
-    case 'windows': case 'windows-carousel': case 'windows-4': return [['Super+Tab', 'Next window'], ['Super+Wheel', 'Zoom: 1 · 2 · 3 · 4 per row'], ['Ctrl+Pinch', 'Zoom (touchpad)'], ['Left+Right', 'Move'], ['Enter', 'Switch'], ['Esc', 'Back']];
+    case 'windows': case 'windows-carousel': case 'windows-4': return [['Tab', 'Next window'], ['Shift+Tab', 'Previous'], ['Super+Wheel', 'Zoom: 1 · 2 · 3 · 4 per row'], ['Pinch', 'Zoom (touchpad)'], ['Enter', 'Switch'], ['Esc', 'Close viewer']];
     case 'search': return [['Super', 'Close launcher'], ['Enter', 'Open first'], ['Super+Tab', 'Windows'], ['Esc', 'Close']];
     case 'dock-edit': return [['Esc', 'Done'], ['Delete', 'Remove item']];
     case 'idea-viewmenu': return [['Alt+V', 'View menu'], ['Up+Down', 'Choose'], ['Enter', 'Switch view']];
@@ -166,19 +200,20 @@ const hints = computed<[string, string][]>(() => {
       </div>
 
       <!-- 4: Windows view (Super+Tab) / idea: touchpad -->
-      <XWindows v-if="winView" v-model:level="level" v-model:selected="sel" :left="dockPos === 'left' ? dockT : 0" @open="open" />
-      <div v-if="st === 'idea-gestures'" class="x-gest hd-on-overlay" aria-label="Touchpad gestures">
-        <svg width="200" height="130" viewBox="0 0 200 130" aria-hidden="true">
-          <rect x="4" y="4" width="192" height="122" rx="14" fill="none" stroke="currentColor" stroke-opacity=".5" stroke-width="2" />
-          <g fill="var(--hd-accent)"><circle cx="70" cy="80" r="9" /><circle cx="92" cy="74" r="9" /><circle cx="114" cy="80" r="9" /></g>
-          <path d="M92 58V20m0 0l-9 12m9-12l9 12" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round" />
-          <g fill="none" stroke="var(--hd-accent)" stroke-width="2.5"><circle cx="150" cy="60" r="7" /><circle cx="176" cy="92" r="7" /></g>
-          <path d="M140 50l-8-8m44 58l8 8" stroke="currentColor" stroke-width="3" stroke-linecap="round" />
-        </svg>
-        <div class="x-gest__txt">
-          <b>Swipe and pinch on the touchpad</b>
-          <span><i>3 fingers ↑</i> Windows · <i>↓</i> back to the desktop</span>
-          <span><i>Pinch</i> zoom: one at a time · 2 · 3 · 4 per row (same as <i>Super + wheel</i>)</span>
+      <XWindows v-if="winView" v-model:level="level" v-model:selected="sel" :left="dockPos === 'left' ? dockT : 0" @open="open" @zoom="onZoom" />
+      <div v-if="winView && held && !locked" class="x-switchhint hd-on-overlay" role="status"><XKey keys="Super" /> held · <b>Release Super to switch</b> · <XKey keys="Tab" /> next · <XKey keys="Shift+Tab" /> back · <b>Scroll to keep open</b></div>
+      <div v-else-if="winView && locked" class="x-switchhint x-switchhint--locked hd-on-overlay" role="status"><HdIcon name="lock" :size="14" /> Viewer kept open · pick a window or <XKey keys="Esc" /></div>
+      <div v-if="st === 'gestures'" class="x-gest hd-on-overlay" aria-label="Touchpad gestures">
+        <div v-for="g in GESTURES" :key="g.k" class="x-gest__g">
+          <svg width="120" height="84" viewBox="0 0 120 84" aria-hidden="true">
+            <rect x="3" y="3" width="114" height="78" rx="10" fill="none" stroke="currentColor" stroke-opacity=".45" stroke-width="2" />
+            <g v-if="g.k !== 'pinch'" fill="var(--hd-accent)"><circle cx="44" cy="44" r="7" /><circle cx="60" cy="40" r="7" /><circle cx="76" cy="44" r="7" /></g>
+            <path v-if="g.k === 'side'" d="M30 66h60m0 0l-8-6m8 6l-8 6M30 66l8-6m-8 6l8 6" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" />
+            <path v-if="g.k === 'down'" d="M60 14v18m0 0l-6-7m6 7l6-7" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" />
+            <template v-if="g.k === 'pinch'"><g fill="var(--hd-accent)"><circle cx="40" cy="30" r="7" /><circle cx="80" cy="56" r="7" /></g><path d="M50 38l8 8m4 0l8 8M30 20l-6-6m66 50l6 6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" /></template>
+          </svg>
+          <b>{{ g.t }}</b><span>{{ g.d }}</span>
+          <label v-if="g.k === 'down'" class="x-gest__opt"><HdSwitch v-model="swipeClose" aria-label="Three-finger swipe down closes windows" /> Swipe down to close · Off</label>
         </div>
       </div>
 
@@ -190,8 +225,8 @@ const hints = computed<[string, string][]>(() => {
       <XStatusPanel v-if="status" />
 
       <!-- dock -->
-      <XDock v-if="st !== 'decor'" :position="dockPos" :panel="panel" :launcher="panel" :trash="panel" :clock="panel" :auto-hide="autoHide" :revealed="autoHide"
-        :editing="st === 'dock-edit'" :thumbs="st === 'idea-thumbs'" :peek-thumb="st === 'idea-thumbs' ? 'Mail' : undefined" :running="RUNNING"
+      <XDock v-if="st !== 'decor'" :position="dockPos" :panel="panel" :clock="panel" :auto-hide="autoHide" :revealed="autoHide"
+        :editing="st === 'dock-edit'" :previews="st === 'dock-previews'" :peek-thumb="st === 'dock-previews' ? 'Mail' : undefined" :running="RUNNING"
         :active="winView || launcher ? undefined : st === 'snapped' ? 'Calendar' : focused" :launcher-active="launcher" @launcher="st = launcher ? 'desktop' : 'search'" @open="open" />
       <template v-if="st === 'dock-edit'">
         <div class="x-editbanner hd-on-overlay"><HdIcon name="edit" :size="18" /><b>Edit dock</b><span>Drag the handle to any screen edge · × removes · everything else is in the settings</span><XKey keys="Esc" /> Done</div>
@@ -199,7 +234,7 @@ const hints = computed<[string, string][]>(() => {
       </template>
       <XCursor v-if="st === 'dock-autohide'" :x="6" :y="520" />
       <div v-if="st === 'dock-autohide'" class="x-chip hd-on-overlay" style="left: 110px; bottom: 24px">Pointer at the left edge, or <XKey keys="Super" />, slides the dock in · it hides again when you leave</div>
-      <XCursor v-if="st === 'idea-thumbs'" :x="52" :y="440" />
+      <XCursor v-if="st === 'dock-previews'" :x="52" :y="440" />
 
       <XHints v-if="hints.length && !events" corner="br" :items="hints" :style="dockPos === 'bottom' ? 'bottom: 96px' : undefined" />
     </div>
@@ -211,10 +246,13 @@ const hints = computed<[string, string][]>(() => {
 .x-editbanner { position: absolute; z-index: 46; top: 12px; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 10px; padding: 10px 16px; border-radius: var(--hd-radius-card); background: var(--hd-surface-overlay); color: var(--hd-c-fg); box-shadow: var(--hd-shadow-overlay), 0 0 0 2px var(--hd-accent); font: 400 var(--hd-font-size-small)/1 var(--hd-font-family-base); }
 .x-editbanner span { color: var(--hd-c-fg-secondary); }
 .x-chip { position: absolute; z-index: 46; display: flex; align-items: center; gap: 8px; padding: 10px 14px; border-radius: var(--hd-radius-card); background: var(--hd-surface-overlay); color: var(--hd-c-fg); box-shadow: var(--hd-shadow-overlay); font: 400 var(--hd-font-size-small)/1 var(--hd-font-family-base); }
-.x-gest { position: absolute; z-index: 50; left: 50%; bottom: 40px; transform: translateX(-50%); display: flex; align-items: center; gap: 24px; padding: 18px 26px; border-radius: var(--hd-radius-card); background: var(--hd-surface-overlay); color: var(--hd-c-fg); box-shadow: var(--hd-shadow-overlay), 0 0 0 1px var(--hd-c-divider); }
-.x-gest__txt { display: flex; flex-direction: column; gap: 8px; font: 400 var(--hd-font-size-small)/1.3 var(--hd-font-family-base); }
-.x-gest__txt b { font: var(--hd-font-weight-light) var(--hd-font-size-xlarge)/1 var(--hd-font-family-light); }
-.x-gest__txt i { font-style: normal; font-weight: 700; color: var(--hd-accent); }
+.x-gest { position: absolute; z-index: 50; left: 50%; bottom: 120px; transform: translateX(-50%); display: flex; gap: 28px; padding: 20px 26px; border-radius: var(--hd-radius-card); background: var(--hd-surface-overlay); color: var(--hd-c-fg); box-shadow: var(--hd-shadow-overlay), 0 0 0 1px var(--hd-c-divider); }
+.x-gest__g { display: flex; flex-direction: column; align-items: center; gap: 6px; width: 230px; text-align: center; font: 400 var(--hd-font-size-small)/1.3 var(--hd-font-family-base); color: var(--hd-c-fg-secondary); }
+.x-gest__g b { font: var(--hd-font-weight-light) var(--hd-font-size-large)/1.1 var(--hd-font-family-light); color: var(--hd-c-fg); }
+.x-gest__opt { white-space: nowrap; display: inline-flex; align-items: center; gap: 8px; margin-top: 6px; padding: 6px 10px; border-radius: 8px; background: color-mix(in srgb, var(--hd-c-fg) 7%, transparent); color: var(--hd-c-fg); font-size: var(--hd-font-size-xsmall); }
+.x-switchhint { position: absolute; z-index: 50; left: 50%; bottom: 22px; transform: translateX(-50%); display: flex; align-items: center; gap: 8px; padding: 10px 16px; border-radius: var(--hd-radius-card); background: var(--hd-surface-overlay); color: var(--hd-c-fg-secondary); box-shadow: var(--hd-shadow-overlay), 0 0 0 1px var(--hd-c-divider); font: 400 var(--hd-font-size-small)/1 var(--hd-font-family-base); white-space: nowrap; }
+.x-switchhint b { color: var(--hd-c-fg); }
+.x-switchhint--locked { color: var(--hd-c-fg); }
 /* decorations close-up */
 .x-decor { position: absolute; inset: 0; display: grid; grid-template-columns: 1fr 380px; grid-template-rows: auto 1fr; gap: 24px 32px; padding: 28px 40px; }
 .x-decor__anat { grid-column: 1 / -1; display: flex; align-items: flex-start; gap: 6px; padding: 14px 18px 12px; border-radius: var(--hd-radius-card); background: var(--hd-surface-chrome); color: var(--hd-c-fg); }
