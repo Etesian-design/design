@@ -96,10 +96,26 @@ body.hd-quasar.body--dark, .hd-quasar .q-dark, .hd-quasar.q-dark { color: var(--
 .hd-quasar .q-header.hd-plain, .hd-quasar .q-header.bg-transparent { background: var(--hd-c-bg) !important; color: var(--hd-c-fg); border-bottom: 1px solid var(--hd-c-divider); }
 .hd-quasar .q-header--bordered { border-bottom: 1px solid var(--hd-c-divider); }
 /* N9 bottom toolbar: QFooter + QToolbar, dark gradient, icon-only tools */
-.hd-quasar .q-footer { background: var(--hd-surface-chrome); color: var(--hd-c-fg); box-shadow: none; }
+/* same look as HdToolBar (ROM): light grey by default in every mode, .hd-dark per app (Gallery, Settings, Music) */
+.hd-quasar .q-footer { background: linear-gradient(#D6D6D8, #ADADB0); box-shadow: inset 0 1px 0 #6E6E72; color: #1A1A1A; --hd-c-pressed: rgba(255,255,255,.55); }
+.hd-quasar .q-footer.hd-dark { background: linear-gradient(#2A2A2C, #0E0E10); box-shadow: inset 0 1px 0 #48484C; color: #fff; --hd-c-pressed: rgba(255,255,255,.16); }
+/* Back in a QFooter: lit squircle button, same as HdToolBar (q-btn with classes "hd-sq hd-q-back") */
+.hd-quasar .q-footer .q-btn.hd-q-back { width: 52px; height: 48px; min-width: 0; padding: 0; border-radius: 0 !important; --hd-sq-size: 46px;
+  --hd-sq-fill: linear-gradient(#F7F7F8, #E6E6E8 50%, #D4D4D7); --hd-sq-ring: #8E8E93; color: #141414; }
+.hd-quasar .q-footer.hd-dark .q-btn.hd-q-back { --hd-sq-fill: linear-gradient(#3A3A3C, #232325 50%, #161618); --hd-sq-ring: #5A5A5E; color: #fff; }
+.hd-quasar .q-btn.hd-sq::before, .hd-quasar .q-btn.hd-sq::after { left: 50% !important; top: 50% !important; right: auto !important; bottom: auto !important; width: auto !important; height: min(var(--hd-sq-size), 100%) !important; transform: translate(-50%, -50%) !important; opacity: 1 !important; box-shadow: none; border: 0; border-radius: 0; }
+.hd-quasar .q-footer .q-btn.hd-q-back .q-focus-helper { display: none; }
+.hd-quasar .q-footer .q-btn.hd-q-back .q-btn__content { position: relative; z-index: 1; }
+/* app examples: N9 page header (title LIGHT, large) + pull-down search hint + unread accent bar */
+.hd-quasar .hd-q-head { display: flex; align-items: baseline; gap: 10px; padding: 18px 16px 12px; font: 300 1.75rem/1.1 var(--hd-font-family-light); }
+.hd-quasar .hd-q-head small { font: 400 1rem/1 var(--hd-font-family-base); color: var(--hd-c-fg-secondary); }
+.hd-quasar .hd-q-head .q-badge { align-self: center; }
+.hd-quasar .hd-q-pull { display: flex; align-items: center; justify-content: center; gap: 6px; padding: 10px 0; font: 400 .875rem/1 var(--hd-font-family-base); color: var(--hd-c-fg-secondary); }
+.hd-quasar .hd-q-unread { box-shadow: inset 4px 0 0 var(--hd-accent); }
+.hd-quasar .hd-q-unread .hd-q-from { color: var(--hd-c-accent-text, var(--hd-accent)); }
 .hd-quasar .q-footer--bordered { border-top: 0; }
 .hd-quasar .q-footer .q-toolbar { min-height: var(--hd-size-toolbar); padding: 0 var(--hd-space-medium); }
-.hd-quasar .q-footer .q-btn { color: var(--hd-c-fg); background: transparent !important; min-width: var(--hd-size-touch-target); min-height: var(--hd-size-touch-target); }
+.hd-quasar .q-footer .q-btn { color: inherit; background: transparent !important; min-width: var(--hd-size-touch-target); min-height: var(--hd-size-touch-target); }
 .hd-quasar .q-footer .q-btn:active .q-icon { opacity: .6; }
 .hd-quasar .q-drawer { background: var(--hd-c-surface); color: var(--hd-c-fg); }
 .hd-quasar .q-drawer--bordered { border-color: var(--hd-c-divider); }
