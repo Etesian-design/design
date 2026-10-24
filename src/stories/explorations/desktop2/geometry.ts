@@ -39,3 +39,23 @@ export function zoneRects(layout: LayoutId, area: Rect, gap = GAP): Rect[] {
     return { x: l, y: t, w: r - l, h: b - t };
   });
 }
+
+/** Open windows and their real size (the Windows view and dock thumbnails keep each window's exact shape). */
+export interface OpenWin { app: string; w: number; h: number }
+export const OPEN_WINDOWS: OpenWin[] = [
+  { app: 'Mail', w: 1120, h: 760 }, { app: 'Browser', w: 960, h: 650 }, { app: 'Messages', w: 460, h: 640 },
+  { app: 'Calendar', w: 1200, h: 800 }, { app: 'Music', w: 720, h: 520 },
+];
+/** Windows view zoom levels, as on the phone's Open apps view: 1 = one card at a time (carousel), then 2, 3, 4 per row. */
+export const ZOOM_LEVELS = [1, 2, 3, 4] as const;
+export type ZoomLevel = (typeof ZOOM_LEVELS)[number];
+/** Super + wheel (or Ctrl/Super + pinch, which arrives as a ctrl wheel): wheel down / pinch in = more per row. */
+export function zoomStep(level: ZoomLevel, deltaY: number): ZoomLevel {
+  if (!deltaY) return level;
+  return Math.min(4, Math.max(1, level + (deltaY > 0 ? 1 : -1))) as ZoomLevel;
+}
+/** Fit a w × h window into a box, keeping its aspect ratio (contain). */
+export function fitInto(w: number, h: number, bw: number, bh: number): { w: number; h: number; s: number } {
+  const s = Math.min(bw / w, bh / h);
+  return { w: Math.round(w * s), h: Math.round(h * s), s };
+}

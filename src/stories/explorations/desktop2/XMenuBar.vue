@@ -10,9 +10,9 @@ import XKey from '../parts/XKey.vue';
 import XContextMenu from '../parts/XContextMenu.vue';
 import { chromeOf } from './chrome';
 import type { XMenuItem } from '../parts/types';
-const props = withDefaults(defineProps<{ app?: string; label?: string; count?: number; hints?: boolean; active?: 'events' | null; openMenu?: string | null }>(),
+const props = withDefaults(defineProps<{ app?: string; label?: string; count?: number; hints?: boolean; active?: 'events' | 'status' | null; openMenu?: string | null }>(),
   { app: '', count: 4, hints: true, active: null, openMenu: null });
-const emit = defineEmits<{ events: []; menu: [name: string | null] }>();
+const emit = defineEmits<{ events: []; status: []; menu: [name: string | null] }>();
 const menus = computed(() => (props.app ? chromeOf(props.app).menus : []));
 const ITEMS: Record<string, XMenuItem[]> = {
   File: [{ id: 'new', label: 'New message', keys: 'Ctrl+N', icon: 'add' }, { id: 'win', label: 'New window', keys: 'Ctrl+Shift+N', icon: 'window' }, { id: 'print', label: 'Print…', keys: 'Ctrl+P' }, { id: 'close', label: 'Close window', keys: 'Ctrl+W', divider: true }, { id: 'quit', label: 'Quit', keys: 'Ctrl+Q' }],
@@ -31,9 +31,9 @@ const ITEMS: Record<string, XMenuItem[]> = {
     <span class="x-mbar__status" aria-label="Status">
       <XKey v-if="hints" keys="Super+N" />
       <button type="button" class="x-mbar__events hd-focusable" :class="{ 'is-active': active === 'events' }" :aria-label="`Events: ${count} new`" @click="emit('events')"><HdCountBubble :value="count" /></button>
-      <HdIcon name="wifi" :size="15" label="Wi-Fi connected" />
-      <HdIcon name="bluetooth" :size="15" label="Bluetooth on" />
-      <span class="x-mbar__batt"><HdIcon name="battery" :size="17" label="Battery" />82%</span>
+      <button type="button" class="x-mbar__sicons hd-focusable" :class="{ 'is-active': active === 'status' }" aria-label="Status menu: Wi-Fi, Bluetooth, battery 82%" :aria-expanded="active === 'status' ? 'true' : 'false'" @click="emit('status')">
+        <HdIcon name="wifi" :size="15" /><HdIcon name="bluetooth" :size="15" /><span class="x-mbar__batt"><HdIcon name="battery" :size="17" />82%</span>
+      </button>
       <span class="x-mbar__clock" aria-label="Saturday 24 October, 12:45"><span>Sat 24 Oct</span><b>12:45</b></span>
     </span>
   </header>
@@ -49,6 +49,8 @@ const ITEMS: Record<string, XMenuItem[]> = {
 .x-mbar__events { display: inline-flex; align-items: center; height: 24px; padding: 0 4px; border: 0; border-radius: 12px; background: transparent; cursor: pointer; }
 .x-mbar__events:hover, .x-mbar__events.is-active { background: var(--hd-c-pressed); }
 .x-mbar__events .hd-count { min-width: 18px; height: 18px; font-size: 11px; }
+.x-mbar__sicons { display: inline-flex; align-items: center; gap: 10px; height: 24px; padding: 0 8px; border: 0; border-radius: 12px; background: transparent; color: inherit; font: inherit; cursor: pointer; }
+.x-mbar__sicons:hover, .x-mbar__sicons.is-active { background: var(--hd-c-pressed); }
 .x-mbar__batt { display: inline-flex; align-items: center; gap: 3px; }
 .x-mbar__clock { display: inline-flex; align-items: center; gap: 8px; padding: 0 8px; height: 24px; margin-left: 2px; font-size: var(--hd-font-size-small); }
 .x-mbar__clock b { font-weight: 700; }

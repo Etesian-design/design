@@ -15,8 +15,8 @@ import { app as appOf } from '../parts/data';
 import { chromeOf } from './chrome';
 const props = withDefaults(defineProps<{
   app: string; title?: string; x?: number; y?: number; w?: number; h?: number; z?: number; focused?: boolean; tiled?: boolean;
-  plain?: boolean; back?: boolean; hints?: boolean; viewMenu?: boolean; dragging?: boolean; closing?: number; idPrefix?: string;
-}>(), { x: 0, y: 0, w: 900, h: 600, z: 1, hints: false, viewMenu: false, closing: 0, back: undefined });
+  plain?: boolean; back?: boolean; hints?: boolean; viewMenu?: boolean; dragging?: boolean; idPrefix?: string;
+}>(), { x: 0, y: 0, w: 900, h: 600, z: 1, hints: false, viewMenu: false, back: undefined });
 const emit = defineEmits<{ close: []; minimise: []; maximise: []; focus: []; back: []; view: [name: string] }>();
 const a = computed(() => appOf(props.app));
 const c = computed(() => chromeOf(props.app));
@@ -28,13 +28,10 @@ watch(() => props.viewMenu, (v) => (menu.value = v));
 const view = ref(views.value?.[0] ?? '');
 const shownTitle = computed(() => props.title ?? (views.value ? view.value : c.value.title));
 function pick(v: string) { view.value = v; menu.value = false; emit('view', v); }
-const style = computed(() => ({
-  left: `${props.x}px`, top: `${props.y}px`, width: `${props.w}px`, height: `${props.h}px`, zIndex: props.z,
-  ...(props.closing ? { transform: `translateY(${Math.round(props.closing * 220)}px) scale(${1 - props.closing * 0.12})`, opacity: String(1 - props.closing * 0.45) } : {}),
-}));
+const style = computed(() => ({ left: `${props.x}px`, top: `${props.y}px`, width: `${props.w}px`, height: `${props.h}px`, zIndex: props.z }));
 </script>
 <template>
-  <section class="x-win" :class="{ 'is-focused': focused, 'is-tiled': tiled, 'is-dragging': dragging, 'is-closing': closing > 0 }" :aria-label="`${shownTitle} – ${app} window`" :style="style" @mousedown="emit('focus')">
+  <section class="x-win" :class="{ 'is-focused': focused, 'is-tiled': tiled, 'is-dragging': dragging }" :aria-label="`${shownTitle} – ${app} window`" :style="style" @mousedown="emit('focus')">
     <header class="x-win__bar hd-on-chrome">
       <span class="x-win__lead">
         <HdTooltip v-if="showBack" text="Back (Alt+Left)" placement="bottom"><HdToolIcon icon="back" label="Back" @click="emit('back')" /></HdTooltip>
