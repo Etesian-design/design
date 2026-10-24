@@ -2,12 +2,12 @@
 /** Events view item (canon): squircle thumbnail, title, body, time; groups by source. */
 import HdSquircle from './HdSquircle.vue';
 import HdIcon from './HdIcon.vue';
-defineProps<{ title: string; body?: string; time: string; icon?: string; image?: string; accent?: string; href?: string }>();
+withDefaults(defineProps<{ title: string; body?: string; time: string; icon?: string; image?: string; accent?: string; lighting?: 'lit' | 'flat'; href?: string }>(), { lighting: 'lit' });
 defineEmits<{ click: [] }>();
 </script>
 <template>
   <component :is="href ? 'a' : 'button'" :href="href" :type="href ? undefined : 'button'" class="hd-event hd-focusable" @click="$emit('click')">
-    <HdSquircle :size="43" :src="image" :color="image ? undefined : (accent ?? 'var(--hd-accent)')"><HdIcon :name="icon ?? 'message'" :size="22" /></HdSquircle>
+    <HdSquircle :size="43" :src="image" :color="image ? undefined : (accent ?? 'var(--hd-accent)')" :lighting="lighting"><HdIcon :name="icon ?? 'message'" :size="22" :lit="lighting === 'lit' && !image" /></HdSquircle>
     <span class="hd-event__text">
       <span class="hd-event__title">{{ title }}</span>
       <span v-if="body" class="hd-event__body">{{ body }}</span>

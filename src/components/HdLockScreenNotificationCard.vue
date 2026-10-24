@@ -2,11 +2,11 @@
 /** Lock-screen notification tile (canon): dark translucent, squircle icon/photo left, message in large type, sender/app and time below, no buttons. */
 import HdSquircle from './HdSquircle.vue';
 import HdIcon from './HdIcon.vue';
-defineProps<{ message: string; source: string; time: string; icon?: string; image?: string; accent?: string; count?: number }>();
+withDefaults(defineProps<{ message: string; source: string; time: string; icon?: string; image?: string; accent?: string; lighting?: 'lit' | 'flat'; count?: number }>(), { lighting: 'lit' });
 </script>
 <template>
   <article class="hd-lock-card" :aria-label="`${source}: ${message}, ${time}`">
-    <HdSquircle :size="43" :src="image" :color="image ? undefined : (accent ?? 'var(--hd-accent)')"><HdIcon :name="icon ?? 'message'" :size="22" /></HdSquircle>
+    <HdSquircle :size="43" :src="image" :color="image ? undefined : (accent ?? 'var(--hd-accent)')" :lighting="lighting"><HdIcon :name="icon ?? 'message'" :size="22" :lit="lighting === 'lit' && !image" /></HdSquircle>
     <div class="hd-lock-card__text">
       <p class="hd-lock-card__msg">{{ message }}</p>
       <p class="hd-lock-card__meta">{{ source }}<span v-if="count && count > 1"> · {{ count }}</span> · <time>{{ time }}</time></p>

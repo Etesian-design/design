@@ -184,6 +184,34 @@ export const tokens = {
     "toolbar": "100",
     "overlay": "1000",
     "banner": "1100"
+  },
+  "icon": {
+    "lighting": {
+      "gradient-start": "10%",
+      "gradient-end": "72%",
+      "lightness-delta": "12%",
+      "hue-shift": "12deg",
+      "rim-size": "2.5%",
+      "rim-lightness": "10%",
+      "rim-opacity": "0.55",
+      "bottom-line-opacity": "0.06",
+      "glyph-top": "#F6F8ED",
+      "glyph-mid": "#EAE9E3",
+      "glyph-bottom": "#D0C9C6",
+      "glyph-highlight": "#FFFFFF",
+      "cast-offset": "1.5%",
+      "cast-blur": "3%",
+      "cast-opacity": "0.34",
+      "outer-shadow-offset": "1.5%",
+      "outer-shadow-blur": "2.5%",
+      "outer-shadow-opacity": "0.28"
+    },
+    "light-tile": {
+      "top": "#FCFCFD",
+      "bottom": "#D1D3D4",
+      "glyph-top": "#231F20",
+      "glyph-bottom": "#5E5E60"
+    }
   }
 } as const;
 export type Origin = 'n9' | 'ext';
@@ -295,6 +323,28 @@ export const tokenOrigins: Record<string, Origin> = {
   "z.toolbar": "ext",
   "z.overlay": "ext",
   "z.banner": "ext",
+  "icon.lighting.gradient-start": "n9",
+  "icon.lighting.gradient-end": "n9",
+  "icon.lighting.lightness-delta": "n9",
+  "icon.lighting.hue-shift": "n9",
+  "icon.lighting.rim-size": "n9",
+  "icon.lighting.rim-lightness": "n9",
+  "icon.lighting.rim-opacity": "ext",
+  "icon.lighting.bottom-line-opacity": "ext",
+  "icon.lighting.glyph-top": "n9",
+  "icon.lighting.glyph-mid": "n9",
+  "icon.lighting.glyph-bottom": "n9",
+  "icon.lighting.glyph-highlight": "n9",
+  "icon.lighting.cast-offset": "n9",
+  "icon.lighting.cast-blur": "n9",
+  "icon.lighting.cast-opacity": "n9",
+  "icon.lighting.outer-shadow-offset": "ext",
+  "icon.lighting.outer-shadow-blur": "ext",
+  "icon.lighting.outer-shadow-opacity": "ext",
+  "icon.light-tile.top": "n9",
+  "icon.light-tile.bottom": "n9",
+  "icon.light-tile.glyph-top": "n9",
+  "icon.light-tile.glyph-bottom": "n9",
   "theme.light.bg": "n9",
   "theme.light.surface": "ext",
   "theme.light.surface-raised": "ext",

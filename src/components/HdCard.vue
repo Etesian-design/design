@@ -2,12 +2,12 @@
 /** Card (extrapolated, web). Flat surface, no shadow (canon: shadows only on overlays), squircle media optional. Whole card is a link when href is set. */
 import HdSquircle from './HdSquircle.vue';
 import HdIcon from './HdIcon.vue';
-withDefaults(defineProps<{ title?: string; text?: string; href?: string; icon?: string; accent?: string; image?: string; level?: 2 | 3 | 4 }>(), { level: 3 });
+withDefaults(defineProps<{ title?: string; text?: string; href?: string; icon?: string; accent?: string; image?: string; level?: 2 | 3 | 4; lighting?: 'lit' | 'flat' }>(), { level: 3, lighting: 'lit' });
 </script>
 <template>
   <article class="hd-card" :class="{ 'hd-card--link': href }" :style="accent ? { '--hd-accent': accent } : undefined">
     <img v-if="image" class="hd-card__image" :src="image" alt="" />
-    <HdSquircle v-if="icon" :size="43" color="var(--hd-accent)"><HdIcon :name="icon" :size="22" /></HdSquircle>
+    <HdSquircle v-if="icon" :size="43" :color="accent ?? 'var(--hd-accent)'" :lighting="lighting"><HdIcon :name="icon" :size="22" :lit="lighting === 'lit'" /></HdSquircle>
     <component :is="`h${level}`" v-if="title" class="hd-card__title">
       <a v-if="href" :href="href" class="hd-card__link">{{ title }}</a><template v-else>{{ title }}</template>
     </component>

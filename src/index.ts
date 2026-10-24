@@ -55,5 +55,7 @@ export type { HdFooterColumn } from './components/HdFooter.vue';
 export type { HdColumn } from './components/HdTable.vue';
 export { icons } from './components/icons';
 export { squirclePath, SQUIRCLE_EXPONENT, SQUIRCLE_PATH_100, SQUIRCLE_MASK } from './squircle';
+export { litPalette, litVars, LIGHTING } from './lighting';
+export type { IconLighting, IconTone, LitPalette } from './lighting';
 export { tokens, tokenOrigins, cssVar } from './tokens';
 export { useModal, useId } from './composables/useModal';

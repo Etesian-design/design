@@ -6,15 +6,16 @@
 import HdSquircle from './HdSquircle.vue';
 import HdIcon from './HdIcon.vue';
 import HdBusyIndicator from './HdBusyIndicator.vue';
-withDefaults(defineProps<{ label: string; icon?: string; src?: string; color?: string; size?: number; loading?: boolean; badge?: number; href?: string }>(), { size: 54, color: '#4591FF' });
+import type { IconLighting, IconTone } from '../lighting';
+withDefaults(defineProps<{ label: string; icon?: string; src?: string; color?: string; size?: number; loading?: boolean; badge?: number; href?: string; lighting?: IconLighting; tone?: IconTone }>(), { size: 54, color: '#4591FF', lighting: 'lit', tone: 'colour' });
 defineEmits<{ click: [e: MouseEvent] }>();
 </script>
 <template>
   <component :is="href ? 'a' : 'button'" :href="href" :type="href ? undefined : 'button'" class="hd-app-icon hd-focusable"
     :aria-busy="loading ? 'true' : undefined" @click="(e: MouseEvent) => $emit('click', e)">
     <span class="hd-app-icon__shape" :style="{ width: `${size}px`, height: `${size}px` }">
-      <HdSquircle :size="size" :src="src" :color="src ? undefined : `linear-gradient(160deg, ${color}, color-mix(in srgb, ${color} 70%, #000))`">
-        <HdIcon v-if="icon" :name="icon" :size="Math.round(size * 0.5)" />
+      <HdSquircle :size="size" :src="src" :color="src ? undefined : color" :lighting="lighting" :tone="tone">
+        <HdIcon v-if="icon" :name="icon" :size="Math.round(size * 0.5)" :lit="lighting === 'lit' ? (tone === 'light' ? 'dark' : true) : false" />
       </HdSquircle>
       <HdBusyIndicator v-if="loading" variant="squircle" class="hd-app-icon__ring" :size="size + 8" label="Opening" />
       <span v-if="badge" class="hd-app-icon__badge" aria-hidden="true">{{ badge }}</span>

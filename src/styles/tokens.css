@@ -107,6 +107,28 @@
   --hd-z-toolbar: 100; /* extrapolated */
   --hd-z-overlay: 1000; /* extrapolated */
   --hd-z-banner: 1100; /* extrapolated */
+  --hd-icon-lighting-gradient-start: 10%;
+  --hd-icon-lighting-gradient-end: 72%;
+  --hd-icon-lighting-lightness-delta: 12%;
+  --hd-icon-lighting-hue-shift: 12deg;
+  --hd-icon-lighting-rim-size: 2.5%;
+  --hd-icon-lighting-rim-lightness: 10%;
+  --hd-icon-lighting-rim-opacity: 0.55; /* extrapolated */
+  --hd-icon-lighting-bottom-line-opacity: 0.06; /* extrapolated */
+  --hd-icon-lighting-glyph-top: #F6F8ED;
+  --hd-icon-lighting-glyph-mid: #EAE9E3;
+  --hd-icon-lighting-glyph-bottom: #D0C9C6;
+  --hd-icon-lighting-glyph-highlight: #FFFFFF;
+  --hd-icon-lighting-cast-offset: 1.5%;
+  --hd-icon-lighting-cast-blur: 3%;
+  --hd-icon-lighting-cast-opacity: 0.34;
+  --hd-icon-lighting-outer-shadow-offset: 1.5%; /* extrapolated */
+  --hd-icon-lighting-outer-shadow-blur: 2.5%; /* extrapolated */
+  --hd-icon-lighting-outer-shadow-opacity: 0.28; /* extrapolated */
+  --hd-icon-light-tile-top: #FCFCFD;
+  --hd-icon-light-tile-bottom: #D1D3D4;
+  --hd-icon-light-tile-glyph-top: #231F20;
+  --hd-icon-light-tile-glyph-bottom: #5E5E60;
 }
 /* Light ("blanco") theme is the default */
 :root, .hd-theme-light, [data-hd-theme="light"] {

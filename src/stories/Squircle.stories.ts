@@ -4,7 +4,7 @@ import HdAppIcon from '../components/HdAppIcon.vue';
 import HdThumbnail from '../components/HdThumbnail.vue';
 import HdSquircle from '../components/HdSquircle.vue';
 
-const meta: Meta = { title: 'OS/Squircle shapes', tags: ['autodocs'], parameters: { docs: { description: { component: '**Canon (squircle rule)**: avatars, app icons, thumbnails, file icons and the loading ring are superellipses (|x|^4+|y|^4=1). Images in these stories are generated gradients (no third-party photos).' } } } };
+const meta: Meta = { title: 'OS/Squircle shapes', tags: ['autodocs'], parameters: { docs: { description: { component: '**Canon (squircle rule)**: avatars, app icons, thumbnails, file icons and the loading ring are superellipses (|x|^2.8+|y|^2.8=1). Images in these stories are generated gradients (no third-party photos).' } } } };
 export default meta;
 type S = StoryObj;
 const img = (a: string, b: string) => `data:image/svg+xml,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10"><defs><linearGradient id="g" x2="1" y2="1"><stop offset="0" stop-color="${a}"/><stop offset="1" stop-color="${b}"/></linearGradient></defs><rect width="10" height="10" fill="url(#g)"/></svg>`)}`;
