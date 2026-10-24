@@ -60,3 +60,5 @@ export { litPalette, litVars, LIGHTING } from './lighting';
 export type { IconLighting, IconTone, LitPalette } from './lighting';
 export { tokens, tokenOrigins, cssVar } from './tokens';
 export { useModal, useId } from './composables/useModal';
+export { FONT_ALTERNATIVES, fontVars } from './fonts';
+export type { FontAlternative } from './fonts';

@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { mount } from '@vue/test-utils';
 import { readFileSync } from 'node:fs';
 import * as Hd from '../src';
+import { FONT_ALTERNATIVES, fontVars } from '../src/fonts';
 
 const t = JSON.parse(readFileSync('tokens/tokens.json', 'utf8'));
 const css = readFileSync('src/styles/tokens.css', 'utf8');
@@ -43,5 +44,26 @@ describe('colour modes', () => {
     expect(mount(Hd.HdTheme, { props: { mode: 'light' } }).attributes('data-hd-mode')).toBe('light');
     expect(mount(Hd.HdTheme, { props: { theme: 'light' } }).attributes('data-hd-mode')).toBe('hybrid');
     expect(mount(Hd.HdTheme).attributes('data-hd-mode')).toBe('hybrid');
+  });
+});
+
+describe('font alternatives', () => {
+  it('every look-alike has licence, source, package and metric adjustments', () => {
+    expect(FONT_ALTERNATIVES.length).toBeGreaterThanOrEqual(8);
+    for (const f of FONT_ALTERNATIVES) {
+      expect(f.sizeAdjust).toMatch(/^\d+(\.\d+)?%$/);
+      expect(f.letterSpacing).toMatch(/^-?\d+(\.\d+)?em$/);
+      if (f.key === 'nokia-pure') { expect(f.package).toBeNull(); continue; }
+      expect(f.licence).toMatch(/OFL-1\.1|Ubuntu Font Licence 1\.0|Apache-2\.0/);
+      expect(f.source).toMatch(/^https:\/\//);
+      expect(f.package).toBe(`@fontsource/${f.key}`);
+    }
+  });
+  it('never bundles Nokia Pure files; aliases exist for every free font', () => {
+    const css = readFileSync('src/styles/font-alternatives.css', 'utf8');
+    expect(css).not.toMatch(/url\([^)]*nokia/i);
+    for (const f of FONT_ALTERNATIVES.filter((x) => x.key !== 'nokia-pure')) expect(css).toContain(`font-family: "${f.alias}"`);
+    expect(fontVars('fira-sans')['--hd-font-family-base']).toContain('"HD Fira Sans"');
+    expect(fontVars(undefined)).toEqual({});
   });
 });

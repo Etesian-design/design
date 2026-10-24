@@ -52,6 +52,58 @@
   --hd-font-line-height-tight: 1.15; /* extrapolated */
   --hd-font-line-height-default: 1.35; /* extrapolated */
   --hd-font-line-height-prose: 1.55; /* extrapolated */
+  --hd-font-alternatives-nokia-pure-family: "Nokia Pure Text";
+  --hd-font-alternatives-nokia-pure-size-adjust: 100.0%;
+  --hd-font-alternatives-nokia-pure-letter-spacing: 0em;
+  --hd-font-alternatives-nokia-pure-line-height: 1.0;
+  --hd-font-alternatives-fira-sans-family: "Fira Sans"; /* extrapolated */
+  --hd-font-alternatives-fira-sans-size-adjust: 102.0%; /* extrapolated */
+  --hd-font-alternatives-fira-sans-letter-spacing: -0.0027em; /* extrapolated */
+  --hd-font-alternatives-fira-sans-line-height: 1.096; /* extrapolated */
+  --hd-font-alternatives-ubuntu-sans-family: "Ubuntu Sans"; /* extrapolated */
+  --hd-font-alternatives-ubuntu-sans-size-adjust: 101.4%; /* extrapolated */
+  --hd-font-alternatives-ubuntu-sans-letter-spacing: -0.0053em; /* extrapolated */
+  --hd-font-alternatives-ubuntu-sans-line-height: 1.096; /* extrapolated */
+  --hd-font-alternatives-ubuntu-family: "Ubuntu"; /* extrapolated */
+  --hd-font-alternatives-ubuntu-size-adjust: 101.4%; /* extrapolated */
+  --hd-font-alternatives-ubuntu-letter-spacing: -0.0098em; /* extrapolated */
+  --hd-font-alternatives-ubuntu-line-height: 1.144; /* extrapolated */
+  --hd-font-alternatives-hind-family: "Hind"; /* extrapolated */
+  --hd-font-alternatives-hind-size-adjust: 104.3%; /* extrapolated */
+  --hd-font-alternatives-hind-letter-spacing: 0.0063em; /* extrapolated */
+  --hd-font-alternatives-hind-line-height: 0.821; /* extrapolated */
+  --hd-font-alternatives-lato-family: "Lato"; /* extrapolated */
+  --hd-font-alternatives-lato-size-adjust: 98.1%; /* extrapolated */
+  --hd-font-alternatives-lato-letter-spacing: 0.0157em; /* extrapolated */
+  --hd-font-alternatives-lato-line-height: 1.096; /* extrapolated */
+  --hd-font-alternatives-public-sans-family: "Public Sans"; /* extrapolated */
+  --hd-font-alternatives-public-sans-size-adjust: 97.2%; /* extrapolated */
+  --hd-font-alternatives-public-sans-letter-spacing: -0.005em; /* extrapolated */
+  --hd-font-alternatives-public-sans-line-height: 1.119; /* extrapolated */
+  --hd-font-alternatives-inter-family: "Inter"; /* extrapolated */
+  --hd-font-alternatives-inter-size-adjust: 96.6%; /* extrapolated */
+  --hd-font-alternatives-inter-letter-spacing: -0.0149em; /* extrapolated */
+  --hd-font-alternatives-inter-line-height: 1.087; /* extrapolated */
+  --hd-font-alternatives-signika-family: "Signika"; /* extrapolated */
+  --hd-font-alternatives-signika-size-adjust: 102.3%; /* extrapolated */
+  --hd-font-alternatives-signika-letter-spacing: 0.0162em; /* extrapolated */
+  --hd-font-alternatives-signika-line-height: 1.067; /* extrapolated */
+  --hd-font-alternatives-noto-sans-family: "Noto Sans"; /* extrapolated */
+  --hd-font-alternatives-noto-sans-size-adjust: 98.5%; /* extrapolated */
+  --hd-font-alternatives-noto-sans-letter-spacing: -0.0126em; /* extrapolated */
+  --hd-font-alternatives-noto-sans-line-height: 0.965; /* extrapolated */
+  --hd-font-alternatives-open-sans-family: "Open Sans"; /* extrapolated */
+  --hd-font-alternatives-open-sans-size-adjust: 98.5%; /* extrapolated */
+  --hd-font-alternatives-open-sans-letter-spacing: -0.008em; /* extrapolated */
+  --hd-font-alternatives-open-sans-line-height: 0.966; /* extrapolated */
+  --hd-font-alternatives-source-sans-3-family: "Source Sans 3"; /* extrapolated */
+  --hd-font-alternatives-source-sans-3-size-adjust: 107.2%; /* extrapolated */
+  --hd-font-alternatives-source-sans-3-letter-spacing: 0.0094em; /* extrapolated */
+  --hd-font-alternatives-source-sans-3-line-height: 0.923; /* extrapolated */
+  --hd-font-alternatives-nunito-sans-family: "Nunito Sans"; /* extrapolated */
+  --hd-font-alternatives-nunito-sans-size-adjust: 99.7%; /* extrapolated */
+  --hd-font-alternatives-nunito-sans-letter-spacing: -0.0051em; /* extrapolated */
+  --hd-font-alternatives-nunito-sans-line-height: 0.964; /* extrapolated */
   --hd-space-xsmall: 1px;
   --hd-space-small: 3px;
   --hd-space-medium: 4px;

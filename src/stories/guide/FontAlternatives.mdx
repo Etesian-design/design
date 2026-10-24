@@ -1,0 +1,15 @@
+import { Meta, Markdown, Canvas } from '@storybook/blocks';
+import md from '../../../docs/03b-font-alternatives.md?raw';
+import * as F from '../typography/FontAlternatives.stories';
+
+<Meta of={F} />
+
+<Markdown>{md}</Markdown>
+
+## Recommended fonts
+
+<Canvas of={F.Recommended} />
+
+## Every candidate (full type scale, clock, UI and paragraph)
+
+<Canvas of={F.AllFonts} />

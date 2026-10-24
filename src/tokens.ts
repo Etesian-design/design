@@ -106,6 +106,86 @@ export const tokens = {
       "tight": "1.15",
       "default": "1.35",
       "prose": "1.55"
+    },
+    "alternatives": {
+      "nokia-pure": {
+        "family": "\"Nokia Pure Text\"",
+        "size-adjust": "100.0%",
+        "letter-spacing": "0em",
+        "line-height": "1.0"
+      },
+      "fira-sans": {
+        "family": "\"Fira Sans\"",
+        "size-adjust": "102.0%",
+        "letter-spacing": "-0.0027em",
+        "line-height": "1.096"
+      },
+      "ubuntu-sans": {
+        "family": "\"Ubuntu Sans\"",
+        "size-adjust": "101.4%",
+        "letter-spacing": "-0.0053em",
+        "line-height": "1.096"
+      },
+      "ubuntu": {
+        "family": "\"Ubuntu\"",
+        "size-adjust": "101.4%",
+        "letter-spacing": "-0.0098em",
+        "line-height": "1.144"
+      },
+      "hind": {
+        "family": "\"Hind\"",
+        "size-adjust": "104.3%",
+        "letter-spacing": "0.0063em",
+        "line-height": "0.821"
+      },
+      "lato": {
+        "family": "\"Lato\"",
+        "size-adjust": "98.1%",
+        "letter-spacing": "0.0157em",
+        "line-height": "1.096"
+      },
+      "public-sans": {
+        "family": "\"Public Sans\"",
+        "size-adjust": "97.2%",
+        "letter-spacing": "-0.005em",
+        "line-height": "1.119"
+      },
+      "inter": {
+        "family": "\"Inter\"",
+        "size-adjust": "96.6%",
+        "letter-spacing": "-0.0149em",
+        "line-height": "1.087"
+      },
+      "signika": {
+        "family": "\"Signika\"",
+        "size-adjust": "102.3%",
+        "letter-spacing": "0.0162em",
+        "line-height": "1.067"
+      },
+      "noto-sans": {
+        "family": "\"Noto Sans\"",
+        "size-adjust": "98.5%",
+        "letter-spacing": "-0.0126em",
+        "line-height": "0.965"
+      },
+      "open-sans": {
+        "family": "\"Open Sans\"",
+        "size-adjust": "98.5%",
+        "letter-spacing": "-0.008em",
+        "line-height": "0.966"
+      },
+      "source-sans-3": {
+        "family": "\"Source Sans 3\"",
+        "size-adjust": "107.2%",
+        "letter-spacing": "0.0094em",
+        "line-height": "0.923"
+      },
+      "nunito-sans": {
+        "family": "\"Nunito Sans\"",
+        "size-adjust": "99.7%",
+        "letter-spacing": "-0.0051em",
+        "line-height": "0.964"
+      }
     }
   },
   "space": {
@@ -303,6 +383,58 @@ export const tokenOrigins: Record<string, Origin> = {
   "font.line-height.tight": "ext",
   "font.line-height.default": "ext",
   "font.line-height.prose": "ext",
+  "font.alternatives.nokia-pure.family": "n9",
+  "font.alternatives.nokia-pure.size-adjust": "n9",
+  "font.alternatives.nokia-pure.letter-spacing": "n9",
+  "font.alternatives.nokia-pure.line-height": "n9",
+  "font.alternatives.fira-sans.family": "ext",
+  "font.alternatives.fira-sans.size-adjust": "ext",
+  "font.alternatives.fira-sans.letter-spacing": "ext",
+  "font.alternatives.fira-sans.line-height": "ext",
+  "font.alternatives.ubuntu-sans.family": "ext",
+  "font.alternatives.ubuntu-sans.size-adjust": "ext",
+  "font.alternatives.ubuntu-sans.letter-spacing": "ext",
+  "font.alternatives.ubuntu-sans.line-height": "ext",
+  "font.alternatives.ubuntu.family": "ext",
+  "font.alternatives.ubuntu.size-adjust": "ext",
+  "font.alternatives.ubuntu.letter-spacing": "ext",
+  "font.alternatives.ubuntu.line-height": "ext",
+  "font.alternatives.hind.family": "ext",
+  "font.alternatives.hind.size-adjust": "ext",
+  "font.alternatives.hind.letter-spacing": "ext",
+  "font.alternatives.hind.line-height": "ext",
+  "font.alternatives.lato.family": "ext",
+  "font.alternatives.lato.size-adjust": "ext",
+  "font.alternatives.lato.letter-spacing": "ext",
+  "font.alternatives.lato.line-height": "ext",
+  "font.alternatives.public-sans.family": "ext",
+  "font.alternatives.public-sans.size-adjust": "ext",
+  "font.alternatives.public-sans.letter-spacing": "ext",
+  "font.alternatives.public-sans.line-height": "ext",
+  "font.alternatives.inter.family": "ext",
+  "font.alternatives.inter.size-adjust": "ext",
+  "font.alternatives.inter.letter-spacing": "ext",
+  "font.alternatives.inter.line-height": "ext",
+  "font.alternatives.signika.family": "ext",
+  "font.alternatives.signika.size-adjust": "ext",
+  "font.alternatives.signika.letter-spacing": "ext",
+  "font.alternatives.signika.line-height": "ext",
+  "font.alternatives.noto-sans.family": "ext",
+  "font.alternatives.noto-sans.size-adjust": "ext",
+  "font.alternatives.noto-sans.letter-spacing": "ext",
+  "font.alternatives.noto-sans.line-height": "ext",
+  "font.alternatives.open-sans.family": "ext",
+  "font.alternatives.open-sans.size-adjust": "ext",
+  "font.alternatives.open-sans.letter-spacing": "ext",
+  "font.alternatives.open-sans.line-height": "ext",
+  "font.alternatives.source-sans-3.family": "ext",
+  "font.alternatives.source-sans-3.size-adjust": "ext",
+  "font.alternatives.source-sans-3.letter-spacing": "ext",
+  "font.alternatives.source-sans-3.line-height": "ext",
+  "font.alternatives.nunito-sans.family": "ext",
+  "font.alternatives.nunito-sans.size-adjust": "ext",
+  "font.alternatives.nunito-sans.letter-spacing": "ext",
+  "font.alternatives.nunito-sans.line-height": "ext",
   "space.xsmall": "n9",
   "space.small": "n9",
   "space.medium": "n9",
