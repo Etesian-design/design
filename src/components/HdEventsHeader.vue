@@ -24,10 +24,10 @@ withDefaults(defineProps<{ day: string; date: string; city?: string; temperature
 <style>
 .hd-events-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; padding: 24px 16px 12px; color: var(--hd-c-fg); }
 .hd-events-header__when { display: flex; flex-direction: column; gap: 6px; }
-.hd-events-header__day { font: 700 2rem/1.05 var(--hd-font-family-base); }
-.hd-events-header__date { font: 700 1rem/1.2 var(--hd-font-family-base); color: var(--hd-c-fg-secondary); }
+.hd-events-header__day { font: 300 2rem/1.05 var(--hd-font-family-light); }
+.hd-events-header__date { font: 300 1.7rem/1.1 var(--hd-font-family-light); color: var(--hd-c-fg-secondary); }
 .hd-events-header__wx { display: flex; flex-direction: column; align-items: center; min-width: 160px; }
 .hd-events-header__city { align-self: stretch; padding-bottom: 6px; border-bottom: 1px solid var(--hd-c-divider); text-align: center; font: 700 .875rem/1.2 var(--hd-font-family-base); }
 .hd-events-header__now { display: flex; align-items: center; justify-content: center; gap: 12px; padding-top: 6px; }
-.hd-events-header__temp { font: 700 1.75rem/1 var(--hd-font-family-base); }
+.hd-events-header__temp { font: 300 1.75rem/1 var(--hd-font-family-light); }
 </style>

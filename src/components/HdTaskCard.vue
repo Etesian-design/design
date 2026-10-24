@@ -26,7 +26,7 @@ defineEmits<{ open: []; close: [] }>();
 .hd-task-card__body:hover .hd-task-card__preview { transform: scale(1.02); }
 .hd-task-card__body:active .hd-task-card__preview { transform: scale(.97); }
 .hd-task-card__placeholder { display: block; height: 18%; background: var(--hd-accent); }
-.hd-task-card__title { font: 700 .875rem/1.2 var(--hd-font-family-base); text-align: center; color: inherit; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.hd-task-card__title { font: 400 .875rem/1.2 var(--hd-font-family-base); text-align: center; color: inherit; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 /* edit mode: preview at exactly 50% brightness */
 .hd-task-card.is-editing .hd-task-card__preview::after { content: ''; position: absolute; inset: 0; z-index: 1; background: rgba(0, 0, 0, .5); pointer-events: none; }
 .hd-task-card.is-editing .hd-task-card__body:hover .hd-task-card__preview { transform: none; }
