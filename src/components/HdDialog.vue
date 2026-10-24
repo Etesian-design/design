@@ -10,7 +10,7 @@ useModal(toRef(props, 'open'), panel, () => emit('close'));
 </script>
 <template>
   <Transition name="hd-dialog">
-    <div v-if="open" class="hd-dialog hd-inverted" :class="{ 'hd-dialog--inline': inline }" @click.self="emit('close')">
+    <div v-if="open" class="hd-dialog hd-on-overlay" :class="{ 'hd-dialog--inline': inline }" @click.self="emit('close')">
       <div ref="panel" class="hd-dialog__panel" :role="role" aria-modal="true" :aria-labelledby="title ? `${id}-t` : undefined" :aria-describedby="`${id}-b`" tabindex="-1">
         <slot name="icon" />
         <h2 v-if="title" :id="`${id}-t`" class="hd-dialog__title">{{ title }}</h2>
@@ -21,13 +21,13 @@ useModal(toRef(props, 'open'), panel, () => emit('close'));
   </Transition>
 </template>
 <style>
-.hd-dialog { position: fixed; inset: 0; z-index: var(--hd-z-overlay); display: flex; align-items: center; justify-content: center; padding: var(--hd-space-xxlarge); background: rgba(0,0,0,.88); color: #fff; }
+.hd-dialog { position: fixed; inset: 0; z-index: var(--hd-z-overlay); display: flex; align-items: center; justify-content: center; padding: var(--hd-space-xxlarge); background: var(--hd-surface-scrim); color: var(--hd-c-fg); }
 .hd-dialog--inline { position: absolute; }
 .hd-dialog__panel { width: 100%; max-width: 420px; display: flex; flex-direction: column; align-items: center; gap: var(--hd-space-xxlarge); text-align: center; outline: none; }
 .hd-dialog__title { margin: 0; font: var(--hd-font-weight-light) var(--hd-font-size-xlarge)/1.2 var(--hd-font-family-light); }
 .hd-dialog__body { width: 100%; font-size: var(--hd-font-size-default); color: var(--hd-c-fg-secondary); }
 .hd-dialog__buttons { display: flex; flex-direction: column; gap: var(--hd-space-double); align-items: center; width: 100%; }
-.hd-dialog .hd-button:not(.hd-button--accent):not(.hd-button--negative) { background: #fff; color: #000; }
+.hd-dialog .hd-button:not(.hd-button--accent):not(.hd-button--negative) { background: var(--hd-color-palette-dialog-button-background); color: #000; border-color: var(--hd-c-button-border); }
 .hd-dialog-enter-active, .hd-dialog-leave-active { transition: opacity var(--hd-motion-duration-default) var(--hd-motion-easing-out); }
 .hd-dialog-enter-active .hd-dialog__panel { transition: transform var(--hd-motion-duration-default) var(--hd-motion-easing-out); }
 .hd-dialog-enter-from, .hd-dialog-leave-to { opacity: 0; }

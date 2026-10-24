@@ -15,6 +15,6 @@ defineEmits<{ select: [index: number] }>();
 <style>
 .hd-page-indicator { display: inline-flex; gap: 8px; align-items: center; }
 .hd-page-indicator__dot { width: 8px; height: 8px; padding: 0; border: 0; border-radius: 999px; background: currentColor; opacity: .3; transition: opacity var(--hd-motion-duration-default); }
-button.hd-page-indicator__dot { cursor: pointer; box-sizing: content-box; background-clip: content-box; padding: 6px; margin: -6px; }
+button.hd-page-indicator__dot { color: inherit; cursor: pointer; box-sizing: content-box; background-clip: content-box; padding: 6px; margin: -6px; }
 .hd-page-indicator__dot.is-current { opacity: 1; }
 </style>

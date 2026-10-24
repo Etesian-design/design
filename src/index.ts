@@ -53,6 +53,7 @@ export type { HdMenuItem } from './components/HdMenu.vue';
 export type { HdNavLink } from './components/HdSiteHeader.vue';
 export type { HdFooterColumn } from './components/HdFooter.vue';
 export type { HdColumn } from './components/HdTable.vue';
+export type { HdMode } from './components/HdTheme.vue';
 export { icons } from './components/icons';
 export { squirclePath, SQUIRCLE_EXPONENT, SQUIRCLE_PATH_100, SQUIRCLE_MASK } from './squircle';
 export { litPalette, litVars, LIGHTING } from './lighting';

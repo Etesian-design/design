@@ -20,7 +20,7 @@ useModal(toRef(props, 'open'), panel, reject);
   <Transition name="hd-sheet">
     <div v-if="open" class="hd-sheet" :class="{ 'hd-sheet--inline': inline }">
       <div ref="panel" class="hd-sheet__panel" role="dialog" aria-modal="true" :aria-labelledby="title ? `${id}-t` : undefined" tabindex="-1">
-        <div class="hd-sheet__bar">
+        <div class="hd-sheet__bar hd-on-chrome">
           <HdButton @click="reject">{{ rejectLabel }}</HdButton>
           <h2 v-if="title" :id="`${id}-t`" class="hd-sheet__title">{{ title }}</h2>
           <HdButton variant="accent" :disabled="acceptDisabled" @click="accept">{{ acceptLabel }}</HdButton>
@@ -35,7 +35,7 @@ useModal(toRef(props, 'open'), panel, reject);
 .hd-sheet--inline { position: absolute; }
 .hd-sheet__panel { width: 100%; max-width: 720px; height: calc(100% - 24px); background: var(--hd-c-bg); color: var(--hd-c-fg); display: flex; flex-direction: column; box-shadow: var(--hd-shadow-overlay); outline: none; }
 @media (min-width: 600px) { .hd-sheet { align-items: center; } .hd-sheet__panel { height: auto; max-height: 85vh; border-radius: var(--hd-radius-card); overflow: hidden; } }
-.hd-sheet__bar { display: flex; align-items: center; justify-content: space-between; gap: var(--hd-space-double); padding: var(--hd-space-double) var(--hd-space-xlarge); background: var(--hd-c-surface-raised); border-bottom: 1px solid var(--hd-c-divider); }
+.hd-sheet__bar { display: flex; align-items: center; justify-content: space-between; gap: var(--hd-space-double); padding: var(--hd-space-double) var(--hd-space-xlarge); background: var(--hd-surface-chrome); color: var(--hd-c-fg); border-bottom: 1px solid var(--hd-c-divider); }
 .hd-sheet__title { margin: 0; font: var(--hd-font-weight-light) var(--hd-font-size-large)/1.2 var(--hd-font-family-light); text-align: center; flex: 1; }
 .hd-sheet__content { padding: var(--hd-space-xlarge); overflow: auto; }
 .hd-sheet-enter-active, .hd-sheet-leave-active { transition: background var(--hd-motion-duration-slow) var(--hd-motion-easing-out); }

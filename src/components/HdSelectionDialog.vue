@@ -23,7 +23,7 @@ function onKey(e: KeyboardEvent) {
 </template>
 <style>
 .hd-selection { list-style: none; margin: 0; padding: 0; text-align: left; max-height: 60vh; overflow: auto; }
-.hd-selection__item { min-height: var(--hd-size-list-item-small); display: flex; align-items: center; padding: 0 var(--hd-space-xlarge); color: #fff; font: var(--hd-font-weight-light) var(--hd-font-size-large)/1.2 var(--hd-font-family-light); border-radius: var(--hd-radius-control); cursor: pointer; }
-.hd-selection__item:hover { background: rgba(255,255,255,.1); }
+.hd-selection__item { min-height: var(--hd-size-list-item-small); display: flex; align-items: center; padding: 0 var(--hd-space-xlarge); color: var(--hd-c-fg); font: var(--hd-font-weight-light) var(--hd-font-size-large)/1.2 var(--hd-font-family-light); border-radius: var(--hd-radius-control); cursor: pointer; }
+.hd-selection__item:hover { background: var(--hd-c-pressed); }
 .hd-selection__item.is-selected { background: var(--hd-accent); }
 </style>

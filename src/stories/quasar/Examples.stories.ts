@@ -28,7 +28,7 @@ const mails = [
 ];
 export const EmailApp = qs(`<q-layout view="hHh lpR fFf" container style="height:640px;max-width:420px;margin:0 auto">
   <q-header><q-toolbar><q-toolbar-title>Inbox <q-badge color="white" text-color="primary" class="q-ml-sm">2</q-badge></q-toolbar-title></q-toolbar>
-    <q-toolbar><q-input dense outlined class="full-width" placeholder="Search" :model-value="''" bg-color="white"><template #prepend><q-icon :name="ic('search')" /></template></q-input></q-toolbar></q-header>
+    <q-toolbar><q-input dense outlined class="full-width" placeholder="Search" :model-value="''"><template #prepend><q-icon :name="ic('search')" /></template></q-input></q-toolbar></q-header>
   <q-footer><q-toolbar><q-btn flat round :icon="ic('refresh')" aria-label="Refresh" /><q-space /><q-btn flat round :icon="ic('edit')" aria-label="Compose" /><q-space /><q-btn flat round :icon="ic('menu')" aria-label="Menu" /></q-toolbar></q-footer>
   <q-page-container><q-page>
     <q-list separator>

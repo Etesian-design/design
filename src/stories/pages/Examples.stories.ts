@@ -54,15 +54,15 @@ export const OSLockScreen: S = {
   name: 'OS: Lock screen',
   render: () => ({
     components,
-    template: `<div class="hd-inverted" style="max-width:400px;height:720px;margin:0 auto;display:flex;flex-direction:column;background:linear-gradient(160deg,#1d2b3a,#05070a);color:#fff">
+    template: `<div class="hd-on-home" style="max-width:400px;height:720px;margin:0 auto;display:flex;flex-direction:column;background:linear-gradient(160deg,color-mix(in srgb,#1d6bba 35%,var(--hd-surface-home)),var(--hd-surface-home));color:var(--hd-c-fg)">
       <HdStatusBar transparent time="12:45" />
       <div style="text-align:right;padding:32px 24px 0"><div style="font:300 72px/1 var(--hd-font-family-light);font-variant-numeric:tabular-nums">12:45</div>
-        <div style="font:300 var(--hd-font-size-large)/1.4 var(--hd-font-family-light);color:#c8c8c8">Monday 24 October</div></div>
+        <div style="font:300 var(--hd-font-size-large)/1.4 var(--hd-font-family-light);color:var(--hd-c-fg-secondary)">Monday 24 October</div></div>
       <div style="margin-top:auto;display:grid;gap:8px;padding:16px">
         <HdLockScreenNotificationCard message="Are we still on for lunch?" source="Anna Virtanen" time="12:02" accent="#09A7CC" />
         <HdLockScreenNotificationCard message="2 missed calls" source="Phone" time="11:40" icon="phone" accent="#62B700" :count="2" />
-        <p style="margin:4px 0 0;text-align:right;color:#c8c8c8;font-size:var(--hd-font-size-small)">More</p>
-        <p style="margin:16px 0 0;text-align:center;color:#8c8c8c;font-size:var(--hd-font-size-xsmall)">Swipe sideways to unlock</p></div></div>`,
+        <p style="margin:4px 0 0;text-align:right;color:var(--hd-c-fg-secondary);font-size:var(--hd-font-size-small)">More</p>
+        <p style="margin:16px 0 0;text-align:center;color:var(--hd-c-fg-secondary);font-size:var(--hd-font-size-xsmall)">Swipe sideways to unlock</p></div></div>`,
   }),
 };
 
@@ -70,9 +70,9 @@ export const OSHome: S = {
   name: 'OS: Home (Applications view)',
   render: () => ({
     components, setup: () => ({ apps, view: ref(1) }),
-    template: `<div class="hd-inverted" style="max-width:400px;height:720px;margin:0 auto;display:flex;flex-direction:column;background:#000;color:#fff">
+    template: `<div class="hd-on-home" style="max-width:400px;height:720px;margin:0 auto;display:flex;flex-direction:column;background:var(--hd-surface-home);color:var(--hd-c-fg)">
       <HdStatusBar time="12:45" />
-      <div style="flex:1;overflow:auto"><HdAppGrid><li v-for="a in apps" :key="a[0]"><HdAppIcon :label="a[0]" :icon="a[1]" :color="a[2]" :loading="a[0]==='Music'" /></li></HdAppGrid></div>
+      <div style="flex:1;min-height:0;overflow:auto"><HdAppGrid><li v-for="a in apps" :key="a[0]"><HdAppIcon :label="a[0]" :icon="a[1]" :color="a[2]" :loading="a[0]==='Music'" /></li></HdAppGrid></div>
       <div style="display:flex;justify-content:center;padding:16px"><HdPageIndicator :total="3" :current="view" interactive label="Home views" @select="view = $event" /></div></div>`,
   }),
 };
@@ -92,7 +92,7 @@ export const WebLanding: S = {
       <main id="main">
         <HdHero eyebrow="Design language" title="The content is the interface." lead="A calm, light, gesture-first design system inspired by the Nokia N9, for apps and the web.">
           <template #actions><HdButton variant="accent" @click="toast = true">Get started</HdButton><HdButton>Read the guide</HdButton></template>
-          <template #media><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;justify-items:center;padding:24px;background:#000;border-radius:var(--hd-radius-card)" class="hd-inverted">
+          <template #media><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;justify-items:center;padding:24px;background:var(--hd-surface-home);border-radius:var(--hd-radius-card)" class="hd-on-home">
             <HdAppIcon v-for="a in apps.slice(0, 8)" :key="a[0]" :label="a[0]" :icon="a[1]" :color="a[2]" /></div></template>
         </HdHero>
         <section id="features" style="padding:48px 0"><HdContainer>

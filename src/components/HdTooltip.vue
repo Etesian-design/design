@@ -11,12 +11,12 @@ const off = () => { clearTimeout(t); show.value = false; };
 <template>
   <span class="hd-tooltip" @mouseenter="on" @mouseleave="off" @focusin="on" @focusout="off" @keydown.esc="off" :aria-describedby="id">
     <slot />
-    <span :id="id" role="tooltip" class="hd-tooltip__bubble" :class="[`is-${placement}`, { 'is-shown': show }]">{{ text }}</span>
+    <span :id="id" role="tooltip" class="hd-tooltip__bubble hd-on-overlay" :class="[`is-${placement}`, { 'is-shown': show }]">{{ text }}</span>
   </span>
 </template>
 <style>
 .hd-tooltip { position: relative; display: inline-flex; }
-.hd-tooltip__bubble { position: absolute; left: 50%; z-index: var(--hd-z-banner); padding: 6px 10px; border-radius: 6px; background: rgba(20,20,20,.94); color: #fff; font: 400 var(--hd-font-size-small)/1.3 var(--hd-font-family-base); white-space: nowrap; pointer-events: none;
+.hd-tooltip__bubble { position: absolute; left: 50%; z-index: var(--hd-z-banner); padding: 6px 10px; border-radius: 6px; background: var(--hd-surface-overlay); color: var(--hd-c-fg); box-shadow: 0 0 0 1px var(--hd-c-divider); font: 400 var(--hd-font-size-small)/1.3 var(--hd-font-family-base); white-space: nowrap; pointer-events: none;
   opacity: 0; transform: translate(-50%, 4px); transition: opacity var(--hd-motion-duration-instant), transform var(--hd-motion-duration-instant) var(--hd-motion-easing-out); }
 .hd-tooltip__bubble.is-top { bottom: calc(100% + 6px); }
 .hd-tooltip__bubble.is-bottom { top: calc(100% + 6px); }
