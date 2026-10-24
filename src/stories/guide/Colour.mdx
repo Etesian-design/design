@@ -1,0 +1,17 @@
+import { Meta, Markdown, ColorPalette, ColorItem } from '@storybook/blocks';
+import md from '../../../docs/02-colour.md?raw';
+import tokens from '../../../tokens/tokens.json';
+export const pick = (o) => Object.fromEntries(Object.entries(o).map(([k, v]) => [k + (v.origin === 'ext' ? ' (EXT)' : ''), v.value]));
+
+<Meta title="Guide/Colour" />
+
+<Markdown>{md}</Markdown>
+
+## Swatches
+
+<ColorPalette>
+  <ColorItem title="Palette" subtitle="constants.ini (N9)" colors={pick(tokens.color.palette)} />
+  <ColorItem title="Accents" subtitle="COLOR_ACCENT1..19 (N9)" colors={pick(tokens.color.accent)} />
+  <ColorItem title="Light theme" subtitle="--hd-c-*" colors={pick(tokens.theme.light)} />
+  <ColorItem title="Dark theme" subtitle="--hd-c-*" colors={pick(tokens.theme.dark)} />
+</ColorPalette>

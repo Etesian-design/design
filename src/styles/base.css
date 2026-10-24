@@ -1,0 +1,49 @@
+/* Harmattan base styles. Import after tokens.css. */
+:root {
+  --hd-accent: var(--hd-color-accent-default);
+  --hd-squircle-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M100 50L99.88 65.65L99.52 72.08L98.91 76.94L98.06 80.93L96.96 84.33L95.59 87.27L93.96 89.82L92.04 92.04L89.82 93.96L87.27 95.59L84.33 96.96L80.93 98.06L76.94 98.91L72.08 99.52L65.65 99.88L50 100L34.35 99.88L27.92 99.52L23.06 98.91L19.07 98.06L15.67 96.96L12.73 95.59L10.18 93.96L7.96 92.04L6.04 89.82L4.41 87.27L3.04 84.33L1.94 80.93L1.09 76.94L0.48 72.08L0.12 65.65L0 50L0.12 34.35L0.48 27.92L1.09 23.06L1.94 19.07L3.04 15.67L4.41 12.73L6.04 10.18L7.96 7.96L10.18 6.04L12.73 4.41L15.67 3.04L19.07 1.94L23.06 1.09L27.92 0.48L34.35 0.12L50 0L65.65 0.12L72.08 0.48L76.94 1.09L80.93 1.94L84.33 3.04L87.27 4.41L89.82 6.04L92.04 7.96L93.96 10.18L95.59 12.73L96.96 15.67L98.06 19.07L98.91 23.06L99.52 27.92L99.88 34.35Z'/%3E%3C/svg%3E");
+}
+.hd-root, .hd-theme-light, .hd-theme-dark, .hd-inverted {
+  font-family: var(--hd-font-family-light);
+  font-weight: var(--hd-font-weight-light);
+  font-size: var(--hd-font-size-default);
+  line-height: var(--hd-font-line-height-default);
+  color: var(--hd-c-fg);
+  -webkit-font-smoothing: antialiased;
+}
+.hd-root *, .hd-root *::before, .hd-root *::after { box-sizing: border-box; }
+
+/* Squircle utility: clip any element to the N9 superellipse. */
+.hd-squircle {
+  -webkit-mask-image: var(--hd-squircle-mask);
+  mask-image: var(--hd-squircle-mask);
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+}
+
+/* Focus (extrapolated): visible only for keyboard users, 2px ring in focus colour, 2px offset. */
+.hd-focusable:focus { outline: none; }
+.hd-focusable:focus-visible {
+  outline: var(--hd-size-focus-ring) solid var(--hd-c-focus);
+  outline-offset: 2px;
+}
+.hd-visually-hidden {
+  position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+.hd-page-title {
+  font-family: var(--hd-font-family-base);
+  font-weight: var(--hd-font-weight-bold);
+  text-transform: uppercase;
+  font-size: var(--hd-font-size-default);
+}
+a.hd-link, :where(.hd-root) a:where(:not([class])) { color: var(--hd-c-link); }
+
+@media (prefers-reduced-motion: reduce) {
+  .hd-root *, .hd-theme-light *, .hd-theme-dark * {
+    animation-duration: 1ms !important; animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+  }
+}

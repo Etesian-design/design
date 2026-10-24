@@ -1,0 +1,49 @@
+{
+  "name": "harmattan-design",
+  "version": "0.1.0",
+  "description": "Harmattan Design Language: N9 (MeeGo Harmattan) inspired style guide and Vue 3 components",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/harmattan.umd.cjs",
+  "module": "./dist/harmattan.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/harmattan.js",
+      "require": "./dist/harmattan.umd.cjs"
+    },
+    "./style.css": "./dist/harmattan.css",
+    "./tokens.css": "./src/styles/tokens.css"
+  },
+  "files": [
+    "dist",
+    "src/styles",
+    "tokens"
+  ],
+  "scripts": {
+    "tokens": "node scripts/build-tokens.mjs",
+    "storybook": "npm run tokens && storybook dev -p 6006",
+    "build-storybook": "npm run tokens && storybook build",
+    "build": "npm run tokens && vite build && vue-tsc -p tsconfig.build.json --emitDeclarationOnly",
+    "test": "npm run tokens && vitest run"
+  },
+  "peerDependencies": {
+    "vue": "^3.4.0"
+  },
+  "devDependencies": {
+    "@storybook/addon-a11y": "^8.6.19",
+    "@storybook/addon-essentials": "^8.6.14",
+    "@storybook/blocks": "^8.6.14",
+    "@storybook/vue3": "^8.6.19",
+    "@storybook/vue3-vite": "^8.6.19",
+    "@vitejs/plugin-vue": "^5.2.4",
+    "@vue/test-utils": "^2.5.1",
+    "jsdom": "^25.0.1",
+    "storybook": "^8.6.19",
+    "typescript": "^5.9.3",
+    "vite": "^5.4.21",
+    "vitest": "^2.1.9",
+    "vue": "^3.5.44",
+    "vue-tsc": "^2.2.12"
+  }
+}

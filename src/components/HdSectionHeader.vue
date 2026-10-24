@@ -1,0 +1,17 @@
+<script setup lang="ts">
+/** SectionHeader. N9-original: small bold secondary label, right-aligned, with a hairline to its left. */
+withDefaults(defineProps<{ title: string; align?: 'end' | 'start'; level?: 2 | 3 | 4 }>(), { align: 'end', level: 2 });
+</script>
+<template>
+  <component :is="`h${level}`" class="hd-section-header" :class="`hd-section-header--${align}`">
+    <span class="hd-section-header__line" aria-hidden="true"></span><span>{{ title }}</span>
+  </component>
+</template>
+<style>
+.hd-section-header {
+  display: flex; align-items: center; gap: var(--hd-space-double); margin: 0; padding: var(--hd-space-double) var(--hd-space-xlarge);
+  font: var(--hd-font-weight-bold) var(--hd-font-size-xsmall)/1.2 var(--hd-font-family-base); color: var(--hd-c-fg-secondary);
+}
+.hd-section-header__line { flex: 1; height: 1px; background: var(--hd-c-divider); }
+.hd-section-header--start { flex-direction: row-reverse; }
+</style>
