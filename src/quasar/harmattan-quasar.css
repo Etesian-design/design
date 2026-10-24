@@ -184,7 +184,7 @@ body.hd-quasar.body--dark, .hd-quasar .q-dark, .hd-quasar.q-dark { color: var(--
 .hd-quasar .q-banner { background: var(--hd-c-surface-raised); color: var(--hd-c-fg); border-bottom: 1px solid var(--hd-c-divider); min-height: var(--hd-size-list-item); padding: var(--hd-space-double) var(--hd-space-xlarge); font-size: var(--hd-font-size-default); }
 .hd-quasar .q-banner--dark { background: var(--hd-c-surface-raised); }
 .hd-quasar .q-banner--top-padding { padding-top: var(--hd-space-xlarge); }
-.hd-quasar .q-banner__avatar .q-avatar, .hd-quasar .q-banner__avatar .q-icon { font-size: 32px; }
+.hd-quasar .q-banner__avatar > .q-avatar, .hd-quasar .q-banner__avatar > .q-icon { font-size: 32px; }
 .hd-quasar .q-breadcrumbs { font-size: var(--hd-font-size-small); color: var(--hd-c-fg-secondary); }
 .hd-quasar .q-breadcrumbs__el { color: var(--hd-c-link); }
 .hd-quasar .q-breadcrumbs > div:last-child .q-breadcrumbs__el, .hd-quasar .q-breadcrumbs--last a { color: var(--hd-c-fg); }
@@ -481,7 +481,7 @@ body.hd-quasar.body--dark, .hd-quasar .q-dark, .hd-quasar.q-dark { color: var(--
 .hd-quasar .q-timeline__dot { color: var(--hd-accent); }
 .hd-quasar .q-timeline__dot::before { border: 0 !important; width: 15px; height: 15px; left: 0; top: 4px; background: currentColor; border-radius: 0 !important; -webkit-mask-image: var(--hd-q-squircle); mask-image: var(--hd-q-squircle); -webkit-mask-size: 100% 100%; mask-size: 100% 100%; }
 .hd-quasar .q-timeline__dot::after { background: var(--hd-c-divider); opacity: 1; }
-.hd-quasar .q-timeline__entry--icon .q-timeline__dot::before { width: 31px; height: 31px; left: -8px; top: -4px; }
+.hd-quasar .q-timeline__entry--icon .q-timeline__dot::before { width: 31px; height: 31px; left: 0; top: 4px; }
 .hd-quasar .q-timeline__entry--icon .q-timeline__dot .q-icon { color: #fff; }
 .hd-quasar .q-timeline__title { font: var(--hd-font-weight-light) var(--hd-font-size-large)/1.25 var(--hd-font-family-light); }
 .hd-quasar .q-timeline__subtitle { font: var(--hd-font-weight-bold) var(--hd-font-size-xsmall)/1.2 var(--hd-font-family-base); color: var(--hd-c-fg-secondary); letter-spacing: 0; text-transform: none; opacity: 1; }
