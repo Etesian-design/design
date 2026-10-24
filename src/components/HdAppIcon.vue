@@ -25,7 +25,7 @@ defineEmits<{ click: [e: MouseEvent] }>();
 </template>
 <style>
 .hd-app-icon {
-  display: inline-flex; flex-direction: column; align-items: center; gap: var(--hd-space-medium); width: 84px; padding: 4px 0;
+  display: inline-flex; flex-direction: column; align-items: center; gap: var(--hd-space-medium); width: 84px; max-width: 100%; min-width: 0; padding: 4px 0;
   border: 0; background: none; color: inherit; font: inherit; text-decoration: none; cursor: pointer; border-radius: var(--hd-radius-card);
 }
 .hd-app-icon:active .hd-app-icon__shape { transform: scale(.94); }

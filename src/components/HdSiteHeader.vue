@@ -24,16 +24,19 @@ withDefaults(defineProps<{ brand: string; links: HdNavLink[]; brandHref?: string
 <style>
 .hd-site-header { background: var(--hd-c-bg); border-bottom: 1px solid var(--hd-c-divider); z-index: var(--hd-z-toolbar); }
 .hd-site-header.is-sticky { position: sticky; top: 0; }
-.hd-site-header__skip { position: absolute; left: 8px; top: -60px; padding: 8px 12px; background: var(--hd-c-fg); color: var(--hd-c-bg); border-radius: 6px; z-index: 2; }
-.hd-site-header__skip:focus { top: 8px; }
+.hd-site-header__skip { position: absolute; left: 8px; top: 8px; padding: 8px 12px; background: var(--hd-c-fg); color: var(--hd-c-bg); border-radius: 6px; z-index: 2;
+  /* Hidden until focused with the keyboard (not just moved off-screen, which can peek out). */
+  clip-path: inset(50%); width: 1px; height: 1px; overflow: hidden; white-space: nowrap; }
+.hd-site-header__skip:focus { clip-path: none; width: auto; height: auto; overflow: visible; }
 .hd-site-header__bar { display: flex; align-items: center; gap: 24px; max-width: calc(var(--hd-container-default) + 64px); margin: 0 auto; height: 56px; padding: 0 var(--hd-space-page); }
 .hd-site-header__brand { display: inline-flex; align-items: center; gap: 8px; color: inherit; text-decoration: none; font: var(--hd-font-weight-bold) var(--hd-font-size-default)/1 var(--hd-font-family-base); text-transform: uppercase; letter-spacing: .02em; border-radius: 4px; }
-.hd-site-header__nav { display: flex; gap: 4px; flex: 1; }
+.hd-site-header__nav { display: flex; gap: 4px; flex: 1; min-width: 0; overflow-x: auto; scrollbar-width: none; }
 .hd-site-header__link { display: inline-flex; align-items: center; min-height: 40px; padding: 0 12px; border-radius: var(--hd-radius-control); color: var(--hd-c-fg); text-decoration: none; font-weight: 400; transition: background var(--hd-motion-duration-instant); }
 .hd-site-header__link:hover { background: var(--hd-c-pressed); }
 .hd-site-header__link[aria-current='page'] { color: var(--hd-c-accent-text); font-weight: 700; }
 .hd-site-header__icon { display: none; }
 .hd-site-header__actions { display: flex; gap: 8px; margin-left: auto; }
+/* By the window, not a container: a container would also become the bottom bar's frame. */
 @media (max-width: 599.98px) {
   .hd-site-header__nav { position: fixed; left: 0; right: 0; bottom: 0; height: var(--hd-size-toolbar); justify-content: space-around; gap: 0;
     background: var(--hd-surface-chrome); padding-bottom: env(safe-area-inset-bottom); }
