@@ -470,6 +470,17 @@ body.hd-quasar.body--dark, .hd-quasar .q-dark, .hd-quasar.q-dark { color: var(--
 .hd-quasar .q-tree__arrow { color: var(--hd-c-fg-secondary); }
 .hd-quasar .q-tree__node::after, .hd-quasar .q-tree__node-header::before { border-color: var(--hd-c-divider); }
 .hd-quasar .q-tree__node-header-content { font-size: var(--hd-font-size-default); }
+/* Quasar hard-codes #000 / #fff / #9e9e9e on tree labels: follow the surface tokens in every mode */
+.hd-quasar .q-tree, .hd-quasar .q-tree--dark { color: var(--hd-c-fg-secondary); }
+.hd-quasar .q-tree__node-header-content, .hd-quasar .q-tree--dark .q-tree__node-header-content { color: var(--hd-c-fg); }
+.hd-quasar .q-tree__node--selected .q-tree__node-header-content { color: var(--hd-c-fg); font-weight: var(--hd-font-weight-bold); }
+.hd-quasar .q-tree__node--disabled .q-tree__node-header-content { color: var(--hd-c-fg-secondary); }
+.hd-quasar .q-tree .q-icon, .hd-quasar .q-tree .q-checkbox__label { color: inherit; }
+.hd-quasar .q-tree__node-header:hover .q-tree__arrow { color: var(--hd-c-fg); }
+/* same pattern elsewhere: Quasar's dark variants and table borders use fixed colours */
+.hd-quasar .q-list--dark, .hd-quasar .q-item--dark, .hd-quasar .q-table__card--dark { color: var(--hd-c-fg); border-color: var(--hd-c-divider); }
+.hd-quasar .q-table thead, .hd-quasar .q-table tr, .hd-quasar .q-table th, .hd-quasar .q-table td { border-color: var(--hd-c-divider); }
+.hd-quasar .q-select__dialog, .hd-quasar .q-select__options--content .q-item { color: var(--hd-c-fg); }
 .hd-quasar .q-splitter__separator { background: var(--hd-c-divider); }
 .hd-quasar .q-splitter__separator-area:hover { background: color-mix(in srgb, var(--hd-accent) 20%, transparent); }
 .hd-quasar .q-scrollarea__thumb { background: var(--hd-c-fg-secondary); width: 4px; border-radius: 999px; opacity: .35; right: 2px; }

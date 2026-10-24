@@ -25,7 +25,25 @@ In `tokens/tokens.json` every token has `"origin": "n9"` or `"origin": "ext"` an
 - `tokens/tokens.json`: single source of tokens, generated to `src/styles/tokens.css` (CSS custom
   properties, `--hd-*`) and `src/tokens.ts` (TypeScript).
 - `src/components`: 48 Vue 3 SFCs (`Hd*`), themable via CSS variables, keyboard and screen-reader accessible.
-- `docs/*.md`: this guide. The same files are rendered in Storybook under **Guide**.
+- `docs/*.md`: this guide. The same files are rendered in Storybook under **Guide**. Chapters:
+  - [Principles](01-principles.md)
+  - [Colour](02-colour.md)
+  - [Typography](03-typography.md)
+  - [Font alternatives (free look-alikes for Nokia Pure)](03b-font-alternatives.md)
+  - [Spacing & sizing](04-spacing-sizing.md)
+  - [Shape: the squircle](05-shape.md)
+  - [Iconography](06-iconography.md)
+  - [Icon lighting (top-lit emboss)](06b-icon-lighting.md)
+  - [Motion](07-motion.md)
+  - [Sound & haptics](08-sound-haptics.md)
+  - [Layout & grids](09-layout.md)
+  - [Components](10-components.md)
+  - [Patterns](11-patterns.md)
+  - [Accessibility (EXT unless noted)](12-accessibility.md)
+  - [Contributing & gaps](13-contributing.md)
+  - [Using with Quasar](14-quasar.md)
+  - [Colour modes: Hybrid, Dark, Light](15-colour-modes.md)
+  - [The phone: reference for every form factor, read it first](20-phone.md)
 - Storybook: `npm run storybook`.
 
 ## Legal
