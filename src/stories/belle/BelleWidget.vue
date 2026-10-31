@@ -71,7 +71,7 @@ const words = (n: number) => (n < 20 ? ONES[n] : TENS[Math.floor(n / 10)] + (n %
 const wordH = computed(() => words(hh.value % 12 || 12)), wordM = computed(() => (mm.value ? words(mm.value) : "O'clock"));
 /** the data meter's ring: twelve segments from 12 o'clock, the used share brighter */
 const used = 0.62;
-const dataOuter = squircleRectPath(80, 80, 2.7, 0, 0), dataInner = squircleRectPath(56, 56, 2.7, 12, 12);
+const dataOuter = squircleRectPath(80, 80, 2.7, 0, 0), dataInner = squircleRectPath(62, 62, 2.7, 9, 9);
 const wedge = (from: number, to: number) => { const p = (a: number) => `${40 + 60 * Math.sin(a * Math.PI * 2)} ${40 - 60 * Math.cos(a * Math.PI * 2)}`; let d = `M40 40L${p(from)}`; for (let a = from + 0.05; a < to; a += 0.05) d += `L${p(a)}`; return `${d}L${p(to)}Z`; };
 </script>
 <template>
@@ -104,9 +104,10 @@ const wedge = (from: number, to: number) => { const p = (a: number) => `${40 + 6
         <path :d="dataOuter" fill="#000" fill-opacity=".4" transform="translate(0 1)" />
         <path :d="dataOuter" fill="url(#bw-dm-o)" />
         <g clip-path="url(#bw-dm-c)"><path :d="wedge(0, 1)" fill="#27AAE1" fill-opacity=".3" /><path :d="wedge(0, used)" fill="#27AAE1" fill-opacity=".7" />
-          <line v-for="k in 12" :key="k" x1="40" y1="40" x2="40" y2="-20" stroke="#000" stroke-opacity=".35" stroke-width="1" :transform="`rotate(${k * 30} 40 40)`" /></g>
+          <line v-for="k in 12" :key="k" x1="40" y1="40" x2="40" y2="-20" stroke="#000" stroke-opacity=".15" stroke-width=".5" :transform="`rotate(${k * 30} 40 40)`" />
+          <line v-for="k in 12" :key="`h${k}`" x1="40.5" y1="40.5" x2="40.5" y2="-20" stroke="#fff" stroke-opacity=".15" stroke-width=".5" :transform="`rotate(${k * 30} 40.5 40.5)`" /></g>
         <path :d="dataOuter" fill="none" stroke="#fff" stroke-opacity=".15" />
-        <path :d="dataInner" fill="url(#bw-dm-i)" stroke="#000" stroke-opacity=".5" /></svg>
+        <path :d="dataInner" fill="url(#bw-dm-i)" stroke="#575756" stroke-width="1" /></svg>
       <span class="bw-data__l"><span class="bw-data__n">620</span><span class="bw-data__u">MB</span></span></div>
     <!-- ---- Notes: yellow paper, dark bar with ▲ ▼ + 🗑 ---- -->
     <div v-else-if="kind === 'notes'" class="bw-notes">
@@ -256,7 +257,7 @@ const wedge = (from: number, to: number) => { const p = (a: number) => `${40 + 6
 .bw--data { display: grid; place-items: center; }
 .bw-data { position: relative; width: 78px !important; height: 78px !important; }
 .bw-data__l { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-.bw-data__n { font-size: 21px; font-weight: 700; line-height: 1; color: #F0EFF0; text-shadow: 0 1px 1px #000; } .bw-data__u { font-size: 15px; font-weight: 700; line-height: 1; color: #F0EFF0; text-shadow: 0 1px 1px #000; }
+.bw-data__n { font-size: 25px; font-weight: 700; line-height: 1; color: #F0EFF0; text-shadow: 0 1px 1px #000; } .bw-data__u { font-size: 19px; font-weight: 700; line-height: 1; color: #F0EFF0; text-shadow: 0 1px 1px #000; }
 /* notes */
 .bw-notes { display: flex; flex-direction: column; }
 .bw-notes__paper { flex: 1; padding: 12px; border-radius: 4px 4px 0 0; border: 1px solid #D9C46E; background: linear-gradient(#FBF3C4, #F0DC8A); color: #3A3A3A; overflow: hidden; }
