@@ -2,7 +2,7 @@ import { defineComponent, h } from 'vue';
 import HdBusyIndicator from '../components/HdBusyIndicator.vue';
 /**
  * N9 squircle spinner with the QSpinner API (size: '1em' | '48px' | number, color: Quasar colour name).
- * Used as the default spinner for Loading/Notify/QInnerLoading in the Harmattan Quasar config.
+ * Used as the default spinner for Loading/Notify/QInnerLoading in the Etesian Quasar config.
  */
 export default defineComponent({
   name: 'HdQSpinnerSquircle',

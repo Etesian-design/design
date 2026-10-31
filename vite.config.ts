@@ -5,9 +5,9 @@ import { resolve } from 'node:path';
 export default defineConfig({
   plugins: [vue()],
   build: {
-    lib: { entry: resolve(import.meta.dirname, 'src/index.ts'), name: 'Harmattan', fileName: 'harmattan' },
-    cssFileName: 'harmattan',
-    rollupOptions: { external: ['vue'], output: { globals: { vue: 'Vue' }, assetFileNames: 'harmattan.[ext]' } },
+    lib: { entry: resolve(import.meta.dirname, 'src/index.ts'), name: 'Etesian', fileName: 'etesian' },
+    cssFileName: 'etesian',
+    rollupOptions: { external: ['vue'], output: { globals: { vue: 'Vue' }, assetFileNames: 'etesian.[ext]' } },
   },
   test: { environment: 'jsdom', include: ['tests/**/*.test.ts'], alias: [{ find: /^quasar$/, replacement: 'quasar/dist/quasar.client.js' }], css: false, setupFiles: ['tests/setup.ts'] },
 });

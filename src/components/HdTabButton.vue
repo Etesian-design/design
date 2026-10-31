@@ -5,7 +5,7 @@ defineProps<{ label: string; icon?: string; selected?: boolean; controls?: strin
 defineEmits<{ click: [] }>();
 </script>
 <template>
-  <button type="button" role="tab" class="hd-tab-button hd-focusable" :id="id" :class="{ 'is-selected': selected, 'hd-tab-button--icon': icon, 'hd-sq': icon }"
+  <button type="button" role="tab" class="hd-tab-button hd-focusable" :id="id" :class="{ 'is-selected': selected, 'hd-tab-button--icon': icon }"
     :aria-selected="selected ? 'true' : 'false'" :aria-controls="controls" :tabindex="selected ? 0 : -1"
     :aria-label="icon ? label : undefined" :title="icon ? label : undefined" @click="$emit('click')">
     <HdIcon v-if="icon" :name="icon" :size="24" /><span v-else>{{ label }}</span>
@@ -26,8 +26,9 @@ defineEmits<{ click: [] }>();
 .hd-tab-bar--vertical > .hd-tab-button + .hd-tab-button { border-left: 0; border-top: 1px solid var(--hd-btn-rim); }
 .hd-tab-bar--segments > .hd-tab-button.is-selected { background: linear-gradient(color-mix(in srgb, var(--hd-accent) 88%, #fff), var(--hd-accent) 50%, color-mix(in srgb, var(--hd-accent) 88%, #000)); box-shadow: inset 0 1px 0 rgba(255,255,255,.3); color: #fff; }
 .hd-tab-bar--segments > .hd-tab-button:hover:not(.is-selected) { background: color-mix(in srgb, var(--hd-c-fg) 6%, transparent); }
-/* Icon tab (toolbar): the selection highlight is a squircle (n = 2.8) behind the icon, drawn by .hd-sq. */
-.hd-tab-button--icon { border: 0; color: inherit; opacity: .6; --hd-sq-size: 40px; }
-.hd-tab-button--icon:hover { --hd-sq-fill: color-mix(in srgb, var(--hd-c-pressed) 50%, transparent); }
-.hd-tab-button--icon.is-selected { --hd-sq-fill: var(--hd-c-pressed); color: inherit; opacity: 1; }
+/* Icon tab (toolbar, N9): the selected tab is a lighter FULL-HEIGHT cell with square edges across the tab's width,
+   not a shape behind the icon. */
+.hd-tab-button--icon { align-self: stretch; min-width: 64px; height: auto; border: 0; border-radius: 0; background: transparent; color: inherit; opacity: .6; }
+.hd-tab-button--icon:hover { background: color-mix(in srgb, var(--hd-c-pressed) 50%, transparent); }
+.hd-tab-button--icon.is-selected { background: var(--hd-tab-selected, linear-gradient(rgba(255,255,255,.22), rgba(255,255,255,.08))); color: inherit; opacity: 1; }
 </style>

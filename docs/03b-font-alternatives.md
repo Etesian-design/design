@@ -46,7 +46,7 @@ Sources: tokens `font.alternatives.*.$info.source`.
 - **letter-spacing** = per-character width difference at that size (em), applied by `fontVars(key)`.
 - **line-height** = ratio of hhea line spacing, informational: HDL sets explicit line heights so no change is required.
 
-Use: `import { fontVars, FONT_ALTERNATIVES } from 'harmattan-design'` and spread it on a root element's style.
+Use: `import { fontVars, FONT_ALTERNATIVES } from 'etesian-design'` and spread it on a root element's style.
 The Storybook toolbar **Font** switch does exactly that.
 
 ## Firmware recommendation

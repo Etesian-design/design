@@ -5,3 +5,7 @@ storybook-static
 screenshots/upgrade/
 screenshots/explorations/
 screenshots/explorations-v2/
+
+# Local captures and reference shots of real Nokia devices: never published. (The Etesian captures
+# already tracked under screenshots/ stay tracked.)
+screenshots/

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-/** Snap zones overlay shown while dragging a window (FancyZones style, Harmattan look): numbered zones, the hot zone lit in the accent colour. */
+/** Snap zones overlay shown while dragging a window (FancyZones style, Etesian look): numbered zones, the hot zone lit in the accent colour. */
 import { computed } from 'vue';
 import { zoneRects, type LayoutId, type Rect } from './geometry';
 const props = withDefaults(defineProps<{ layout: LayoutId; area: Rect; hot?: number; app?: string }>(), { hot: -1 });

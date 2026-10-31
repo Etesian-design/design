@@ -1,6 +1,6 @@
 # 20 · The phone (reference for every form factor)
 
-This chapter records everything already built and decided for the phone (the Harmattan launcher on Android). It is the reference for tablet, desktop and any later form factor. If something here conflicts with an exploration, this chapter wins unless the change is made here first.
+This chapter records everything already built and decided for the phone (the Etesian launcher on Android). It is the reference for tablet, desktop and any later form factor. If something here conflicts with an exploration, this chapter wins unless the change is made here first.
 
 Units: all sizes are in **dp**, and type is in **sp**.
 
@@ -14,7 +14,11 @@ Units: all sizes are in **dp**, and type is in **sp**.
 | **Swipe down from the top edge** | Closes the app (the N9 swipe-down close). |
 | **Swipe up from the bottom edge and hold** | Peeks the first row of the app grid over the app. Release on an icon to launch it; release elsewhere to cancel. |
 | **Tap the status bar** | Opens the status menu: connectivity toggles, Silent, volume, brightness and battery. It is never part of Events. |
+
+**Profile strip.** Silent and Beep are fixed segments. The Ringing segment and the grey after it are one control, the ringer volume slider: its blue fill runs into the grey in proportion to ring volume (drag along it to set the level; full = all the way across). A strip without a volume (e.g. the Mode strip) has no grey remainder: its segments fill the width.
 | **Swipe sideways on the lock screen** | Unlocks. There is no unlock button. |
+
+> **Lock screen: to be revisited as a whole.** The Phone v2 mocks follow the real Pro1-X lock (huge thin right-aligned clock, full date right-aligned under it, lock-card notifications at the bottom); the whole lock screen will be reviewed again later.
 | **Pinch in Open apps** | Zooms between the levels: carousel (one card), 2, 3 and 4 per row. |
 
 The system gesture areas belong to the OS. Apps never put interactive controls within the edge-swipe zone, and nothing in an app may imitate an edge swipe.
@@ -24,7 +28,7 @@ The system gesture areas belong to the OS. Apps never put interactive controls w
 - **Default notification style: a stacked carousel (iPhone style).**
   - The newest **N** notifications show in full at the bottom. N defaults to 3; the setting allows 1–10.
   - The rest appear as stacked strips under them.
-  - Sliding up moves the cards like a carousel over the clock, and the clock fades out as they cover it.
+  - Sliding up works like an accordion: cards past the last full one wait hidden behind it, the next card is uncovered from its lower edge and then carried up, and cards fold away under the clock block, so the clock always stays visible.
 - **Optional style: N9.** The N9 "More" label replaces the stacked strips.
 - **Groups:** tapping a group opens it in place into separate N9 cards. It does not navigate away.
 - **Notification cards:**

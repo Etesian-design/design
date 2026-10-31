@@ -1,5 +1,5 @@
 <script setup lang="ts">
-/** "Edit dock" settings popover, Harmattan look. Defaults = the light floating strip (icons only); every extra is opt-in:
+/** "Edit dock" settings popover, Etesian look. Defaults = the light floating strip (icons only); every extra is opt-in:
  * full-height panel, launcher / thumbnails / trash / clock / battery widgets, icon size, auto-hide, position. */
 import { ref } from 'vue';
 import HdSlider from '../../../components/HdSlider.vue';

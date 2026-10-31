@@ -1,6 +1,6 @@
 /**
  * Every component in Quasar 2's API (node_modules/quasar/dist/api, type "component") mapped to the
- * selectors that style it in harmattan-quasar.css. `null` + reason = renders nothing visual of its
+ * selectors that style it in etesian-quasar.css. `null` + reason = renders nothing visual of its
  * own (logic/observer/transition) so there is nothing to theme. tests/quasar.test.ts checks that
  * this list matches Quasar's list exactly and that every selector exists in the theme file.
  */

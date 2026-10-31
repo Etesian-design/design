@@ -25,8 +25,9 @@ describe('squircle highlights in the library (no rounded squares on icon-shaped 
     expect(w.classes()).toContain('is-active');
     expect(w.attributes('aria-pressed')).toBe('true');
   });
-  it('icon TabButton is a squircle, text TabButton is not', () => {
-    expect(mount(Hd.HdTabButton, { props: { label: 'A', icon: 'phone', selected: true } }).classes()).toContain('hd-sq');
+  // 2026-10-25 (N9 review): the selected toolbar tab is a lighter full-height square-edged cell, not a squircle.
+  it('icon TabButton is a full-height cell (no squircle), text TabButton is not a squircle either', () => {
+    expect(mount(Hd.HdTabButton, { props: { label: 'A', icon: 'phone', selected: true } }).classes()).not.toContain('hd-sq');
     expect(mount(Hd.HdTabButton, { props: { label: 'A' } }).classes()).not.toContain('hd-sq');
   });
   it('icon-only Button is a squircle, labelled Button is not', () => {

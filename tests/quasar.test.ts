@@ -4,13 +4,13 @@ import { readFileSync, readdirSync } from 'node:fs';
 import { h } from 'vue';
 import * as Q from 'quasar';
 import { quasarCoverage, quasarPluginCoverage } from '../src/quasar/coverage';
-import { harmattanIconSet, harmattanQuasarOptions, HarmattanQuasar, HdQSpinnerSquircle } from '../src/quasar';
+import { etesianIconSet, etesianQuasarOptions, EtesianQuasar, HdQSpinnerSquircle } from '../src/quasar';
 import { quasarPlugin } from '../src/stories/quasar/quasar-app';
 
 const apiDir = 'node_modules/quasar/dist/api';
 const api = readdirSync(apiDir).map((f) => ({ name: f.replace('.json', ''), ...JSON.parse(readFileSync(`${apiDir}/${f}`, 'utf8')) }));
 const components = api.filter((a) => a.type === 'component').map((a) => a.name).sort();
-const css = readFileSync('src/quasar/harmattan-quasar.css', 'utf8');
+const css = readFileSync('src/quasar/etesian-quasar.css', 'utf8');
 
 describe('Quasar theme coverage', () => {
   it('covers exactly the components in the installed Quasar API', () => {
@@ -36,14 +36,14 @@ describe('Quasar theme coverage', () => {
     const mat = (await import('quasar/icon-set/material-icons.js')).default as Record<string, any>;
     for (const [group, v] of Object.entries(mat)) {
       if (typeof v !== 'object') continue;
-      for (const k of Object.keys(v)) expect(harmattanIconSet as any, `${group}.${k}`).toHaveProperty([group, k]);
+      for (const k of Object.keys(v)) expect(etesianIconSet as any, `${group}.${k}`).toHaveProperty([group, k]);
     }
   });
-  it('options map the brand to Harmattan tokens', () => {
-    const o = harmattanQuasarOptions();
+  it('options map the brand to Etesian tokens', () => {
+    const o = etesianQuasarOptions();
     expect(o.config.brand.primary).toBe('#4591FF');
     expect(o.config.brand.negative).toBe('#DA201E');
-    expect(o.iconSet.name).toBe('harmattan');
+    expect(o.iconSet.name).toBe('etesian');
   });
 });
 
@@ -73,13 +73,13 @@ describe('Quasar smoke mounts with the theme', () => {
       w.unmount();
     });
   }
-  it('QBtn gets Harmattan defaults (no-caps, unelevated) from the plugin', () => {
+  it('QBtn gets Etesian defaults (no-caps, unelevated) from the plugin', () => {
     const w = mount(Q.QBtn, { props: { label: 'Go' }, global });
     expect(w.classes()).toContain('q-btn--no-uppercase');
     expect(w.classes()).toContain('q-btn--unelevated');
   });
   it('plugin adds .hd-quasar to body', () => {
-    mount({ render: () => h('div') }, { global: { plugins: [[Q.Quasar, harmattanQuasarOptions()], [HarmattanQuasar]] as any } });
+    mount({ render: () => h('div') }, { global: { plugins: [[Q.Quasar, etesianQuasarOptions()], [EtesianQuasar]] as any } });
     expect(document.body.classList.contains('hd-quasar')).toBe(true);
   });
 });

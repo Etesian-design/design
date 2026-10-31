@@ -13,6 +13,8 @@ export { default as HdDialog } from './components/HdDialog.vue';
 export { default as HdEventsFeedItem } from './components/HdEventsFeedItem.vue';
 export { default as HdEventsHeader } from './components/HdEventsHeader.vue';
 export { default as HdFooter } from './components/HdFooter.vue';
+export { default as HdFastScroll } from './components/HdFastScroll.vue';
+export { default as HdEmptyState } from './components/HdEmptyState.vue';
 export { default as HdGrid } from './components/HdGrid.vue';
 export { default as HdHero } from './components/HdHero.vue';
 export { default as HdIcon } from './components/HdIcon.vue';

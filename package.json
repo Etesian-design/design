@@ -1,24 +1,24 @@
 {
-  "name": "harmattan-design",
+  "name": "etesian-design",
   "version": "0.1.0",
-  "description": "Harmattan Design Language: N9 (MeeGo Harmattan) inspired style guide and Vue 3 components",
+  "description": "Etesian Design Language: N9 (MeeGo Etesian) inspired style guide and Vue 3 components",
   "license": "MIT",
   "type": "module",
-  "main": "./dist/harmattan.umd.cjs",
-  "module": "./dist/harmattan.js",
+  "main": "./dist/etesian.umd.cjs",
+  "module": "./dist/etesian.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/harmattan.js",
-      "require": "./dist/harmattan.umd.cjs"
+      "import": "./dist/etesian.js",
+      "require": "./dist/etesian.umd.cjs"
     },
-    "./style.css": "./dist/harmattan.css",
+    "./style.css": "./dist/etesian.css",
     "./tokens.css": "./src/styles/tokens.css",
     "./quasar": {
       "import": "./dist/quasar.js",
       "types": "./dist/quasar/index.d.ts"
     },
-    "./quasar/theme.css": "./src/quasar/harmattan-quasar.css",
+    "./quasar/theme.css": "./src/quasar/etesian-quasar.css",
     "./quasar/variables.scss": "./src/quasar/quasar-variables.scss"
   },
   "files": [
@@ -28,11 +28,12 @@
     "src/quasar"
   ],
   "scripts": {
-    "tokens": "node scripts/build-tokens.mjs && node scripts/build-font-css.mjs",
+    "tokens": "node scripts/build-tokens.ts && node scripts/build-font-css.ts",
     "storybook": "npm run tokens && storybook dev -p 6006",
     "build-storybook": "npm run tokens && storybook build",
     "build": "npm run tokens && vite build && vite build -c vite.quasar.config.ts && vue-tsc -p tsconfig.build.json --emitDeclarationOnly",
-    "test": "npm run tokens && vitest run"
+    "check": "vue-tsc -p tsconfig.json --noEmit",
+    "test": "npm run tokens && npm run check && vitest run"
   },
   "peerDependencies": {
     "quasar": "^2.14.0",
@@ -54,6 +55,7 @@
     "@storybook/addon-a11y": "^10.6.3",
     "@storybook/addon-docs": "^10.6.3",
     "@storybook/vue3-vite": "^10.6.3",
+    "@types/node": "^24.19.2",
     "@vitejs/plugin-vue": "^6.0.10",
     "@vue/test-utils": "^2.5.1",
     "jsdom": "^30.1.3",

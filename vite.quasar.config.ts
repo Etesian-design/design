@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import { resolve } from 'node:path';
-// Second library entry: harmattan-design/quasar (ES module; vue + quasar external).
+// Second library entry: etesian-design/quasar (ES module; vue + quasar external).
 export default defineConfig({
   plugins: [vue()],
   build: {

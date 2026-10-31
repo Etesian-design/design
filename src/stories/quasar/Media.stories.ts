@@ -3,7 +3,7 @@ import { qs, both } from './q';
 const meta: Meta = { title: 'Quasar/Components/Media & feedback', ...both };
 export default meta;
 const g = (a: string, b: string) => `data:image/svg+xml,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 9"><defs><linearGradient id="g" x2="1" y2="1"><stop offset="0" stop-color="${a}"/><stop offset="1" stop-color="${b}"/></linearGradient></defs><rect width="16" height="9" fill="url(#g)"/></svg>`)}`;
-export const Img = qs(`<q-img :src="src" :ratio="16/9" style="max-width:320px"><div class="absolute-bottom">Harmattan dunes</div></q-img>`, () => ({ src: g('#f6d365', '#fda085') }), { name: 'QImg' });
+export const Img = qs(`<q-img :src="src" :ratio="16/9" style="max-width:320px"><div class="absolute-bottom">Etesian dunes</div></q-img>`, () => ({ src: g('#f6d365', '#fda085') }), { name: 'QImg' });
 export const Carousel = qs(`<q-carousel :model-value="1" animated navigation arrows height="180px" style="max-width:360px"><q-carousel-slide :name="1" :img-src="a" /><q-carousel-slide :name="2" :img-src="b" /><template #control><q-carousel-control position="bottom-right" :offset="[12,12]"><q-btn round color="primary" :icon="ic('play')" aria-label="Play" /></q-carousel-control></template></q-carousel>`, () => ({ a: g('#43e97b', '#38f9d7'), b: g('#4591FF', '#821DDE') }), { name: 'QCarousel / QCarouselSlide / QCarouselControl' });
 export const Video = qs(`<q-video src="about:blank" :ratio="16/9" style="max-width:320px" />`, undefined, { name: 'QVideo' });
 export const Parallax = qs(`<q-parallax :src="src" :height="160"><h3 class="text-white">Parallax</h3></q-parallax>`, () => ({ src: g('#0067BC', '#09A7CC') }), { name: 'QParallax' });

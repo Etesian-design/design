@@ -9,7 +9,7 @@ import { shellProps, type XAppProps } from '../parts/types';
 const props = withDefaults(defineProps<XAppProps>(), { hints: true });
 </script>
 <template>
-  <XAppShell title="Harmattan journal" v-bind="shellProps(props)" :actions="[{ icon: 'refresh', label: 'Reload', keys: 'Ctrl+R' }, { icon: 'star', label: 'Bookmark', keys: 'Ctrl+D' }]">
+  <XAppShell title="Etesian journal" v-bind="shellProps(props)" :actions="[{ icon: 'refresh', label: 'Reload', keys: 'Ctrl+R' }, { icon: 'star', label: 'Bookmark', keys: 'Ctrl+D' }]">
     <div class="x-web" style="--hd-accent: #2EA8C7">
       <div class="x-web__bar"><HdTextField model-value="journal.example/tablet-swipe" aria-label="Address" icon="globe" /></div>
       <article class="x-web__page">

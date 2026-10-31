@@ -1,7 +1,7 @@
-# Harmattan Design Language
+# Etesian Design Language
 
-The Harmattan Design Language (HDL) documents the visual and interaction language of the Nokia N9
-(MeeGo 1.2 "Harmattan", 2011) and extends it to **operating-system UIs** and **websites**, with a
+The Etesian Design Language (HDL) documents the visual and interaction language of the Nokia N9
+(MeeGo 1.2 "Etesian", 2011) and extends it to **operating-system UIs** and **websites**, with a
 ready-to-use Vue 3 component library.
 
 The N9 was designed for one 854 x 480 portrait/landscape touch screen with no hardware buttons
@@ -64,8 +64,8 @@ npm test                 # vitest smoke tests
 ```
 
 ```ts
-import { HdTheme, HdButton } from 'harmattan-design';
-import 'harmattan-design/style.css';
+import { HdTheme, HdButton } from 'etesian-design';
+import 'etesian-design/style.css';
 ```
 
 ```vue

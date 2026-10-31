@@ -1,5 +1,5 @@
 /**
- * Original line icons drawn for the Harmattan Design Language (MIT, same as this repo).
+ * Original line icons drawn for the Etesian Design Language (MIT, same as this repo).
  * NOT Nokia icons. 24x24 grid, 2px stroke, round caps: an approximation of the
  * calm, thin, monochrome N9 toolbar style. Paths are stroke-only unless noted.
  */
@@ -7,6 +7,7 @@ export const icons: Record<string, string> = {
   back: 'M15 5l-7 7 7 7',
   'chevron-right': 'M9 5l7 7-7 7',
   'chevron-down': 'M5 9l7 7 7-7',
+  'chevron-up': 'M5 15l7-7 7 7',
   menu: 'M6 10l6 6 6-6',
   more: 'M5 12h.01M12 12h.01M19 12h.01',
   add: 'M12 5v14M5 12h14',
@@ -18,6 +19,34 @@ export const icons: Record<string, string> = {
   share: 'M12 4v11M7 9l5-5 5 5M5 14v6h14v-6',
   refresh: 'M19 12a7 7 0 1 1-2-4.9M19 4v4h-4',
   settings: 'M12 9a3 3 0 1 1 0 6 3 3 0 0 1 0-6zM12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1',
+  flight: 'M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5z',
+  moon: 'M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z',
+  location: 'M12 21s-6-5.7-6-11a6 6 0 0 1 12 0c0 5.3-6 11-6 11zM12 8a2 2 0 1 1 0 4 2 2 0 0 1 0-4z',
+  record: 'M12 5a7 7 0 1 1 0 14 7 7 0 0 1 0-14zM12 9a3 3 0 1 1 0 6 3 3 0 0 1 0-6z',
+  hotspot: 'M12 12v9M8.5 15.5a5 5 0 1 1 7 0M5.6 18.4a9 9 0 1 1 12.8 0',
+  cast: 'M3 8V5h18v14h-7M3 12a7 7 0 0 1 7 7M3 16a3 3 0 0 1 3 3',
+  mic: 'M12 3a3 3 0 0 1 3 3v6a3 3 0 0 1-6 0V6a3 3 0 0 1 3-3zM6 11a6 6 0 0 0 12 0M12 17v4',
+  camera: 'M4 7h4l2-2h4l2 2h4v12H4zM12 10a3 3 0 1 1 0 6 3 3 0 0 1 0-6z',
+  qr: 'M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h2v2h-2zM18 18h2v2h-2zM14 18h2M18 14h2',
+  accessibility: 'M12 3a2 2 0 1 1 0 4 2 2 0 0 1 0-4zM5 9l7 1 7-1M12 10v5l-3 6M12 15l3 6',
+  speaker: 'M4 9h4l5-4v14l-5-4H4zM16 9a4 4 0 0 1 0 6M18.5 6.5a8 8 0 0 1 0 11',
+  headset: 'M4 15v-3a8 8 0 0 1 16 0v3M4 15h3v5H4zM17 15h3v5h-3z',
+  power: 'M12 3v8M7 6.3a7 7 0 1 0 10 0',
+  torch: 'M8 3h8v4l-2 3v11h-4V10L8 7zM8 7h8M12 13v2',
+  data: 'M8 20V5M4.5 8.5 8 5l3.5 3.5M16 4v15M12.5 15.5 16 19l3.5-3.5',
+  restart: 'M4 12a8 8 0 1 0 2.3-5.7M4 4v4h4',
+  folder: 'M3 6h6l2 2h10v11H3z',
+  save: 'M5 4h11l3 3v13H5zM8 4v5h7V4M8 20v-6h8v6',
+  undo: 'M9 14L4 9l5-5M4 9h10a6 6 0 0 1 0 12h-3',
+  redo: 'M15 14l5-5-5-5M20 9H10a6 6 0 0 0 0 12h3',
+  wrench: 'M14.5 4.5a4.5 4.5 0 0 0-4.2 6.1L4 16.9V20h3.1l6.3-6.3a4.5 4.5 0 0 0 6.1-4.2l-2.7 2.7-2.6-.6-.6-2.6z',
+  attach: 'M16.5 6.5 8.6 14.4a2 2 0 0 0 2.8 2.8l8-8a4 4 0 0 0-5.6-5.6l-8 8a6 6 0 0 0 8.5 8.5l7-7',
+  smile: 'M12 3a9 9 0 1 1 0 18 9 9 0 0 1 0-18zM8.5 14.5a4.5 4.5 0 0 0 7 0M9 9.5v1M15 9.5v1',
+  bag: 'M5 8h14l-1 12H6zM9 8V6a3 3 0 0 1 6 0v2',
+  list: 'M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01',
+  backspace: 'M9 5h11v14H9l-6-7zM12 9l5 6M17 9l-5 6',
+  shift: 'M12 4l8 8h-4v7H8v-7H4z',
+  enter: 'M20 5v7H6M10 8l-4 4 4 4',
   phone: 'M6 3h3l2 5-2.5 1.5a11 11 0 0 0 6 6L16 13l5 2v3a3 3 0 0 1-3 3A15 15 0 0 1 3 6a3 3 0 0 1 3-3z',
   message: 'M4 5h16v11H9l-5 4V5z',
   mail: 'M3 6h18v12H3zM3 6l9 7 9-7',
@@ -41,5 +70,6 @@ export const icons: Record<string, string> = {
   minimize: 'M5 18h14',
   window: 'M4 5h16v14H4zM4 9h16',
   grid: 'M5 5h5v5H5zM14 5h5v5h-5zM5 14h5v5H5zM14 14h5v5h-5z',
+  drag: 'M5 9h14M5 15h14',
 };
 export type IconName = keyof typeof icons;

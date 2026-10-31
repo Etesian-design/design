@@ -1,30 +1,39 @@
+import { BACK_ARROW_PATH } from '../../components/backArrow';
 import type { Meta } from '@storybook/vue3-vite';
 import { ref, computed } from 'vue';
 import { qs } from './q';
 import HdTimePicker from '../../components/HdTimePicker.vue';
+import HdFastScroll from '../../components/HdFastScroll.vue';
 const meta: Meta = {
   title: 'Quasar/Examples',
   parameters: {
     layout: 'fullscreen',
-    docs: { description: { component: 'Complete apps built from Quasar components with the Harmattan theme, following docs/20-phone.md: plain page headers with the title in large LIGHT type over a thin divider, pull-down search, the light HdToolBar look for QFooter (dark only where the N9 app is dark: Music, Gallery photo view), lit squircle Back, titles bold and body regular. Every example works in Hybrid, Dark and Light; see Examples/All colour modes.' } },
+    docs: { description: { component: 'Complete apps built from Quasar components with the Etesian theme, following docs/20-phone.md: plain page headers with the title in large LIGHT type over a thin divider, pull-down search, the light HdToolBar look for QFooter (dark only where the N9 app is dark: Music, Gallery photo view), lit squircle Back, titles bold and body regular. Every example works in Hybrid, Dark and Light; see Examples/All colour modes.' } },
   },
 };
 export default meta;
 
 /* ---- shared pieces ---- */
-const phone = (inner: string, opts = '') => `<q-layout view="hHh lpR fFf" container class="hd-q-app" style="height:680px;width:360px;flex:none${opts}">${inner}</q-layout>`;
-const head = (title: string, extra = '') => `<q-header class="hd-plain"><div class="hd-q-head">${title}${extra}</div></q-header>`;
+// phone frame: rounded display corners (--hd-q-screen-radius)
+const phone = (inner: string, opts = '') => `<q-layout view="hHh lpR fFf" container class="hd-q-app" style="height:680px;width:360px;flex:none;border-radius:var(--hd-q-screen-radius) var(--hd-q-screen-radius) 0 0;overflow:hidden${opts}">${inner}</q-layout>`;
+/** half resolution (240 × 427 N9 px → 240 × 453 here): same layout, thumbnail-sized photo */
+const phoneSmall = (inner: string) => `<q-layout view="hHh lpR fFf" container class="hd-q-app hd-q-small" style="height:453px;width:240px;flex:none;border-radius:var(--hd-q-screen-radius) var(--hd-q-screen-radius) 0 0;overflow:hidden">${inner}</q-layout>`;
+// main page: the app's brand colour (set per app, not taken from the icon); sub pages: plain
+const head = (title: string, extra = '', brand?: string) => brand
+  ? `<q-header class="hd-q-brand" style="background:${brand} !important;color:#fff;--hd-c-fg-secondary:rgba(255,255,255,.85)"><div class="hd-q-head">${title}${extra}</div></q-header>`
+  : `<q-header class="hd-plain"><div class="hd-q-head">${title}${extra}</div></q-header>`;
 const pull = `<div class="hd-q-pull"><q-icon :name="ic('arrow-down')" size="16px" />Pull down to search</div>`;
-const back = `<q-btn flat class="hd-sq hd-q-back" :icon="ic('arrow-left')" aria-label="Back" />`;
+const back = `<q-btn flat class="hd-sq hd-q-back" aria-label="Back"><svg width="33" height="33" viewBox="0 0 24 24" aria-hidden="true"><path d="${BACK_ARROW_PATH}" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" /></svg></q-btn>`;
 const row = (...panels: string[]) => `<div style="display:flex;flex-wrap:wrap;gap:16px;align-items:flex-start">${panels.join('')}</div>`;
 const tool = (icon: string, label: string) => `<q-btn flat round :icon="ic('${icon}')" aria-label="${label}" />`;
 const more = `<q-btn flat round :icon="ic('more')" aria-label="App menu" />`;
-const footer = (tools: string, opts: { dark?: boolean; menu?: boolean; back?: boolean } = {}) =>
-  `<q-footer${opts.dark ? ' class="hd-dark"' : ''}><q-toolbar>${opts.back === false ? '<div style="width:52px"></div>' : back}<q-space /><div class="row no-wrap" style="gap:24px">${tools}</div><q-space /><div style="width:52px;display:flex;justify-content:flex-end">${opts.menu ? more : ''}</div></q-toolbar></q-footer>`;
+/** bottom bar: several buttons → first / last centres 44 n9px from the edges, the rest evenly spaced; a single one goes left (Back, +) or right (≡) per `align` */
+const footer = (tools: string, opts: { dark?: boolean; menu?: boolean; back?: boolean; align?: 'start' | 'end' } = {}) =>
+  `<q-footer${opts.dark ? ' class="hd-dark"' : ''}><q-toolbar${(opts.align ?? (!tools && !opts.menu ? 'start' : !tools && opts.back === false ? 'end' : '')) ? ` class="hd-q-bar--${opts.align ?? (!opts.menu ? 'start' : 'end')}"` : ''}>${opts.back === false ? '' : back}${tools}${opts.menu ? more : ''}</q-toolbar></q-footer>`; // equal slots across the bar
 const art = (a: string, b: string) => `background:linear-gradient(135deg,${a},${b})`;
 const CSS = `<component is="style">
-.hd-q-app .hd-q-rail { position:absolute; right:2px; top:8px; bottom:8px; display:flex; flex-direction:column; justify-content:space-between; font:700 10px/1 var(--hd-font-family-base); color:var(--hd-c-fg-secondary); z-index:2; }
-.hd-q-app .hd-q-letter { position:sticky; top:0; z-index:1; padding:6px 16px 4px; background:var(--hd-c-bg); font:700 .8125rem/1 var(--hd-font-family-base); color:var(--hd-c-fg-secondary); display:flex; align-items:center; gap:10px; }
+.hd-q-story { --hd-q-screen-radius: 7px; } /* N9: 10 n9px, top corners of the app window only; the toolbar edge is square */
+.hd-q-app .hd-q-letter { position:sticky; top:0; z-index:1; padding:6px 16px 4px; flex-direction:row-reverse; background:var(--hd-c-bg); font:700 .8125rem/1 var(--hd-font-family-base); color:var(--hd-c-fg-secondary); display:flex; align-items:center; gap:10px; }
 .hd-q-app .hd-q-letter::after { content:''; flex:1; height:1px; background:var(--hd-c-divider); }
 .hd-q-app .hd-q-sqart { -webkit-mask:var(--hd-squircle-mask) center/100% 100% no-repeat; mask:var(--hd-squircle-mask) center/100% 100% no-repeat; flex:none; }
 .hd-q-app .hd-q-big { font:300 2.25rem/1.1 var(--hd-font-family-light); }
@@ -59,7 +68,7 @@ const mails = [
   { from: 'Sara Koski', subject: 'Photos', snippet: 'Here are the photos from Saturday', time: 'Mon', unread: false, c: 'purple' },
   { from: 'Jussi Heikkinen', subject: 'Bluetooth keyboard', snippet: 'Did the pairing work in the end?', time: 'Sun', unread: false, c: 'teal' },
 ];
-export const EmailApp = qs(CSS + phone(`${head('Inbox', ' <q-badge color="primary" :label="2" aria-label="2 unread" />')}
+export const EmailApp = qs(CSS + phone(`${head('Inbox', ' <q-badge color="white" text-color="primary" :label="2" aria-label="2 unread" />', '#0067BC')}
   ${footer(tool('refresh', 'Refresh') + tool('edit', 'Compose'), { menu: true })}
   <q-page-container><q-page>${pull}
     <q-list separator>
@@ -72,21 +81,40 @@ export const EmailApp = qs(CSS + phone(`${head('Inbox', ' <q-badge color="primar
   </q-page></q-page-container>`, ';margin:0 auto'), () => ({ mails, initials }), { name: 'Email app' });
 
 /* ---- Contacts ---- */
-const people = ['Aino Mäkinen', 'Anna Virtanen', 'Antti Salo', 'Elina Koivisto', 'Heikki Lahti', 'Jussi Heikkinen', 'Kaisa Rinne', 'Liisa Niemi', 'Mikko Laine', 'Sara Koski', 'Timo Nurmi'];
-const colours = ['primary', 'positive', 'orange', 'purple', 'teal', 'red', 'indigo'];
+/** N9 Contacts main page (n9-contacts-fastscroll*.png): brand header, rounded search, dark squircle avatars with white
+ * bold initials (a photo sits in the same squircle), each section opens with a thin rule up to the fast-scroll band;
+ * light toolbar with + left and ≡ right, no Back. */
+const ROW = 64, SEC = 28;
+const contactsList = (fs: string, shift = 'at') => phone(`${head('Contacts', '', '#0A7FD6')}
+  <q-footer><q-toolbar>${tool('add', 'New contact')}${tool('lines', 'Menu')}</q-toolbar></q-footer>
+  <q-page-container><q-page>
+    <div class="hd-q-csearch"><q-input rounded outlined dense placeholder="Search" aria-label="Search contacts"><template #append><q-icon :name="ic('search')" /></template></q-input></div>
+    <div class="hd-q-clist">${fs}<div class="hd-q-cinner" :style="{ transform: 'translateY(' + -(${shift}) + 'px)' }">
+      <template v-for="g in groups" :key="g[0]"><div class="hd-q-crule" aria-hidden="true"></div>
+        <div v-for="(p, i) in g[1]" :key="p" class="hd-q-crow" role="button" tabindex="0">
+          <span class="hd-q-sqart hd-q-cav" :style="i === 1 && g[0] === 'K' ? 'background:linear-gradient(135deg,#d9a06b,#5b3a24)' : ''" :aria-label="i === 1 && g[0] === 'K' ? 'Photo of ' + p : undefined" :role="i === 1 && g[0] === 'K' ? 'img' : undefined">{{ i === 1 && g[0] === 'K' ? '' : initials(p) }}</span>
+          <b>{{ p }}</b></div></template>
+    </div></div>
+  </q-page></q-page-container>
+  <component is="style">
+    .hd-q-csearch { padding: 12px 10px; border-bottom: 1px solid var(--hd-c-divider); }
+    .hd-q-clist { position: relative; height: 545px; overflow: hidden; } .hd-q-cinner { transition: transform .12s; }
+    .hd-q-crule { height: ${SEC}px; margin-right: 47px; display: flex; align-items: center; } .hd-q-crule::after { content: ''; flex: 1; height: 1px; margin-left: 10px; background: rgba(0,0,0,.14); }
+    .hd-q-crow { height: ${ROW}px; display: flex; align-items: center; gap: 12px; padding: 0 10px; margin-right: 47px; font: 700 1.0625rem/1 var(--hd-font-family-base); }
+    .hd-q-cav { width: 43px; height: 43px; display: grid; place-items: center; background: linear-gradient(#3a3a3a, #0a0a0a); color: #fff; font: 700 1.125rem/1 var(--hd-font-family-base); }
+  </component>`);
+const cPeople = ['Aino Mäkinen', 'Anna Virtanen', 'Antti Salo', 'Elina Koivisto', 'Heikki Lahti', 'Jussi Heikkinen', 'Kaisa Rinne', 'Kalle Mäki', 'Katja Lind', 'Kimmo Aalto', 'Liisa Niemi', 'Lotta Saari', 'Mikko Laine', 'Sara Koski', 'Timo Nurmi'];
+const cGroups = Object.entries(cPeople.reduce<Record<string, string[]>>((a, p) => ((a[p[0]] ??= []).push(p), a), {}));
+let cTop = 0;
+const cSecs = cGroups.map(([letter, ps]) => { const top = cTop + SEC / 2; cTop += SEC + ps.length * ROW; return { letter, top }; });
 export const ContactsApp = qs(CSS + row(
-  phone(`${head('Contacts', ' <small>{{ people.length }}</small>')}
-  ${footer(tool('add', 'New contact') + tool('search', 'Search'), { back: false, menu: true })}
-  <q-page-container><q-page style="position:relative">${pull}
-    <nav class="hd-q-rail" aria-label="Fast scroll"><span v-for="l in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'" :key="l">{{ l }}</span></nav>
-    <template v-for="g in groups" :key="g[0]"><div class="hd-q-letter">{{ g[0] }}</div>
-      <q-list><q-item v-for="(p, i) in g[1]" :key="p" clickable><q-item-section avatar><q-avatar :color="colours[(p.length + i) % colours.length]" text-color="white">{{ initials(p) }}</q-avatar></q-item-section><q-item-section><q-item-label class="hd-q-t">{{ p }}</q-item-label></q-item-section></q-item></q-list></template>
-  </q-page></q-page-container>`),
+  contactsList('<HdFastScroll :position="0.3" :sections="secs" label="Fast scroll (drag: snaps section by section)" @jump="(i) => (at = secs[i].top - 14)" />'),
+  contactsList('<HdFastScroll :position="0.16" active letter="K" :sections="secs.map((x) => ({ ...x, top: x.top - kTop }))" label="Fast scroll (finger on the bar)" />', 'kTop'),
   phone(`${footer(tool('edit', 'Edit') + tool('star', 'Favourite') + tool('share', 'Share'), { menu: true })}
   <q-page-container><q-page class="q-pa-md">
     <div class="column items-center q-pt-md" style="gap:12px">
       <div class="hd-q-sqart" style="width:148px;height:148px;${art('#7fb0d8', '#2a5b8a')};display:grid;place-items:center;color:#fff;font:300 56px/1 var(--hd-font-family-light)" role="img" aria-label="Photo of Anna Virtanen">AV</div>
-      <div class="hd-q-big">Anna Virtanen</div><div class="hd-q-sub">Designer, Harmattan Oy</div>
+      <div class="hd-q-big">Anna Virtanen</div><div class="hd-q-sub">Designer, Etesian Oy</div>
       <div class="row" style="gap:12px"><q-btn unelevated color="positive" :icon="ic('phone')" label="Call" /><q-btn unelevated :icon="ic('message')" label="Message" /></div>
     </div>
     <q-list class="q-mt-md">
@@ -95,8 +123,35 @@ export const ContactsApp = qs(CSS + row(
       <q-item-label header>Email</q-item-label>
       <q-item clickable><q-item-section><q-item-label class="hd-q-t">anna@example.com</q-item-label><q-item-label caption>Work</q-item-label></q-item-section></q-item>
     </q-list>
-  </q-page></q-page-container>`)),
-() => ({ people, colours, initials, groups: Object.entries(people.reduce<Record<string, string[]>>((a, p) => ((a[p[0]] ??= []).push(p), a), {})) }), { name: 'Contacts app' });
+  </q-page></q-page-container>`)), () => ({ initials, groups: cGroups, secs: cSecs, at: ref(0), kTop: cSecs.find((x) => x.letter === 'K')!.top - SEC / 2 }), { name: 'Contacts app (fast scroll idle / finger on the bar, detail)' }, { HdFastScroll });
+export const ContactsCompact = qs(CSS + row(
+  phone(`${footer(tool('edit', 'Edit') + tool('star', 'Favourite') + tool('share', 'Share'), { menu: true })}
+  <q-page-container><q-page class="q-pa-md">
+    <div class="column items-center q-pt-md" style="gap:12px">
+      <div class="hd-q-sqart" style="width:148px;height:148px;${art('#7fb0d8', '#2a5b8a')};display:grid;place-items:center;color:#fff;font:300 56px/1 var(--hd-font-family-light)" role="img" aria-label="Photo of Anna Virtanen">AV</div>
+      <div class="hd-q-big">Anna Virtanen</div><div class="hd-q-sub">Designer, Etesian Oy</div>
+      <div class="row" style="gap:12px"><q-btn unelevated color="positive" :icon="ic('phone')" label="Call" /><q-btn unelevated :icon="ic('message')" label="Message" /></div>
+    </div>
+    <q-list class="q-mt-md">
+      <q-item-label header>Phone</q-item-label>
+      <q-item clickable><q-item-section><q-item-label class="hd-q-t">+358 40 123 4567</q-item-label><q-item-label caption>Mobile</q-item-label></q-item-section><q-item-section side><q-icon :name="ic('message')" /></q-item-section></q-item>
+      <q-item-label header>Email</q-item-label>
+      <q-item clickable><q-item-section><q-item-label class="hd-q-t">anna@example.com</q-item-label><q-item-label caption>Work</q-item-label></q-item-section></q-item>
+    </q-list>
+  </q-page></q-page-container>`),
+  phoneSmall(`${footer(tool('edit', 'Edit') + tool('share', 'Share'), { menu: true })}
+  <q-page-container><q-page class="q-pa-sm">
+    <div class="row items-center no-wrap q-pa-sm" style="gap:10px">
+      <div class="hd-q-sqart" style="width:43px;height:43px;${art('#7fb0d8', '#2a5b8a')};display:grid;place-items:center;color:#fff;font:300 18px/1 var(--hd-font-family-light)" role="img" aria-label="Photo of Anna Virtanen">AV</div>
+      <div style="min-width:0"><div class="hd-q-t ellipsis">Anna Virtanen</div><div class="hd-q-sub ellipsis">Designer, Etesian Oy</div></div></div>
+    <div class="row no-wrap q-px-sm" style="gap:8px"><q-btn unelevated dense color="positive" :icon="ic('phone')" label="Call" style="flex:1" /><q-btn unelevated dense no-wrap :icon="ic('message')" label="Text" style="flex:1" /></div>
+    <q-list dense class="q-mt-sm">
+      <q-item-label header>Phone</q-item-label>
+      <q-item clickable><q-item-section><q-item-label class="hd-q-t">+358 40 123 4567</q-item-label><q-item-label caption>Mobile</q-item-label></q-item-section></q-item>
+      <q-item-label header>Email</q-item-label>
+      <q-item clickable><q-item-section><q-item-label class="hd-q-t ellipsis">anna@example.com</q-item-label><q-item-label caption>Work</q-item-label></q-item-section></q-item>
+    </q-list>
+  </q-page></q-page-container>`)), () => ({}), { name: 'Contacts detail: full vs. half resolution (compact)' });
 
 /* ---- Messaging ---- */
 const threads = [
@@ -106,7 +161,7 @@ const threads = [
   { who: 'Liisa Niemi', last: 'Thanks!', time: 'Mon', n: 0, c: 'orange' },
 ];
 export const MessagingApp = qs(CSS + row(
-  phone(`${head('Messages')}
+  phone(`${head('Messages', '', '#09A7CC')}
   ${footer(tool('edit', 'New message') + tool('search', 'Search'), { back: false, menu: true })}
   <q-page-container><q-page>${pull}<q-list separator>
     <q-item v-for="t in threads" :key="t.who" clickable :class="{ 'hd-q-unread': t.n }"><q-item-section avatar><q-avatar :color="t.c" text-color="white">{{ initials(t.who) }}</q-avatar></q-item-section>
@@ -114,7 +169,7 @@ export const MessagingApp = qs(CSS + row(
       <q-item-section side top><q-item-label caption>{{ t.time }}</q-item-label></q-item-section></q-item>
   </q-list></q-page></q-page-container>`),
   phone(`${head('Anna Virtanen')}
-  <q-footer><q-toolbar style="gap:8px;padding:8px">${back.replace('hd-q-back', 'hd-q-back hd-q-back--page')}<q-input v-model="draft" dense outlined class="col" placeholder="Write a message" aria-label="Message" /><q-btn unelevated color="primary" :icon="ic('message')" aria-label="Send" /></q-toolbar></q-footer>
+  <q-footer><q-toolbar class="hd-q-free" style="gap:8px;padding:8px">${back.replace('hd-q-back', 'hd-q-back hd-q-back--page')}<q-input v-model="draft" dense outlined class="col" placeholder="Write a message" aria-label="Message" /><q-btn unelevated color="primary" :icon="ic('message')" aria-label="Send" /></q-toolbar></q-footer>
   <q-page-container><q-page class="q-pa-md">
     <q-chat-message name="Anna" :text="['Are we still on for lunch?']" stamp="12:02" />
     <q-chat-message name="me" :text="['Yes! 12:30 at the usual place?']" stamp="12:05" sent />
@@ -124,22 +179,54 @@ export const MessagingApp = qs(CSS + row(
   </q-page></q-page-container>`)),
 () => ({ threads, initials, draft: ref('') }), { name: 'Messaging app' });
 
-/* ---- Music (dark, like the N9 app) ---- */
-const songs = [['A Matterapat', 'Dr. Lonnie Smith', '6:46'], ['Call On Me', 'Colette', '6:16'], ['Colors', 'The Pass', '4:44'], ['Harmattan wind', 'The Swipes', '3:57'], ['Northern lights', 'The Swipes', '5:02'], ['Polar night', 'The Swipes', '3:18']];
-export const MusicApp = qs(CSS + row(
-  phone(`${footer(tool('star', 'Favourite') + tool('share', 'Share'), { dark: true, menu: true })}
-  <q-page-container><q-page class="q-pa-md column items-center" style="gap:14px">
-    <div class="hd-q-sqart q-mt-md" style="width:260px;height:260px;${art('#d38ab0', '#3b1d3e')}" role="img" aria-label="Album art: Harmattan wind"></div>
-    <div class="text-center"><div class="hd-q-t" style="font-size:1.25rem">Harmattan wind</div><div class="hd-q-sub">The Swipes · Polar night</div></div>
-    <div class="full-width"><q-slider v-model="pos" :min="0" :max="237" aria-label="Position" /><div class="row justify-between hd-q-sub"><span>{{ fmt(pos) }}</span><span>3:57</span></div></div>
-    <div class="row items-center" style="gap:16px"><q-btn unelevated round :icon="ic('first')" aria-label="Previous" /><q-btn unelevated round size="lg" color="primary" :icon="ic('play')" aria-label="Play" /><q-btn unelevated round :icon="ic('last')" aria-label="Next" /></div>
-  </q-page></q-page-container>`),
-  phone(`${head('Songs')}
-  ${footer('', { dark: true })}
-  <q-page-container><q-page style="position:relative">${pull}
-    <nav class="hd-q-rail" aria-label="Fast scroll"><span v-for="l in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'" :key="l">{{ l }}</span></nav>
-    <q-item clickable><q-item-section avatar><q-icon :name="ic('refresh')" /></q-item-section><q-item-section><q-item-label class="hd-q-t" style="font-size:1.125rem">Shuffle</q-item-label></q-item-section></q-item>
-    <q-list separator><q-item v-for="s in songs" :key="s[0]" clickable :active="s[0] === 'Harmattan wind'"><q-item-section><q-item-label class="hd-q-t">{{ s[0] }}</q-item-label><q-item-label caption>{{ s[1] }}</q-item-label></q-item-section><q-item-section side style="padding-right:12px"><q-item-label caption>{{ s[2] }}</q-item-label></q-item-section></q-item></q-list>
+/* ---- Music (dark, like the N9 app; n9-music-*.png) ----
+ * Album art is content: shown whole, square and edge to edge, never squircled (photos in Gallery too; contact photos
+ * in lists are squircles). An album without art gets the N9's generated cover: its name in heavy caps, then the name
+ * repeated without spaces in a dark shade of the same colour, every line justified, on black. One colour per album
+ * (unknown albums are always purple); the playing item in a list takes the magenta highlight. */
+const songs = [['A Matterapat', 'Dr. Lonnie Smith', '6:46'], ['Call On Me', 'Colette', '6:16'], ['Colors', 'The Pass', '4:44'], ['Etesian wind', 'The Swipes', '3:57'], ['Northern lights', 'The Swipes', '5:02'], ['Polar night', 'The Swipes', '3:18']];
+const MAGENTA = '#C4008F';
+/** The generated cover: [size] px square, [color] bright, the repeat at a third of its brightness. */
+const genArt = (name: string, color: string, size: number) => {
+  const fill = (name.replace(/\s+/g, '').toUpperCase() + ' ').repeat(12);
+  return `<div role="img" aria-label="Album art: ${name}" style="width:${size}px;height:${size}px;flex:none;overflow:hidden;background:#000;` +
+    `font:900 ${Math.round(size * 0.17)}px/0.98 var(--hd-font-family-base);text-transform:uppercase;text-align:justify;text-align-last:justify;` +
+    `word-break:break-all;padding:0 ${Math.round(size * 0.01)}px;color:color-mix(in srgb, ${color} 33%, #000)">` +
+    `<span style="color:${color};word-break:normal">${name.toUpperCase()}</span> ${fill}</div>`;
+};
+const photoArt = (a: string, b: string, size: number | string, label: string) =>
+  `<div role="img" aria-label="Album art: ${label}" style="width:${size};aspect-ratio:1;flex:none;${art(a, b)}"></div>`;
+/** Now Playing: the art, title + position, artist / album with the round "•••", bare transport glyphs, thin magenta bar. */
+const nowPlaying = (cover: string, title: string, artist: string, album: string, at: string, len: string, pct: number, pos: string) => `
+  <q-footer class="hd-dark hd-q-music-bar"><q-toolbar>${back}<q-btn flat round :icon="ic('star')" aria-label="Favourite" />
+    <q-btn flat round :icon="ic('shuffle')" aria-label="Shuffle" style="opacity:.35" /><q-btn flat round :icon="ic('repeat')" aria-label="Repeat" />
+    <q-btn flat round :icon="ic('lines')" aria-label="Menu" /></q-toolbar></q-footer>
+  <q-page-container><q-page class="column">
+    ${cover}
+    <div class="row items-baseline no-wrap q-px-md" style="margin-top:14px"><div class="hd-q-t ellipsis" style="flex:1;font-size:1.0625rem">${title}</div><div class="hd-q-sub" style="margin-left:12px">${pos}</div></div>
+    <div class="row items-center no-wrap q-px-md" style="margin-top:12px"><div style="flex:1;min-width:0"><div class="hd-q-sub ellipsis" style="font-size:1rem;line-height:1.6">${artist}</div><div class="hd-q-sub ellipsis" style="font-size:1rem;line-height:1.6">${album}</div></div>
+      <div aria-label="More about this song" role="button" style="width:26px;height:26px;border-radius:50%;background:#fff;color:#000;display:grid;place-items:center;font:900 14px/1 var(--hd-font-family-base);letter-spacing:1px">•••</div></div>
+    <div class="row justify-between items-center q-px-md" style="margin-top:16px"><q-btn flat dense round :icon="ic('first')" aria-label="Previous" /><q-btn flat dense round :icon="ic('pause')" aria-label="Pause" /><q-btn flat dense round :icon="ic('last')" aria-label="Next" /></div>
+    <div class="q-px-md" style="margin-top:22px"><div style="position:relative;height:5px;background:#3a3a3c;border-radius:3px"><div style="position:absolute;inset:0 ${100 - pct}% 0 0;background:${MAGENTA};border-radius:3px"></div><div style="position:absolute;top:0;left:calc(${pct}% - 2px);width:4px;height:5px;background:#fff"></div></div>
+      <div class="row justify-between hd-q-sub" style="margin-top:8px;font-size:.9375rem"><span>${at}</span><span>${len}</span></div></div>
+  </q-page></q-page-container>`;
+export const MusicApp = qs(CSS + `<component is="style">
+.hd-q-music-main .hd-q-menu { display:flex; align-items:center; justify-content:space-between; padding:0 16px; height:49px; font:700 1.0625rem/1 var(--hd-font-family-base); }
+</component>` + row(
+  phone(nowPlaying(photoArt('#d38ab0', '#3b1d3e', '100%', 'Polar night'), 'Etesian wind', 'The Swipes', 'Polar night', '1:24', '3:57', 35, '4/6')),
+  phone(nowPlaying(genArt('Unknown album', '#8E10C4', 360), 'Episode293', 'Unknown artist', 'Unknown album', '1:16', '24:58', 5, '4/20')),
+  phone(`<q-page-container><q-page class="hd-q-music-main">
+    <div style="display:grid;grid-template-columns:repeat(3,120px);grid-template-rows:repeat(3,120px)">
+      <div style="grid-column:1/3;grid-row:1/3;position:relative">${genArt('In Search Of Sunrise 5', '#FF5A00', 240)}
+        <div style="position:absolute;left:4px;right:4px;bottom:4px;height:17px;border-radius:9px;background:${MAGENTA};color:#fff;display:flex;align-items:center;gap:8px;padding:0 10px;font:700 .75rem/1 var(--hd-font-family-base)"><span>▶</span><span class="ellipsis">In Search Of Sunrise 5 (CD 1)</span></div></div>
+      ${genArt('Unknown album', '#8E10C4', 120)}
+      ${photoArt('#6d5a4a', '#2b211b', '120px', 'Podcast')}
+      ${photoArt('#a8c84a', '#3d6b1f', '120px', 'Every Direction Is North')}${photoArt('#e0a04a', '#5a2b10', '120px', 'Rocks')}${photoArt('#f6a5d0', '#9b2f6d', '120px', 'Call On Me')}
+    </div>
+    <div style="margin-top:10px">
+      <div v-for="m in ['Artists','Albums','Songs','Playlists']" :key="m" class="hd-q-menu" role="link"><span>{{ m }}</span><q-icon :name="ic('chevron-right')" size="22px" /></div>
+      <div class="hd-q-menu" role="link"><span>Music Store</span><q-icon :name="ic('store')" size="20px" /></div>
+    </div>
   </q-page></q-page-container>`)).replace(/class="hd-q-app"/g, 'class="hd-q-app hd-q-dark-app"'),
 () => ({ songs, pos: ref(84), fmt: (s: number) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}` }), { name: 'Music player' });
 
@@ -161,16 +248,16 @@ export const CalendarApp = qs(CSS + row(
     <q-toggle v-model="remind" label="Reminder 15 minutes before" />
     <q-btn unelevated color="primary" label="Save" />
   </q-page></q-page-container>`, ';height:920px')),
-() => ({ day: ref('2026/10/24'), events: [['Lunch with Anna', '12:30 – 13:30', '#09A7CC'], ['Design review', '14:00 – 15:00 · Room Harmattan', '#EF5500'], ['Gym', '18:00 – 19:00', '#62B700']], title: ref('Sauna evening'), where: ref('Lahti'), allDay: ref(false), start: ref('19:00'), remind: ref(true) }),
+() => ({ day: ref('2026/10/24'), events: [['Lunch with Anna', '12:30 – 13:30', '#09A7CC'], ['Design review', '14:00 – 15:00 · Room Etesian', '#EF5500'], ['Gym', '18:00 – 19:00', '#62B700']], title: ref('Sauna evening'), where: ref('Lahti'), allDay: ref(false), start: ref('19:00'), remind: ref(true) }),
 { name: 'Calendar app' }, { HdTimePicker });
 
 /* ---- Gallery ---- */
 const tints = [['#f6b26b', '#8e3b1f'], ['#6fa8dc', '#1c3d63'], ['#93c47d', '#2c4d1f'], ['#c27ba0', '#4c1830'], ['#ffd966', '#7f6000'], ['#76a5af', '#1b3a40'], ['#e06666', '#5a1414'], ['#8e7cc3', '#2c2050'], ['#b6d7a8', '#38512d'], ['#f9cb9c', '#7a4214'], ['#a4c2f4', '#203a6b'], ['#d5a6bd', '#5c2a42']];
 export const GalleryApp = qs(CSS + row(
-  phone(`${head('Gallery', ' <small>{{ tints.length }} photos</small>')}
+  phone(`${head('Gallery', ' <small>{{ tints.length }} photos</small>', '#821DDE')}
   ${footer(tool('photo', 'Albums') + tool('share', 'Share'), { back: false, menu: true })}
   <q-page-container><q-page class="q-pa-sm"><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px">
-    <div v-for="(t, i) in tints" :key="i" class="hd-q-sqart" role="img" :aria-label="'Photo ' + (i + 1)" style="aspect-ratio:1" :style="{ background: 'linear-gradient(135deg,' + t[0] + ',' + t[1] + ')' }"></div>
+    <div v-for="(t, i) in tints" :key="i" role="img" :aria-label="'Photo ' + (i + 1)" style="aspect-ratio:1" :style="{ background: 'linear-gradient(135deg,' + t[0] + ',' + t[1] + ')' }"></div>
   </div></q-page></q-page-container>`),
   phone(`${footer(tool('share', 'Share') + tool('edit', 'Edit') + tool('delete', 'Delete'), { dark: true, menu: true })}
   <q-page-container><q-page style="background:#000 !important;display:grid;place-items:center"><div role="img" aria-label="Photo 2, full screen" style="width:100%;aspect-ratio:4/3;${art('#6fa8dc', '#1c3d63')}"></div></q-page></q-page-container>`)),
@@ -179,7 +266,7 @@ export const GalleryApp = qs(CSS + row(
 /* ---- Store ---- */
 export const StoreApp = qs(CSS + phone(`${footer(tool('share', 'Share'), { menu: true })}
   <q-page-container><q-page class="q-pa-md column" style="gap:14px">
-    <div class="row no-wrap items-center" style="gap:16px"><q-avatar size="72px" color="orange" text-color="white" :icon="ic('globe')" /><div class="col"><div class="hd-q-big" style="font-size:1.75rem">Feeds</div><div class="hd-q-sub">Harmattan Labs · News</div>
+    <div class="row no-wrap items-center" style="gap:16px"><q-avatar size="72px" color="orange" text-color="white" :icon="ic('globe')" /><div class="col"><div class="hd-q-big" style="font-size:1.75rem">Feeds</div><div class="hd-q-sub">Etesian Labs · News</div>
       <div class="row items-center" style="gap:6px"><q-rating :model-value="4.5" readonly size="18px" color="primary" :icon="ic('star')" aria-label="Rated 4.5 of 5" /><span class="hd-q-sub">4.5 (1 284)</span></div></div></div>
     <q-btn unelevated color="primary" label="Install" class="full-width" />
     <q-carousel v-model="slide" animated swipeable navigation arrows height="280px" style="border-radius:8px">
@@ -211,7 +298,7 @@ export const ClockApp = qs(CSS + row(
 { name: 'Clock app' }, { HdTimePicker });
 
 /* ---- Feeds ---- */
-export const FeedsApp = qs(CSS + phone(`${head('Feeds', ' <small>updated {{ updated }}</small>')}
+export const FeedsApp = qs(CSS + phone(`${head('Feeds', ' <small>updated {{ updated }}</small>', '#FF8500')}
   ${footer(tool('refresh', 'Refresh') + tool('add', 'Add feed'), { back: false, menu: true })}
   <q-page-container><q-page><q-pull-to-refresh @refresh="refresh" :icon="ic('refresh')">
     <div class="hd-q-pull"><q-icon :name="ic('arrow-down')" size="16px" />Pull down to refresh</div>
@@ -220,7 +307,7 @@ export const FeedsApp = qs(CSS + phone(`${head('Feeds', ' <small>updated {{ upda
   </q-pull-to-refresh></q-page></q-page-container>`, ';margin:0 auto'),
 () => {
   const updated = ref('12:18');
-  return { updated, feeds: [['Brain Pickings', 'Ursula K. Le Guin on the meaning of life: we are the survivors of immense and minute events.', '12:18'], ['IEEE Spectrum', 'Why engineers should brave Capitol Hill', '11:51'], ['Design weekly', 'Why squircles feel softer than rounded rectangles', '10:53'], ['Hacker News', 'Show HN: a squircle calculator for the Harmattan design language', '09:30']],
+  return { updated, feeds: [['Brain Pickings', 'Ursula K. Le Guin on the meaning of life: we are the survivors of immense and minute events.', '12:18'], ['IEEE Spectrum', 'Why engineers should brave Capitol Hill', '11:51'], ['Design weekly', 'Why squircles feel softer than rounded rectangles', '10:53'], ['Hacker News', 'Show HN: a squircle calculator for the Etesian design language', '09:30']],
     refresh: (done: () => void) => setTimeout(() => { updated.value = 'now'; done(); }, 600) };
 }, { name: 'Feeds reader' });
 

@@ -12,7 +12,7 @@ withDefaults(defineProps<{ day: string; date: string; city?: string; temperature
       <span class="hd-events-header__city">{{ city }}</span>
       <span class="hd-events-header__now">
         <span class="hd-events-header__temp">{{ temperature }}</span>
-        <svg width="44" height="34" viewBox="0 0 44 34" aria-hidden="true">
+        <svg width="44" height="38" viewBox="0 0 44 38" aria-hidden="true">
           <circle v-if="weather !== 'cloud' && weather !== 'rain'" :cx="weather === 'sun' ? 22 : 27" :cy="weather === 'sun' ? 17 : 12" :r="weather === 'sun' ? 11 : 8" fill="#FFC21A" />
           <path v-if="weather !== 'sun'" d="M10 31h22a7 7 0 0 0 .6-14 9 9 0 0 0-17.2 2.6A5.7 5.7 0 0 0 10 31z" fill="#F2F2F2" stroke="rgba(0,0,0,.25)" stroke-width=".8" />
           <path v-if="weather === 'rain'" d="M15 33l-2 3m9-3l-2 3m9-3l-2 3" stroke="#6CB6FF" stroke-width="2" stroke-linecap="round" />
