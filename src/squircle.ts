@@ -25,5 +25,27 @@ export function squirclePath(size = 100, n = SQUIRCLE_EXPONENT, samples = 96, in
   return 'M' + pts.join('L') + 'Z';
 }
 
+/**
+ * Belle (Symbian, the N9's sibling) draws the icon squircle as four cubic curves, edge-midpoint to edge-midpoint, with handles
+ * BELLE_HANDLE × the half-size (decoded from the 701's own .nvg icons: 80 px icons, handles 29.63 px of 40). It is within 0.7%
+ * of n = 2.8 everywhere. Larger faces (the analog clock, the toggle caps, the torch) measure n ≈ 2.9–2.95, and are often not
+ * square (72 × 82): the squircle stretches to its box (squircleRectPath), it never becomes a rounded rectangle or a pill. The
+ * on/off switch track is a wide squircle (64 × 42, n ≈ 3.6).
+ */
+export const BELLE_HANDLE = 0.7408;
+/** Squircle exponent of Belle's larger faces (analog dial, toggle caps). */
+export const FACE_EXPONENT = 2.9;
+
+/** A squircle stretched to a w × h box at (x, y): |x/a|^n + |y/b|^n = 1. */
+export function squircleRectPath(w: number, h: number, n = SQUIRCLE_EXPONENT, x = 0, y = 0, samples = 96): string {
+  const pts: string[] = [];
+  for (let i = 0; i < samples; i++) {
+    const t = (i / samples) * Math.PI * 2;
+    const ct = Math.cos(t), st = Math.sin(t);
+    pts.push(`${(x + w / 2 + (w / 2) * Math.sign(ct) * Math.pow(Math.abs(ct), 2 / n)).toFixed(2)} ${(y + h / 2 + (h / 2) * Math.sign(st) * Math.pow(Math.abs(st), 2 / n)).toFixed(2)}`);
+  }
+  return 'M' + pts.join('L') + 'Z';
+}
+
 /** CSS mask-image value (data URI) clipping an element to the squircle. */
 export const SQUIRCLE_MASK = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='${SQUIRCLE_PATH_100}'/%3E%3C/svg%3E")`;

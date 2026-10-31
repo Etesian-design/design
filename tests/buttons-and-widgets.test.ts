@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { mount } from '@vue/test-utils';
 import { readFileSync } from 'node:fs';
 import HdButton from '../src/components/HdButton.vue';
@@ -719,4 +719,44 @@ it('gallery tiles follow approved rules: per-stream rows Media/Alarm/Call (no du
   expect(m.findAll('.p2-oa__f').length).toBe(2); // two fingers
   expect(m.find('.p2-oa__hint').text()).toContain('spread to cancel');
   expect(read('src/stories/explorations/phone2/PhoneV2.vue')).not.toMatch(/p2-card--drag \{[^}]*rotate/);
+});
+
+// Regression 2026-10-31: the Belle clocks were frozen at 10:08 and their faces, the switches and the data meter were rounded
+// rectangles. Measured from the 701's own art (.nvg): faces are squircles (stretched to their box), the dial is warm charcoal
+// with a #4791DC second hand, and the clocks keep time.
+describe('Belle clocks and switches (701 art)', () => {
+  const angle = (el: Element | undefined) => Number(/rotate\(([-\d.]+)/.exec(el?.getAttribute('transform') ?? '')?.[1]);
+  it('the hands show the given time', () => {
+    const w = mount(BelleWidget, { props: { kind: 'bigclock', at: '03:30:15' } });
+    expect(angle(w.find('.bd-hour').element)).toBeCloseTo(105.125, 2);
+    expect(angle(w.find('.bd-minute').element)).toBeCloseTo(181.5, 2);
+    expect(angle(w.find('.bd-second').element)).toBe(90);
+    expect(w.find('.bd-second').attributes('stroke')).toBe('#4791DC');
+  });
+  it('the clocks keep time', async () => {
+    vi.useFakeTimers(); vi.setSystemTime(new Date(2026, 9, 31, 9, 0, 0));
+    const w = mount(BelleWidget, { props: { kind: 'bigclock' } });
+    expect(angle(w.find('.bd-second').element)).toBe(0);
+    await vi.advanceTimersByTimeAsync(5000);
+    expect(angle(w.find('.bd-second').element)).toBe(30);
+    w.unmount(); vi.useRealTimers();
+  });
+  it('the digital and word clocks read the same time', () => {
+    expect(mount(BelleWidget, { props: { kind: 'flipclock', at: '07:05' } }).text()).toContain('07');
+    expect(mount(BelleWidget, { props: { kind: 'wordclock', at: '07:45' } }).text()).toContain('Forty-five');
+    expect(mount(BelleWidget, { props: { kind: 'wordclock', at: '12:00' } }).text()).toContain("O'clock");
+  });
+  it('the dial is the 701 squircle in warm charcoal', () => {
+    const dial = read('src/stories/belle/BelleDial.vue');
+    for (const c of ['#41413C', '#282823', '#50504B', '#4791DC']) expect(dial).toContain(c);
+    expect(dial).toContain('squircleRectPath(126, 126, FACE_EXPONENT)');
+  });
+  it('no switch, toggle, data meter or dial face is a rounded rectangle', () => {
+    const css = read('src/stories/belle/BelleWidget.vue');
+    for (const sel of ['.bw-sw', '.bw-tg__face', '.bw-power', '.bw-sqdial', '.bw-data']) {
+      const rule = new RegExp(`\\${sel} \\{[^}]*\\}`).exec(css)?.[0] ?? '';
+      expect(rule, sel).not.toMatch(/border-radius/);
+    }
+    expect(mount(BelleWidget, { props: { kind: 'switch', on: true, glyph: 'wifi' } }).find('.bcap.on path').exists()).toBe(true);
+  });
 });
