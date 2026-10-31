@@ -11,7 +11,9 @@ import HdSquircle from '../../components/HdSquircle.vue';
 export type BelleKind = 'switch' | 'wifi' | 'fm' | 'toggles' | 'data' | 'notes' | 'today' | 'agenda' | 'bigclock' | 'gearclock' | 'analog'
   | 'flipclock' | 'lcdclock' | 'wordclock' | 'web' | 'contact' | 'weather' | 'rss' | 'mail' | 'stackmail' | 'music' | 'music-large' | 'm-clock' | 'm-analog' | 'm-calendar'
   | 'm-feeds' | 'm-music' | 'm-weather' | 'm-shortcuts';
-const props = withDefaults(defineProps<{ kind: BelleKind; cols?: number; rows?: number; on?: boolean; glyph?: string; word?: string; editing?: boolean; cell?: number; art?: string; title?: string; out?: string }>(), { cell: 90 });
+const props = withDefaults(defineProps<{ kind: BelleKind; cols?: number; rows?: number; on?: boolean; glyph?: string; word?: string; editing?: boolean; cell?: number; art?: string; title?: string; out?: string; place?: string }>(), { cell: 90, place: 'Tampere' });
+/** place: tapping the place on a weather widget opens the place picker (BellePlacePicker) */
+const emit = defineEmits<{ place: [] }>();
 /* default grid size per widget (targetCellWidth / Height in the appwidget-provider xml) */
 const SIZE: Record<BelleKind, [number, number]> = {
   switch: [1, 1], wifi: [2, 1], fm: [2, 1], toggles: [4, 1], data: [1, 1], notes: [4, 2], today: [4, 1], agenda: [4, 3], bigclock: [4, 3],
@@ -120,7 +122,7 @@ const hourDeg = (now.h % 12) * 30 + now.m / 2, minDeg = now.m * 6;
     </div>
     <!-- ---- Weather (4×2): grey glass, icon breaking out above, big temp, place tab, two forecast days ---- -->
     <div v-else-if="kind === 'weather'" class="bw-weather">
-      <div class="bw-glass bw-weather__body"><div class="bw-weather__now"><div class="bw-weather__t"><span>12°</span><small>14° / 6°</small></div><span class="bw-label bw-weather__place">Tampere</span></div>
+      <div class="bw-glass bw-weather__body"><div class="bw-weather__now"><div class="bw-weather__t"><span>12°</span><small>14° / 6°</small></div><span class="bw-label bw-weather__place" role="button" @click.stop="emit('place')">{{ place }}</span></div>
         <div v-for="d in [['Tue', '13° / 5°', 'rain'], ['Wed', '15° / 7°', 'sun']]" :key="d[0]" class="bw-weather__day"><svg viewBox="0 0 40 40" width="40" height="40"><use :href="`#bw-wx-${d[2]}`" /></svg><span>{{ d[1] }}</span><span>{{ d[0] }}</span></div></div>
       <svg class="bw-weather__icon" viewBox="0 0 40 40" width="84" height="84"><use href="#bw-wx-cloudsun" /></svg>
       <svg width="0" height="0" style="position:absolute"><defs>
@@ -182,7 +184,7 @@ const hourDeg = (now.h % 12) * 30 + now.m / 2, minDeg = now.m * 6;
       <div class="bw-mmusic__side"><span class="bw-mmusic__t">{{ art ? 'Polar night' : 'Music' }}</span><span class="bw-sec" style="font-size:12px">{{ art ? 'The Swipes' : 'Nothing playing' }}</span>
         <div class="bw-mmusic__ctl"><svg viewBox="0 0 24 24" width="20" height="20"><path :d="G.prev" fill="currentColor" /></svg><svg viewBox="0 0 24 24" width="24" height="24"><path :d="G.play" fill="currentColor" /></svg><svg viewBox="0 0 24 24" width="20" height="20"><path :d="G.next" fill="currentColor" /></svg></div></div>
     </div>
-    <div v-else-if="kind === 'm-weather'" class="bw-panel bw-mweather"><svg viewBox="0 0 40 40" width="56" height="56"><circle cx="20" cy="20" r="10" fill="#F5B21F" /></svg><span class="bw-mweather__p"><span>Tampere</span><small class="bw-sec">Sunny</small></span><span class="bw-mweather__t">12°</span></div>
+    <div v-else-if="kind === 'm-weather'" class="bw-panel bw-mweather"><svg viewBox="0 0 40 40" width="56" height="56"><circle cx="20" cy="20" r="10" fill="#F5B21F" /></svg><span class="bw-mweather__p"><span role="button" @click.stop="emit('place')">{{ place }}</span><small class="bw-sec">Sunny</small></span><span class="bw-mweather__t">12°</span></div>
     <div v-else-if="kind === 'm-shortcuts'" class="bw-panel bw-mshort">
       <span v-for="a in [['Phone', 'phone', '#62B700'], ['Messages', 'message', '#09A7CC'], ['Camera', 'photo', '#821DDE'], ['', 'add', '']]" :key="a[1]" class="bw-slot">
         <HdSquircle v-if="a[2]" :size="40" :color="a[2]" lighting="lit"><HdIcon :name="a[1]" :size="22" lit /></HdSquircle><HdIcon v-else name="add" :size="32" style="opacity:.6" />
