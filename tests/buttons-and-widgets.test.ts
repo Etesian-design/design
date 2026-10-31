@@ -741,6 +741,16 @@ describe('Belle clocks and switches (701 art)', () => {
     expect(angle(w.find('.bd-second').element)).toBe(30);
     w.unmount(); vi.useRealTimers();
   });
+  it('an on cap glows brightest at the bottom of its well, as the 701 draws it', () => {
+    const g = mount(BelleWidget, { props: { kind: 'toggles' } }).find('linearGradient[id$="b"]');
+    expect(g.attributes('y1')).toBe('1'); expect(g.attributes('y2')).toBe('0');
+    expect(g.find('stop').attributes('stop-color')).toBe('#2FA7DD');
+  });
+  it('the data meter keeps the 701 proportions: the inner squircle is 62 of 80', () => {
+    const d = mount(BelleWidget, { props: { kind: 'data' } }).findAll('.bw-data path').at(-1)!;
+    const xs = [...d.attributes("d")!.matchAll(/[ML]([\d.]+) /g)].map((m) => Number(m[1]));
+    expect(Math.max(...xs) - Math.min(...xs)).toBeCloseTo(62, 0);
+  });
   it('the digital and word clocks read the same time', () => {
     expect(mount(BelleWidget, { props: { kind: 'flipclock', at: '07:05' } }).text()).toContain('07');
     expect(mount(BelleWidget, { props: { kind: 'wordclock', at: '07:45' } }).text()).toContain('Forty-five');

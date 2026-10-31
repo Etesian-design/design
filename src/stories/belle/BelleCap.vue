@@ -1,6 +1,6 @@
 <!--
   Belle toggle cap, measured from the 701's switch art (nfcapplication .nvg, a 72 × 82 face): a blue-grey metal squircle
-  (n = 2.95, #A6B6C1 → #555E70) in a well. On: the cap sits up and the well glows blue below it (#2FA7DD → #2F86DD → #355CA6).
+  (n = 2.95, #A6B6C1 → #555E70) in a well. On: the cap sits up and the well glows blue below it, brightest at the bottom (#2FA7DD → #2F86DD → #355CA6).
   Off: the cap sits down in a dark well (#4E5662, rim #808C9A). Stretches to any size; never a rounded rectangle.
 -->
 <script setup lang="ts">
@@ -18,7 +18,7 @@ const capOff = squircleRectPath(64, 64, n, 4, 14);
     <svg viewBox="0 0 72 82" preserveAspectRatio="none" aria-hidden="true">
       <defs>
         <linearGradient :id="`${id}m`" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#A6B6C1" /><stop offset="1" stop-color="#555E70" /></linearGradient>
-        <linearGradient :id="`${id}b`" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2FA7DD" /><stop offset=".16" stop-color="#2F86DD" /><stop offset="1" stop-color="#355CA6" /></linearGradient>
+        <linearGradient :id="`${id}b`" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#2FA7DD" /><stop offset=".16" stop-color="#2F86DD" /><stop offset="1" stop-color="#355CA6" /></linearGradient>
         <linearGradient :id="`${id}g`" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".25" /><stop offset="1" stop-color="#fff" stop-opacity="0" /></linearGradient>
       </defs>
       <path :d="body" :fill="`url(#${id}m)`" stroke="#010101" stroke-opacity=".3" />
