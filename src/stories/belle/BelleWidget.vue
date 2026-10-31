@@ -5,13 +5,17 @@
  * Classic (bc_*): lit glass / metal / paper bodies. Modern (belle_*): one translucent black panel, 12px corners.
  * editing: the launcher's edit chrome (2px accent outline at 14px corners, red ✕ squircle 30px top-right, resize handle).
  */
-import { computed, ref } from 'vue';
+import { computed, onMounted, onUnmounted, ref } from 'vue';
+import BelleDial from './BelleDial.vue';
+import BelleCap from './BelleCap.vue';
+import BelleOnOff from './BelleOnOff.vue';
+import { squircleRectPath } from '../../squircle';
 import HdIcon from '../../components/HdIcon.vue';
 import HdSquircle from '../../components/HdSquircle.vue';
 export type BelleKind = 'switch' | 'wifi' | 'fm' | 'toggles' | 'data' | 'notes' | 'today' | 'agenda' | 'bigclock' | 'gearclock' | 'analog'
   | 'flipclock' | 'lcdclock' | 'wordclock' | 'web' | 'contact' | 'weather' | 'rss' | 'mail' | 'stackmail' | 'music' | 'music-large' | 'm-clock' | 'm-analog' | 'm-calendar'
   | 'm-feeds' | 'm-music' | 'm-weather' | 'm-shortcuts';
-const props = withDefaults(defineProps<{ kind: BelleKind; cols?: number; rows?: number; on?: boolean; glyph?: string; word?: string; editing?: boolean; cell?: number; art?: string; title?: string; out?: string; place?: string }>(), { cell: 90, place: 'Tampere' });
+const props = withDefaults(defineProps<{ kind: BelleKind; cols?: number; rows?: number; on?: boolean; glyph?: string; word?: string; editing?: boolean; cell?: number; art?: string; title?: string; out?: string; place?: string; at?: string }>(), { cell: 90, place: 'Tampere' });
 /** place: tapping the place on a weather widget opens the place picker (BellePlacePicker) */
 const emit = defineEmits<{ place: [] }>();
 /* default grid size per widget (targetCellWidth / Height in the appwidget-provider xml) */
@@ -45,35 +49,65 @@ const G: Record<string, string> = {
   people: 'M9 11a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7zm0 2c-3 0-7 1.5-7 4.5V20h14v-2.5C16 14.5 12 13 9 13zm7-2a3 3 0 1 0-1-5.8 5.5 5.5 0 0 1 0 5.6c.3.1.6.2 1 .2zm1.7 2.1c1.4 1 2.3 2.4 2.3 4.4V20h3v-2.5c0-2.4-3-3.9-5.3-4.4z',
   up: 'M7 14l5-5 5 5z', down: 'M7 10l5 5 5-5z', left: 'M14 7l-5 5 5 5z', right: 'M10 7l5 5-5 5z',
 };
-const now = { h: 10, m: 8 };
-const hand = (deg: number) => ({ transform: `rotate(${deg}deg)` });
-const hourDeg = (now.h % 12) * 30 + now.m / 2, minDeg = now.m * 6;
+// The clocks keep time (every second), as on the phone; `at` ("HH:MM[:SS]") pins one for tests and screenshots.
+const tick = ref(Date.now());
+let timer = 0;
+onMounted(() => { if (!props.at) timer = window.setInterval(() => (tick.value = Date.now()), 1000); });
+onUnmounted(() => clearInterval(timer));
+const now = computed(() => {
+  if (!props.at) return new Date(tick.value);
+  const [h, m, sec = 0] = props.at.split(':').map(Number);
+  return new Date(2026, 9, 25, h, m, sec);
+});
+const hh = computed(() => now.value.getHours()), mm = computed(() => now.value.getMinutes()), ss = computed(() => now.value.getSeconds());
+const pad = (n: number) => String(n).padStart(2, '0');
+const DAY3 = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'], DAYS_FULL = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+const MON3 = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+const dmy = computed(() => `${pad(now.value.getDate())}/${pad(now.value.getMonth() + 1)}/${now.value.getFullYear()}`);
+const ONES = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'];
+const TENS = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty'];
+/** the word clock's words: "Ten" / "Eight", "O'clock" on the hour */
+const words = (n: number) => (n < 20 ? ONES[n] : TENS[Math.floor(n / 10)] + (n % 10 ? '-' + ONES[n % 10].toLowerCase() : ''));
+const wordH = computed(() => words(hh.value % 12 || 12)), wordM = computed(() => (mm.value ? words(mm.value) : "O'clock"));
+/** the data meter's ring: twelve segments from 12 o'clock, the used share brighter */
+const used = 0.62;
+const dataOuter = squircleRectPath(80, 80, 2.7, 0, 0), dataInner = squircleRectPath(56, 56, 2.7, 12, 12);
+const wedge = (from: number, to: number) => { const p = (a: number) => `${40 + 60 * Math.sin(a * Math.PI * 2)} ${40 - 60 * Math.cos(a * Math.PI * 2)}`; let d = `M40 40L${p(from)}`; for (let a = from + 0.05; a < to; a += 0.05) d += `L${p(a)}`; return `${d}L${p(to)}Z`; };
 </script>
 <template>
   <div class="bw" :class="[`bw--${kind}`, { 'bw--editing': editing }]" :style="box" :data-cells="`${c}x${r}`">
-    <!-- ---- 1×1 switch: brushed squircle, blue glow under the rim when on; a glyph or embossed word ---- -->
-    <div v-if="kind === 'switch'" class="bw-sw" :class="{ on }" role="switch" :aria-checked="!!on" :aria-label="word ?? glyph">
+    <!-- ---- 1×1 switch: Belle's metal cap (BelleCap), up over a blue glow when on; a glyph or embossed word ---- -->
+    <BelleCap v-if="kind === 'switch'" class="bw-sw" :on="on" role="switch" :aria-checked="!!on" :aria-label="word ?? glyph">
       <span v-if="word" class="bw-sw__word">{{ word }}</span>
-      <svg v-else-if="G[glyph ?? '']" class="bw-sw__glyph" viewBox="0 0 24 24" width="34" height="34"><path :d="G[glyph!]" fill="currentColor" /></svg>
-      <HdIcon v-else :name="glyph ?? 'wifi'" :size="34" class="bw-sw__glyph" />
-    </div>
-    <!-- ---- 2×1 Wi-Fi / FM switch: dark lit pill, power squircle (grey off, green on) ---- -->
+      <svg v-else-if="G[glyph ?? '']" viewBox="0 0 24 24" width="34" height="34"><path :d="G[glyph!]" fill="currentColor" /></svg>
+      <HdIcon v-else :name="glyph ?? 'wifi'" :size="34" />
+    </BelleCap>
+    <!-- ---- 2×1 Wi-Fi / FM switch: dark lit panel with Belle's on/off switch (BelleOnOff: squircle track and knob) ---- -->
     <div v-else-if="kind === 'wifi' || kind === 'fm'" class="bw-pill">
-      <span class="bw-power" :class="{ on }"><svg viewBox="0 0 24 24" width="30" height="30"><path :d="G.power" fill="currentColor" /></svg></span>
+      <span class="bw-power"><BelleOnOff :on="on" /></span>
       <span v-if="kind === 'wifi'" class="bw-pill__side"><HdIcon name="wifi" :size="34" /><b v-if="on" class="bw-badge">4</b></span>
       <span v-else class="bw-pill__freq" :class="{ on }">{{ on ? '98.40 MHz' : 'FM Radio' }}</span>
     </div>
-    <!-- ---- 4×1 switches: four dark squircles, blue lit rim when on ---- -->
+    <!-- ---- 4×1 switches: four of Belle's metal caps (BelleCap), blue glow under the raised ones ---- -->
     <div v-else-if="kind === 'toggles'" class="bw-panel bw-toggles">
       <span v-for="(t, i) in [['wifi', 'Wi-Fi'], ['bluetooth', 'Bluetooth'], ['data', 'Data'], ['silent', 'Silent']]" :key="t[0]" class="bw-tg">
-        <span class="bw-tg__face" :class="{ on: i < 2 }"><svg v-if="G[t[0]]" viewBox="0 0 24 24" width="30" height="30"><path :d="G[t[0]]" fill="currentColor" /></svg><HdIcon v-else :name="t[0]" :size="30" /></span>
+        <BelleCap class="bw-tg__face" :on="i < 2"><svg v-if="G[t[0]]" viewBox="0 0 24 24" width="28" height="28"><path :d="G[t[0]]" fill="currentColor" /></svg><HdIcon v-else :name="t[0]" :size="28" /></BelleCap>
         <span class="bw-tg__label">{{ t[1] }}</span></span>
     </div>
-    <!-- ---- 1×1 data tracker: dark disc, blue ring from 12 o'clock ---- -->
-    <div v-else-if="kind === 'data'" class="bw-data"><svg viewBox="0 0 78 78" width="78" height="78" aria-hidden="true"><defs><linearGradient id="bw-disc" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#55565A" /><stop offset="1" stop-color="#1A1A1C" /></linearGradient></defs>
-      <circle cx="39" cy="39" r="39" fill="url(#bw-disc)" /><circle cx="39" cy="39" r="35.1" fill="#050506" /><circle cx="39" cy="39" r="31.5" fill="none" stroke="#0F2A47" stroke-width="7" />
-      <circle cx="39" cy="39" r="31.5" fill="none" stroke="#2F8BEA" stroke-width="7" stroke-linecap="round" :stroke-dasharray="`${0.62 * 197.9} 197.9`" transform="rotate(-90 39 39)" /></svg>
-      <span class="bw-data__l"><span class="bw-data__n">620</span><span class="bw-data__u">MB used</span></span></div>
+    <!-- ---- 1×1 data tracker (Belle's data meter: a squircle ringed by twelve blue segments from 12 o'clock, brighter for
+         what is used, round a dark squircle with the amount) ---- -->
+    <div v-else-if="kind === 'data'" class="bw-data" role="img" :aria-label="`620 MB used, ${Math.round(used * 100)}% of the plan`">
+      <svg viewBox="-4 -3 88 88" width="78" height="78" aria-hidden="true"><defs>
+        <linearGradient id="bw-dm-o" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#58595B" /><stop offset="1" stop-color="#000" /></linearGradient>
+        <linearGradient id="bw-dm-i" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#58595B" /><stop offset="1" stop-color="#000" /></linearGradient>
+        <clipPath id="bw-dm-c"><path :d="dataOuter" /></clipPath></defs>
+        <path :d="dataOuter" fill="#000" fill-opacity=".4" transform="translate(0 1)" />
+        <path :d="dataOuter" fill="url(#bw-dm-o)" />
+        <g clip-path="url(#bw-dm-c)"><path :d="wedge(0, 1)" fill="#27AAE1" fill-opacity=".3" /><path :d="wedge(0, used)" fill="#27AAE1" fill-opacity=".7" />
+          <line v-for="k in 12" :key="k" x1="40" y1="40" x2="40" y2="-20" stroke="#000" stroke-opacity=".35" stroke-width="1" :transform="`rotate(${k * 30} 40 40)`" /></g>
+        <path :d="dataOuter" fill="none" stroke="#fff" stroke-opacity=".15" />
+        <path :d="dataInner" fill="url(#bw-dm-i)" stroke="#000" stroke-opacity=".5" /></svg>
+      <span class="bw-data__l"><span class="bw-data__n">620</span><span class="bw-data__u">MB</span></span></div>
     <!-- ---- Notes: yellow paper, dark bar with ▲ ▼ + 🗑 ---- -->
     <div v-else-if="kind === 'notes'" class="bw-notes">
       <div class="bw-notes__paper"><div class="bw-notes__head"><b>Notes</b><span>Today 09:41</span></div>
@@ -99,21 +133,20 @@ const hourDeg = (now.h % 12) * 30 + now.m / 2, minDeg = now.m * 6;
       </div></div>
     <!-- ---- clocks ---- -->
     <div v-else-if="kind === 'analog' || kind === 'bigclock'" class="bw-sqdial" :class="{ big: kind === 'bigclock' }">
-      <svg class="bw-marks" viewBox="0 0 100 100"><path stroke="#EDEDED" stroke-width="2.6" stroke-linecap="round" d="M50,9V16M50,84V91M9,50H14M86,50H91" /><path stroke="#9A9A9E" stroke-width="1.6" stroke-linecap="round" d="M70.5,14.5L68.5,18M85.5,29.5L82,31.5M85.5,70.5L82,68.5M70.5,85.5L68.5,82M29.5,85.5L31.5,82M14.5,70.5L18,68.5M14.5,29.5L18,31.5M29.5,14.5L31.5,18" /></svg>
-      <i class="bw-hand bw-hand--h" :style="hand(hourDeg)" /><i class="bw-hand bw-hand--m" :style="hand(minDeg)" /><i v-if="kind === 'bigclock'" class="bw-hand bw-hand--s" :style="hand(200)" /><i class="bw-cap" />
-      <span v-if="kind === 'bigclock'" class="bw-dayname">Mon</span><span class="bw-datebub">25</span>
+      <BelleDial :h="hh" :m="mm" :s="ss" :date="now.getDate()" :second="kind === 'bigclock'" />
+      <span v-if="kind === 'bigclock'" class="bw-dayname">{{ DAY3[now.getDay()] }}</span>
     </div>
     <div v-else-if="kind === 'gearclock'" class="bw-gear">
       <i v-for="(g, i) in [[66, 31, 42], [31, 66, 38], [50, 50, 36], [69, 65, 22]]" :key="i" class="bw-gear__g" :style="{ left: `${g[0]}%`, top: `${g[1]}%`, width: `${g[2] * 2}%`, height: `${g[2] * 2}%` }" />
+      <BelleDial :h="hh" :m="mm" :s="ss" second face="none" :marks="false" />
       <svg class="bw-marks" viewBox="0 0 100 100"><path stroke="#8E8F94" stroke-width="1.2" stroke-linecap="round" d="M50,6V12M50,88V94M6,50H12M88,50H94" /></svg>
-      <i class="bw-hand bw-hand--h" :style="hand(hourDeg)" /><i class="bw-hand bw-hand--m" :style="hand(minDeg)" /><i class="bw-hand bw-hand--s" :style="hand(200)" /><i class="bw-cap" />
-      <span class="bw-dayname">Mon</span><span class="bw-datebub">25</span>
+      <span class="bw-dayname">{{ DAY3[now.getDay()] }}</span><span class="bw-datebub">{{ now.getDate() }}</span>
     </div>
     <div v-else-if="kind === 'flipclock'" class="bw-flip">
-      <div v-for="(t, i) in ['10', '08']" :key="i" class="bw-flip__tile"><span class="bw-flip__n">{{ t }}</span><i class="bw-flip__hinge" /><i class="bw-pin" style="left:0" /><i class="bw-pin" style="right:0" /><small v-if="i" class="bw-flip__date">Mon Oct 25</small></div>
+      <div v-for="(t, i) in [pad(hh), pad(mm)]" :key="i" class="bw-flip__tile"><span class="bw-flip__n">{{ t }}</span><i class="bw-flip__hinge" /><i class="bw-pin" style="left:0" /><i class="bw-pin" style="right:0" /><small v-if="i" class="bw-flip__date">{{ DAY3[now.getDay()] }} {{ MON3[now.getMonth()] }} {{ now.getDate() }}</small></div>
     </div>
-    <div v-else-if="kind === 'lcdclock'" class="bw-lcd"><div class="bw-lcd__glass"><span class="bw-lcd__t">10</span><span class="bw-lcd__c">:</span><span class="bw-lcd__t">08</span><span class="bw-lcd__d">25/10/2026</span></div></div>
-    <div v-else-if="kind === 'wordclock'" class="bw-word"><span class="bw-word__h">Ten</span><span class="bw-word__m">Eight</span><span class="bw-word__d">25/10/2026</span></div>
+    <div v-else-if="kind === 'lcdclock'" class="bw-lcd"><div class="bw-lcd__glass"><span class="bw-lcd__t">{{ pad(hh) }}</span><span class="bw-lcd__c">:</span><span class="bw-lcd__t">{{ pad(mm) }}</span><span class="bw-lcd__d">{{ dmy }}</span></div></div>
+    <div v-else-if="kind === 'wordclock'" class="bw-word"><span class="bw-word__h">{{ wordH }}</span><span class="bw-word__m">{{ wordM }}</span><span class="bw-word__d">{{ dmy }}</span></div>
     <!-- ---- web / contact shortcut (2×2): picture shown as is, name on a dark strip ---- -->
     <div v-else-if="kind === 'web' || kind === 'contact'" class="bw-photo" :role="'img'" :aria-label="kind === 'web' ? 'Website thumbnail' : 'Contact photo'">
       <div v-if="kind === 'web'" class="bw-web"><i style="height:14px;background:#2a6fb5" /><i style="height:42px;background:#dfe6ee" /><i style="width:70%" /><i /><i style="width:85%" /><i style="width:60%" /></div>
@@ -172,8 +205,8 @@ const hourDeg = (now.h % 12) * 30 + now.m / 2, minDeg = now.m * 6;
       <div class="bw-mlarge__ctl"><HdSquircle v-for="(g, i) in [G.prev, on && art ? G.pause : G.play, G.next]" :key="i" :size="i === 1 ? 50 : 38" color="#1E1E21" lighting="lit" role="button" :aria-label="['Previous', on && art ? 'Pause' : 'Play', 'Next'][i]" :class="{ 'is-dim': !art }"><svg viewBox="0 0 24 24" :width="i === 1 ? 28 : 18" :height="i === 1 ? 28 : 18"><path :d="g" fill="currentColor" /></svg></HdSquircle></div>
     </div>
     <!-- ---- modern (belle_*): one translucent black panel ---- -->
-    <div v-else-if="kind === 'm-clock'" class="bw-mclock"><span class="bw-mclock__t">10:08</span><span class="bw-sec">Monday 25 October</span></div>
-    <div v-else-if="kind === 'm-analog'" class="bw-manalog"><div class="bw-mdial"><svg class="bw-marks" style="inset:0;width:100%;height:100%" viewBox="0 0 120 120"><path stroke="#fff" stroke-width="3" d="M60,8v10M112,60h-10M60,112v-10M8,60h10" /><path stroke="rgba(255,255,255,.6)" stroke-width="1.5" d="M86,15l-3,5.2M105,34l-5.2,3M105,86l-5.2,-3M86,105l-3,-5.2M34,105l3,-5.2M15,86l5.2,-3M15,34l5.2,3M34,15l3,5.2" /></svg><i class="bw-hand bw-hand--h" :style="hand(hourDeg)" /><i class="bw-hand bw-hand--m" :style="hand(minDeg)" /><i class="bw-cap" /></div><span class="bw-sec" style="font-size:13px">Mon 25 Oct</span></div>
+    <div v-else-if="kind === 'm-clock'" class="bw-mclock"><span class="bw-mclock__t">{{ pad(hh) }}:{{ pad(mm) }}</span><span class="bw-sec">{{ DAYS_FULL[now.getDay()] }} {{ now.getDate() }} {{ MONTHS[now.getMonth()] }}</span></div>
+    <div v-else-if="kind === 'm-analog'" class="bw-manalog"><div class="bw-mdial"><svg class="bw-marks" style="inset:0;width:100%;height:100%" viewBox="0 0 120 120"><path stroke="#fff" stroke-width="3" d="M60,8v10M112,60h-10M60,112v-10M8,60h10" /><path stroke="rgba(255,255,255,.6)" stroke-width="1.5" d="M86,15l-3,5.2M105,34l-5.2,3M105,86l-5.2,-3M86,105l-3,-5.2M34,105l3,-5.2M15,86l5.2,-3M15,34l5.2,3M34,15l3,5.2" /></svg><BelleDial :h="hh" :m="mm" :s="ss" face="none" :marks="false" /></div><span class="bw-sec" style="font-size:13px">{{ DAY3[now.getDay()] }} {{ now.getDate() }} {{ MON3[now.getMonth()] }}</span></div>
     <div v-else-if="kind === 'm-calendar' || kind === 'm-feeds'" class="bw-panel bw-mlist">
       <div class="bw-mlist__head"><HdIcon :name="kind === 'm-calendar' ? 'calendar' : 'globe'" :size="16" />{{ kind === 'm-calendar' ? 'Calendar' : 'Feeds' }}</div>
       <div v-for="e in (kind === 'm-calendar' ? [['Design review', 'Today 14:00'], ['Dentist', 'Tomorrow 09:30'], ['Sauna evening', 'Fri 18:00']] : [['Tram line opens to the harbour', 'Example News · 1 h'], ['Northern lights tonight', 'Sky Weekly · 2 h'], ['Winter cup final', 'Sports Daily · 3 h']])" :key="e[0]" class="bw-mlist__row"><span>{{ e[0] }}</span><small>{{ e[1] }}</small></div>
@@ -205,31 +238,25 @@ const hourDeg = (now.h % 12) * 30 + now.m / 2, minDeg = now.m * 6;
 .bw-label { border-radius: 4px; border: 1px solid rgba(255,255,255,.25); background: linear-gradient(rgba(64,65,68,.88), rgba(21,21,23,.88)); }
 /* 1×1 switch, 76×80 */
 .bw--switch { display: grid; place-items: center; }
-.bw-sw { width: 76px !important; height: 80px !important; display: grid; place-items: center; padding-bottom: 6px; border-radius: 24px; color: #6E7075;
-  background: linear-gradient(#C4C6CB, #9C9EA3 50%, #7E8085) padding-box, linear-gradient(#6C6E73, #2E2F33) border-box; border: 4px solid transparent; border-bottom-width: 8px;
-  box-shadow: 0 2px 0 rgba(0,0,0,.6), inset 0 0 0 1px #DADCE0; }
-.bw-sw.on { color: #2F7FD6; box-shadow: 0 0 0 2px #2F7FD6, 0 3px 6px rgba(111,184,255,.8), inset 0 0 0 1px #DADCE0; }
+.bw-sw { width: 72px !important; height: 82px !important; margin: auto; }
 .bw-sw__word { font: 700 24px/1 var(--hd-font-family-base); text-shadow: 0 1.5px .5px #E6E7EA; }
-.bw-sw__glyph { filter: drop-shadow(0 1.5px 0 #E6E7EA); }
 /* 2×1 pill + power squircle */
 .bw-pill { display: flex; align-items: center; gap: 0; padding: 5px; border-radius: 16px; border: 1.5px solid #050506; background: linear-gradient(#4C4D52, #26272A 50%, #101012); }
-.bw-power { position: relative; flex: none; display: grid; place-items: center; width: 56px; height: 56px; border-radius: 14px; border: 1px solid #2A2A2C; color: #2a2a2c; background: linear-gradient(#A9AAAE, #707175 50%, #45464A); }
-.bw-power.on { border-color: #2F5A08; color: #fff; background: linear-gradient(rgba(255,255,255,.4), rgba(255,255,255,0) 40%), linear-gradient(#D3EE7A, #8CC43A 50%, #4F8A14); }
+.bw-power { flex: none; width: 66px; height: 44px; }
 .bw-pill__side { position: relative; flex: 1; display: grid; place-items: center; height: 100%; color: #fff; }
 .bw-badge { position: absolute; top: 2px; right: 6px; width: 22px; height: 22px; border-radius: 50%; box-sizing: border-box; border: 1.5px solid #fff; background: linear-gradient(#9AD24A, #4F8A14); font: 700 11px/19px var(--hd-font-family-base); text-align: center; }
 .bw-pill__freq { flex: 1; text-align: center; font-size: 17px; color: #8E8F94; }
 .bw-pill__freq.on { color: #fff; }
-/* 4×1 toggles: 60×56 dark squircles */
+/* 4×1 toggles: Belle's 72 × 82 metal caps, scaled to 54 × 62 */
 .bw-toggles { display: flex; align-items: center; padding: 4px; }
 .bw-tg { flex: 1; display: flex; flex-direction: column; align-items: center; min-width: 0; }
-.bw-tg__face { display: grid; place-items: center; width: 60px; height: 56px; box-sizing: border-box; border-radius: 20px; border: 3px solid #0C0C0D; border-bottom-width: 5px; color: #8E8F94; background: linear-gradient(#3E3F43, #222325); }
-.bw-tg__face.on { border-color: #3A86D8; border-top-color: #8EC4F6; border-bottom-color: #1A4F96; color: #fff; background: linear-gradient(#55575C, #26272A); }
+.bw-tg__face { width: 54px; height: 62px; }
 .bw-tg__label { margin-top: 2px; font-size: 13px; }
 /* data ring 78 */
 .bw--data { display: grid; place-items: center; }
 .bw-data { position: relative; width: 78px !important; height: 78px !important; }
 .bw-data__l { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-.bw-data__n { font-size: 19px; } .bw-data__u { font-size: 8px; color: #B0B1B5; }
+.bw-data__n { font-size: 21px; font-weight: 700; line-height: 1; color: #F0EFF0; text-shadow: 0 1px 1px #000; } .bw-data__u { font-size: 15px; font-weight: 700; line-height: 1; color: #F0EFF0; text-shadow: 0 1px 1px #000; }
 /* notes */
 .bw-notes { display: flex; flex-direction: column; }
 .bw-notes__paper { flex: 1; padding: 12px; border-radius: 4px 4px 0 0; border: 1px solid #D9C46E; background: linear-gradient(#FBF3C4, #F0DC8A); color: #3A3A3A; overflow: hidden; }
@@ -263,21 +290,15 @@ const hourDeg = (now.h % 12) * 30 + now.m / 2, minDeg = now.m * 6;
 /* square dial 120 (2×2) / 220 (4×3) */
 .bw--analog, .bw--bigclock, .bw--gearclock { display: grid; place-items: center; }
 .bw-sqdial, .bw-gear { position: relative; width: 120px !important; height: 120px !important; }
-.bw-sqdial { border-radius: 34px; border: 2px solid #0A0A0B; background: linear-gradient(#55565B, #141416); box-shadow: inset 0 0 0 4px rgba(0,0,0,0); }
-.bw-sqdial::before { content: ''; position: absolute; inset: 4px; border-radius: 28px; background: linear-gradient(#2E2F33, #0E0E10); }
+.bw-sqdial { filter: drop-shadow(0 2px 3px rgba(0,0,0,.5)); }
 .bw-sqdial.big, .bw-gear { width: 220px !important; height: 220px !important; }
-.bw-sqdial.big { border-radius: 62px; } .bw-sqdial.big::before { inset: 9px; border-radius: 52px; }
 .bw-marks { position: absolute; inset: 6px; width: calc(100% - 12px); height: calc(100% - 12px); fill: none; }
-.bw-hand { position: absolute; left: 50%; bottom: 50%; transform-origin: 50% 100%; border-radius: 2px; background: #fff; box-shadow: 0 1px 2px rgba(0,0,0,.6); }
-.bw-hand--h { width: 5%; height: 26%; margin-left: -2.5%; } .bw-hand--m { width: 3.4%; height: 38%; margin-left: -1.7%; }
-.bw-hand--s { width: .8%; height: 46%; margin-left: -.4%; background: #3D8FE0; }
-.bw-cap { position: absolute; left: 50%; top: 50%; width: 7%; height: 7%; transform: translate(-50%, -50%); border-radius: 50%; background: #fff; box-shadow: inset 0 0 0 2px #3D8FE0; }
-.bw-datebub { position: absolute; left: 79%; top: 50%; width: 12%; height: 12%; transform: translate(-50%, -50%); border-radius: 22%; box-sizing: border-box; border: 1px solid #46474B; background: linear-gradient(#2C2D31, #141416); font-size: 11px; display: grid; place-items: center; z-index: 1; }
+.bw-datebub { position: absolute; top: 50%; transform: translate(-50%, -50%); z-index: 1; }
 .big .bw-datebub { font-size: 14px; }
 .bw-dayname { position: absolute; left: 24.5%; top: 50%; transform: translate(-50%, -50%); font-size: 14px; color: #B4B5B9; z-index: 1; }
 /* Gear clock (belle-ref11): the day low on the left, a round date at 3 o'clock. */
 .bw-gear .bw-dayname { left: 31%; top: 72%; font-size: 13px; }
-.bw-gear .bw-datebub { left: 87%; width: 11%; height: 11%; border-radius: 50%; border-color: #77787C; background: linear-gradient(#3A3B3F, #1A1A1C); font-size: 13px; }
+.bw-gear .bw-datebub { left: 87%; width: 11%; height: 11%; border-radius: 50%; box-sizing: border-box; border: 1px solid #77787C; display: grid; place-items: center; background: linear-gradient(#3A3B3F, #1A1A1C); font-size: 13px; }
 .bw-gear { border-radius: 50%; overflow: hidden; background: radial-gradient(circle at 50% 40%, #4A4B4F, #141416 70%); box-shadow: inset 0 0 0 2px #050506; }
 .bw-gear__g { position: absolute; transform: translate(-50%, -50%); border-radius: 50%; background: radial-gradient(#1A1B1E 30%, #2E2F33 31% 80%, transparent 81%), repeating-conic-gradient(#2E2F33 0 12deg, transparent 12deg 26deg); opacity: .9; }
 /* flip clock 4×2: two black tiles, 16px corners, hinge + pins */
