@@ -22,7 +22,7 @@ const TODAY = 24, DAYS = 31, FIRST = 3;
 const ENTRIES: Record<number, [string, string][]> = {
   20: [['09:30', 'Dentist']],
   22: [['13:00', 'Lunch with Sara']],
-  24: [['10:00', 'Stand-up'], ['14:00', 'Design review · Room Harmattan'], ['18:30', 'Sauna with Mikko']],
+  24: [['10:00', 'Stand-up'], ['14:00', 'Design review · Room Etesian'], ['18:30', 'Sauna with Mikko']],
   26: [['09:00', 'Sprint planning'], ['16:00', 'Swipe UI workshop']],
   29: [['All day', 'Anna’s birthday']],
 };
@@ -77,9 +77,9 @@ const selEntries = computed(() => ENTRIES[sel.value] ?? []);
       <HdEventsFeedItem title="Liisa Niemi" body="Sent you a voice note (0:42)" time="40 min ago" accent="#09A7CC" />
       <HdEventsFeedItem title="Design weekly" body="Why squircles feel softer than rounded rectangles" time="1 h ago" icon="mail" accent="#0067BC" />
       <HdSectionHeader title="Calendar" />
-      <HdEventsFeedItem v-for="[t, s] in ENTRIES[TODAY]" :key="t" :title="s" :body="t === '14:00' ? 'Today 14:00, Room Harmattan' : `Today ${t}`" :time="t" icon="calendar" accent="#EF5500" />
+      <HdEventsFeedItem v-for="[t, s] in ENTRIES[TODAY]" :key="t" :title="s" :body="t === '14:00' ? 'Today 14:00, Room Etesian' : `Today ${t}`" :time="t" icon="calendar" accent="#EF5500" />
       <HdSectionHeader title="Feeds" />
-      <HdEventsFeedItem title="Harmattan journal" body="A tablet for the swipe generation: what the N9 got right" time="2 h ago" :image="photo(0)" />
+      <HdEventsFeedItem title="Etesian journal" body="A tablet for the swipe generation: what the N9 got right" time="2 h ago" :image="photo(0)" />
       <HdEventsFeedItem title="Mikko Laine" body="Posted 6 new photos from Lapland" time="Yesterday" :image="photo(3)" />
     </div>
   </aside>

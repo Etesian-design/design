@@ -102,14 +102,14 @@ describe('desktop v2 parts', () => {
     expect(w.emitted('menu')?.[0]).toEqual(['File']);
     expect(mount(XMenuBar, { props: { app: 'Mail', openMenu: 'View' } }).find('.x-cmenu').exists()).toBe(true);
   });
-  it('XDock default: floating strip on the left; launcher | separator | apps | separator | trash (last)', async () => {
+  it('XDock default: floating strip on the left; Overview button | separator | apps | separator | trash (last)', async () => {
     const w = mount(XDock);
     const d = w.get('.x-dock');
     expect(d.classes()).toEqual(expect.arrayContaining(['x-dock--left', 'is-vertical']));
     expect(d.classes()).not.toContain('is-panel');
     expect(w.find('.x-dock__clock').exists()).toBe(false);
     const kids = Array.from(d.element.children).map((c) => (c.classList.contains('x-dock__div') ? '|' : c.querySelector('[aria-label]')?.getAttribute('aria-label')));
-    expect(kids).toEqual(['Launcher', '|', 'Browser', 'Mail', 'Messages', 'Calendar', 'Music', 'Notes', '|', 'Trash']);
+    expect(kids).toEqual(['Overview', '|', 'Browser', 'Mail', 'Messages', 'Calendar', 'Music', 'Notes', '|', 'Trash']);
     expect(w.findAll('.x-dock__item').every((b) => b.classes().includes('hd-sq'))).toBe(true);
     expect(w.findAll('.x-dock__run').length).toBe(3);
     await w.get('[aria-label="Mail"]').trigger('click');
@@ -121,7 +121,7 @@ describe('desktop v2 parts', () => {
     expect(p.get('.x-dock').attributes('style')).toContain('bottom: 8px');
     expect(p.find('.x-dock__clock').exists()).toBe(true);
     expect(p.get('.x-dock').element.lastElementChild?.classList.contains('x-dock__trash')).toBe(true);
-    await p.get('[aria-label="Launcher"]').trigger('click');
+    await p.get('[aria-label="Overview"]').trigger('click');
     expect(p.emitted('launcher')).toHaveLength(1);
     expect(mount(XDock, { props: { position: 'bottom' } }).get('.x-dock').classes()).not.toContain('is-vertical');
     const hid = mount(XDock, { props: { autoHide: true } });
@@ -250,14 +250,43 @@ describe('DesktopV2 scene', () => {
     expect(w.find('.x-wins--1').exists()).toBe(true);
     w.unmount();
   });
-  it('tapping Super alone opens the launcher and typing filters; Esc closes', async () => {
+  // v2 extends v1: Super opens v1's Overview (the main menu), never the spotlight.
+  it('tapping Super alone opens the v1 Overview (Events, Windows, Apps); typing filters; Super again closes', async () => {
     const w = mount(DesktopV2, { attachTo: document.body });
     await tapSuper();
+    expect(w.find('.x-ov').exists()).toBe(true);
+    expect(w.find('.x-launch').exists()).toBe(false);
+    expect(w.find('.x-ov__events').exists()).toBe(true);
+    expect(w.find('.x-ov__wins').exists()).toBe(true);
+    await key('m'); await key('u');
+    expect(w.findAll('.x-ov__apps .hd-app-icon').map((a) => a.text())).toEqual(['Music']);
+    await tapSuper();
+    expect(w.find('.x-ov').exists()).toBe(false);
+    w.unmount();
+  });
+  it('the dock\'s first button opens the Overview too', async () => {
+    const w = mount(DesktopV2, { attachTo: document.body });
+    await w.get('.x-dock__launcher').trigger('click');
+    expect(w.find('.x-ov').exists()).toBe(true);
+    w.unmount();
+  });
+  it('Super+Space opens the spotlight (an addition, not the Overview); typing filters; Esc closes', async () => {
+    const w = mount(DesktopV2, { attachTo: document.body });
+    await key(' ', true); await keyUp('Meta');
     expect(w.find('.x-launch').exists()).toBe(true);
+    expect(w.find('.x-ov').exists()).toBe(false);
     await key('m'); await key('u');
     expect(w.findAll('.x-launch .hd-app-icon').map((a) => a.text())).toEqual(['Music']);
     await key('Escape');
     expect(w.find('.x-launch').exists()).toBe(false);
+    w.unmount();
+  });
+  it('decorations: a KDE app\'s toolbar moves into the header (after has actions and no toolbar row)', () => {
+    const w = mount(DesktopV2, { props: { state: 'decor' } });
+    const [before, after] = w.findAll('.x-kde');
+    expect(before!.find('.x-kde__tools').exists()).toBe(true);
+    expect(after!.find('.x-kde__tools').exists()).toBe(false);
+    expect(after!.findAll('.x-kde__bar .hd-tool-icon').map((b) => b.attributes('aria-label'))).toEqual(expect.arrayContaining(['New (Ctrl+N)', 'Open (Ctrl+O)', 'Save (Ctrl+S)']));
     w.unmount();
   });
   it('the status icons open the status menu, separate from Events', async () => {
@@ -326,5 +355,17 @@ describe('Open apps edit mode (measured from the N9)', () => {
     expect(w.findAll('.hd-task-card__close').length).toBe(9);
     await w.findAll('.hd-task-edit-bar__btn')[1]!.trigger('click');
     expect(w.findAll('.hd-task-card')).toHaveLength(0);
+  });
+});
+
+describe('phone v2 mock 19 decisions', async () => {
+  const { STATES, SMALL, LEAVE_OUT } = await import('../src/stories/explorations/phone2/states');
+  it('records the agreed directions', () => {
+    expect(SMALL).not.toContain('history'); expect(SMALL).not.toContain('history-entry'); expect(SMALL).toContain('history-ghost');
+    expect(STATES['priority'].idea).toMatch(/per contact/);
+    expect(STATES['split-drag'].idea).toMatch(/two fingers/);
+    expect(STATES['screen-time'].idea).toMatch(/one-line/);
+    expect(STATES['medical'].idea).toMatch(/No Emergency call button on the lock screen/); expect(STATES['medical-card'].idea).toMatch(/only Emergency call button/);
+    expect(LEAVE_OUT.map((l) => l[0])).toEqual(expect.arrayContaining(['App shortcuts sheet in edit mode', 'Per-stream volume rows', 'Share in Open apps', 'Notification history']));
   });
 });

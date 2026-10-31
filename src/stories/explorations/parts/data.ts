@@ -31,7 +31,7 @@ export const MAILS = [
   { id: 1, from: 'Anna Virtanen', subject: 'Lunch on Friday?', preview: 'Are we still on for lunch? I can be there by 12:30 if that works for you.', time: '12:02', unread: true },
   { id: 2, from: 'Design weekly', subject: 'Why squircles feel softer', preview: 'This week: superellipses, continuous curvature and the N9 icon grid.', time: '10:41', unread: true },
   { id: 3, from: 'Mikko Laine', subject: 'Photos from the trip', preview: 'I uploaded the rest of the photos from Lapland, have a look when you can.', time: '09:15', unread: false },
-  { id: 4, from: 'Calendar', subject: 'Invitation: Design review', preview: 'Thursday 14:00 - 15:00, Room Harmattan. Please confirm.', time: 'Yesterday', unread: false },
+  { id: 4, from: 'Calendar', subject: 'Invitation: Design review', preview: 'Thursday 14:00 - 15:00, Room Etesian. Please confirm.', time: 'Yesterday', unread: false },
   { id: 5, from: 'Sara Koski', subject: 'Re: Tablet layout', preview: 'I like the two-pane idea, but portrait should stay a single list.', time: 'Yesterday', unread: false },
   { id: 6, from: 'Store', subject: 'Your receipt', preview: 'Thank you for your purchase of Notes Pro.', time: 'Mon', unread: false },
   { id: 7, from: 'Jussi Heikkinen', subject: 'Bluetooth keyboard', preview: 'The keyboard arrived, the Super key works out of the box.', time: 'Mon', unread: false },

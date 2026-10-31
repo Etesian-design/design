@@ -1,0 +1,39 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { STATES, CORE, SMALL, NO_MOCK, LEAVE_OUT, QUESTIONS, storyId } from '../explorations/phone2/states';
+
+<Meta title="Guide/Phone v2 proposals" />
+
+# Phone v2: Android 16 gaps, the N9 way
+
+Source: `vendor/etesian/docs/android-feature-gap.md` (33 gaps). Every proposal is a phone mock under **Explorations / Phone v2**. Mocks for rows marked "(?)" in the survey are tagged **Proposal** until they are checked on the phone.
+
+## Gap → mock
+
+<table>
+  <thead><tr><th>Gap</th><th>Mock</th><th>Priority</th><th>Effort</th><th>Story</th></tr></thead>
+  <tbody>
+    {[...CORE, ...SMALL].map((s) => <tr key={s}><td>{STATES[s].gaps.map((g) => '#' + g).join(', ')}</td><td>{STATES[s].title}{STATES[s].proposal ? ' (Proposal)' : ''}</td><td>{STATES[s].pri}</td><td>{STATES[s].effort}</td><td><a href={`?path=/story/${storyId(s)}`}><code>{storyId(s)}</code></a></td></tr>)}
+    {NO_MOCK.map(([n, f, why]) => <tr key={n}><td>#{n}</td><td>{f}</td><td>–</td><td>–</td><td>{why}</td></tr>)}
+  </tbody>
+</table>
+
+## Roadmap (top 10)
+
+1. Status menu "More" switches + TileService host (#3, #14, #30)
+2. Events long-press sheet with inline reply and snooze (#1, #6)
+3. Lock-screen music card + status-menu music row with output picker (#5, #22)
+4. N9 NotificationBanner for heads-up (#2)
+5. Profiles = ringer + Do Not Disturb + Modes (#4)
+6. Share sheet (#16)
+7. Privacy indicators + accessibility button (#23, #28)
+8. Screenshot banner → Gallery edit (#13)
+9. Power menu and permission dialogs (#17, #24)
+10. App pinning exit, live updates strip, next event under the lock clock (#33, #32, #21)
+
+## Left out on purpose
+
+<ul>{LEAVE_OUT.map(([f, why]) => <li key={f}><b>{f}</b>: {why}</li>)}</ul>
+
+## Open questions
+
+<ol>{QUESTIONS.map((q) => <li key={q}>{q}</li>)}</ol>

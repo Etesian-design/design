@@ -39,8 +39,8 @@ const thumb = (n: string, box = props.size + 8) => { const o = shape(n); return 
   <nav class="x-dock hd-on-home" :class="[`x-dock--${position}`, { 'is-vertical': vertical, 'is-panel': panel, 'is-hidden': hidden, 'is-autohide': autoHide, 'is-editing': editing }]" :style="style" aria-label="Dock">
     <template v-if="launcher">
       <span class="x-dock__slot">
-        <HdTooltip text="Launcher (Super)" :placement="tipPlace">
-          <button type="button" class="x-dock__launcher hd-sq hd-focusable" :class="{ 'is-active': launcherActive }" aria-label="Launcher" @click="emit('launcher')"><HdIcon name="grid" :size="Math.round(size * 0.5)" /></button>
+        <HdTooltip text="Overview (Super)" :placement="tipPlace">
+          <button type="button" class="x-dock__launcher hd-sq hd-focusable" :class="{ 'is-active': launcherActive }" aria-label="Overview" @click="emit('launcher')"><HdIcon name="grid" :size="Math.round(size * 0.5)" /></button>
         </HdTooltip>
         <span v-if="editing" class="x-dock__rm hd-sq" aria-hidden="true">×</span>
       </span>

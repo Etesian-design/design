@@ -24,7 +24,7 @@ defineProps<{ title: string; idea: string; gain: string; cost: string }>();
 .x-stage__idea { margin: 2px 0 0; font-size: var(--hd-font-size-small); line-height: 1.4; }
 .x-stage__tradeoff { margin: 4px 0 0; display: flex; flex-wrap: wrap; gap: 2px 20px; font-size: var(--hd-font-size-small); line-height: 1.4; color: var(--hd-c-fg-secondary); }
 .x-stage__tradeoff b { font-weight: 700; color: var(--hd-c-fg); margin-right: 4px; }
-.x-stage__controls { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; }
+.x-stage__controls { min-width: 0; max-width: 100%; display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; }
 .x-stage__controls .hd-tab-bar { min-width: 0; }
 .x-stage__controls .hd-tab-button { flex: 0 0 auto; white-space: nowrap; min-height: 30px; padding: 0 12px; }
 .x-stage__frames { flex: 1 1 auto; min-height: 0; display: flex; gap: 20px; align-items: stretch; }

@@ -19,7 +19,7 @@ const allDay = ref(false);
     <HdSheet v-model:open="open" inline title="New event" accept-label="Save" reject-label="Cancel">
       <div class="x-tsheet__form">
         <HdTextField label="Title" model-value="Design review" />
-        <HdTextField label="Location" model-value="Room Harmattan" />
+        <HdTextField label="Location" model-value="Room Etesian" />
         <HdListItem title="All day"><template #trailing><HdSwitch v-model="allDay" aria-label="All day" /></template></HdListItem>
         <HdSectionHeader title="When" />
         <HdListItem title="Starts" subtitle="Thursday 29 October, 14:00" drilldown />

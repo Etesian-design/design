@@ -1,9 +1,10 @@
 <script setup lang="ts">
 /**
- * Desktop v2 (merges v1 A + B, D's peek dock): overlapping windows with integrated N9 header bars, snapping by keyboard
- * or drag, a light floating dock (left by default; a full-height panel is an option), a global menu bar, a Windows view
- * (Super+Tab, Super + wheel zooms like the phone's Open apps), a launcher (Super), the Events panel (Super+N) and a status menu.
- * Live keys: Super, Super+Tab, Tab, Super+N, Super+Z, Super+Left/Right/Down, typing in the launcher, Esc.
+ * Desktop v2 EXTENDS Desktop v1 (it keeps everything v1 has and adds to it): v1's Overview stays the main menu (Super: Events,
+ * open windows and apps, full screen). v2 adds overlapping windows with integrated N9 header bars, snapping by keyboard or drag,
+ * a light floating dock (left by default; a full-height panel is an option), a global menu bar, a Windows view (Super+Tab,
+ * Super + wheel zooms like the phone's Open apps), the spotlight search (Super+Space), the Events panel (Super+N) and a status menu.
+ * Live keys: Super, Super+Space, Super+Tab, Tab, Super+N, Super+Z, Super+Left/Right/Down, typing, Esc.
  */
 import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue';
 import XDesktop from '../desktop/XDesktop.vue';
@@ -21,8 +22,10 @@ import XZones from './XZones.vue';
 import XLayoutPicker from './XLayoutPicker.vue';
 import XWindows from './XWindows.vue';
 import XLauncher from './XLauncher.vue';
+import XOverview from '../parts/XOverview.vue';
 import XEventsPanel from './XEventsPanel.vue';
 import XStatusPanel from './XStatusPanel.vue';
+import XWidgets from './XWidgets.vue';
 import { useDesktopKeys } from '../desktop/useDesktopKeys';
 import { workArea, zoneRects, dockThickness, GAP, OPEN_WINDOWS, type DockPos, type LayoutId, type Rect, type ZoomLevel } from './geometry';
 import { STATES, type V2State } from './states';
@@ -48,6 +51,7 @@ const autoHide = computed(() => st.value === 'dock-autohide');
 const area = computed(() => workArea(dockPos.value, 44, autoHide.value));
 const winView = computed(() => st.value in LEVEL);
 const launcher = computed(() => st.value === 'search');
+const overview = computed(() => st.value === 'overview');
 const events = computed(() => st.value === 'events' || st.value === 'events-month');
 const status = computed(() => st.value === 'status');
 const RUNNING = OPEN_WINDOWS.map((o) => o.app);
@@ -59,8 +63,10 @@ const FLOAT: W[] = [
   { app: 'Messages', x: 1420, y: 290, w: 460, h: 640, z: 2 },
 ];
 function inArea(r: Rect, a: Rect): Rect { return { x: a.x + Math.min(r.x, a.w - r.w - GAP), y: a.y + Math.min(r.y, a.h - r.h - GAP), w: Math.min(r.w, a.w - 2 * GAP), h: Math.min(r.h, a.h - 2 * GAP) }; }
+const widgets = computed(() => st.value === 'idea-widgets' || st.value === 'idea-widgets-edit');
 const wins = computed<W[]>(() => {
   const a = area.value;
+  if (widgets.value) return []; // the windows are minimised: the desktop shows
   if (st.value === 'snapped') {
     const z = zoneRects('thirds', a);
     return ['Mail', 'Calendar', 'Messages'].map((app, i) => ({ app, ...z[i]!, z: 1, tiled: true }));
@@ -76,8 +82,8 @@ const wins = computed<W[]>(() => {
   return list;
 });
 const dragApp = computed(() => (st.value === 'drag' ? 'Mail' : null));
-const barApp = computed(() => (winView.value || launcher.value ? '' : st.value === 'snapped' ? 'Calendar' : focused.value));
-const barLabel = computed(() => (winView.value ? 'Windows' : launcher.value ? 'Launcher' : ''));
+const barApp = computed(() => (winView.value || launcher.value || overview.value ? '' : st.value === 'snapped' ? 'Calendar' : focused.value));
+const barLabel = computed(() => (winView.value ? 'Windows' : overview.value ? 'Overview' : launcher.value ? 'Search' : ''));
 function open(n: string) { focused.value = n; q.value = ''; held.value = false; locked.value = false; st.value = 'desktop'; }
 
 function snapFocused(i: number) { snap.value = { ...snap.value, [focused.value]: i }; }
@@ -93,6 +99,7 @@ useDesktopKeys((e) => {
     else { level.value = 1; locked.value = false; held.value = true; sel.value = (RUNNING.indexOf(focused.value) + (e.shiftKey ? N - 1 : 1)) % N; st.value = 'switch'; }
     return;
   }
+  if (e.metaKey && k === ' ') { e.preventDefault(); st.value = launcher.value ? 'desktop' : 'search'; return; }
   if (e.metaKey && (k === 'n' || k === 'N')) { st.value = events.value ? 'desktop' : 'events'; return; }
   if (e.metaKey && (k === 'z' || k === 'Z')) { picker.value = !picker.value; return; }
   if (k === 'Escape') { picker.value = false; q.value = ''; st.value = 'desktop'; return; }
@@ -103,7 +110,7 @@ useDesktopKeys((e) => {
     else if (k === 'Enter') open(RUNNING[sel.value]!);
     return;
   }
-  if (launcher.value) {
+  if (launcher.value || overview.value) {
     if (k === 'Backspace') q.value = q.value.slice(0, -1);
     else if (k.length === 1 && !e.metaKey && !(e.target instanceof HTMLInputElement)) q.value += k;
     return;
@@ -112,12 +119,12 @@ useDesktopKeys((e) => {
   else if (e.metaKey && k === 'ArrowRight') snapFocused(1);
   else if (e.metaKey && k === 'ArrowDown') { const s = { ...snap.value }; delete s[focused.value]; snap.value = s; }
 });
-/** Super released: a tap alone opens the launcher; after Super+Tab it switches, unless the wheel locked the viewer */
+/** Super released: a tap alone opens or closes the Overview; after Super+Tab it switches, unless the wheel locked the viewer */
 function onKeyUp(e: KeyboardEvent) {
   if (e.key !== 'Meta' && e.key !== 'OS') return;
   const used = metaUsed; metaDown = false; metaUsed = false;
   if (held.value) { held.value = false; if (winView.value && !locked.value) open(RUNNING[sel.value]!); return; }
-  if (!used && !e.ctrlKey) st.value = launcher.value ? 'desktop' : 'search';
+  if (!used && !e.ctrlKey) st.value = overview.value ? 'desktop' : 'overview';
 }
 function onZoom() { locked.value = true; }
 onMounted(() => window.addEventListener('keyup', onKeyUp));
@@ -135,13 +142,13 @@ const GESTURES = [
 const info = computed(() => STATES[st.value]);
 const hints = computed<[string, string][]>(() => {
   switch (st.value) {
-    case 'desktop': case 'dock-previews': case 'dock-panel': case 'dock-bottom': return [['Super+Tab', 'Switch'], ['Super+Wheel', 'Task viewer'], ['Super', 'Launcher'], ['Super+N', 'Events'], ['Super+Z', 'Snap layouts'], ['Super+Left', 'Snap left'], ['Super+Right', 'Snap right'], ['Alt', 'Menus'], ['3 fingers ←→', 'Minimise / switch'], ['Pinch', 'Zoom windows']];
+    case 'desktop': case 'dock-previews': case 'dock-panel': case 'dock-bottom': return [['Super+Tab', 'Switch'], ['Super+Wheel', 'Task viewer'], ['Super', 'Overview'], ['Super+Space', 'Search'], ['Super+N', 'Events'], ['Super+Z', 'Snap layouts'], ['Super+Left', 'Snap left'], ['Super+Right', 'Snap right'], ['Alt', 'Menus'], ['3 fingers ←→', 'Minimise / switch'], ['Pinch', 'Zoom windows']];
     case 'gestures': return [['3 fingers ←→', 'Minimise / switch'], ['Pinch', 'Zoom windows'], ['3 fingers ↓', 'Close (setting, off by default)']];
     case 'switch': return [];
     case 'drag': return [['Shift', 'Show zones while dragging'], ['Super+Z', 'Layouts'], ['Ctrl', 'Span two zones'], ['Esc', 'Cancel']];
     case 'snapped': return [['Super+Left', 'Move to left zone'], ['Super+Right', 'Move to right zone'], ['Super+Up', 'Maximise'], ['Super+Down', 'Float again'], ['Super+Tab', 'Windows']];
     case 'windows': case 'windows-carousel': case 'windows-4': return [['Tab', 'Next window'], ['Shift+Tab', 'Previous'], ['Super+Wheel', 'Zoom: 1 · 2 · 3 · 4 per row'], ['Pinch', 'Zoom (touchpad)'], ['Enter', 'Switch'], ['Esc', 'Close viewer']];
-    case 'search': return [['Super', 'Close launcher'], ['Enter', 'Open first'], ['Super+Tab', 'Windows'], ['Esc', 'Close']];
+    case 'search': return [['Super+Space', 'Close'], ['Enter', 'Open first'], ['Super', 'Overview'], ['Esc', 'Close']];
     case 'dock-edit': return [['Esc', 'Done'], ['Delete', 'Remove item']];
     case 'idea-viewmenu': return [['Alt+V', 'View menu'], ['Up+Down', 'Choose'], ['Enter', 'Switch view']];
     default: return [];
@@ -152,6 +159,8 @@ const hints = computed<[string, string][]>(() => {
   <XDesktop :label="info.title">
     <XMenuBar :app="barApp" :label="barLabel" :active="events ? 'events' : status ? 'status' : null" @events="st = events ? 'desktop' : 'events'" @status="st = status ? 'desktop' : 'status'" />
     <div class="x-desktop__area x-v2" :class="`x-v2--${st}`">
+      <!-- idea: widgets on the wallpaper, under the windows -->
+      <XWidgets v-if="widgets" :editing="st === 'idea-widgets-edit'" :left="area.x" />
       <!-- windows -->
       <template v-if="st !== 'decor'">
         <XWin v-for="w in wins" :key="st + w.app" :app="w.app" :x="w.x" :y="w.y" :w="w.w" :h="w.h" :tiled="w.tiled"
@@ -181,13 +190,29 @@ const hints = computed<[string, string][]>(() => {
         </section>
         <div class="x-decor__rows">
           <p class="x-decor__cap">Mail · active · reading a message (Back shown)</p>
-          <div class="x-decor__win"><XWin app="Mail" :w="1200" :h="150" focused back id-prefix="dc1" /></div>
+          <div class="x-decor__win"><XWin app="Mail" :w="1200" :h="112" focused back id-prefix="dc1" /></div>
           <p class="x-decor__cap">Mail · inactive</p>
-          <div class="x-decor__win"><XWin app="Mail" :w="1200" :h="150" id-prefix="dc2" /></div>
+          <div class="x-decor__win"><XWin app="Mail" :w="1200" :h="112" id-prefix="dc2" /></div>
           <p class="x-decor__cap">Plain app (Notes, no app actions) · active</p>
-          <div class="x-decor__win"><XWin app="Notes" plain :w="1200" :h="150" focused id-prefix="dc3" /></div>
+          <div class="x-decor__win"><XWin app="Notes" plain :w="1200" :h="112" focused id-prefix="dc3" /></div>
           <p class="x-decor__cap">Plain app · inactive</p>
-          <div class="x-decor__win"><XWin app="Notes" plain :w="1200" :h="150" id-prefix="dc4" /></div>
+          <div class="x-decor__win"><XWin app="Notes" plain :w="1200" :h="112" id-prefix="dc4" /></div>
+          <!-- KDE apps (KXmlGui) keep a toolbar under the title bar; the Etesian decoration reads the app's exported menu and
+               moves the toolbar's actions into the header, then the app's own toolbar is hidden: one row of chrome, as above. -->
+          <div class="x-decor__pair"><div>
+          <p class="x-decor__cap">KDE app (Kate) · before: its own toolbar row</p>
+          <div class="x-decor__win x-kde hd-on-chrome">
+            <div class="x-kde__bar"><span class="x-kde__icon" /><span class="x-kde__title">README.md — Kate</span><span class="x-kde__grow" /><span class="x-decor__sep" /><HdToolIcon icon="minimize" label="Minimise" /><HdToolIcon icon="maximize" label="Maximise" /><HdToolIcon icon="close" label="Close" /></div>
+            <div class="x-kde__tools"><span v-for="t in ['New', 'Open', 'Save', 'Save As', 'Undo', 'Redo']" :key="t">{{ t }}</span></div>
+            <div class="x-kde__page hd-on-page">The second row only repeats the File and Edit menus.</div>
+          </div></div><div>
+          <p class="x-decor__cap">after: its actions in the header, toolbar hidden</p>
+          <div class="x-decor__win x-kde hd-on-chrome">
+            <div class="x-kde__bar"><span class="x-kde__icon" /><span class="x-kde__title">README.md</span><span class="x-kde__grow" />
+              <HdToolIcon icon="add" label="New (Ctrl+N)" /><HdToolIcon icon="folder" label="Open (Ctrl+O)" /><HdToolIcon icon="save" label="Save (Ctrl+S)" /><HdToolIcon icon="undo" label="Undo (Ctrl+Z)" /><HdToolIcon icon="redo" label="Redo (Ctrl+Shift+Z)" /><HdToolIcon icon="more" label="Menu" />
+              <span class="x-decor__sep" /><HdToolIcon icon="minimize" label="Minimise" /><HdToolIcon icon="maximize" label="Maximise" /><HdToolIcon icon="close" label="Close" /></div>
+            <div class="x-kde__page hd-on-page">One row of chrome; menus stay in the menu bar (Alt).</div>
+          </div></div></div>
         </div>
         <aside class="x-decor__notes hd-on-page">
           <h3>Rules</h3>
@@ -217,7 +242,8 @@ const hints = computed<[string, string][]>(() => {
         </div>
       </div>
 
-      <!-- 5: launcher (Super) -->
+      <!-- 5: the Overview (Super), v1's main menu / 5b: the spotlight (Super+Space), a v2 addition -->
+      <Transition name="x-ov"><XOverview v-if="overview" v-model:query="q" :apps="RUNNING" spotlight @open="open" /></Transition>
       <XLauncher v-if="launcher" v-model:query="q" @open="open" />
 
       <!-- 6: events panel / 7: status menu -->
@@ -227,7 +253,7 @@ const hints = computed<[string, string][]>(() => {
       <!-- dock -->
       <XDock v-if="st !== 'decor'" :position="dockPos" :panel="panel" :clock="panel" :auto-hide="autoHide" :revealed="autoHide"
         :editing="st === 'dock-edit'" :previews="st === 'dock-previews'" :peek-thumb="st === 'dock-previews' ? 'Mail' : undefined" :running="RUNNING"
-        :active="winView || launcher ? undefined : st === 'snapped' ? 'Calendar' : focused" :launcher-active="launcher" @launcher="st = launcher ? 'desktop' : 'search'" @open="open" />
+        :active="winView || launcher || overview ? undefined : st === 'snapped' ? 'Calendar' : focused" :launcher-active="overview" @launcher="st = overview ? 'desktop' : 'overview'" @open="open" />
       <template v-if="st === 'dock-edit'">
         <div class="x-editbanner hd-on-overlay"><HdIcon name="edit" :size="18" /><b>Edit dock</b><span>Drag the handle to any screen edge · × removes · everything else is in the settings</span><XKey keys="Esc" /> Done</div>
         <XDockSettings style="left: 104px; top: 150px" />
@@ -236,7 +262,7 @@ const hints = computed<[string, string][]>(() => {
       <div v-if="st === 'dock-autohide'" class="x-chip hd-on-overlay" style="left: 110px; bottom: 24px">Pointer at the left edge, or <XKey keys="Super" />, slides the dock in · it hides again when you leave</div>
       <XCursor v-if="st === 'dock-previews'" :x="52" :y="440" />
 
-      <XHints v-if="hints.length && !events" corner="br" :items="hints" :style="dockPos === 'bottom' ? 'bottom: 96px' : undefined" />
+      <XHints v-if="hints.length && !events && !overview" corner="br" :items="hints" :style="dockPos === 'bottom' ? 'bottom: 96px' : undefined" />
     </div>
   </XDesktop>
 </template>
@@ -264,13 +290,24 @@ const hints = computed<[string, string][]>(() => {
 .x-decor__p .hd-tool-icon:first-child { --hd-sq-fill: var(--hd-c-pressed); }
 .x-decor__t { gap: 6px; font: var(--hd-font-weight-light) 32px/1 var(--hd-font-family-light); }
 .x-decor__drag { align-self: stretch; background: repeating-linear-gradient(45deg, transparent 0 8px, color-mix(in srgb, var(--hd-c-fg) 8%, transparent) 8px 16px); }
+.x-kde { border-radius: var(--hd-radius-card); overflow: hidden; background: var(--hd-surface-chrome); color: var(--hd-c-fg); }
+.x-kde__bar { display: flex; align-items: center; gap: 4px; height: 44px; padding: 0 6px; }
+.x-kde__icon { width: 22px; height: 22px; margin: 0 4px; --hd-sq-size: 22px; background: linear-gradient(#F9B233, #E07B00); clip-path: url(#hd-squircle-clip); border-radius: 30%; }
+.x-kde__title { font: var(--hd-font-weight-light) 21px/1 var(--hd-font-family-light); }
+.x-kde__grow { flex: 1; }
+.x-kde__tools { display: flex; gap: 18px; height: 34px; align-items: center; padding: 0 14px; border-top: 1px solid var(--hd-c-divider); font: 400 var(--hd-font-size-small)/1 var(--hd-font-family-base); color: var(--hd-c-fg-secondary); }
+.x-kde__page { padding: 10px 14px; background: var(--hd-c-bg); color: var(--hd-c-fg); font-size: var(--hd-font-size-small); }
 .x-decor__sep { width: 1px; height: 30px; background: var(--hd-c-divider); }
 .x-decor__ctl .hd-tool-icon { width: 44px; height: 44px; --hd-sq-size: 40px; }
 .x-decor__ctl .hd-tool-icon svg { width: 22px; height: 22px; }
 .x-decor__close { --hd-sq-fill: var(--hd-color-palette-warning) !important; color: #fff; }
 .x-decor__rows { display: flex; flex-direction: column; gap: 6px; }
 .x-decor__cap { margin: 8px 0 2px; font: 700 var(--hd-font-size-xsmall)/1 var(--hd-font-family-base); color: var(--hd-c-fg-secondary); }
-.x-decor__win { position: relative; height: 150px; }
+.x-decor__win { position: relative; height: 112px; }
+.x-decor__pair { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.x-decor__win.x-kde { height: auto; }
+.x-kde__bar .hd-tool-icon { width: 34px; height: 34px; --hd-sq-size: 32px; }
+.x-kde__bar .hd-tool-icon svg { width: 20px; height: 20px; }
 .x-decor__win .x-win { position: relative; left: auto !important; top: auto !important; width: 100% !important; }
 .x-decor__notes { align-self: start; padding: 18px 22px; border-radius: var(--hd-radius-card); background: var(--hd-c-bg); color: var(--hd-c-fg); font-size: var(--hd-font-size-small); line-height: 1.45; box-shadow: 0 0 0 1px var(--hd-c-divider); }
 .x-decor__notes h3 { margin: 0 0 8px; font: var(--hd-font-weight-light) var(--hd-font-size-xlarge)/1 var(--hd-font-family-light); }

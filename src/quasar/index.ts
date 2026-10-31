@@ -1,25 +1,25 @@
 /**
- * Harmattan Design Language for Quasar 2.
+ * Etesian Design Language for Quasar 2.
  *
  *   import { Quasar, Notify, Dialog, Loading, BottomSheet } from 'quasar';
  *   import 'quasar/dist/quasar.css';
- *   import 'harmattan-design/style.css';
- *   import 'harmattan-design/quasar/theme.css';
- *   import { harmattanQuasarOptions, HarmattanQuasar } from 'harmattan-design/quasar';
- *   app.use(Quasar, harmattanQuasarOptions({ plugins: { Notify, Dialog, Loading, BottomSheet } }));
- *   app.use(HarmattanQuasar);
+ *   import 'etesian-design/style.css';
+ *   import 'etesian-design/quasar/theme.css';
+ *   import { etesianQuasarOptions, EtesianQuasar } from 'etesian-design/quasar';
+ *   app.use(Quasar, etesianQuasarOptions({ plugins: { Notify, Dialog, Loading, BottomSheet } }));
+ *   app.use(EtesianQuasar);
  */
 import type { App, Component } from 'vue';
 import { watch } from 'vue';
 import { tokens } from '../tokens';
-import { harmattanIconSet, hdIcon, quasarExtraPaths } from './icon-set';
+import { etesianIconSet, hdIcon, quasarExtraPaths } from './icon-set';
 import HdQSpinnerSquircle from './HdQSpinnerSquircle';
 import { quasarCoverage } from './coverage';
 
-export { harmattanIconSet, hdIcon, quasarExtraPaths, HdQSpinnerSquircle, quasarCoverage };
+export { etesianIconSet, hdIcon, quasarExtraPaths, HdQSpinnerSquircle, quasarCoverage };
 
-/** Quasar brand colours mapped to Harmattan tokens (light "blanco"). */
-export const harmattanBrand = {
+/** Quasar brand colours mapped to Etesian tokens (light "blanco"). */
+export const etesianBrand = {
   primary: tokens.color.accent.default,
   secondary: tokens.color.palette['link-active'],
   accent: tokens.color.accent.conversations,
@@ -33,13 +33,13 @@ export const harmattanBrand = {
 
 type AnyObj = Record<string, any>;
 /** Build the options object for app.use(Quasar, ...): brand, icon set, dark mode, plugin defaults. */
-export function harmattanQuasarOptions(extra: AnyObj = {}): AnyObj {
+export function etesianQuasarOptions(extra: AnyObj = {}): AnyObj {
   const { config = {}, ...rest } = extra;
   return {
-    iconSet: harmattanIconSet,
+    iconSet: etesianIconSet,
     ...rest,
     config: {
-      brand: { ...harmattanBrand },
+      brand: { ...etesianBrand },
       dark: 'auto',
       ripple: false,
       // Notify = InfoBanner (top, 3000 ms, dark translucent box; styled in theme.css)
@@ -52,7 +52,7 @@ export function harmattanQuasarOptions(extra: AnyObj = {}): AnyObj {
 }
 
 /** Default props applied to Quasar components so markup stays short (N9: flat, sentence case). */
-export const harmattanDefaultProps: Record<string, AnyObj> = {
+export const etesianDefaultProps: Record<string, AnyObj> = {
   QBtn: { noCaps: true, unelevated: true, ripple: false },
   QBtnDropdown: { noCaps: true, unelevated: true, ripple: false },
   QBtnToggle: { noCaps: true, unelevated: true, ripple: false, toggleColor: 'primary' },
@@ -91,10 +91,10 @@ function patchDefaults(app: App, defaults: Record<string, AnyObj>) {
   }
 }
 
-export interface HarmattanQuasarOptions {
+export interface EtesianQuasarOptions {
   /** add .hd-quasar to <body> (default true) */
   bodyClass?: boolean;
-  /** apply harmattanDefaultProps (default true; needs Quasar components registered globally) */
+  /** apply etesianDefaultProps (default true; needs Quasar components registered globally) */
   defaults?: boolean | Record<string, AnyObj>;
   /** keep [data-hd-mode] on <html> in sync with Quasar Dark (default true): dark when $q.dark is active, else `mode` */
   syncDark?: boolean;
@@ -103,10 +103,10 @@ export interface HarmattanQuasarOptions {
 }
 
 /** Vue plugin: install AFTER Quasar. */
-export const HarmattanQuasar = {
-  install(app: App, opts: HarmattanQuasarOptions = {}) {
+export const EtesianQuasar = {
+  install(app: App, opts: EtesianQuasarOptions = {}) {
     const { bodyClass = true, defaults = true, syncDark = true, mode = 'hybrid' } = opts;
-    if (defaults) patchDefaults(app, defaults === true ? harmattanDefaultProps : defaults);
+    if (defaults) patchDefaults(app, defaults === true ? etesianDefaultProps : defaults);
     app.component('HdQSpinnerSquircle', HdQSpinnerSquircle);
     if (typeof document === 'undefined') return;
     if (bodyClass) document.body.classList.add('hd-quasar');
@@ -116,4 +116,4 @@ export const HarmattanQuasar = {
     }
   },
 };
-export default HarmattanQuasar;
+export default EtesianQuasar;

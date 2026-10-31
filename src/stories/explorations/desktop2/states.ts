@@ -1,7 +1,7 @@
 /** Desktop v2 tour: every state with its idea and trade-off (shown in the story header). */
-export const CORE = ['desktop', 'drag', 'snapped', 'switch', 'windows', 'windows-carousel', 'windows-4', 'search', 'events', 'events-month', 'status',
+export const CORE = ['desktop', 'drag', 'snapped', 'switch', 'windows', 'windows-carousel', 'windows-4', 'overview', 'search', 'events', 'events-month', 'status',
   'gestures', 'dock-edit', 'dock-panel', 'dock-previews', 'dock-bottom', 'dock-autohide', 'decor'] as const;
-export const IDEAS = ['idea-viewmenu'] as const;
+export const IDEAS = ['idea-viewmenu', 'idea-widgets', 'idea-widgets-edit'] as const;
 export type V2State = (typeof CORE)[number] | (typeof IDEAS)[number];
 export interface StateInfo { tab: string; title: string; idea: string; gain: string; cost: string }
 export const STATES: Record<V2State, StateInfo> = {
@@ -10,7 +10,7 @@ export const STATES: Record<V2State, StateInfo> = {
     gain: 'the dock takes only the space its icons need; nothing in it but apps; menus always in the same place.',
     cost: 'no clock in the dock by default (the clock lives in the top bar); a short dock leaves the edge corners unused.' },
   drag: { tab: '2 Drag to snap', title: '2 · Drag to snap: zones + Super+Z layout picker',
-    idea: 'Dragging a window shows numbered snap zones (FancyZones) drawn as Harmattan cards; dragging to the top edge (or Super+Z) drops the layout picker (Windows 11 snap layouts). Drop on a zone to snap, or keep it floating.',
+    idea: 'Dragging a window shows numbered snap zones (FancyZones) drawn as Etesian cards; dragging to the top edge (or Super+Z) drops the layout picker (Windows 11 snap layouts). Drop on a zone to snap, or keep it floating.',
     gain: 'overlapping and tiled windows in one model; snapping is discoverable by mouse and fully reachable by keyboard.',
     cost: 'two overlays (zones and picker) to learn; a custom zone editor is needed for power users.' },
   snapped: { tab: '3 Snapped', title: '3 · Snapped: three columns, same dock and bar',
@@ -31,9 +31,12 @@ export const STATES: Record<V2State, StateInfo> = {
   'windows-4': { tab: '4d Viewer, 4 per row', title: '4d · Locked viewer zoomed out to 4 per row',
     idea: 'The densest level, for many windows. Each window keeps its own shape inside its card.',
     gain: 'every window at a glance.', cost: 'small thumbnails; titles carry more of the work.' },
-  search: { tab: '5 Launcher (Super)', title: '5 · Launcher: tap Super and type',
-    idea: 'Tapping Super on its own (pressed and released with no other key) opens a compact launcher over the windows: a search field and the app grid; typing (“mu”) filters apps, people, mail and files. Enter opens the first match. It is separate from the Windows view.',
-    gain: 'launching and switching each have one key: Super, Super+Tab.', cost: 'a second overlay to learn next to the Windows view.' },
+  overview: { tab: '5 Overview (Super)', title: '5 · Overview (Super): the main menu, kept from Desktop v1',
+    idea: 'v2 extends v1, so v1’s Overview stays the main menu. Tapping Super on its own (or the dock’s first button) opens it full screen under the menu bar, in the N9 home order: Events on the left, the open windows as live thumbnails in the middle, the apps on the right. Just start typing to search; Tab moves between the columns, Enter opens, Ctrl+W closes a window, Esc or Super closes it.',
+    gain: 'one key shows everything (notifications, windows, apps), as on the phone’s home.', cost: 'covers the whole screen while open.' },
+  search: { tab: '5b Spotlight (Super+Space)', title: '5b · Spotlight (Super+Space): a compact search, added by v2',
+    idea: 'An addition next to the Overview, not a replacement: Super+Space opens a compact spotlight-style search over the windows: a search field and the app grid; typing (“mu”) filters apps, people, mail and files. Enter opens the first match; Super+Space or Esc closes it.',
+    gain: 'a quick search without leaving the windows in view.', cost: 'a second way to launch next to the Overview.' },
   events: { tab: '6 Events (Super+N)', title: '6 · Events (Super+N): exactly the phone’s Events view',
     idea: 'Events slide in from the right under the bar: the day and date, the time, the weather (city, temperature, icon), then Notifications, Calendar (today) and Feeds — the phone’s order. No toggles, no volume: those live in the status menu.',
     gain: 'one place to catch up, the same as on the phone; nothing else competes for attention.',
@@ -66,10 +69,18 @@ export const STATES: Record<V2State, StateInfo> = {
     gain: 'the full screen for one maximised app, N9 style.', cost: 'running apps are invisible until you reach for the edge.' },
   decor: { tab: '10 Decorations', title: '10 · Window decorations close-up',
     idea: 'The N9-style integrated header bar: Back on the left when there is navigation (otherwise the app squircle), the title (a view-menu button when the app has views), the app actions and menu, a thin divider, then minimise / maximise / close. Inactive windows fade their header to half strength.',
-    gain: 'no duplicated title or app bar; one row of chrome per window; consistent action positions.',
+    gain: 'no duplicated title or app bar; one row of chrome per window; consistent action positions. KDE apps that draw a toolbar under the title bar (Kate: New, Open, Save…) get the same single row: the decoration reads the app’s exported menu, shows the toolbar’s actions in the header and the app’s own toolbar is hidden.',
     cost: 'apps must draw their own decorations (client-side), like GTK HeaderBar; server-side-decorated apps look different.' },
   'idea-viewmenu': { tab: 'Idea: title view menu', title: 'Idea · Title-bar view menu (N9 nod)',
     idea: 'Click the window title (or Alt+V) to drop the view menu, exactly like the N9’s title-bar view menus: Inbox / Sent / Drafts…, current view ticked with an accent squircle.',
     gain: 'the title becomes useful and navigation takes no toolbar space; a direct N9 echo.',
     cost: 'a hidden affordance (only the small chevron hints at it); not every app has views.' },
+  'idea-widgets': { tab: 'Idea: widgets', title: 'Idea · Belle widgets on the desktop (windows minimised)',
+    idea: 'The phone’s Belle widgets live on the wallpaper, under every window: seen when the windows are minimised or moved aside (Super+D shows the desktop). Clocks, Agenda, Feeds (RSS) and a new Mail widget (unread count and the latest senders) in the Belle panel style; Chats in the same style. Clicking a widget row opens that app’s window.',
+    gain: 'glanceable mail, calendar, chats and time without opening a window; the same widgets as the phone.',
+    cost: 'only visible with the windows out of the way; a desktop full of widgets competes with windows for attention.' },
+  'idea-widgets-edit': { tab: 'Idea: edit widgets', title: 'Idea · Edit widgets: View → Edit widgets',
+    idea: 'View → Edit widgets turns on the phone’s edit chrome (accent outline, red ✕ squircle, resize handle) and a faint 90 px grid; widgets drag and snap to it. The Add widgets sheet lists the kinds by group. No long-press and no new right-click menu: edit mode is entered from the menu bar, like the dock’s edit mode. Done or Esc ends it.',
+    gain: 'one edit model shared with the phone Home and the dock; nothing hidden behind a gesture.',
+    cost: 'adding a widget is two clicks away (View menu, then the sheet).' },
 };

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 /**
- * Desktop window: slim 30px Harmattan title bar (chrome surface: squircle app icon, title, minimise / maximise / close as
+ * Desktop window: slim 30px Etesian title bar (chrome surface: squircle app icon, title, minimise / maximise / close as
  * squircle icon buttons), app content below, resize grip. Absolute position in desktop coordinates.
  */
 import HdSquircle from '../../../components/HdSquircle.vue';

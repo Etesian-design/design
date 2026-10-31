@@ -1,5 +1,5 @@
 import 'quasar/dist/quasar.css';
-import '../../quasar/harmattan-quasar.css';
+import '../../quasar/etesian-quasar.css';
 import { onMounted, onBeforeUnmount, type Component } from 'vue';
 import type { StoryObj } from '@storybook/vue3-vite';
 import { hdIcon } from '../../quasar/icon-set';

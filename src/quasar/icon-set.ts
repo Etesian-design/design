@@ -16,6 +16,11 @@ export const quasarExtraPaths: Record<string, string> = {
   'caret-down': 'M8 10l4 4 4-4',
   'cancel': 'M12 3a9 9 0 1 1 0 18 9 9 0 1 1 0-18M9 9l6 6M15 9l-6 6',
   'first': 'M6 5v14M18 5l-7 7 7 7',
+  'pause': 'M8 5v14M16 5v14',
+  'lines': 'M4 7h16M4 12h16M4 17h16',
+  'shuffle': 'M3 7h3c5 0 6 10 11 10h4M3 17h3c2 0 3-1.5 4-3M13 10c1-1.5 2-3 4-3h4M18 4l3 3-3 3M18 14l3 3-3 3',
+  'repeat': 'M17 2l3 3-3 3M4 11V9a4 4 0 0 1 4-4h12M7 22l-3-3 3-3M20 13v2a4 4 0 0 1-4 4H4',
+  'store': 'M6 8h12l-1 12H7zM9 8V6a3 3 0 0 1 6 0v2',
   'last': 'M18 5v14M6 5l7 7-7 7',
   'dot': 'M12 9.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 1 1 0-5',
   'tune': 'M4 7h10M18 7h2M4 17h4M12 17h8M16 5v4M10 15v4',
@@ -58,9 +63,9 @@ const all: Record<string, string> = { ...icons, ...quasarExtraPaths };
 export const hdIcon = (name: string): string => `${(all[name] ?? all.info!)}@@${STROKE}|0 0 24 24`;
 
 const i = hdIcon;
-/** Pass as `iconSet` to Quasar (app.use(Quasar, { iconSet: harmattanIconSet })). */
-export const harmattanIconSet = {
-  name: 'harmattan',
+/** Pass as `iconSet` to Quasar (app.use(Quasar, { iconSet: etesianIconSet })). */
+export const etesianIconSet = {
+  name: 'etesian',
   type: { positive: i('check'), negative: i('warning'), info: i('info'), warning: i('warning') },
   arrow: { up: i('arrow-up'), right: i('arrow-right'), down: i('arrow-down'), left: i('arrow-left'), dropdown: i('caret-down') },
   chevron: { left: i('chevron-left'), right: i('chevron-right') },

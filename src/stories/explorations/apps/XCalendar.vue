@@ -24,7 +24,7 @@ const tabs = [{ id: 'month', label: 'Month', icon: 'calendar' }, { id: 'agenda',
       </div>
       <div class="x-cal__agenda">
         <HdSectionHeader :title="`Saturday ${day} October`" />
-        <HdListItem title="Design review" subtitle="14:00 – 15:00 · Room Harmattan" />
+        <HdListItem title="Design review" subtitle="14:00 – 15:00 · Room Etesian" />
         <HdListItem title="Lunch with Anna" subtitle="12:30 – 13:30" />
         <HdListItem title="Gym" subtitle="18:00 – 19:00" />
       </div>

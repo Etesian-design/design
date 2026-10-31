@@ -1,5 +1,5 @@
 <script setup lang="ts">
-/** Super+Z snap-layout picker (Windows 11 snap layouts, Harmattan look). Also drops down when a window is dragged to the top edge. */
+/** Super+Z snap-layout picker (Windows 11 snap layouts, Etesian look). Also drops down when a window is dragged to the top edge. */
 import XKey from '../parts/XKey.vue';
 import { LAYOUTS, type LayoutId } from './geometry';
 const props = withDefaults(defineProps<{ layout?: LayoutId; zone?: number; hints?: boolean }>(), { zone: -1, hints: true });

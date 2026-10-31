@@ -22,7 +22,7 @@ watch(() => props.events, (v) => (events.value = v));
 const W = 1920, H = 1052, G = 8;
 const LAYOUTS: Record<Layout, { app: string; title: string; f: number }[]> = {
   thirds: [{ app: 'Mail', title: 'Inbox', f: 1 / 3 }, { app: 'Calendar', title: 'Calendar', f: 1 / 3 }, { app: 'Messages', title: 'Anna Virtanen', f: 1 / 3 }],
-  halves: [{ app: 'Mail', title: 'Inbox', f: 1 / 2 }, { app: 'Browser', title: 'Harmattan journal', f: 1 / 2 }],
+  halves: [{ app: 'Mail', title: 'Inbox', f: 1 / 2 }, { app: 'Browser', title: 'Etesian journal', f: 1 / 2 }],
   'two-thirds': [{ app: 'Mail', title: 'Inbox', f: 2 / 3 }, { app: 'Messages', title: 'Anna Virtanen', f: 1 / 3 }],
 };
 const cols = computed(() => {

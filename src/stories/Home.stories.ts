@@ -16,6 +16,8 @@ import XMiniApp from './explorations/parts/XMiniApp.vue';
 const meta: Meta = { title: 'OS/Home & lock screen', excludeStories: ['apps', 'lockItems'], tags: ['autodocs'], parameters: { docs: { description: { component: '**Canon** (matched to the ROM, see docs/20-phone.md): lock-screen cards and the default stacked carousel, Open applications (2 per row by default; pinch: carousel, 2, 3, 4) with edit mode and the carousel action row, the Applications grid (4 columns), and the black Events view.' } } } };
 export default meta;
 type S = StoryObj;
+/** A story with its own controls (the args its render function reads). */
+type SA<A> = StoryObj<A>;
 export const apps = [
   ['Phone', 'phone', '#62B700'], ['Messages', 'message', '#09A7CC'], ['Contacts', 'person', '#007DC9'], ['Mail', 'mail', '#0067BC'],
   ['Store', 'star', '#1C51AF'], ['Gallery', 'photo', '#821DDE'], ['Music', 'music', '#CC09BA'], ['Calendar', 'calendar', '#EF5500'],
@@ -44,7 +46,7 @@ export const LockScreenMore: S = {
 };
 const openApps = ['Messages', 'Mail', 'Calendar', 'Music'];
 const preview = `<XFit :w="480" :h="854" :initial="0.3"><div style="width:480px;height:854px;display:flex;background:var(--hd-c-bg);color:var(--hd-c-fg)" class="hd-on-page" inert><XMiniApp :name="a" chrome="toolbar" :hints="false" :id-prefix="'tc-' + a" /></div></XFit>`;
-export const TaskCards: S = {
+export const TaskCards: SA<{ editing: boolean }> = {
   name: 'Open apps (2 per row, edit mode)',
   args: { editing: true },
   render: (args) => ({ components: { HdTaskCard, HdTaskEditBar, XFit, XMiniApp }, setup: () => ({ edit: ref(!!args.editing), openApps }), template: `<label><input type="checkbox" v-model="edit"> Edit mode (long-press)</label>
@@ -68,7 +70,7 @@ export const EventsFeed: S = {
   <HdEventsFeedItem title="Anna Virtanen" body="Are we still on for lunch? I can be there by 12:30." time="12:24" accent="#09A7CC" />
   <HdEventsFeedItem title="3 new messages" body="Mikko Laine, Sara Koski, Liisa Niemi" time="Latest 12:20" icon="mail" accent="#0067BC" />
   <HdSectionHeader title="Feed" align="start" large><template #action><HdButton variant="default" class="hd-events-btn">Refresh</HdButton></template></HdSectionHeader>
-  <HdEventsFeedItem title="Hacker News: Front Page" body="Show HN: a squircle calculator for the Harmattan design language" time="12:18" icon="globe" accent="#FF8500" />
+  <HdEventsFeedItem title="Hacker News: Front Page" body="Show HN: a squircle calculator for the Etesian design language" time="12:18" icon="globe" accent="#FF8500" />
   <HdEventsFeedItem title="Design weekly" body="Why squircles feel softer than rounded rectangles" time="11:51" icon="globe" accent="#FF8500" />
   <HdEventsFeedItem title="Mikko Laine" body="Posted 6 new photos from Lapland" time="10:53" icon="photo" accent="#821DDE" /></div>` }),
 };

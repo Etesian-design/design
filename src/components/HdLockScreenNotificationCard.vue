@@ -13,11 +13,11 @@ const extra = computed(() => props.more ?? (props.count && props.count > 1 ? pro
 </script>
 <template>
   <article class="hd-lock-card" :aria-label="`${source}: ${message}, ${time}${extra ? `, ${extra} more` : ''}`">
-    <HdSquircle :size="44" :src="image" :color="image ? undefined : (accent ?? 'var(--hd-accent)')" :lighting="lighting"><HdIcon :name="icon ?? 'message'" :size="24" :lit="lighting === 'lit' && !image" /></HdSquircle>
+    <slot name="media"><HdSquircle :size="44" :src="image" :color="image ? undefined : (accent ?? 'var(--hd-accent)')" :lighting="lighting"><HdIcon :name="icon ?? 'message'" :size="24" :lit="lighting === 'lit' && !image" /></HdSquircle></slot>
     <div class="hd-lock-card__text">
       <p class="hd-lock-card__msg">{{ message }}</p>
       <p class="hd-lock-card__from">{{ source }}<span v-if="extra"> · {{ extra }} more</span></p>
-      <p class="hd-lock-card__time"><time>{{ time }}</time></p>
+      <p v-if="time" class="hd-lock-card__time"><time>{{ time }}</time></p>
     </div>
   </article>
 </template>

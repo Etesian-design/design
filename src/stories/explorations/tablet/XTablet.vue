@@ -7,7 +7,7 @@ withDefaults(defineProps<{ orientation?: 'landscape' | 'portrait'; label?: strin
 <template>
   <XDevice :w="orientation === 'landscape' ? 1280 : 800" :h="orientation === 'landscape' ? 800 : 1280" :label="label ?? (orientation === 'landscape' ? 'Landscape' : 'Portrait')">
     <div class="x-tablet" :class="`x-tablet--${orientation}`">
-      <HdStatusBar v-if="statusBar" operator="Harmattan" time="12:45" :signal="4" />
+      <HdStatusBar v-if="statusBar" operator="Etesian" time="12:45" :signal="4" />
       <div class="x-tablet__content"><slot /></div>
     </div>
   </XDevice>

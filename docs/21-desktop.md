@@ -1,6 +1,6 @@
 # 21 · The desktop (decisions so far)
 
-This chapter is the desktop counterpart of [20 · The phone](20-phone.md). It records what Desktop v2 (Storybook: *Explorations / Desktop v2*) decided, and what was tried and rejected. The phone chapter's rules still apply: squircle n = 2.8, top-lit buttons, type that follows the OS, and the Events order.
+This chapter is the desktop counterpart of [20 · The phone](20-phone.md). It records what Desktop v2 (Storybook: *Explorations / Desktop v2*) decided, and what was tried and rejected. **Desktop v2 extends Desktop v1; it does not replace it.** Everything v1 has stays, above all v1 A's **Overview** as the main menu (Super); v2's pieces are additions. The phone chapter's rules still apply: squircle n = 2.8, top-lit buttons, type that follows the OS, and the Events order.
 
 ## Windows
 
@@ -26,7 +26,7 @@ This chapter is the desktop counterpart of [20 · The phone](20-phone.md). It re
 
 - **Default: a light floating strip** on the left edge.
   - It is centred vertically and only as long as its icons (Unity's position, the macOS dock's shape).
-  - Order: **launcher | separator | pinned and running apps | separator | recycle bin**. The recycle bin is always last.
+  - Order: **Overview button | separator | pinned and running apps | separator | recycle bin**. The recycle bin is always last.
   - Running apps get a small dot on the screen-edge side.
 - **Options** (Edit dock → settings):
   - a full-height Plasma-style panel;
@@ -46,7 +46,11 @@ This chapter is the desktop counterpart of [20 · The phone](20-phone.md). It re
   - A locked view stays open after Super is released, until you pick a window or press Esc.
   - Zooming in at the carousel also locks it, with no visual change.
 - The view shows **only open windows**. Each card keeps its window's aspect ratio and the card radius; only the app badge is a squircle.
-- **Tapping Super alone** (pressed and released with no other key) opens the launcher: a search field plus the app grid. It is separate from the Windows view.
+## Overview (Super) and spotlight (Super+Space)
+
+- **Tapping Super alone** (pressed and released with no other key), or the dock's first button, opens the **Overview**, v1 A's main menu: full screen under the menu bar, in the N9 home order — **Events** on the left, the **open windows** as live thumbnails in the middle (two per row, close on hover), the **apps** on the right with type-to-search.
+  - Just start typing to search; Tab moves between the columns; Enter opens; Ctrl+W closes a window; Esc or Super closes it.
+- **Super+Space** opens the **spotlight**, a v2 addition: a compact search field plus the app grid over the windows; typing finds apps, people, mail and files. It does not replace the Overview.
 
 ## Events panel and status menu
 
@@ -71,7 +75,7 @@ The two core gestures (sideways and pinch) appear in the key hints alongside the
 | Idea | Why it was rejected |
 |---|---|
 | **A Windows-style full-height left panel as the default dock** | Too heavy. It is kept only as an option. |
-| **Full-screen three-view overview** (Events / Windows / Applications on a horizontal track) | Wastes space. Replaced by the Super+Tab carousel and viewer, plus the separate launcher. |
+| **Full-screen three views on a horizontal track** (v1 B: Events / Windows / Applications as pages you slide between) | Wastes space. The Super+Tab carousel and viewer cover window switching. This is not v1 A's three-column Overview, which stays the main menu (Super). |
 | **Connectivity toggles and volume inside Events** | Events must match the phone exactly. These moved to the status menu. |
 | **Dragging the title bar down to close** | Accidental closes, and it conflicts with snapping to the bottom. The optional three-finger swipe down (off by default) covers the N9 close instead. |
 | **Squircle window thumbnails in the dock** | Windows and thumbnails are not squircles. Thumbnails became optional hover previews in the window's real aspect ratio. |

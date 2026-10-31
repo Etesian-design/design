@@ -3,6 +3,7 @@ import { ref } from 'vue';
 import HdToolBar from '../components/HdToolBar.vue';
 import HdToolIcon from '../components/HdToolIcon.vue';
 import HdTabBar from '../components/HdTabBar.vue';
+import HdFastScroll from '../components/HdFastScroll.vue';
 import HdPageHeader from '../components/HdPageHeader.vue';
 import HdStatusBar from '../components/HdStatusBar.vue';
 import HdPageIndicator from '../components/HdPageIndicator.vue';
@@ -49,4 +50,14 @@ export const DrillDown: S = {
       <template #default="{ depth }">
         <HdListItem v-for="n in ['Display', 'Sounds', 'Connectivity']" :key="n + depth" :title="depth === 1 ? n : n + ' option'" drilldown @click="push(n)" />
       </template></HdPageStack></div>` }),
+};
+
+const fsSecs = ['A', 'E', 'H', 'J', 'K', 'L', 'M', 'S', 'T'].map((letter, i) => ({ letter, top: 14 + i * 60 }));
+export const FastScroll: StoryObj<typeof HdFastScroll> = {
+  name: 'FastScroll (drag the band: snaps section by section)',
+  parameters: { docs: { description: { story: '**N9** (n9-contacts-fastscroll*.png): idle, a wide translucent band with the section letters and a small dot. Finger on the band: the dot hides, a dark band with the big LIGHT letter runs across the list, and every small move jumps to the next / previous letter section (no smooth pixel scrolling); the list snaps to that section\'s start.' } } },
+  render: () => ({ components: { HdFastScroll }, setup: () => ({ secs: fsSecs, cur: ref('A') }), template: `<div style="display:flex;gap:16px">
+    <div style="position:relative;width:300px;height:540px;background:#DDE1E5;color:#111"><HdFastScroll :sections="secs" :position="0.2" @jump="(i, l) => (cur = l)" />
+      <p style="margin:0;padding:12px 60px 0 12px;font:700 15px/1.3 var(--hd-font-family-base)">Section: {{ cur }}</p></div>
+    <div style="position:relative;width:300px;height:540px;background:#DDE1E5"><HdFastScroll :sections="secs" :position="0.45" active letter="K" /></div></div>` }),
 };

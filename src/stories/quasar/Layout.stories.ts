@@ -1,6 +1,6 @@
 import type { Meta } from '@storybook/vue3-vite';
 import { qs, both } from './q';
-const meta: Meta = { title: 'Quasar/Components/Layout & navigation', ...both, parameters: { docs: { description: { component: 'Quasar layout components in the Harmattan theme. N9 bottom toolbar = QFooter + QToolbar; page header = QHeader (accent) or `class="hd-plain"`.' } } } };
+const meta: Meta = { title: 'Quasar/Components/Layout & navigation', ...both, parameters: { docs: { description: { component: 'Quasar layout components in the Etesian theme. N9 bottom toolbar = QFooter + QToolbar; page header = QHeader (accent) or `class="hd-plain"`.' } } } };
 export default meta;
 
 const layout = (footer = true) => `<q-layout view="hHh lpR fFf" container style="height:360px" class="rounded-borders">
