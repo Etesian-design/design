@@ -746,6 +746,9 @@ describe('Belle clocks and switches (701 art)', () => {
     expect(g.attributes('y1')).toBe('1'); expect(g.attributes('y2')).toBe('0');
     expect(g.find('stop').attributes('stop-color')).toBe('#2FA7DD');
   });
+  it('a glyph on an on cap is lit Belle blue', () => {
+    expect(readFileSync('src/stories/belle/BelleCap.vue', 'utf8')).toMatch(/\.bcap\.on \.bcap__glyph \{ color: #3C8FE6/);
+  });
   it('the data meter keeps the 701 proportions: the inner squircle is 62 of 80', () => {
     const d = mount(BelleWidget, { props: { kind: 'data' } }).findAll('.bw-data path').at(-1)!;
     const xs = [...d.attributes("d")!.matchAll(/[ML]([\d.]+) /g)].map((m) => Number(m[1]));
