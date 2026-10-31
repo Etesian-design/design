@@ -35,5 +35,5 @@ const capOff = squircleRectPath(64, 64, n, 4, 14);
 /* the glyph rides on the cap: up when on, pressed down when off */
 .bcap__glyph { position: absolute; left: 0; right: 0; top: 5%; height: 78%; display: grid; place-items: center; color: #2E343D; filter: drop-shadow(0 1px 0 rgba(255,255,255,.35)); }
 .bcap:not(.on) .bcap__glyph { top: 17%; }
-.bcap.on .bcap__glyph { color: #fff; filter: drop-shadow(0 1px 1px rgba(0,0,0,.45)); }
+.bcap.on .bcap__glyph { color: #3C8FE6; filter: drop-shadow(0 0 3px rgba(60,143,230,.55)); } /* lit Belle blue (belle-ref4) */
 </style>
