@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/vue3-vite';
 import { ref } from 'vue';
 import BelleWidget from './belle/BelleWidget.vue';
+import BellePlacePicker, { type Place } from './belle/BellePlacePicker.vue';
 import HdTaskEditBar from '../components/HdTaskEditBar.vue';
 
 const meta: Meta<typeof BelleWidget> = {
@@ -50,4 +51,14 @@ export const EditMode: S = {
   render: () => ({ components: { BelleWidget, HdTaskEditBar }, setup: () => ({ edit: ref(true) }), template: `<div style="width:360px">
     <label style="color:#fff"><input type="checkbox" v-model="edit"> Edit mode (long-press)</label>${home}
     <HdTaskEditBar v-if="edit" done-label="Done" close-all-label="Add widget" @done="edit = false" /></div>` }),
+};
+export const WeatherPlace: S = {
+  name: 'Weather place picker (tap the place)',
+  render: () => ({ components: { BelleWidget, BellePlacePicker }, setup: () => {
+    const place = ref<string | null>('Tampere'); const picking = ref(false);
+    return { place, picking, pick: (p: Place | null) => { place.value = p?.name ?? null; picking.value = false; } };
+  }, template: `<div style="width:360px">
+    <BellePlacePicker v-if="picking" :current="place ?? ''" @pick="pick" />
+    <template v-else><BelleWidget kind="weather" :place="place ?? 'Here'" @place="picking = true" />
+      <BelleWidget kind="m-weather" :place="place ?? 'Here'" @place="picking = true" /></template></div>` }),
 };
