@@ -10,12 +10,12 @@
  *  - Windows (XWindow + windowManager.ts): the app's actions in the header, overlapping, resizable from any edge; dragged to
  *    a side edge they snap to that half, to the top edge they show the snap layouts; double-click the bar maximises.
  *    Kept on the device under `storageKey`.
- *  - Overview (Super alone or the dock button): Events | the open windows themselves, as cards | the apps, type to search.
- *    Search (Super+Space): the compact version. Windows switcher (Super+Tab): release Super to switch.
- *  - Events (Super+N, the count or the clock) and the status menu: panels the host fills.
+ *  - Overview (the dock button, View): Events | the open windows themselves, as cards | the apps, type to search.
+ *    Search (View): the compact version. Windows switcher (View > Windows): arrows or Tab, Enter, Escape.
+ *  - Events (the count or the clock) and the status menu: panels the host fills.
  *  - Widgets on the wallpaper (the host's `widgets` slot), Edit desktop moves the windows aside.
  *  - Right-click menus on the desktop, a title bar, a dock icon and the dock. Inside a window it belongs to the app.
- * Every shortcut takes Super, or Ctrl+Alt where the system keeps Super for itself.
+ * No Super or Ctrl+Alt shortcuts: in a browser the operating system takes them first (see createDesktopKeys).
  *
  * Slots: window { id } (the app inside), actions { id } (its header buttons), events { embedded, close }, status { close },
  * widgets { editing, done }, mark (the logo before the app name), indicators (left of the Events count), card { id } (a line
@@ -126,7 +126,7 @@ const drawn = computed(() => wm.wins.filter((w) => known(w) && (cardIds.value.le
 const LEVEL: Record<ZoomLevel, string> = { 1: 'One at a time', 2: '2 per row', 3: '3 per row', 4: '4 per row' };
 function onCardsWheel(e: WheelEvent) {
   const sw = wm.switcher.value; if (!sw) return;
-  if (e.metaKey || e.ctrlKey) { e.preventDefault(); wm.switchLevel(zoomStep(sw.level, e.deltaY)); }
+  if (e.ctrlKey) { e.preventDefault(); wm.switchLevel(zoomStep(sw.level, e.deltaY)); }
   else if (sw.level === 1 && e.deltaY) wm.switchMove(e.deltaY > 0 ? 1 : -1);
 }
 function pickCard(id: string) { if (wm.switcher.value) { wm.switcher.value.i = wm.switcher.value.list.indexOf(id); wm.switchEnd(true); } else open(id); }
@@ -179,8 +179,6 @@ function pickLayout(l: LayoutId, z: number) { const w = wm.focusedWin.value; pic
 
 /* ---------- keyboard ---------- */
 const keys = createDesktopKeys(wm, {
-  overview: () => toggle('overview'), launcher: () => toggle('launcher'), events: () => toggle('events'),
-  picker: () => { if (!wm.focusedWin.value) return; const was = !!picker.value; closeOverlays(); picker.value = was ? null : { layout: null, drag: false }; },
   closeAll: closeOverlays,
   pickerDigit: (n) => {
     const p = picker.value; if (!p || p.drag) return false;
@@ -189,7 +187,7 @@ const keys = createDesktopKeys(wm, {
   },
 });
 function onKeyDown(e: KeyboardEvent) {
-  if (keys.down(e)) { if (wm.switcher.value) { overview.value = launcher.value = events.value = false; } return; }
+  if (keys.down(e)) return;
   /* the Overview and Search: typing anywhere goes into the search */
   if ((overview.value || launcher.value) && document.activeElement !== searchEl.value && e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) { searchEl.value?.focus(); }
 }
@@ -200,14 +198,14 @@ const time = computed(() => now.value.toLocaleTimeString([], { hour: '2-digit', 
 const date = computed(() => now.value.toLocaleDateString([], { weekday: 'short', day: 'numeric', month: 'short' }));
 const barApp = computed(() => (overview.value ? 'Overview' : wm.switcher.value ? 'Windows' : launcher.value ? 'Search' : wm.focusedWin.value ? byId.value[wm.focusedWin.value.id]?.title ?? props.name : props.name));
 const winItems = (w?: WmWin): XMenuItem[] => [
-  { id: 'w:minimise', label: w?.min ? 'Show' : 'Minimise', icon: 'minimize', disabled: !w }, { id: 'w:maximise', label: w?.snap === 'max' ? 'Restore' : 'Maximise', icon: 'maximize', keys: 'Super+Up', disabled: !w },
-  { id: 'w:left', label: 'Snap left', keys: 'Super+Left', disabled: !w }, { id: 'w:right', label: 'Snap right', keys: 'Super+Right', disabled: !w },
-  { id: 'w:layouts', label: 'Snap layouts…', icon: 'split', keys: 'Super+Z', disabled: !w }, { id: 'w:close', label: 'Close window', icon: 'close', divider: true, destructive: true, disabled: !w }];
+  { id: 'w:minimise', label: w?.min ? 'Show' : 'Minimise', icon: 'minimize', disabled: !w }, { id: 'w:maximise', label: w?.snap === 'max' ? 'Restore' : 'Maximise', icon: 'maximize', disabled: !w },
+  { id: 'w:left', label: 'Snap left', disabled: !w }, { id: 'w:right', label: 'Snap right', disabled: !w },
+  { id: 'w:layouts', label: 'Snap layouts…', icon: 'split', disabled: !w }, { id: 'w:close', label: 'Close window', icon: 'close', divider: true, destructive: true, disabled: !w }];
 const menus = computed<ShellMenu[]>(() => [
   ...props.menus,
-  { label: 'View', items: [{ id: 'v:overview', label: 'Overview', icon: 'grid', keys: 'Super' }, { id: 'v:windows', label: 'Windows', icon: 'window', keys: 'Super+Tab' },
-    { id: 'v:search', label: 'Search', icon: 'search', keys: 'Super+Space' }, { id: 'v:events', label: 'Events', icon: 'calendar', keys: 'Super+N' },
-    { id: 'v:desktop', label: 'Show the desktop', icon: 'home', keys: 'Super+D', divider: true }, ...(slots.widgets ? [{ id: 'v:widgets', label: 'Edit desktop', icon: 'edit' }] : [])] },
+  { label: 'View', items: [{ id: 'v:overview', label: 'Overview', icon: 'grid' }, { id: 'v:windows', label: 'Windows', icon: 'window' },
+    { id: 'v:search', label: 'Search', icon: 'search' }, { id: 'v:events', label: 'Events', icon: 'calendar' },
+    { id: 'v:desktop', label: 'Show the desktop', icon: 'home', divider: true }, ...(slots.widgets ? [{ id: 'v:widgets', label: 'Edit desktop', icon: 'edit' }] : [])] },
   { label: 'Window', items: [...winItems(wm.focusedWin.value), ...wm.recent.value.filter(known).map((w, i) => ({ id: `w:show:${w.id}`, label: byId.value[w.id]!.title + (w.min ? ' (minimised)' : ''), divider: i === 0 }))] },
 ]);
 const openMenu = ref<string | null>(null);
@@ -268,13 +266,13 @@ let ro: ResizeObserver | undefined, clock = 0;
 function measure() { if (areaEl.value) { size.w = areaEl.value.clientWidth; size.h = areaEl.value.clientHeight; } }
 onMounted(() => {
   measure(); ro = new ResizeObserver(measure); if (areaEl.value) ro.observe(areaEl.value);
-  window.addEventListener('keydown', onKeyDown); window.addEventListener('keyup', keys.up);
+  window.addEventListener('keydown', onKeyDown);
   document.addEventListener('selectstart', refuse);
   clock = window.setInterval(() => (now.value = new Date()), 15000);
   if (!wm.focused.value) wm.focusTopmost();
 });
 onBeforeUnmount(() => {
-  ro?.disconnect(); window.removeEventListener('keydown', onKeyDown); window.removeEventListener('keyup', keys.up);
+  ro?.disconnect(); window.removeEventListener('keydown', onKeyDown);
   document.removeEventListener('selectstart', refuse); window.clearInterval(clock); noSelect(false);
 });
 defineExpose({ open, close, wm });
@@ -296,11 +294,11 @@ const tone = (id: string): IconTone | undefined => byId.value[id]?.tone;
       <span class="x-mbar__sp"></span>
       <span class="x-mbar__status" aria-label="Status">
         <slot name="indicators" />
-        <button v-if="eventsCount !== undefined" type="button" class="x-mbar__events hd-focusable" :class="{ 'is-active': events }" :aria-label="`Events: ${eventsCount} new`" title="Events (Super+N)" @click="toggle('events')"><HdCountBubble :value="eventsCount" /></button>
+        <button v-if="eventsCount !== undefined" type="button" class="x-mbar__events hd-focusable" :class="{ 'is-active': events }" :aria-label="`Events: ${eventsCount} new`" title="Events" @click="toggle('events')"><HdCountBubble :value="eventsCount" /></button>
         <button v-if="$slots.status" type="button" class="x-mbar__sicons hd-focusable" :class="{ 'is-active': status }" aria-label="Status menu" :aria-expanded="status ? 'true' : 'false'" @click="toggle('status')">
           <slot name="status-icons"><HdIcon name="wifi" :size="15" /><HdIcon name="bluetooth" :size="15" /><HdIcon name="battery" :size="17" /></slot>
         </button>
-        <button type="button" class="x-mbar__clock x-shell__clock hd-focusable" :class="{ 'is-active': events }" :aria-label="`${date}, ${time}, Events`" :aria-expanded="events ? 'true' : 'false'" title="Events (Super+N)" @click="toggle('events')">
+        <button type="button" class="x-mbar__clock x-shell__clock hd-focusable" :class="{ 'is-active': events }" :aria-label="`${date}, ${time}, Events`" :aria-expanded="events ? 'true' : 'false'" title="Events" @click="toggle('events')">
           <span>{{ date }}</span><b>{{ time }}</b></button>
       </span>
     </header>
@@ -328,7 +326,7 @@ const tone = (id: string): IconTone | undefined => byId.value[id]?.tone;
         <header class="x-wins__head" :style="{ left: `${work.x + 40}px`, right: '40px' }">
           <h2 class="x-wins__h">Windows</h2>
           <span class="x-wins__n">{{ wm.switcher.value.list.length }} open · {{ LEVEL[wm.switcher.value.level] }}</span>
-          <span class="x-wins__zoom" role="radiogroup" aria-label="Zoom (Super + wheel)">
+          <span class="x-wins__zoom" role="radiogroup" aria-label="Zoom (Ctrl + wheel)">
             <button v-for="l in ZOOM_LEVELS" :key="l" type="button" role="radio" class="x-wins__z hd-sq hd-focusable" :class="{ 'is-on': l === wm.switcher.value.level }" :aria-checked="l === wm.switcher.value.level ? 'true' : 'false'"
               :aria-label="LEVEL[l]" @click="wm.switchLevel(l)">
               <svg width="20" height="14" viewBox="0 0 20 14" aria-hidden="true"><rect v-for="k in l" :key="k" :x="l === 1 ? 4 : (k - 1) * (20 / l) + 0.5" :y="l === 1 ? 1 : 3" :width="l === 1 ? 12 : 20 / l - 1.5" :height="l === 1 ? 12 : 8" rx="1.5" fill="currentColor" /></svg>
@@ -360,7 +358,7 @@ const tone = (id: string): IconTone | undefined => byId.value[id]?.tone;
       <div v-if="hotRect" class="x-shell-zone" :style="{ left: `${hotRect.x}px`, top: `${hotRect.y}px`, width: `${hotRect.w}px`, height: `${hotRect.h}px` }" aria-hidden="true"></div>
       <div v-if="picker" class="x-shell-picker"><XLayoutPicker :layout="picker.layout ?? undefined" :zone="op?.hot && op.hot !== 'max' ? op.hot.zone : -1" :hints="!picker.drag" @pick="pickLayout" /></div>
 
-      <!-- Search (Super+Space) -->
+      <!-- Search -->
       <div v-if="launcher" class="x-shell-scrim" @pointerdown.self="launcher = false">
         <div class="x-shell-search-panel hd-on-overlay" role="dialog" aria-label="Search">
           <label class="x-shell-search"><HdIcon name="search" :size="20" /><input ref="searchEl" v-model="query" type="search" placeholder="Type to search" aria-label="Search apps" @keydown.enter="openFirst" /></label>

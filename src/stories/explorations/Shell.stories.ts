@@ -12,7 +12,7 @@ import { chromeOf } from '../../shell/desktop/chrome';
 /** Desktop / Try it: the real desktop (XShell), the one the website and cloud-companion run, with the mock apps. */
 const meta: Meta = {
   title: 'Desktop/Try it',
-  parameters: { layout: 'fullscreen', docs: { description: { component: 'The working desktop: drag windows by their header to move them, to a side edge to snap, to the top edge for the snap layouts; resize from any edge; double-click the header to maximise. Super (or Ctrl+Alt) with Tab, Space, N, D, Z and the arrows; Super alone opens the Overview. Right-click the desktop, a header, the dock. The arrangement is kept in this browser.' } } },
+  parameters: { layout: 'fullscreen', docs: { description: { component: 'The working desktop: drag windows by their header to move them, to a side edge to snap, to the top edge for the snap layouts; resize from any edge; double-click the header to maximise. Everything opens from the dock, the menu bar and right-click (no Super or Ctrl+Alt shortcuts: in a browser the system takes them); in the switcher, arrows or Tab, Enter and Escape. Right-click the desktop, a header, the dock. The arrangement is kept in this browser.' } } },
 };
 export default meta;
 const SHOWN = ['Mail', 'Messages', 'Browser', 'Calendar', 'Music', 'Gallery', 'Notes', 'Settings'];

@@ -1,8 +1,8 @@
 /**
  * The desktop's window manager, without any look: the windows (their floating rectangle, snap, stacking order, minimised),
  * focus, snapping to halves, to maximised and to the zones of a snap layout, moving and resizing, Show desktop, the Windows
- * switcher (Super+Tab: release Super to switch; Super + wheel zooms and keeps it open), and the keyboard (every shortcut takes
- * Super, or Ctrl+Alt where the system keeps Super for itself). Shared by the website and cloud-companion; the windows'
+ * switcher (arrows or Tab, Enter, Escape; Ctrl + wheel zooms), and the keys inside the desktop's overlays (no Super or
+ * Ctrl+Alt shortcuts: the operating system takes those). Shared by the website and cloud-companion; the windows'
  * contents are theirs. Optionally kept on the device (localStorage) under `storageKey`.
  */
 import { computed, reactive, ref, watch, type Ref } from 'vue';
@@ -77,12 +77,12 @@ export function createWindowManager(opts: WmOptions) {
   function snap(id: string, s: Snap) { const w = get(id); if (!w) return; w.snap = s; focus(id); }
   /** the dock and the Overview: bring a window forward, or minimise it when it is already in front */
   function activate(id: string) { const w = get(id); if (w && !w.min && focused.value === id) minimise(id); else open(id); }
-  /** Super+D: minimise every window; again brings the same ones back */
+  /** Show the desktop: minimise every window; again brings the same ones back */
   function showDesktop() {
     if (shown.value.length) { hidden = shown.value.map((w) => w.id); shown.value.forEach((w) => (w.min = true)); focused.value = null; }
     else { hidden.forEach((id) => { const w = get(id); if (w) w.min = false; }); hidden = []; focusTopmost(); }
   }
-  /** Super+arrows: Left / Right to that half, Up maximises, Down floats a snapped window again or minimises a floating one */
+  /** Left / Right to that half, Up maximises, Down floats a snapped window again or minimises a floating one */
   function arrow(key: 'ArrowLeft' | 'ArrowRight' | 'ArrowUp' | 'ArrowDown') {
     const w = focusedWin.value; if (!w) return;
     if (key === 'ArrowLeft') snap(w.id, HALF_LEFT); else if (key === 'ArrowRight') snap(w.id, HALF_RIGHT);
@@ -136,10 +136,10 @@ export function createWindowManager(opts: WmOptions) {
   }
   function resizeEnd() { rs = null; }
 
-  /* ---------- the Windows switcher (Super+Tab) ---------- */
-  /** list: most recent first; held: Super is still down, so letting go switches; zoomed out (level > 1) it stays open */
+  /* ---------- the Windows switcher ---------- */
+  /** list: most recent first; held: a key is still down, so letting go switches (unused in the browser: always false) */
   const switcher = ref<{ list: string[]; i: number; level: ZoomLevel; held: boolean } | null>(null);
-  function switchStep(back: boolean, held = true) {
+  function switchStep(back: boolean, held = false) {
     const sw = switcher.value;
     if (!sw) { const list = recent.value.map((w) => w.id); if (!list.length) return; switcher.value = { list, i: list.length > 1 ? (back ? list.length - 1 : 1) : 0, level: 1, held }; return; }
     const n = sw.list.length; sw.i = (sw.i + (back ? n - 1 : 1)) % n;
@@ -155,51 +155,33 @@ export function createWindowManager(opts: WmOptions) {
 }
 export type WindowManager = ReturnType<typeof createWindowManager>;
 
-/** Super, or Ctrl+Alt where the system keeps Super for itself */
-export const isSuper = (e: { metaKey: boolean; ctrlKey: boolean; altKey: boolean }) => e.metaKey || (e.ctrlKey && e.altKey);
-
-/** the overlays the keyboard opens; the desktop component owns them */
+/** what the keyboard can do inside the desktop's own overlays; the desktop component owns them */
 export interface DesktopKeyActions {
-  overview(): void; launcher(): void; events(): void; picker(): void; closeAll(): boolean;
-  /** Super+Z is open and waiting for a layout digit, then a zone digit */
+  closeAll(): boolean;
+  /** the snap layouts are open and waiting for a layout digit, then a zone digit */
   pickerDigit?(n: number): boolean;
 }
+
 /**
- * The desktop's keyboard. Call it from keydown and keyup on the window; it returns true when it used the key.
- * Super alone (pressed and released with nothing else) opens the Overview.
+ * The desktop runs in a browser, so it has no Super or Ctrl+Alt shortcuts: the operating system takes those first and
+ * the two would fight. Everything opens from the dock, the menu bar and right-click; once something is open, plain keys
+ * work in it: the switcher's arrows, Tab, Enter and Escape, the snap layouts' digits, Escape to close.
  */
 export function createDesktopKeys(wm: WindowManager, act: DesktopKeyActions) {
-  let alone = false;
   function down(e: KeyboardEvent): boolean {
-    if (e.key === 'Meta' || e.key === 'OS') { alone = true; return false; }
-    alone = false;
+    if (e.metaKey || e.ctrlKey || e.altKey) return false;
     const sw = wm.switcher.value;
     if (sw) {
+      const step: Record<string, number> = { ArrowRight: 1, ArrowLeft: -1, ArrowDown: sw.level, ArrowUp: -sw.level };
       if (e.key === 'Escape') { e.preventDefault(); wm.switchEnd(false); return true; }
-      if (e.key === 'Tab') { e.preventDefault(); wm.switchStep(e.shiftKey); return true; }
-      if (!sw.held) {
-        const step: Record<string, number> = { ArrowRight: 1, ArrowLeft: -1, ArrowDown: sw.level, ArrowUp: -sw.level };
-        if (e.key === 'Enter') { e.preventDefault(); wm.switchEnd(true); return true; }
-        if (step[e.key] !== undefined) { e.preventDefault(); wm.switchMove(step[e.key]!); return true; }
-      }
+      if (e.key === 'Enter') { e.preventDefault(); wm.switchEnd(true); return true; }
+      if (e.key === 'Tab') { e.preventDefault(); wm.switchStep(e.shiftKey, false); return true; }
+      if (step[e.key] !== undefined) { e.preventDefault(); wm.switchMove(step[e.key]!); return true; }
+      return false;
     }
     if (/^[1-9]$/.test(e.key) && act.pickerDigit?.(Number(e.key) - 1)) { e.preventDefault(); return true; }
     if (e.key === 'Escape') return act.closeAll();
-    if (!isSuper(e)) return false;
-    const k = e.key.length === 1 ? e.key.toLowerCase() : e.key;
-    const run = (f: () => void) => { e.preventDefault(); f(); return true; };
-    if (k === 'Tab') return run(() => wm.switchStep(e.shiftKey));
-    if (k === ' ') return run(act.launcher);
-    if (k === 'n') return run(act.events);
-    if (k === 'd') return run(wm.showDesktop);
-    if (k === 'z') return run(act.picker);
-    if (k === 'ArrowLeft' || k === 'ArrowRight' || k === 'ArrowUp' || k === 'ArrowDown') return run(() => wm.arrow(k));
     return false;
   }
-  function up(e: KeyboardEvent): boolean {
-    if (wm.switcher.value?.held && ['Meta', 'OS', 'Control', 'Alt'].includes(e.key)) { wm.switchEnd(true); alone = false; return true; }
-    if ((e.key === 'Meta' || e.key === 'OS') && alone) { alone = false; act.overview(); return true; }
-    alone = false; return false;
-  }
-  return { down, up };
+  return { down };
 }
