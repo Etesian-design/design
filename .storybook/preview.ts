@@ -45,7 +45,7 @@ const preview: Preview = {
   parameters: {
     layout: 'fullscreen',
     controls: { matchers: { color: /(background|color|accent)$/i } },
-    options: { storySort: { order: ['Guide', ['Introduction', 'Principles', 'Colour', 'Colour modes', 'Typography', 'Font alternatives', 'Spacing & sizing', 'Shape (squircle)', 'Iconography', 'Icon lighting', 'Motion', 'Sound & haptics', 'Layout & grids', 'Components', 'Patterns', 'Accessibility', 'The desktop', 'The phone', 'Home widgets', 'Contributing & gaps'], 'OS', 'Controls', 'Overlays', 'Web', 'Examples', 'Quasar', ['Using with Quasar', 'Examples', 'Components'], 'Desktop', ['The desktop'], 'Phone', 'Explorations', ['Tablet']] } },
+    options: { storySort: { order: ['Guide', ['Introduction', 'Principles', 'Colour', 'Colour modes', 'Typography', 'Font alternatives', 'Spacing & sizing', 'Shape (squircle)', 'Iconography', 'Icon lighting', 'Motion', 'Sound & haptics', 'Layout & grids', 'Components', 'Patterns', 'Accessibility', 'The desktop', 'The phone', 'Home widgets', 'Contributing & gaps'], 'OS', 'Controls', 'Overlays', 'Web', 'Examples', 'Quasar', ['Using with Quasar', 'Examples', 'Components'], 'Desktop', ['The desktop', 'Try it'], 'Phone', 'Explorations', ['Tablet']] } },
   },
 };
 export default preview;
