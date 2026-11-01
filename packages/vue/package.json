@@ -1,6 +1,6 @@
 {
   "name": "@etesian-design/vue",
-  "version": "0.2.0",
+  "version": "0.3.1",
   "description": "Etesian Vue 3 components: the N9-style building blocks (Hd*), composables and squircle geometry",
   "license": "MIT",
   "type": "module",
@@ -33,7 +33,7 @@
     }
   },
   "dependencies": {
-    "@etesian-design/tokens": "^0.2.0"
+    "@etesian-design/tokens": "^0.3.1"
   },
   "peerDependencies": {
     "vue": "^3.5.0"
