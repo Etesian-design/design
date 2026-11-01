@@ -1,9 +1,9 @@
 <script setup lang="ts">
 /**
- * Desktop v2 EXTENDS Desktop v1 (it keeps everything v1 has and adds to it): v1's Overview stays the main menu (Super: Events,
- * open windows and apps, full screen). v2 adds overlapping windows with integrated N9 header bars, snapping by keyboard or drag,
+ * The Etesian desktop (the Storybook tour): the Overview is the main menu (Super: Events,
+ * open windows and apps, full screen), with overlapping windows with integrated N9 header bars, snapping by keyboard or drag,
  * a light floating dock (left by default; a full-height panel is an option), a global menu bar, a Windows view (Super+Tab,
- * Super + wheel zooms like the phone's Open apps), the spotlight search (Super+Space), the Events panel (Super+N) and a status menu.
+ * Super + wheel zooms like the phone's Open apps), Search (Super+Space), the Events panel (Super+N) and a status menu.
  * Live keys: Super, Super+Space, Super+Tab, Tab, Super+N, Super+Z, Super+Left/Right/Down, typing, Esc.
  */
 import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue';
@@ -242,8 +242,8 @@ const hints = computed<[string, string][]>(() => {
         </div>
       </div>
 
-      <!-- 5: the Overview (Super), v1's main menu / 5b: the spotlight (Super+Space), a v2 addition -->
-      <Transition name="x-ov"><XOverview v-if="overview" v-model:query="q" :apps="RUNNING" spotlight @open="open" /></Transition>
+      <!-- 5: the Overview (Super), the main menu / 5b: Search (Super+Space) -->
+      <Transition name="x-ov"><XOverview v-if="overview" v-model:query="q" :apps="RUNNING" search @open="open" /></Transition>
       <XLauncher v-if="launcher" v-model:query="q" @open="open" />
 
       <!-- 6: events panel / 7: status menu -->

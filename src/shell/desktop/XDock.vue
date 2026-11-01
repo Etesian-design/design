@@ -1,6 +1,6 @@
 <script setup lang="ts">
 /**
- * Desktop v2 dock. Default: a light floating strip (v1 D's peek dock), centred on its edge and hugging its icons — Unity's
+ * The desktop's dock. Default: a light floating strip, centred on its edge and hugging its icons — Unity's
  * left position, the macOS dock's shape. Order: launcher | separator | pinned and running apps | separator | trash (always last).
  * Running apps get a small dot. Left by default; any edge.
  * Options (Edit dock): panel = full-height KDE Plasma-style panel; clock widget; size; auto-hide; previews.
