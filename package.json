@@ -1,6 +1,6 @@
 {
   "name": "etesian-design",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "description": "Etesian Design Language: the guide, Storybook and the source of the @etesian-design packages (packages/)",
   "license": "MIT",

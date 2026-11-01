@@ -1,6 +1,6 @@
 {
   "name": "@etesian-design/tokens",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Etesian design tokens: CSS custom properties, the tokens as TypeScript and JSON, and the free font alternatives to Nokia Pure",
   "license": "MIT",
   "type": "module",
