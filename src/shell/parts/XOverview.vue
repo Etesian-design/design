@@ -1,15 +1,15 @@
 <script setup lang="ts">
 /**
- * The Overview, the desktop's main menu (Desktop v1 A, kept by Desktop v2): full screen under the top bar, in the N9 home order.
+ * The Overview, the desktop's main menu: full screen under the top bar, in the N9 home order.
  * the phone's Events view on the left (the same as v2's Events sidebar, weather included), no column titles, the open windows as live thumbnails in the middle, the app grid with type-to-search on the right.
- * Super opens and closes it; typing goes to the search. Desktop v2 adds the compact spotlight (Super+Space) next to it.
+ * Super opens and closes it; typing goes to the search. Search (Super+Space) is the compact version next to it.
  */
 import XEventsPanel from '../desktop/XEventsPanel.vue';
 import XAppsView from './XAppsView.vue';
 import XOpenApps from './XOpenApps.vue';
 import XHints from '../desktop/XHints.vue';
 import HdSearchField from '../../components/HdSearchField.vue';
-withDefaults(defineProps<{ query?: string; apps?: string[]; spotlight?: boolean }>(), { query: '', apps: () => ['Mail', 'Messages', 'Browser'], spotlight: false });
+withDefaults(defineProps<{ query?: string; apps?: string[]; search?: boolean }>(), { query: '', apps: () => ['Mail', 'Messages', 'Browser'], search: false });
 const emit = defineEmits<{ 'update:query': [q: string]; open: [name: string] }>();
 </script>
 <template>
@@ -23,8 +23,8 @@ const emit = defineEmits<{ 'update:query': [q: string]; open: [name: string] }>(
       <p class="x-ov__hint">{{ query ? `Apps matching “${query}”` : 'Just start typing' }}</p>
       <XAppsView :columns="5" :size="54" :query="query" @open="(n: string) => emit('open', n)" />
     </section>
-    <XHints corner="br" :items="spotlight
-      ? [['Esc', 'Close'], ['Tab', 'Next column'], ['Enter', 'Open'], ['Ctrl+W', 'Close window'], ['Super+Space', 'Spotlight']]
+    <XHints corner="br" :items="search
+      ? [['Esc', 'Close'], ['Tab', 'Next column'], ['Enter', 'Open'], ['Ctrl+W', 'Close window'], ['Super+Space', 'Search']]
       : [['Esc', 'Close'], ['Tab', 'Next column'], ['Left+Right', 'Move'], ['Enter', 'Open'], ['Ctrl+W', 'Close window']]" />
   </div>
 </template>

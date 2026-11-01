@@ -1,6 +1,6 @@
 <script setup lang="ts">
 /**
- * Desktop v2 global menu bar (30px, chrome surface): left = focused app name + its menus (File, Edit, View…),
+ * The desktop's global menu bar (30px, chrome surface): left = focused app name + its menus (File, Edit, View…),
  * like macOS or a Linux global menu; right = status area, then the clock at the far right end.
  */
 import { computed } from 'vue';

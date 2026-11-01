@@ -48,11 +48,11 @@ This chapter is the desktop counterpart of [The phone](20-phone.md). It records 
   - A locked view stays open after Super is released, until you pick a window or press Esc.
   - Zooming in at the carousel also locks it, with no visual change.
 - The view shows **only open windows**. Each card keeps its window's aspect ratio and the card radius; only the app badge is a squircle.
-## Overview (Super) and spotlight (Super+Space)
+## Overview (Super) and Search (Super+Space)
 
 - **Tapping Super alone** (pressed and released with no other key), or the dock's first button, opens the **Overview**, the main menu: full screen under the menu bar, in the N9 home order — **Events** on the left, the **open windows** as live thumbnails in the middle (two per row, close on hover), the **apps** on the right with type-to-search.
   - Just start typing to search; Tab moves between the columns; Enter opens; Ctrl+W closes a window; Esc or Super closes it.
-- **Super+Space** opens the **spotlight**, a compact search field plus the app grid over the windows; typing finds apps, people, mail and files. It does not replace the Overview.
+- **Super+Space** opens **Search**, a compact search field plus the app grid over the windows; typing finds apps, people, mail and files. It does not replace the Overview.
 
 ## Events panel and status menu
 

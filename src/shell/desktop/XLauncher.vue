@@ -1,5 +1,5 @@
 <script setup lang="ts">
-/** Spotlight (Super+Space), a Desktop v2 addition next to v1’s Overview (Super): a compact search field over the windows with the app grid; typing filters apps, people, mail and files. */
+/** Search (Super+Space), next to the Overview (Super): a compact search field over the windows with the app grid; typing filters apps, people, mail and files. */
 import HdSearchField from '../../components/HdSearchField.vue';
 import XAppsView from '../parts/XAppsView.vue';
 import XKey from '../parts/XKey.vue';
