@@ -1,14 +1,17 @@
 <script setup lang="ts">
 /**
  * SiteHeader / NavBar (extrapolated, web). >= 600px: top bar with brand + links + actions.
- * < 600px: the links collapse into an N9-style dark bottom ToolBar (icons + tiny labels), one-handed.
+ * < 600px: the links collapse into an N9-style dark bottom ToolBar (icons + tiny labels), one-handed; the brand and the
+ * actions stay in the top bar (the actions as compact buttons), so it is never an empty strip.
+ * tone="chrome": the N9 dark toolbar colour instead of the page's, to run into a dark hero below it.
+ * The `logo` slot goes before the brand name.
  */
 import HdIcon from './HdIcon.vue';
 export interface HdNavLink { label: string; href: string; icon?: string; current?: boolean }
-withDefaults(defineProps<{ brand: string; links: HdNavLink[]; brandHref?: string; sticky?: boolean }>(), { brandHref: '#', sticky: true });
+withDefaults(defineProps<{ brand: string; links: HdNavLink[]; brandHref?: string; sticky?: boolean; tone?: 'page' | 'chrome' }>(), { brandHref: '#', sticky: true, tone: 'page' });
 </script>
 <template>
-  <header class="hd-site-header" :class="{ 'is-sticky': sticky }">
+  <header class="hd-site-header" :class="{ 'is-sticky': sticky, 'hd-site-header--chrome': tone === 'chrome' }">
     <a class="hd-site-header__skip" href="#main">Skip to content</a>
     <div class="hd-site-header__bar">
       <a class="hd-site-header__brand hd-focusable" :href="brandHref"><slot name="logo" />{{ brand }}</a>
@@ -44,6 +47,12 @@ withDefaults(defineProps<{ brand: string; links: HdNavLink[]; brandHref?: string
   .hd-site-header__link:hover { background: var(--hd-c-pressed); }
   .hd-site-header__link[aria-current='page'] { color: var(--hd-surface-chrome-fg); opacity: 1; }
   .hd-site-header__icon { display: block; }
-  .hd-site-header__actions .hd-button:not(.hd-button--icon-only) { display: none; }
+  .hd-site-header__bar { gap: 12px; }
+  .hd-site-header__actions .hd-button { min-height: 36px; padding: 0 14px; font-size: var(--hd-font-size-small); }
 }
+/* the dark toolbar version */
+.hd-site-header--chrome { background: var(--hd-surface-chrome); color: var(--hd-surface-chrome-fg); border-bottom-color: rgba(255,255,255,.08); color-scheme: dark; }
+.hd-site-header--chrome .hd-site-header__link { color: var(--hd-surface-chrome-fg-secondary); }
+.hd-site-header--chrome .hd-site-header__link:hover { background: rgba(255,255,255,.1); color: var(--hd-surface-chrome-fg); }
+.hd-site-header--chrome .hd-site-header__link[aria-current='page'] { color: var(--hd-surface-chrome-fg); }
 </style>
