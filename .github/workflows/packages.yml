@@ -1,0 +1,40 @@
+# Publishes @etesian-design/tokens, vue, quasar and shell to GitHub Packages when a version tag is pushed:
+#   git tag v0.2.0 && git push origin v0.2.0
+# The tag is the version of all four; each depends on the others at that same version.
+name: Packages
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          registry-url: https://npm.pkg.github.com
+          scope: '@etesian-design'
+      - run: npm ci
+      - run: npm test
+      - name: Set the version from the tag
+        run: |
+          node -e '
+            const fs = require("fs"), v = process.env.GITHUB_REF_NAME.replace(/^v/, "");
+            for (const p of ["tokens", "vue", "quasar", "shell"]) {
+              const f = `packages/${p}/package.json`, d = JSON.parse(fs.readFileSync(f, "utf8"));
+              d.version = v;
+              for (const k of Object.keys(d.dependencies ?? {})) if (k.startsWith("@etesian-design/")) d.dependencies[k] = `^${v}`;
+              fs.writeFileSync(f, JSON.stringify(d, null, 2) + "\n");
+            }'
+      - run: npm run build
+      - name: Publish (dependencies first)
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: for p in tokens vue quasar shell; do (cd packages/$p && npm publish); done

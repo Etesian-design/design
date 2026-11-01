@@ -3,7 +3,7 @@ import { mount } from '@vue/test-utils';
 import { readFileSync } from 'node:fs';
 import HdButton from '../src/components/HdButton.vue';
 import HdSlider from '../src/components/HdSlider.vue';
-import BelleWidget from '../src/stories/belle/BelleWidget.vue';
+import BelleWidget from '../src/shell/widgets/BelleWidget.vue';
 
 const read = (p: string) => readFileSync(`${process.cwd()}/${p}`, 'utf8');
 
@@ -45,7 +45,7 @@ describe('Belle widgets', () => {
     const b = w.find('.bw-close');
     expect(b.exists()).toBe(true);
     expect(b.attributes('style')).toContain('width: 30px');
-    expect(read('src/stories/belle/BelleWidget.vue')).toMatch(/\.bw-close \{ position: absolute !important; top: 0; right: 0;/);
+    expect(read('src/shell/widgets/BelleWidget.vue')).toMatch(/\.bw-close \{ position: absolute !important; top: 0; right: 0;/);
     expect(mount(BelleWidget, { props: { kind: 'notes' } }).find('.bw-close').exists()).toBe(false);
   });
   // Regression 2026-10-30: the feed and mail widgets showed a fixed few rows; Belle's hold up to 20 and scroll.
@@ -55,7 +55,7 @@ describe('Belle widgets', () => {
       expect(w.findAll(row).length).toBeGreaterThan(5);
       expect(w.find('.bw-scroll').exists()).toBe(true);
     }
-    const css = read('src/stories/belle/BelleWidget.vue');
+    const css = read('src/shell/widgets/BelleWidget.vue');
     expect(css).toMatch(/\.bw-scroll \{ overflow-y: auto;/);
     expect(css).toMatch(/\.bw-rss__row \{ flex: none; min-height: 52px;/);
     expect(css).toMatch(/-webkit-line-clamp: 3/);
@@ -78,9 +78,9 @@ describe('Belle widgets', () => {
 
 describe('content shown as is, headers', () => {
   it('gallery and events photos are not squircled', () => {
-    expect(read('src/stories/explorations/apps/XGallery.vue')).not.toContain('HdSquircle');
+    expect(read('src/shell/apps/XGallery.vue')).not.toContain('HdSquircle');
     expect(read('src/stories/explorations/parts/XEvents.vue')).not.toMatch(/HdSquircle[^>]*photo\(/);
-    expect(read('src/stories/explorations/apps/XMusic.vue')).not.toContain('HdThumbnail');
+    expect(read('src/shell/apps/XMusic.vue')).not.toContain('HdThumbnail');
   });
   it('app main pages use the brand colour, sub pages stay plain', () => {
     const ex = read('src/stories/quasar/Examples.stories.ts');
@@ -130,7 +130,7 @@ describe('follow-ups', () => {
     expect(q).toContain('.hd-quasar .q-carousel__thumbnail { border-radius: 0; }');
     expect(q).toMatch(/\.q-item__section--thumbnail img \{ width: 43px; height: 43px; border-radius: 0; object-fit: cover; \}/);
   });
-  it('music playing item is #C4008F', () => expect(read('src/stories/explorations/apps/XMusic.vue')).toContain('--hd-accent: #C4008F'));
+  it('music playing item is #C4008F', () => expect(read('src/shell/apps/XMusic.vue')).toContain('--hd-accent: #C4008F'));
 });
 
 // 2026-10-25, n9-contacts-fastscroll*.png, n9-settings-main.png.
@@ -275,10 +275,10 @@ describe('bottom bar layout', () => {
   });
 });
 
-// 2026-10-25: Phone v2, every Android 16 gap proposal visualised.
+// 2026-10-25: the phone's answer to every Android 16 gap, as mocks (agreed, built or declined: not proposals).
 import PhoneV2 from '../src/stories/explorations/phone2/PhoneV2.vue';
-import { STATES, CORE, SMALL, NO_MOCK, LEAVE_OUT, QUESTIONS, storyId, type P2State } from '../src/stories/explorations/phone2/states';
-describe('Phone v2 proposals', () => {
+import { STATES, STATUS, CORE, SMALL, NO_MOCK, LEAVE_OUT, QUESTIONS, storyId, type P2State } from '../src/stories/explorations/phone2/states';
+describe('Phone: Android features', () => {
   const all = [...CORE, ...SMALL];
   it('every gap row is either mocked or listed as done / left out', () => {
     const covered = new Set([...all.flatMap((s) => STATES[s].gaps), ...NO_MOCK.map((r) => r[0])]);
@@ -290,12 +290,14 @@ describe('Phone v2 proposals', () => {
     expect(v).toMatch(/\.p2 \{ position: relative; width: 360px; height: 640px;/);
     expect(v).toMatch(/\.p2__app \{[^}]*border-radius: 7px 7px 0 0;/);
   });
-  it('unverified rows carry the Proposal tag', () => {
-    for (const s of ['lock-music', 'banner', 'screenshot', 'power'] as const) {
-      expect(STATES[s].proposal).toBe(true);
-      expect(mount(PhoneV2, { props: { state: s } }).find('.p2__proposal').exists()).toBe(true);
-    }
-    expect(mount(PhoneV2, { props: { state: 'share-people' } }).find('.p2__proposal').exists()).toBe(false);
+  it('every mock is tagged with what became of it (2026-11-01: they are decisions, not proposals)', () => {
+    const tag = (s: P2State) => mount(PhoneV2, { props: { state: s } }).find('.p2__status').text();
+    for (const s of all) expect(STATUS[s], s).toBeTruthy();
+    expect(tag('power')).toBe('Built'); expect(tag('banner')).toBe('Built, changed'); expect(tag('lock-music')).toBe('Not built yet');
+    expect(tag('split-drag')).toBe('Declined'); expect(tag('back-callback')).toBe('Partly built');
+    // a built mock names its device test, and that test exists on the phone side
+    for (const s of all.filter((x) => STATUS[x][0] === 'built')) expect(STATUS[s][1], s).toMatch(/^[a-z_0-9]+/);
+    expect(read('src/stories/explorations/phone2/PhoneV2.vue') + read('src/stories/explorations/phone2/states.ts')).not.toMatch(/Proposal/);
   });
   it('status menu matches n9-status-menu.png: no panel card, Profile segments, flat magenta Volume, squircle rows, no switches', () => {
     const w = mount(PhoneV2, { props: { state: 'status-more' } });
@@ -340,9 +342,9 @@ describe('Phone v2 proposals', () => {
     const st = m('status-settings').text();
     for (const t of ['Sliders', 'Brightness', 'Add slider', 'Toggle strip', 'Below Profile', 'Below Volume', 'Below the rows', 'Visible rows', 'All', 'Swipe down', 'Both']) expect(st).toContain(t);
   });
-  it('squircle rule: no border-radius on Phone v2 icon tiles, avatars, badges or icon buttons', () => {
+  it('squircle rule: no border-radius on phone mock icon tiles, avatars, badges or icon buttons', () => {
     const v = read('src/stories/explorations/phone2/PhoneV2.vue');
-    const allowed = ['p2-mu', 'p2-wt', 'p2__proposal', 'p2-extra', 'p2-sb__rec', 'p2__app', 'p2-menu__card', 'p2-code i', 'p2-send', 'p2-kb span'];
+    const allowed = ['p2-mu', 'p2-wt', 'p2__status', 'p2-extra', 'p2-sb__rec', 'p2__app', 'p2-menu__card', 'p2-code i', 'p2-send', 'p2-kb span'];
     for (const m of v.matchAll(/^\.([^{]+)\{[^}]*border-radius/gm)) expect(allowed.some((a) => m[1].includes(a)), m[1]).toBe(true);
     expect(v).not.toMatch(/(tile|avatar|icon|badge|p2-x)[^{]*\{[^}]*border-radius/);
     expect(read('src/components/HdSlider.vue')).toMatch(/slider-thumb \{[^}]*border: 0; background: var\(--hd-slider-thumb\)/);
@@ -355,7 +357,7 @@ describe('Phone v2 proposals', () => {
     const names = [...CORE, ...SMALL].map((s) => STATES[s].extra).filter(Boolean);
     expect(ex.findAll('.p2-set .hd-switch').length).toBe(new Set(names).size);
     expect(ex.findAll('input:checked').length).toBe(0);
-    for (const s of [...CORE, ...SMALL]) if (STATES[s].extra) expect(mount(PhoneV2, { props: { state: s } }).find('.p2-extra').text()).toContain('Android extras');
+    for (const s of [...CORE, ...SMALL]) if (STATES[s].extra) expect(mount(PhoneV2, { props: { state: s } }).find('.p2-extra').text()).toBe('Optional · off by default');
     expect(mount(PhoneV2, { props: { state: 'banner' } }).find('.p2-extra').exists()).toBe(false);
   });
   it('N9 slider: thin dark groove, accent fill, end icons outside the track', () => {
@@ -373,17 +375,18 @@ describe('Phone v2 proposals', () => {
   });
   it('album art, screenshot thumbnail and gallery are content shown as is', () => {
     const v = read('src/stories/explorations/phone2/PhoneV2.vue');
-    expect(read('src/stories/belle/BelleWidget.vue')).toMatch(/class="bw-music__art"[^>]*role="img"/);
+    expect(read('src/shell/widgets/BelleWidget.vue')).toMatch(/class="bw-music__art"[^>]*role="img"/);
     expect(v).toMatch(/class="p2-info__thumb"/);
     expect(v.slice(v.indexOf('<template>'))).not.toMatch(/<HdSquircle[^>]*(art|Screenshot)/);
   });
   it('docs page lists every mock with its story id, the leave-out list and the open questions', () => {
-    const mdx = read('src/stories/guide/PhoneV2.mdx');
-    for (const k of ['storyId(s)', 'LEAVE_OUT.map', 'QUESTIONS.map', 'NO_MOCK.map']) expect(mdx).toContain(k);
-    expect(storyId('banner')).toBe('explorations-phone-v2--banner');
-    expect(storyId('history' as P2State)).toBe('explorations-phone-v2--gallery'); // not a state: falls back to the gallery
+    const mdx = read('src/stories/guide/Phone.mdx');
+    for (const k of ['storyId(s)', 'STATUS_LABEL[STATUS[s][0]]', 'LEAVE_OUT.map', 'QUESTIONS.map', 'NO_MOCK.map']) expect(mdx).toContain(k);
+    expect(mdx).toContain('<Meta title="Guide/The phone" />'); expect(mdx).not.toMatch(/v2/); expect(mdx).not.toMatch(/[Pp]roposal|Roadmap/);
+    expect(storyId('banner')).toBe('phone-android-features--banner');
+    expect(storyId('history' as P2State)).toBe('phone-android-features--gallery'); // not a state: falls back to the gallery
     expect(LEAVE_OUT.map((l) => l[0])).toEqual(expect.arrayContaining(['One-handed mode', 'Bubbles', 'App pairs']));
-    expect(QUESTIONS.length).toBeGreaterThanOrEqual(5);
+    expect(QUESTIONS.length).toBe(2); // the rest were answered by building them
   });
   it('no third-party trademarks', () => expect(read('src/stories/explorations/phone2/PhoneV2.vue') + read('src/stories/explorations/phone2/states.ts')).not.toMatch(/Google|Skype|Facebook|Nokia|Ovi|Spotify|WhatsApp/));
 });
@@ -440,7 +443,7 @@ describe('edit modes, Back, edit bar', () => {
     expect(two.findAll('.p2-tg [role=switch]').length).toBe(10);
     expect(read('src/stories/explorations/phone2/PhoneV2.vue')).toContain('.p2-tg { display: grid; grid-template-columns: repeat(6, auto); justify-content: space-between;');
     expect(mount(PhoneV2, { props: { state: 'status-settings' } }).text()).toContain('Opens the toggles editor');
-    expect(read('src/stories/belle/BelleWidget.vue')).toMatch(/\.bw-close \{[^}]*right: 0;/);
+    expect(read('src/shell/widgets/BelleWidget.vue')).toMatch(/\.bw-close \{[^}]*right: 0;/);
     expect(read('src/components/HdTaskCard.vue')).toMatch(/\.hd-task-card__close \{[\s\S]*?right: calc/);
   });
   it('Back arrow: bounding box (with stroke) centred ±1px and padded inside the 33px squircle', () => {
@@ -467,11 +470,11 @@ describe('edit modes, Back, edit bar', () => {
   });
 });
 
-describe('Phone v2 review pass', () => {
+describe('phone mock review pass', () => {
   it('dev tags sit in the status bar (never over content); sheets are the N9 toolbar menu', () => {
     for (const st of ['events-sheet', 'lock-music', 'status-edit'] as const) {
       const w = mount(PhoneV2, { props: { state: st } });
-      for (const t of w.findAll('.p2-extra, .p2__proposal')) expect(t.element.closest('.p2-tags'), st).toBeTruthy();
+      for (const t of w.findAll('.p2-extra, .p2__status')) expect(t.element.closest('.p2-tags'), st).toBeTruthy();
       expect(read('src/stories/explorations/phone2/PhoneV2.vue')).toContain('.p2-tags { position: absolute; z-index: 12; left: 50%; top: 4px;');
     }
     const v = read('src/stories/explorations/phone2/PhoneV2.vue');
@@ -500,7 +503,7 @@ describe('N9 composer: Send / counter / attach live in the keyboard strip', () =
       expect(strip.element.nextElementSibling?.classList.contains('xm-kb')).toBe(true);
     }
   });
-  it('Phone v2 inline reply uses the same split', () => {
+  it('phone mock inline reply uses the same split', () => {
     const w = mount(PhoneV2, { props: { state: 'events-reply' } });
     expect(w.find('.p2-reply__f .p2-send').exists()).toBe(false);
     expect(w.find('.p2-kstrip .p2-send').exists()).toBe(true);
@@ -524,7 +527,7 @@ describe('readable grey text on black (N9 sampled)', () => {
     const t = read('src/styles/tokens.css'); const d = t.slice(t.indexOf('[data-hd-mode="dark"], .hd-mode-dark'));
     for (const k of ['secondary', 'tertiary']) { const h = d.match(new RegExp(`--hd-c-fg-${k}: (#[0-9A-Fa-f]{6})`))![1]; expect(onBlack(h), k).toBeGreaterThanOrEqual(4.5); }
   });
-  it('Phone v2 is dark-themed and uses no dark grey text outside light surfaces / dimmed layers', () => {
+  it('phone mock is dark-themed and uses no dark grey text outside light surfaces / dimmed layers', () => {
     expect(mount(PhoneV2, { props: { state: 'events-reply' } }).classes()).toContain('hd-theme-dark');
     const v = read('src/stories/explorations/phone2/PhoneV2.vue');
     const light = /p2-wt|p2-sugg|p2-reply|p2-row--light|p2-appbg|p2-kstrip|p2-count|p2-seg|p2-dimmed|p2-tg--avail|p2-card|p2-share/;
@@ -582,13 +585,13 @@ describe('hardware keyboard + dictionary', () => {
     }
     expect(mount(PhoneV2, { props: { state: 'events-reply-hw-land' } }).classes()).toContain('p2--land');
   });
-  it('dictionary: word tracker bubble, candidate list, hw suggestions (proposal)', () => {
+  it('dictionary: word tracker bubble, candidate list, hw suggestions (not built yet)', () => {
     const t = mount(PhoneV2, { props: { state: 'dictionary-tracker' } });
     expect(t.find('.p2-cur').text()).toBe('lste'); expect(t.find('.p2-wt').text()).toBe('late'); expect(t.find('.xm-kb').exists()).toBe(true);
     const l = mount(PhoneV2, { props: { state: 'dictionary-list' } });
     expect(l.findAll('.p2-wl__r').map((r) => r.text())).toEqual(['late', 'list', 'lose', 'lste']);
     const h = mount(PhoneV2, { props: { state: 'dictionary-hwkb' } });
-    expect(h.find('.p2-kstrip .p2-sugg b').text()).toBe('late'); expect(h.find('.p2__proposal').exists()).toBe(true); expect(h.find('.xm-kb').exists()).toBe(false);
+    expect(h.find('.p2-kstrip .p2-sugg b').text()).toBe('late'); expect(h.find('.p2__status').text()).toBe('Not built yet'); expect(h.find('.xm-kb').exists()).toBe(false);
     expect(read('src/stories/explorations/phone2/PhoneV2.vue')).toMatch(/\.p2-wt \{[^}]*background: #F7F7F7;[^}]*color: #282828;/);
   });
 });
@@ -657,7 +660,7 @@ it('share Filter is an N9 text field (light, control radius, sunken), not a pill
   expect(v).toMatch(/\.p2-share__f \.hd-search \.hd-field__box \{ border-radius: var\(--hd-radius-control\); background: #fff; box-shadow: inset/);
 });
 
-it('every Phone v2 banner/toast is the lock-card bubble; screenshot uses a square thumbnail', () => {
+it('every phone mock banner/toast is the lock-card bubble; screenshot uses a square thumbnail', () => {
   for (const s of ['banner', 'screenshot', 'pinning', 'copied'] as const) {
     const w = mount(PhoneV2, { props: { state: s } });
     expect(w.find('.p2-banner .hd-lock-card').exists(), s).toBe(true);
@@ -684,7 +687,7 @@ it('live update lives only in Events (pinned item with progress), never in the s
   expect(it0.find('.p2-prog').exists()).toBe(true);
 });
 
-it('Phone v2 Events matches the real pane: date + weather header, Notifications/Feed sections, no bottom bar; live Timer first', () => {
+it('phone mock Events matches the real pane: date + weather header, Notifications/Feed sections, no bottom bar; live Timer first', () => {
   for (const s of ['events-sheet', 'events-reply', 'live-update', 'dictionary-tracker'] as const) {
     const w = mount(PhoneV2, { props: { state: s } });
     expect(w.find('.hd-events-header').text(), s).toContain('Monday');
@@ -747,7 +750,7 @@ describe('Belle clocks and switches (701 art)', () => {
     expect(g.find('stop').attributes('stop-color')).toBe('#2FA7DD');
   });
   it('a glyph on an on cap is lit Belle blue', () => {
-    expect(readFileSync('src/stories/belle/BelleCap.vue', 'utf8')).toMatch(/\.bcap\.on \.bcap__glyph \{ color: #3C8FE6/);
+    expect(readFileSync('src/shell/widgets/BelleCap.vue', 'utf8')).toMatch(/\.bcap\.on \.bcap__glyph \{ color: #3C8FE6/);
   });
   it('the data meter keeps the 701 proportions: the inner squircle is 62 of 80', () => {
     const d = mount(BelleWidget, { props: { kind: 'data' } }).findAll('.bw-data path').at(-1)!;
@@ -760,12 +763,12 @@ describe('Belle clocks and switches (701 art)', () => {
     expect(mount(BelleWidget, { props: { kind: 'wordclock', at: '12:00' } }).text()).toContain("O'clock");
   });
   it('the dial is the 701 squircle in warm charcoal', () => {
-    const dial = read('src/stories/belle/BelleDial.vue');
+    const dial = read('src/shell/widgets/BelleDial.vue');
     for (const c of ['#41413C', '#282823', '#50504B', '#4791DC']) expect(dial).toContain(c);
     expect(dial).toContain('squircleRectPath(126, 126, FACE_EXPONENT)');
   });
   it('no switch, toggle, data meter or dial face is a rounded rectangle', () => {
-    const css = read('src/stories/belle/BelleWidget.vue');
+    const css = read('src/shell/widgets/BelleWidget.vue');
     for (const sel of ['.bw-sw', '.bw-tg__face', '.bw-power', '.bw-sqdial', '.bw-data']) {
       const rule = new RegExp(`\\${sel} \\{[^}]*\\}`).exec(css)?.[0] ?? '';
       expect(rule, sel).not.toMatch(/border-radius/);

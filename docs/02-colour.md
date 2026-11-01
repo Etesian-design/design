@@ -18,11 +18,24 @@ Source: `/usr/share/themes/blanco/meegotouch/constants.ini`.
 | `--hd-color-palette-warning` | `#DA201E` | Errors, destructive | N9 |
 | `--hd-color-palette-attention` | `#CC9900` | Caution | N9 |
 | `--hd-color-palette-notification` | `#7FB133` | Success / positive | N9 |
-| `--hd-color-palette-link` | `#1080DD` | Links (N9) | N9 |
+| `--hd-color-palette-link` | `#1080DD` | Links | N9 |
 | `--hd-color-palette-link-active` | `#1C51AF` | Pressed link | N9 |
 
 Note: Qt Components' `UIConstants.js` uses slightly different values (`#191919` foreground,
-`#a6a8ab` secondary). HDL follows the system theme (`constants.ini`) because it is what native apps showed.
+`#a6a8ab` secondary). Etesian follows the system theme (`constants.ini`) because it is what native apps showed.
+
+## Brand: the Etesian logo (EXT)
+
+Wind blowing right to left, its curls drawing a lower-case *e*, on the N9 squircle. Files in `brand/`, made by
+`scripts/logo.mjs`; the wordmark is Fira Sans Light.
+
+| Version | Use | Tile | Strokes |
+| --- | --- | --- | --- |
+| Deep blue (`etesian-deep.svg`) | the main logo: light backgrounds, the favicon, the GitHub organisation | `#2C6FD9` → `#0F3B8C` | `#FFFFFF` → `#D7ECFF`, `#9FD4FF` → `#6FB8F5` |
+| Pearl (`etesian-pearl.svg`) | dark backgrounds and dark mode | `#FFFFFF` → `#E3EAF3` | `#2584D8` → `#145FB0`, `#7FD0F2` → `#4FB4E6` |
+
+Both carry two leaves, `#9BD12E` → `#5E9418`. At 32 px and below use the simplified favicon
+(`etesian-favicon.svg`: three thicker strokes, no leaves); for round crops use `etesian-avatar.svg`, which fills the square.
 
 ## Accent colours (N9)
 
@@ -44,7 +57,8 @@ Set it on any ancestor (`<HdTheme accent="#62B700">` or `style="--hd-accent: ...
 
 ## Themes
 
-Components never use palette tokens for surfaces directly; they use **semantic theme tokens**
+The full picture, with the three colour modes (Hybrid, Dark, Light) and every surface, is in
+[Colour modes](15-colour-modes.md). The basics: components never use palette tokens for surfaces directly; they use **semantic theme tokens**
 `--hd-c-*`, redefined by theme scope.
 
 | Semantic token | Light / "blanco" | Dark / "inverted" | Origin |
@@ -68,9 +82,11 @@ the N9 toolbar, dialogs and menus are always inverted even inside a light page.
 ## Rules
 
 - (N9) Exactly one accent per screen. Warning red is the only other strong colour.
+- (N9) An app's main page header takes the app's own colour, set per app (not sampled from its icon); its sub
+  pages have a plain header.
 - (N9) Dialogs, menus, the toolbar, status bar and lock screen are always black/inverted.
 - (EXT) **Accent as text**: `#4591FF` on `#E0E1E2` is only 2.4:1. For text and links use
   `--hd-c-accent-text` / `--hd-c-link` (AA). Accent fills with white bold text (buttons) reach ~3.1:1;
-  acceptable for large/bold labels per WCAG "large text" only if >= 18.66px bold, so HDL accent buttons
+  acceptable for large/bold labels per WCAG "large text" only if >= 18.66px bold, so Etesian accent buttons
   are documented as a known contrast gap; pick a darker accent for text-heavy fills.
 - (EXT) Never encode meaning with colour alone; pair warning red with an icon or text.

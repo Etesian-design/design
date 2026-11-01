@@ -1,7 +1,7 @@
 /**
  * Free look-alikes for Nokia Pure (proprietary, never bundled). Metric adjustments come from
  * tokens.json font.alternatives (measured against Nokia Pure Text, docs/03b-font-alternatives.md).
- * applyFont() re-points the HDL font tokens on an element so layouts stay stable when swapping.
+ * applyFont() re-points the Etesian font tokens on an element so layouts stay stable when swapping.
  */
 import raw from '../tokens/tokens.json';
 
@@ -29,7 +29,7 @@ export const FONT_ALTERNATIVES: FontAlternative[] = Object.entries(alts)
 
 const FALLBACK = '"Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif';
 
-/** CSS custom properties that switch HDL text to font `key` (empty object = token default). */
+/** CSS custom properties that switch Etesian text to font `key` (empty object = token default). */
 export function fontVars(key: string | undefined): Record<string, string> {
   const f = FONT_ALTERNATIVES.find((a) => a.key === key);
   if (!f) return {};

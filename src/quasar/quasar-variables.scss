@@ -1,6 +1,6 @@
 // Etesian Design Language -> Quasar SCSS variables.
-// Quasar CLI: put `@import 'etesian-design/quasar/variables.scss';` in src/css/quasar.variables.scss
-// (Vite plugin: sassVariables: 'node_modules/etesian-design/src/quasar/quasar-variables.scss').
+// Quasar CLI: put `@import '@etesian-design/quasar/variables.scss';` in src/css/quasar.variables.scss
+// (Vite plugin: sassVariables: 'node_modules/@etesian-design/quasar/dist/quasar-variables.scss').
 // Values are the static N9 colours; at runtime the theme CSS re-points --q-* to --hd-* so the
 // accent can still change per app.
 $primary   : #4591FF; // COLOR_ACCENT1 (n9)

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 /** T6: a Sheet (new event) as a centred panel over the app (tablet) vs. covering the whole screen (phone behaviour). */
 import { ref } from 'vue';
-import XMiniApp from '../parts/XMiniApp.vue';
+import XMiniApp from '../../../shell/parts/XMiniApp.vue';
 import HdSheet from '../../../components/HdSheet.vue';
 import HdTextField from '../../../components/HdTextField.vue';
 import HdListItem from '../../../components/HdListItem.vue';

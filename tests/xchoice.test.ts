@@ -33,7 +33,7 @@ describe('exploration state switcher', () => {
     expect((w.find('select').element as HTMLSelectElement).value).toBe('');
   });
   it('every exploration page uses it instead of a raw tab bar', () => {
-    for (const f of ['Desktop', 'Desktop2', 'PhoneV2', 'Tablet']) {
+    for (const f of ['Desktop2', 'PhoneFeatures', 'Tablet']) {
       const s = readFileSync(`src/stories/explorations/${f}.stories.ts`, 'utf8');
       expect(s).not.toMatch(/<HdTabBar/);
       expect(s).toMatch(/<XChoice/);

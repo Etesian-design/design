@@ -2,7 +2,7 @@
 /** Events home view: notifications and feeds, grouped by source, squircle thumbnails, photo previews shown as is (square). 1 or 2 columns. */
 import HdEventsFeedItem from '../../../components/HdEventsFeedItem.vue';
 import HdSectionHeader from '../../../components/HdSectionHeader.vue';
-import { photo } from './data';
+import { photo } from '../../../shell/parts/data';
 withDefaults(defineProps<{ columns?: 1 | 2; title?: boolean; previews?: boolean; thumb?: number }>(), { columns: 1, title: true, previews: true, thumb: 64 });
 </script>
 <template>

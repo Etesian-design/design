@@ -80,7 +80,7 @@ Plain HTML/CSS (any content, e.g. Quasar avatars, font icons):
   so it follows the curved top edge), faint bottom line, cast shadow on children via `drop-shadow`.
 - `.hd-icon-lit--light`: white tile variant. `.hd-icon-lit-shadow`: soft outer shadow wrapper
   (a mask clips shadows on the masked element itself, so the shadow lives on a wrapper).
-- Exact gradient: `litPalette(accent)` / `litVars(accent, size)` from `etesian-design` set
+- Exact gradient: `litPalette(accent)` / `litVars(accent, size)` from `@etesian-design/vue` set
   `--hd-icon-top` / `--hd-icon-bottom`; without them a `color-mix()` fallback is used.
 - Glyph: `HdIcon lit` strokes with the off-white gradient and applies an SVG filter (cast shadow +
   top-edge highlight). Photos (`src`) are never re-lit.

@@ -6,7 +6,7 @@ The N9 never showed breadcrumbs. Hierarchy is expressed by **one level per scree
 a slide-in from the right, and a single **Back** at bottom-left.
 
 Web adaptation (EXT):
-- Each level is a real URL; browser Back must equal the HDL Back.
+- Each level is a real URL; browser Back must do the same as the in-app Back.
 - Compact: Back is the toolbar's left button. Medium+: Back may appear at the left of the page header.
 - The page title always names the current level; the parent's name may appear as the Back label on desktop ("< Settings").
 - Max ~4 levels. Deeper structures need search instead.
@@ -30,18 +30,26 @@ accept = verb, e.g. "Delete"). Undoable actions use a Toast with "Undo" instead 
 ## Feedback (N9 + EXT)
 
 - Transient info: InfoBanner (OS) / Toast (web).
-- Incoming events: NotificationBanner + Events view item.
+- Incoming events: an Events view item, and over an app a floating card identical to the lock-screen card,
+  just under the status bar (Etesian phones; the N9 dropped a NotificationBanner from the top).
 - Busy: BusyIndicator in place of the content or on the tapped icon (squircle ring). Never block the whole UI for under 1s.
 
 ## Lock screen (canon)
 
-Large light clock at the top right, date below, notification tiles (`HdLockScreenNotificationCard`)
-at the bottom, a "More" label when there are more, swipe sideways to unlock. Opt-in alternative: a
-stacked card carousel.
+Large light clock at the top right, date below, notification cards at the bottom, swipe sideways to unlock.
+Etesian's default shows the newest cards in full with the rest as a stacked carousel (`HdLockScreenStack`); the
+N9 "More" label is the alternative. The lock screen as a whole will be revisited.
 
 ## Home (canon)
 
-Three horizontal views (Events, Applications, Open applications), `HdPageIndicator` dots, no dock.
+Phone: three horizontal views (Events, Applications, Open applications), `HdPageIndicator` dots, no dock.
+Desktop: the Overview (Super) gathers the same three side by side; see [The desktop](21-desktop.md).
+
+## Additions and settings (EXT)
+
+Everything the N9 did not have is optional: a normal setting in its own group (Status menu, Events, …), never
+a page of "extras", off by default. A settings page that has such settings starts with a live preview that redraws
+as they change. An addition never takes over an N9 gesture (long-press, swipes) and never invents a menu.
 
 ## Forms on the web (EXT)
 

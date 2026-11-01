@@ -6,9 +6,9 @@
 import { ref, computed, watch } from 'vue';
 import HdPageIndicator from '../../../components/HdPageIndicator.vue';
 import XEvents from '../parts/XEvents.vue';
-import XAppsView from '../parts/XAppsView.vue';
-import XOpenApps from '../parts/XOpenApps.vue';
-import XMiniApp from '../parts/XMiniApp.vue';
+import XAppsView from '../../../shell/parts/XAppsView.vue';
+import XOpenApps from '../../../shell/parts/XOpenApps.vue';
+import XMiniApp from '../../../shell/parts/XMiniApp.vue';
 import HdTaskEditBar from '../../../components/HdTaskEditBar.vue';
 const props = withDefaults(defineProps<{ orientation?: 'landscape' | 'portrait'; view?: number; grid?: '3x3' | '4x3'; eventsBeside?: boolean; editing?: boolean }>(), { orientation: 'landscape', view: 1, grid: '3x3' });
 const current = ref(props.view);

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 /** Tablet screen: 1280x800 landscape or 800x1280 portrait, N9 status bar on top, content below. */
-import XDevice from '../parts/XDevice.vue';
+import XDevice from '../../../shell/parts/XDevice.vue';
 import HdStatusBar from '../../../components/HdStatusBar.vue';
 withDefaults(defineProps<{ orientation?: 'landscape' | 'portrait'; label?: string; statusBar?: boolean }>(), { orientation: 'landscape', statusBar: true });
 </script>

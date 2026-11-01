@@ -1,6 +1,6 @@
-# 20 · The phone (reference for every form factor)
+# The phone (reference for every form factor)
 
-This chapter records everything already built and decided for the phone (the Etesian launcher on Android). It is the reference for tablet, desktop and any later form factor. If something here conflicts with an exploration, this chapter wins unless the change is made here first.
+This chapter records everything already built and decided for the phone (Etesian on any phone running LineageOS). It is the reference for tablet, desktop and any later form factor. If something here conflicts with an exploration, this chapter wins unless the change is made here first.
 
 Units: all sizes are in **dp**, and type is in **sp**.
 
@@ -13,17 +13,23 @@ Units: all sizes are in **dp**, and type is in **sp**.
 | **Swipe in from the left or right edge** | Minimises the app to home. The app shrinks away and the last home view shows. The app keeps running and appears in Open apps. |
 | **Swipe down from the top edge** | Closes the app (the N9 swipe-down close). |
 | **Swipe up from the bottom edge and hold** | Peeks the first row of the app grid over the app. Release on an icon to launch it; release elsewhere to cancel. |
-| **Tap the status bar** | Opens the status menu: connectivity toggles, Silent, volume, brightness and battery. It is never part of Events. |
-
-**Profile strip.** Silent and Beep are fixed segments. The Ringing segment and the grey after it are one control, the ringer volume slider: its blue fill runs into the grey in proportion to ring volume (drag along it to set the level; full = all the way across). A strip without a volume (e.g. the Mode strip) has no grey remainder: its segments fill the width.
+| **Tap the status bar** | Opens the status menu (see below). It is never part of Events. |
 | **Swipe sideways on the lock screen** | Unlocks. There is no unlock button. |
-
-> **Lock screen: to be revisited as a whole.** The Phone v2 mocks follow the real Pro1-X lock (huge thin right-aligned clock, full date right-aligned under it, lock-card notifications at the bottom); the whole lock screen will be reviewed again later.
 | **Pinch in Open apps** | Zooms between the levels: carousel (one card), 2, 3 and 4 per row. |
+| **Two fingers drag two Open apps cards together** | Split view: the cards follow the fingers and snap into one card showing the split. Spreading the fingers before lifting undoes it; the reverse gesture pulls a split apart. |
 
 The system gesture areas belong to the OS. Apps never put interactive controls within the edge-swipe zone, and nothing in an app may imitate an edge swipe.
 
+### Status menu
+
+- **Profile strip.** Silent and Beep are fixed segments. The Ringing segment and the grey after it are one control, the ringer volume slider: its blue fill runs into the grey in proportion to ring volume (drag along it to set the level; full = all the way across). A strip without a volume (e.g. the Mode strip) has no grey remainder: its segments fill the width.
+- **Volume** is the media volume, one flat bar. There are no per-stream volume rows.
+- **Rows** of a lit squircle, a bold title and its state: network, Bluetooth, battery and so on.
+- Additions (off by default): a strip of toggle tiles with its editor, extra sliders (brightness), hidden rows behind a handle, a Modes strip (Do Not Disturb and the enabled modes) and the small Belle music widget while something plays, with its "Play on" output dialog.
+
 ### Lock screen
+
+> **To be revisited as a whole.** Today: a huge thin right-aligned clock, the full date right-aligned under it, a glance line (next alarm or event) and the notification cards at the bottom.
 
 - **Default notification style: a stacked carousel (iPhone style).**
   - The newest **N** notifications show in full at the bottom. N defaults to 3; the setting allows 1–10.
@@ -39,7 +45,7 @@ The system gesture areas belong to the OS. Apps never put interactive controls w
 ### Animations on every interaction
 
 - **App launch:** a loading ring runs on the tapped icon. When the app is ready, it slides in. There is **no splash screen**.
-- **Restore from Open apps:** the card is sucked away, then the app slides in from the left.
+- **Restore from Open apps:** the card is sucked away, then the app slides in from the side it was last swiped out to (swiped out to the right, it comes back from the right).
 - **Minimise (edge swipe):** the app slides off in the direction of the swipe and home is revealed underneath.
 - **Close (swipe down):** the app follows the finger down and fades out.
 - **Open apps zoom (pinch):** cards reflow between carousel, 2, 3 and 4 per row. Cards keep their identity; there is no cross-fade.
@@ -60,8 +66,11 @@ From top to bottom:
 2. **Weather**, centred on its line:
    - the city in small bold type, centred above a hairline rule;
    - the temperature and weather icon centred under the rule.
-3. **Notifications.**
-4. **Feeds.**
+3. **Notifications.** Live updates (calls, timers, downloads) are pinned first and appear only here, never in the status bar.
+4. **Today** (optional): one-line items such as screen time, all-day events, birthdays and upcoming events.
+5. **Feeds.**
+
+Long-press an item for the N9 menu sheet: Reply (a one-line composer), Mark as read, Snooze, Dismiss. Optional additions: **priority people** (a contact's messages and mail pinned to the top, across apps) and **ghost rows** (dismissed notifications fade out as one or more rows under the list; tap opens "Earlier", swipe clears them).
 
 Section headers are the N9 SectionHeader: a small bold secondary label, right-aligned, with a hairline to its left.
 
@@ -85,6 +94,8 @@ Thumbnails are 43–44dp squircles.
 - Live cards of the running apps.
 - Zoom levels: carousel, 2, 3 and 4 per row, changed by pinching.
 - The default is 2 per row.
+- The last opened app moves to the top. In edit mode, cards can be dragged to a new place.
+- Two-finger split view: see the gestures table.
 
 ### Open apps edit mode (long press)
 
@@ -111,13 +122,20 @@ Thumbnails are 43–44dp squircles.
 - **Keyboard behaviour:**
   - The toolbar **hides while the keyboard is up**.
   - The keyboard has its own ⌄ hide key next to the microphone.
-  - There is **no system strip under the keyboard**.
+  - Above the keys sits the white N9 strip (emoticon, character counter, Send); in Messaging, a hardware keyboard gets the strip on its own.
+  - There is **no system navigation strip under the keyboard**.
 
 ## 4. Settings
 
 - There is **no search button**.
 - Pulling down at the top of any Settings page reveals search.
 - A hint follows the pull: "Pull down to search", then "Release to search".
+- Everything Etesian adds is a normal setting in its own group, off by default, with no page of "extras". A page with such settings starts with a live preview that redraws as they change.
+- Emergency information has its own page; on the lock screen it shows as the owner's block beside the clock, which opens a full-screen emergency card.
+
+## 4b. System dialogs
+
+Restyled as N9 pieces: the share sheet (a Filter field, pinned targets, all apps; suggested people optional), the power menu (Power off, Restart, Lock now, Emergency), permission dialogs (an N9 query dialog over a 90% dark backdrop), the privacy indicator, app pinning, and small bubbles for "Screenshot saved" (with Share and Edit), "Copied", screen recording (a red dot; tap to stop) and Wi-Fi sharing as a QR sheet. Private apps sit in a locked folder at the end of the app grid. Each one, with its mock and status, is in *Android features, the Etesian way* below.
 
 ---
 
@@ -167,9 +185,9 @@ Accent and negative buttons use the same structure with their base colour.
 6. **A toolbar style flipping between screens of one flow** (Settings in dark, its search in light). Keep one style per flow.
 7. **The ✕ on the wrong side.** The Open apps close button is at the **top-right**.
 8. **Per-card action buttons repeated on every card.** Use one shared action row for the centred card.
-9. (Desktop v2) **Squircle window thumbnails.** Thumbnails keep the window's aspect ratio and the card radius; only the app badge is a squircle.
+9. (Desktop) **Squircle window thumbnails.** Thumbnails keep the window's aspect ratio and the card radius; only the app badge is a squircle.
 
-## Matched to the ROM (round 3 phone fixes)
+## Exact values (from the phone)
 
 > **Weights come from this spec, not from screenshots.** Reference screenshots from the ROM device may have Android's "Bold text" accessibility setting on, which shifts every weight up.
 

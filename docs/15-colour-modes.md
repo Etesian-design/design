@@ -35,9 +35,8 @@ Legacy: `theme="light"` / `[data-hd-theme="light"]` = Hybrid, `theme="dark"` = D
 | Music app dark; Contacts and Messaging light | no theme styles for music-suite, contacts or messaging-ui in the extracted files | canon, not verified in files |
 | Sheet header dark | sheet assets exist in both normal and `-inverted` variants; no evidence which one apps used | extrapolated |
 
-Corrections to the brief: everything in the requested list is consistent with the files where the
-files say anything. Calendar is light but carries its own dark shading greys; Home, Music, Contacts,
-Messaging and the sheet header could not be confirmed from the extracted files and are marked canon/EXT.
+Calendar is light but carries its own dark shading greys; Home, Music, Contacts, Messaging and the sheet
+header could not be confirmed from the extracted files and are marked canon/EXT.
 
 ## Rules (Hybrid)
 
@@ -72,10 +71,10 @@ palette: `.hd-on-chrome`, `.hd-on-overlay`, `.hd-on-home`, `.hd-on-banner`, `.hd
 button colours, link, focus) to that surface, so a button inside a Hybrid menu is automatically a
 dark-scheme button. Components only consume `--hd-surface-*` and `--hd-c-*`.
 
-Contrast (WCAG 2.1): primary text is 14:1 or more in every mode (#282828 on #E0E1E2 = 11.6:1,
-#FFF on #000 = 21:1, #FFF on the toolbar gradient bottom #141414 = 18:1, #282828 on the light toolbar
-bottom #D5D6D8 = 10.5:1). Secondary text: #505050 on #E0E1E2 = 6.1:1, #C8C8C8 on #000 = 12.6:1.
-Accent as text uses `--hd-c-accent-text` (#1C51AF on light = 6.1:1, #7FB0FF on black = 8.9:1, AA).
+Contrast (WCAG 2.1): primary text is 10:1 or more in every mode (#282828 on #E0E1E2 = 11.3:1,
+#FFFFFF on #000000 = 21:1, #FFFFFF on the toolbar gradient bottom #141414 = 18.4:1, #282828 on the light toolbar
+bottom #D5D6D8 = 10.1:1). Secondary text: #505050 on #E0E1E2 = 6.2:1, #C8C8C8 on #000000 = 12.6:1.
+Accent as text uses `--hd-c-accent-text` (#1C51AF on light = 5.6:1, #7FB0FF on black = 9.6:1, AA).
 Gap: white bold 15px text on the default accent #4591FF fill is 3.1:1 (N9 original); it passes only
 for large/bold UI text (3:1), so for long text on accent fills pick a darker accent.
 

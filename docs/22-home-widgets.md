@@ -1,6 +1,6 @@
 # Home widgets (Belle style)
 
-Learned from the ROM launcher's Belle widgets (`BelleClassic*.kt`, `bc_*.xml`, `belle_*.xml`). Sizes are dp, which map 1:1 to CSS px at this scale. Stories: OS / Belle widgets.
+Etesian's widgets, in the style of the Belle widgets: glossy panels with lit squircles, the same on the phone's home screen and on the desktop. Sizes are dp, which map 1:1 to CSS px at this scale. Every widget is live in Storybook under *OS / Belle widgets*.
 
 ## Grid
 
@@ -20,8 +20,8 @@ Learned from the ROM launcher's Belle widgets (`BelleClassic*.kt`, `bc_*.xml`, `
 | Web / contact shortcut | 2×2 | picture as is, name on a dark strip |
 | Weather | 4×2 | grey glass from 30px down, 84px icon breaking out above |
 | RSS (one site) | 4×3 | 52px orange header, white rows with orange dots |
-| Music (small) | 4×1.5 | belle-music-widget-small.jpg: glossy black panel, square art on the left rising above its top edge, title (+ output link), prev / play / next in a recessed groove. Also the status-menu music block (Phone v2 3b) |
-| Music (large, `music-large`) | 4×3 | belle-music-widget-large.jpg: square art standing up out of a glossy tray, prev / big play / next on the tray; empty state "Go to Music library". **Candidate for the real launcher home-screen widget** |
+| Music (small) | 4×1.5 | belle-music-widget-small.jpg: glossy black panel, square art on the left rising above its top edge, title (+ output link), prev / play / next in a recessed groove. Also the status-menu music block |
+| Music (large, `music-large`) | 4×3 | belle-music-widget-large.jpg: square art standing up out of a glossy tray, prev / big play / next on the tray; empty state "Go to Music library". **Planned as a home-screen widget in the phone launcher** |
 | Modern set (clock, calendar, feeds, music, weather, shortcuts) | 4×1 – 4×2 | one translucent black panel |
 
 ## Materials

@@ -1,6 +1,6 @@
 # Font alternatives (free look-alikes for Nokia Pure)
 
-Nokia Pure (Dalton Maag for Nokia, 2011) is **proprietary** (Nokia Pure Font EULA). HDL never bundles it:
+Nokia Pure (Dalton Maag for Nokia, 2011) is **proprietary** (Nokia Pure Font EULA). Etesian never bundles it:
 if the user provides the N9 font files it is used via `local()`, otherwise one of the free fonts below is used.
 
 ## How they were measured
@@ -44,15 +44,16 @@ Sources: tokens `font.alternatives.*.$info.source`.
 
 - **size-adjust** = Pure cap height / font cap height (applied in the `@font-face` alias `"HD <Family>"`, `src/styles/font-alternatives.css`).
 - **letter-spacing** = per-character width difference at that size (em), applied by `fontVars(key)`.
-- **line-height** = ratio of hhea line spacing, informational: HDL sets explicit line heights so no change is required.
+- **line-height** = ratio of hhea line spacing, informational: Etesian sets explicit line heights so no change is required.
 
-Use: `import { fontVars, FONT_ALTERNATIVES } from 'etesian-design'` and spread it on a root element's style.
+Use: `import { fontVars, FONT_ALTERNATIVES } from '@etesian-design/tokens'` and spread it on a root element's style.
 The Storybook toolbar **Font** switch does exactly that.
 
-## Firmware recommendation
+## Etesian's choice
 
-Ship **Fira Sans** as the default UI font when the user provides no N9 files, with **Ubuntu Sans** as the
-alternative option (closest in construction, same designers as Nokia Pure).
+**Fira Sans is Etesian's typeface**: the phone ships it as the default font (with **Ubuntu Sans** as the
+alternative, closest in construction and from the same studio as Nokia Pure), and the desktop, the website,
+Storybook and the logo's wordmark use it. Nokia Pure is used only when the user provides their own N9 files.
 
 - Weights: Light 300 (default text, clock, titles), Regular 400, Bold 700. Italic is not needed by the N9 UI.
   Add Fira Sans' `tnum` feature for clocks/counters (it has one; so does Ubuntu Sans).

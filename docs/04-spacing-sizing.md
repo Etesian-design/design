@@ -8,7 +8,7 @@ the same values in device pixels (`LIST_ITEM_HEIGHT_DEFAULT = 80`). The theme en
 ~251 dpi (9.9 px/mm), so the mapping is essentially physical.
 
 The CSS reference pixel is 1/96 inch. A browser on the N9 would report devicePixelRatio = 1.5,
-i.e. a **569 x 320 CSS px** viewport. HDL therefore converts:
+i.e. a **569 x 320 CSS px** viewport. Etesian therefore converts:
 
 > **CSS px = n9px x 2/3** (rounded), equivalently **1 mm (N9 theme) = 6.67 CSS px**.
 
@@ -54,6 +54,6 @@ Margins and paddings share one scale on the N9 (`MARGIN_*` = `PADDING_*`).
 
 ## Radii (EXT)
 
-The N9 drew controls with bitmap graphics with small rounded corners; HDL uses `--hd-radius-control`
+The N9 drew controls with bitmap graphics with small rounded corners; Etesian uses `--hd-radius-control`
 6px and `--hd-radius-card` 8px. Pills (`999px`) for count bubbles and switch tracks are N9. Squircles
 are not radii: see Shape.

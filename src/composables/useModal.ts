@@ -1,7 +1,8 @@
-import { nextTick, onBeforeUnmount, ref, watch, type Ref } from 'vue';
+import { nextTick, onBeforeUnmount, ref, watch, useId as vueId, type Ref } from 'vue';
 const FOCUSABLE = 'button:not([disabled]), [href], input:not([disabled]), select, textarea, [tabindex]:not([tabindex="-1"])';
-let uid = 0;
-export const useId = (p = 'hd') => `${p}-${++uid}`;
+/** A unique id for a component's elements; call it in setup. Vue's useId: the same on the server and in the browser,
+ * so pages rendered ahead (SSR / SSG) hydrate without id mismatches. */
+export const useId = (p = 'hd') => `${p}-${vueId()}`;
 /** Focus trap + Escape + focus restore for dialogs/sheets/menus (extrapolated a11y behaviour). */
 export function useModal(open: Ref<boolean>, panel: Ref<HTMLElement | undefined>, close: () => void) {
   const prev = ref<HTMLElement | null>(null);

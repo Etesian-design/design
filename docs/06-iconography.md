@@ -9,9 +9,9 @@
 
 The original N9 icon files are Nokia's and are **not included**.
 
-## HDL icon set (EXT, original, AGPL-3.0-only)
+## Etesian icon set (EXT, original, AGPL-3.0-only)
 
-`src/components/icons.ts` contains ~30 original icons drawn for this project on a 24 x 24 grid with a
+`src/components/icons.ts` contains 67 original icons drawn for this project on a 24 x 24 grid with a
 2px round stroke, chosen to echo the N9's light outline look. Use with `<HdIcon name="back" />`.
 
 Rules:

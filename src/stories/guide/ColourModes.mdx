@@ -1,5 +1,6 @@
 import { Meta, Markdown, Canvas } from '@storybook/addon-docs/blocks';
 import md from '../../../docs/15-colour-modes.md?raw';
+import { Doc } from './Doc';
 import * as M from '../pages/Modes.stories';
 
 <Meta title="Guide/Colour modes" />
@@ -8,4 +9,4 @@ import * as M from '../pages/Modes.stories';
 
 <Canvas of={M.SurfacesAllModes} />
 
-<Markdown>{md}</Markdown>
+<Doc md={md} />
