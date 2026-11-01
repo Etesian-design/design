@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { ref, nextTick } from 'vue';
-import { createWindowManager, createDesktopKeys, HALF_LEFT, HALF_RIGHT, isSuper } from '../src/shell/desktop/windowManager';
+import { createWindowManager, createDesktopKeys, HALF_LEFT, HALF_RIGHT } from '../src/shell/desktop/windowManager';
 
 const area = ref({ x: 0, y: 0, w: 1600, h: 900 });
 const key = (key: string, mods: Partial<KeyboardEvent> = {}) => ({ key, metaKey: false, ctrlKey: false, altKey: false, shiftKey: false, preventDefault() {}, ...mods }) as KeyboardEvent;
@@ -104,58 +104,40 @@ describe('window manager', () => {
   });
 });
 
-describe('the Windows switcher and the keyboard', () => {
-  const noop = { overview() {}, launcher() {}, events() {}, picker() {}, closeAll: () => false };
+describe('the keyboard: a browser page, so no system shortcuts', () => {
+  const noop = { closeAll: () => false };
 
-  it('Super+Tab selects the previous window; letting go of Super switches to it', () => {
-    const wm = createWindowManager({ area }); const k = createDesktopKeys(wm, noop);
-    wm.open('a'); wm.open('b'); wm.open('c');
-    k.down(key('Tab', { metaKey: true }));
-    expect(wm.switcher.value!.list[wm.switcher.value!.i]).toBe('b');
-    k.down(key('Tab', { metaKey: true }));
-    k.up(key('Meta'));
-    expect(wm.switcher.value).toBeNull();
-    expect(wm.focused.value).toBe('a');
-  });
-
-  it('Ctrl+Alt works wherever Super does, including releasing it to switch', () => {
+  it('Super and Ctrl+Alt do nothing, alone or with any key', () => {
     const wm = createWindowManager({ area }); const k = createDesktopKeys(wm, noop);
     wm.open('a'); wm.open('b');
-    k.down(key('Tab', { ctrlKey: true, altKey: true })); k.up(key('Alt'));
-    expect(wm.focused.value).toBe('a');
-    k.down(key('ArrowLeft', { ctrlKey: true, altKey: true }));
-    expect(wm.get('a')!.snap).toEqual(HALF_LEFT);
-    expect(isSuper({ metaKey: false, ctrlKey: true, altKey: false })).toBe(false);
+    const before = JSON.stringify(wm.wins);
+    for (const c of ['Meta', 'Tab', ' ', 'n', 'd', 'z', 'ArrowLeft', 'ArrowUp', 'ArrowDown', '1']) {
+      expect(k.down(key(c, { metaKey: true }))).toBe(false);
+      expect(k.down(key(c, { ctrlKey: true, altKey: true }))).toBe(false);
+    }
+    expect(JSON.stringify(wm.wins)).toBe(before);
+    expect(wm.switcher.value).toBeNull();
+    expect('up' in k).toBe(false); // nothing happens on releasing a key either
   });
 
-  it('zoomed out, the switcher stays open after Super is released: arrows move, Enter opens, Escape cancels', () => {
+  it('the switcher, opened from the menu, takes plain keys: arrows and Tab move, Enter opens, Escape cancels', () => {
     const wm = createWindowManager({ area }); const k = createDesktopKeys(wm, noop);
     ['a', 'b', 'c', 'd'].forEach((id) => wm.open(id));
-    k.down(key('Tab', { metaKey: true })); wm.switchLevel(2); k.up(key('Meta'));
-    expect(wm.switcher.value).not.toBeNull();
-    k.down(key('ArrowDown')); // one row down at 2 per row
-    expect(wm.switcher.value!.list[wm.switcher.value!.i]).toBe('a');
-    k.down(key('Enter'));
-    expect(wm.focused.value).toBe('a');
-    k.down(key('Tab', { metaKey: true })); wm.switchLevel(3); k.down(key('Escape'));
-    expect(wm.switcher.value).toBeNull(); expect(wm.focused.value).toBe('a');
+    wm.switchStep(false);
+    expect(wm.switcher.value!.list[wm.switcher.value!.i]).toBe('c');
+    k.down(key('Tab')); expect(wm.switcher.value!.list[wm.switcher.value!.i]).toBe('b');
+    wm.switchLevel(2); k.down(key('ArrowUp')); // one row up at 2 per row
+    expect(wm.switcher.value!.list[wm.switcher.value!.i]).toBe('d');
+    k.down(key('Enter')); expect(wm.focused.value).toBe('d');
+    wm.switchStep(false); k.down(key('Escape'));
+    expect(wm.switcher.value).toBeNull(); expect(wm.focused.value).toBe('d');
   });
 
-  it('Super pressed and released alone opens the Overview; Super with another key does not', () => {
-    const wm = createWindowManager({ area }); let opened = 0;
-    const k = createDesktopKeys(wm, { ...noop, overview: () => opened++ });
-    k.down(key('Meta')); k.up(key('Meta')); expect(opened).toBe(1);
-    k.down(key('Meta')); k.down(key('d', { metaKey: true })); k.up(key('Meta')); expect(opened).toBe(1);
-  });
-
-  it('Super+Space, Super+N, Super+Z and Super+D reach their actions', () => {
-    const wm = createWindowManager({ area }); const hit: string[] = [];
-    const k = createDesktopKeys(wm, { overview() {}, launcher: () => hit.push('launcher'), events: () => hit.push('events'), picker: () => hit.push('picker'), closeAll: () => false });
-    wm.open('a');
-    for (const c of [' ', 'n', 'Z']) k.down(key(c, { metaKey: true }));
-    k.down(key('d', { metaKey: true }));
-    expect(hit).toEqual(['launcher', 'events', 'picker']);
-    expect(wm.shown.value.length).toBe(0);
+  it('digits reach the snap layouts, Escape closes what is open', () => {
+    const wm = createWindowManager({ area }); const got: number[] = []; let closed = 0;
+    const k = createDesktopKeys(wm, { closeAll: () => (closed++, true), pickerDigit: (n) => (got.push(n), true) });
+    k.down(key('2')); k.down(key('Escape'));
+    expect(got).toEqual([1]); expect(closed).toBe(1);
   });
 });
 

@@ -73,7 +73,7 @@ function moveUp(e: PointerEvent) {
   <nav ref="nav" class="x-dock hd-on-home x-shell-dock" :class="[`x-dock--${position}`, { 'is-vertical': vertical, 'is-panel': panel, 'is-hidden': hidden, 'is-autohide': autoHide, 'is-editing': editing }]"
     :style="style" aria-label="Dock">
     <span v-if="launcher" class="x-dock__slot">
-      <HdTooltip text="Overview (Super)" :placement="tip"><button type="button" class="x-dock__launcher hd-sq hd-focusable" :class="{ 'is-active': overviewOpen }" aria-label="Overview" @click="emit('overview')"><HdIcon name="grid" :size="Math.round(size / 2)" /></button></HdTooltip>
+      <HdTooltip text="Overview" :placement="tip"><button type="button" class="x-dock__launcher hd-sq hd-focusable" :class="{ 'is-active': overviewOpen }" aria-label="Overview" @click="emit('overview')"><HdIcon name="grid" :size="Math.round(size / 2)" /></button></HdTooltip>
       <button v-if="editing" type="button" class="x-dock__rm hd-sq x-shell-dock__rm" aria-label="Remove the Overview button" @click="emit('remove', 'launcher')">×</button>
     </span>
     <span v-if="items.length && launcher" class="x-dock__div" aria-hidden="true"></span>
