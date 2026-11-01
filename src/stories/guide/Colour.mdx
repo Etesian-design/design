@@ -1,11 +1,12 @@
 import { Meta, Markdown, ColorPalette, ColorItem } from '@storybook/addon-docs/blocks';
 import md from '../../../docs/02-colour.md?raw';
+import { Doc } from './Doc';
 import tokens from '../../../tokens/tokens.json';
 export const pick = (o) => Object.fromEntries(Object.entries(o).map(([k, v]) => [k + (v.origin === 'ext' ? ' (EXT)' : ''), v.value]));
 
 <Meta title="Guide/Colour" />
 
-<Markdown>{md}</Markdown>
+<Doc md={md} />
 
 ## Swatches
 

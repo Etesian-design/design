@@ -1,10 +1,11 @@
 import { Meta, Markdown, Canvas } from '@storybook/addon-docs/blocks';
 import md from '../../../docs/03b-font-alternatives.md?raw';
+import { Doc } from './Doc';
 import * as F from '../typography/FontAlternatives.stories';
 
 <Meta of={F} />
 
-<Markdown>{md}</Markdown>
+<Doc md={md} />
 
 ## Recommended fonts
 

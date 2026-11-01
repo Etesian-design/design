@@ -23,6 +23,12 @@ Portrait 480 x 854 n9px (320 x 569 CSS px):
 - Open applications: task cards in a 2x2 grid, 3x3 when many apps are open (pinch to switch).
 - Landscape: same structure, shorter toolbar; many apps were portrait-only.
 
+## Desktop layout (EXT)
+
+A global menu bar at the top (the app's menus on the left, the clock at the far right), a floating dock on the
+left, windows whose header carries the app's own actions, and snapping. The details are in
+[The desktop](21-desktop.md).
+
 ## Web layout (EXT)
 
 ### Breakpoints

@@ -1,21 +1,21 @@
 # Etesian Design Language
 
-The Etesian Design Language (HDL) documents the visual and interaction language of the Nokia N9
-(MeeGo 1.2 "Etesian", 2011) and extends it to **operating-system UIs** and **websites**, with a
-ready-to-use Vue 3 component library.
+Etesian is one calm, gesture-first interface for every screen: the **KDE Plasma desktop**, **phones running
+LineageOS** and the **web**. Its influence is the Nokia N9's Swipe UI, re-envisioned for how we use our screens today.
 
-The N9 was designed for one 854 x 480 portrait/landscape touch screen with no hardware buttons
-except power and volume. Everything beyond that (desktop widths, hover, keyboard focus, forms on the
-web, data tables, dark-mode switching, WCAG accessibility) is **extrapolated** in the spirit of the original.
+You move by swiping from the edges, never hunting for a Home button. What's new waits in Events, not in a dozen
+badges. Content fills the screen; controls step back until you need them.
 
-## Provenance labels
+This guide is the design language behind all three: its principles, tokens and the components they share.
 
-Every rule, token and component in this guide carries one of two labels:
+## Where each rule comes from
+
+Every rule, token and component carries one of two labels:
 
 | Label | Meaning |
 | --- | --- |
-| **N9** | N9-original. Taken from the device's `blanco` theme (`constants.ini`), Qt Quick Components for MeeGo (`com.nokia.meego`, `com.nokia.extras`, `UIConstants.js`, `*Style.qml`), or the shipped UX behaviour (treated as canon). |
-| **EXT** | Extrapolated. Not present on the N9; designed here to fill a gap. Open to improvement. |
+| **N9** | Studied from the N9 itself: its `blanco` theme (`constants.ini`), Qt Quick Components for MeeGo (`com.nokia.meego`, `com.nokia.extras`, `UIConstants.js`, `*Style.qml`), or how the device behaved. |
+| **EXT** | Etesian's own: designed here for what the N9 never had, in its spirit. |
 
 In `tokens/tokens.json` every token has `"origin": "n9"` or `"origin": "ext"` and, where possible, a
 `src` naming the original constant.
@@ -24,7 +24,10 @@ In `tokens/tokens.json` every token has `"origin": "n9"` or `"origin": "ext"` an
 
 - `tokens/tokens.json`: single source of tokens, generated to `src/styles/tokens.css` (CSS custom
   properties, `--hd-*`) and `src/tokens.ts` (TypeScript).
-- `src/components`: 48 Vue 3 SFCs (`Hd*`), themable via CSS variables, keyboard and screen-reader accessible.
+- `src/components`: 55 Vue 3 components (`Hd*`), themable via CSS variables, keyboard and screen-reader accessible.
+- `src/shell`: the shell parts (the desktop, the phone parts, mini apps and the Belle widgets) that the website runs.
+- `packages/`: the four published packages, `@etesian-design/tokens`, `vue`, `quasar` and `shell`.
+- `brand/`: the Etesian logo (see [Colour](02-colour.md), Brand).
 - `docs/*.md`: this guide. The same files are rendered in Storybook under **Guide**. Chapters:
   - [Principles](01-principles.md)
   - [Colour](02-colour.md)
@@ -43,8 +46,9 @@ In `tokens/tokens.json` every token has `"origin": "n9"` or `"origin": "ext"` an
   - [Contributing & gaps](13-contributing.md)
   - [Using with Quasar](14-quasar.md)
   - [Colour modes: Hybrid, Dark, Light](15-colour-modes.md)
+  - [The desktop](21-desktop.md)
   - [The phone: reference for every form factor, read it first](20-phone.md)
-  - [The desktop: decisions so far](21-desktop.md)
+  - [Home widgets (Belle style)](22-home-widgets.md)
 - Storybook: `npm run storybook`.
 
 ## Legal
@@ -59,13 +63,13 @@ owners; this project is unaffiliated.
 ```bash
 npm install
 npm run storybook        # browse the guide and components at http://localhost:6006
-npm run build            # library build -> dist/
+npm run build            # the four @etesian-design packages -> packages/*/dist
 npm test                 # vitest smoke tests
 ```
 
 ```ts
-import { HdTheme, HdButton } from 'etesian-design';
-import 'etesian-design/style.css';
+import { HdTheme, HdButton } from '@etesian-design/vue';
+import '@etesian-design/vue/style.css';
 ```
 
 ```vue

@@ -13,8 +13,10 @@ Bold, plus a tabular-figure "T" variant (`Nokia Pure Text T`). It is proprietary
 --hd-font-family-light: "Nokia Pure Text Light", "Nokia Pure Text", "Open Sans", ...;
 ```
 
-Open Sans (SIL OFL) is the closest freely available humanist sans with a true Light 300. Storybook
-loads it from Google Fonts **in the preview only**; the library ships no font files.
+**Etesian's typeface is Fira Sans** (SIL OFL), the closest free look-alike with a true Light 300
+([Font alternatives](./03b-font-alternatives.md) has the comparison). The ROM ships it, the website and Storybook use it,
+and `fontVars('fira-sans')` from `@etesian-design/tokens` switches any element to it, with its metric adjustments.
+The stack above is what applies when nothing is switched.
 
 **Bring your own Nokia Pure:** if you hold a licence, declare it with `@font-face` under the family
 names `"Nokia Pure Text"` / `"Nokia Pure Text Light"` and the stack picks it up automatically.

@@ -1,5 +1,6 @@
 import { Meta, Markdown, IconGallery, IconItem } from '@storybook/addon-docs/blocks';
 import md from '../../../docs/06-iconography.md?raw';
+import { Doc } from './Doc';
 import { icons } from '../../components/icons';
 import { litVars } from '../../lighting';
 
@@ -7,9 +8,9 @@ export const tile = { width: 40, height: 40, display: 'inline-flex', alignItems:
 
 <Meta title="Guide/Iconography" />
 
-<Markdown>{md}</Markdown>
+<Doc md={md} />
 
-## HDL icon set (original, MIT)
+## All icons
 
 <IconGallery>
   {Object.entries(icons).map(([n, d]) => (

@@ -1,0 +1,41 @@
+{
+  "name": "@etesian-design/shell",
+  "version": "0.1.0",
+  "description": "Etesian shell parts in Vue 3: the desktop (menu bar, dock, windows, Events, snapping, Overview), the mini apps and the Belle home-screen widgets",
+  "license": "MIT",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Etesian-design/design.git",
+    "directory": "packages/shell"
+  },
+  "homepage": "https://etesian-design.com",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com",
+    "access": "public"
+  },
+  "files": [
+    "dist"
+  ],
+  "sideEffects": [
+    "*.css"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./style.css": "./dist/style.css",
+    "./*": {
+      "types": "./dist/*.d.ts",
+      "import": "./dist/*.js"
+    }
+  },
+  "dependencies": {
+    "@etesian-design/tokens": "^0.1.0",
+    "@etesian-design/vue": "^0.1.0"
+  },
+  "peerDependencies": {
+    "vue": "^3.5.0"
+  }
+}

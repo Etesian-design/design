@@ -6,7 +6,7 @@ import XTablet from './tablet/XTablet.vue';
 import TabletHome from './tablet/TabletHome.vue';
 import TabletSplit from './tablet/TabletSplit.vue';
 import TabletSheet from './tablet/TabletSheet.vue';
-import XMiniApp from './parts/XMiniApp.vue';
+import XMiniApp from '../../shell/parts/XMiniApp.vue';
 
 /**
  * Explorations: what the Etesian look could become on a 10" tablet (1280 x 800 CSS px landscape, 800 x 1280 portrait).

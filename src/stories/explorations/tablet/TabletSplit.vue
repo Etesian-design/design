@@ -4,7 +4,7 @@
  * plus a pop-up floating window with a small mini-toolbar (drag handle, expand to split, full screen, close).
  */
 import { computed, ref } from 'vue';
-import XMiniApp from '../parts/XMiniApp.vue';
+import XMiniApp from '../../../shell/parts/XMiniApp.vue';
 import HdToolIcon from '../../../components/HdToolIcon.vue';
 const props = withDefaults(defineProps<{ orientation?: 'landscape' | 'portrait'; ratio?: '1/2' | '1/3'; popup?: boolean }>(), { orientation: 'landscape', ratio: '1/2', popup: false });
 const land = computed(() => props.orientation === 'landscape');

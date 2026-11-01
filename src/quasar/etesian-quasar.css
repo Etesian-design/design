@@ -471,7 +471,7 @@ body.hd-quasar.body--dark, .hd-quasar .q-dark, .hd-quasar.q-dark { color: var(--
 .hd-quasar .q-date__calendar-item .q-btn { font-weight: var(--hd-font-weight-light); font-size: var(--hd-font-size-default); min-height: 0; }
 .hd-quasar .q-date__calendar-item--in .q-btn--flat { color: var(--hd-c-fg); }
 .hd-quasar .q-date__today { box-shadow: inset 0 0 0 2px var(--hd-accent) !important; }
-/* QDate: wide enough for the HDL type, everything inside the card in every view */
+/* QDate: wide enough for the Etesian type, everything inside the card in every view */
 .hd-quasar .q-date { width: 340px; min-width: 340px; max-width: 100%; overflow: hidden; }
 .hd-quasar .q-date__view { padding: 12px 14px; min-height: 300px; overflow: hidden; }
 .hd-quasar .q-date__navigation { flex-wrap: nowrap; }

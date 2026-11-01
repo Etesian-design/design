@@ -1,12 +1,13 @@
 import { Meta, Markdown, Typeset } from '@storybook/addon-docs/blocks';
 import md from '../../../docs/03-typography.md?raw';
+import { Doc } from './Doc';
 
 
 <Meta title="Guide/Typography" />
 
-<Markdown>{md}</Markdown>
+<Doc md={md} />
 
-## Specimen (fallback font in this preview)
+## Specimen (Fira Sans, Etesian's typeface)
 
-<Typeset fontFamily={"\"Nokia Pure Text Light\", \"Open Sans\", sans-serif"} fontWeight={300} fontSizes={[48, 21, 19, 16, 13, 12]} sampleText="Calm, light and content first. 0123456789" />
-<Typeset fontFamily={"\"Nokia Pure Text\", \"Open Sans\", sans-serif"} fontWeight={700} fontSizes={[15, 12]} sampleText="BUTTON LABEL / Section header" />
+<Typeset fontFamily={"\"HD Fira Sans\", \"Fira Sans\", sans-serif"} fontWeight={300} fontSizes={[48, 21, 19, 16, 13, 12]} sampleText="Calm, light and content first. 0123456789" />
+<Typeset fontFamily={"\"HD Fira Sans\", \"Fira Sans\", sans-serif"} fontWeight={700} fontSizes={[15, 12]} sampleText="BUTTON LABEL / Section header" />

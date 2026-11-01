@@ -9,6 +9,11 @@ import { FONT_ALTERNATIVES, fontVars } from '../src/fonts';
 
 setup((app) => installQuasar(app));
 
+/** Etesian's typeface is Fira Sans (the free look-alike the ROM and the website ship): the default for every story and
+ * for the guide pages, which Storybook would otherwise set in its own docs font */
+const ETESIAN_FONT = 'fira-sans';
+for (const [k, v] of Object.entries(fontVars(ETESIAN_FONT))) document.documentElement.style.setProperty(k, v);
+
 const preview: Preview = {
   globalTypes: {
     mode: {
@@ -23,15 +28,15 @@ const preview: Preview = {
         { value: '#EF5500', title: 'Calendar' }, { value: '#F2B111', title: 'Notes' }], dynamicTitle: true },
     },
     font: {
-      description: 'Typeface (Nokia Pure is bring-your-own; the rest are free look-alikes)',
-      toolbar: { title: 'Font', icon: 'edit', items: [{ value: '', title: 'Token default' }, ...FONT_ALTERNATIVES.map((f) => ({ value: f.key, title: f.key === 'nokia-pure' ? 'Nokia Pure (if installed)' : `${f.family} (${f.score})` }))], dynamicTitle: true },
+      description: 'Typeface: Fira Sans is Etesian\'s; Nokia Pure is bring-your-own (never bundled); the rest are other free look-alikes',
+      toolbar: { title: 'Font', icon: 'edit', items: FONT_ALTERNATIVES.map((f) => ({ value: f.key, title: f.key === ETESIAN_FONT ? `${f.family} (Etesian)` : f.key === 'nokia-pure' ? 'Nokia Pure (if installed)' : `${f.family} (${f.score})` })), dynamicTitle: true },
     },
   },
-  initialGlobals: { mode: 'hybrid', accent: '', font: '' },
+  initialGlobals: { mode: 'hybrid', accent: '', font: ETESIAN_FONT },
   decorators: [
     (story, ctx) => ({
       components: { story, HdTheme },
-      setup: () => ({ mode: ctx.globals.mode ?? 'hybrid', accent: ctx.globals.accent || undefined, full: ctx.parameters.layout === 'fullscreen', fv: fontVars(ctx.globals.font) }),
+      setup: () => ({ mode: ctx.globals.mode ?? 'hybrid', accent: ctx.globals.accent || undefined, full: ctx.parameters.layout === 'fullscreen', fv: fontVars(ctx.globals.font || ETESIAN_FONT) }),
       template: `<div v-if="mode === 'all'" style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));min-height:100%">
           <HdTheme v-for="m in ['hybrid','dark','light']" :key="m" :mode="m" :accent="accent" :style="[fv, 'padding:16px;position:relative;overflow:hidden']"><div style="font:700 11px/1 sans-serif;opacity:.6;margin-bottom:8px;text-transform:uppercase">{{ m }}</div><story /></HdTheme></div>
         <HdTheme v-else :mode="mode" :accent="accent" :style="[fv, full ? 'min-height:100vh;position:relative' : 'padding:24px;position:relative;min-height:120px']"><story /></HdTheme>`,
@@ -40,7 +45,7 @@ const preview: Preview = {
   parameters: {
     layout: 'fullscreen',
     controls: { matchers: { color: /(background|color|accent)$/i } },
-    options: { storySort: { order: ['Guide', ['Introduction', 'Principles', 'Colour', 'Colour modes', 'Typography', 'Font alternatives', 'Spacing & sizing', 'Shape (squircle)', 'Iconography', 'Icon lighting', 'Motion', 'Sound & haptics', 'Layout & grids', 'Components', 'Patterns', 'Home widgets', 'Phone v2 proposals', 'Accessibility', 'Contributing & gaps'], 'OS', 'Controls', 'Overlays', 'Web', 'Examples', 'Quasar', ['Using with Quasar', 'Examples', 'Components'], 'Explorations', ['Tablet', 'Desktop', 'Desktop v2', 'Phone v2']] } },
+    options: { storySort: { order: ['Guide', ['Introduction', 'Principles', 'Colour', 'Colour modes', 'Typography', 'Font alternatives', 'Spacing & sizing', 'Shape (squircle)', 'Iconography', 'Icon lighting', 'Motion', 'Sound & haptics', 'Layout & grids', 'Components', 'Patterns', 'Accessibility', 'The desktop', 'The phone', 'Home widgets', 'Contributing & gaps'], 'OS', 'Controls', 'Overlays', 'Web', 'Examples', 'Quasar', ['Using with Quasar', 'Examples', 'Components'], 'Desktop', ['The desktop'], 'Phone', 'Explorations', ['Tablet']] } },
   },
 };
 export default preview;

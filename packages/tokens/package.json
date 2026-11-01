@@ -1,0 +1,49 @@
+{
+  "name": "@etesian-design/tokens",
+  "version": "0.1.0",
+  "description": "Etesian design tokens: CSS custom properties, the tokens as TypeScript and JSON, and the free font alternatives to Nokia Pure",
+  "license": "MIT",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Etesian-design/design.git",
+    "directory": "packages/tokens"
+  },
+  "homepage": "https://etesian-design.com",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com",
+    "access": "public"
+  },
+  "files": [
+    "dist"
+  ],
+  "sideEffects": [
+    "*.css"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/design-tokens.d.ts",
+      "import": "./dist/design-tokens.js"
+    },
+    "./tokens.json": "./dist/tokens.json",
+    "./*.css": "./dist/*.css",
+    "./*": {
+      "types": "./dist/*.d.ts",
+      "import": "./dist/*.js"
+    }
+  },
+  "dependencies": {
+    "@fontsource/fira-sans": "^5.3.0",
+    "@fontsource/hind": "^5.3.0",
+    "@fontsource/inter": "^5.3.0",
+    "@fontsource/lato": "^5.3.0",
+    "@fontsource/noto-sans": "^5.3.0",
+    "@fontsource/nunito-sans": "^5.3.0",
+    "@fontsource/open-sans": "^5.3.0",
+    "@fontsource/public-sans": "^5.3.0",
+    "@fontsource/signika": "^5.3.0",
+    "@fontsource/source-sans-3": "^5.3.1",
+    "@fontsource/ubuntu": "^5.3.0",
+    "@fontsource/ubuntu-sans": "^5.3.0"
+  }
+}

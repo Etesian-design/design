@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/vue3-vite';
 import { ref } from 'vue';
-import BelleWidget from './belle/BelleWidget.vue';
+import BelleWidget from '../shell/widgets/BelleWidget.vue';
 import BellePlacePicker, { type Place } from './belle/BellePlacePicker.vue';
 import HdTaskEditBar from '../components/HdTaskEditBar.vue';
 

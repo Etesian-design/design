@@ -1,43 +1,18 @@
 {
   "name": "etesian-design",
   "version": "0.1.0",
-  "description": "Etesian Design Language: N9 (MeeGo Etesian) inspired style guide and Vue 3 components",
+  "private": true,
+  "description": "Etesian Design Language: the guide, Storybook and the source of the @etesian-design packages (packages/)",
   "license": "MIT",
   "type": "module",
-  "main": "./dist/etesian.umd.cjs",
-  "module": "./dist/etesian.js",
-  "types": "./dist/index.d.ts",
-  "exports": {
-    ".": {
-      "import": "./dist/etesian.js",
-      "require": "./dist/etesian.umd.cjs"
-    },
-    "./style.css": "./dist/etesian.css",
-    "./tokens.css": "./src/styles/tokens.css",
-    "./quasar": {
-      "import": "./dist/quasar.js",
-      "types": "./dist/quasar/index.d.ts"
-    },
-    "./quasar/theme.css": "./src/quasar/etesian-quasar.css",
-    "./quasar/variables.scss": "./src/quasar/quasar-variables.scss"
-  },
-  "files": [
-    "dist",
-    "src/styles",
-    "tokens",
-    "src/quasar"
-  ],
   "scripts": {
     "tokens": "node scripts/build-tokens.ts && node scripts/build-font-css.ts",
     "storybook": "npm run tokens && storybook dev -p 6006",
     "build-storybook": "npm run tokens && storybook build",
-    "build": "npm run tokens && vite build && vite build -c vite.quasar.config.ts && vue-tsc -p tsconfig.build.json --emitDeclarationOnly",
+    "build": "node scripts/build-packages.mjs",
     "check": "vue-tsc -p tsconfig.json --noEmit",
-    "test": "npm run tokens && npm run check && vitest run"
-  },
-  "peerDependencies": {
-    "quasar": "^2.14.0",
-    "vue": "^3.4.0"
+    "test": "npm run tokens && npm run check && vitest run",
+    "pack-packages": "node scripts/build-packages.mjs && for p in tokens vue quasar shell; do (cd packages/$p && npm pack --pack-destination ../../dist-packs); done"
   },
   "devDependencies": {
     "@fontsource/fira-sans": "^5.3.0",
@@ -67,10 +42,5 @@
     "vitest": "^5.0.5",
     "vue": "^3.5.44",
     "vue-tsc": "^2.2.12"
-  },
-  "peerDependenciesMeta": {
-    "quasar": {
-      "optional": true
-    }
   }
 }

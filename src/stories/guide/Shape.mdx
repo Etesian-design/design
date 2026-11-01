@@ -1,14 +1,15 @@
 import { Meta, Markdown } from '@storybook/addon-docs/blocks';
 import md from '../../../docs/05-shape.md?raw';
+import { Doc } from './Doc';
 import { SQUIRCLE_PATH_100, squirclePath } from '../../squircle';
 
 <Meta title="Guide/Shape (squircle)" />
 
-<Markdown>{md}</Markdown>
+<Doc md={md} />
 
 ## Comparison
 
-<div style={{ display: "flex", gap: 32, alignItems: "end", fontFamily: "Open Sans, sans-serif" }}>
+<div style={{ display: "flex", gap: 32, alignItems: "end", fontFamily: "var(--hd-font-family-base)" }}>
   <figure style={{ margin: 0, textAlign: "center" }}><svg width="96" height="96" viewBox="0 0 100 100"><path d={SQUIRCLE_PATH_100} fill="#4591FF" /></svg><figcaption>N9 squircle (n=2.8) - use</figcaption></figure>
   <figure style={{ margin: 0, textAlign: "center", opacity: .5 }}><svg width="96" height="96" viewBox="0 0 100 100"><path d={squirclePath(100, 4)} fill="#999" /></svg><figcaption>n=4 - wrong (reads as rounded square)</figcaption></figure>
   <figure style={{ margin: 0, textAlign: "center", opacity: .5 }}><svg width="96" height="96" viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#999" /></svg><figcaption>Rounded rect - never</figcaption></figure>

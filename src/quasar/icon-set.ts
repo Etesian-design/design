@@ -1,5 +1,5 @@
 /**
- * Quasar icon set built from the original HDL line icons (MIT, not Nokia, not Material).
+ * Quasar icon set built from the original Etesian line icons (MIT, not Nokia, not Material).
  * Uses Quasar's inline-SVG icon string format "d@@style|viewBox", so no icon font is needed.
  */
 import { icons } from '../components/icons';
@@ -59,7 +59,7 @@ export const quasarExtraPaths: Record<string, string> = {
   'today': 'M4 6h16v14H4zM4 10h16M8 3v4M16 3v4M10 14h4v3h-4z',
 };
 const all: Record<string, string> = { ...icons, ...quasarExtraPaths };
-/** Quasar SVG icon string for any HDL icon name. */
+/** Quasar SVG icon string for any Etesian icon name. */
 export const hdIcon = (name: string): string => `${(all[name] ?? all.info!)}@@${STROKE}|0 0 24 24`;
 
 const i = hdIcon;

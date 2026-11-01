@@ -1,8 +1,25 @@
-import { Meta, Markdown } from '@storybook/addon-docs/blocks';
+import { Meta, Canvas } from '@storybook/addon-docs/blocks';
 import md from '../../../docs/07-motion.md?raw';
-
+import { Doc } from './Doc';
+import * as M from './MotionDemos.stories';
 
 <Meta title="Guide/Motion" />
 
-<Markdown>{md}</Markdown>
+<Doc md={md} />
 
+## See it move
+
+Every demo below loops on the real motion tokens (durations and easings), so it moves exactly as the components do.
+With reduced motion turned on, the steps still change but nothing slides.
+
+### Easing curves
+
+<Canvas of={M.Easings} sourceState="none" />
+
+### Inside apps
+
+<Canvas of={M.InApps} sourceState="none" />
+
+### Between apps and the system
+
+<Canvas of={M.System} sourceState="none" />

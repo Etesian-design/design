@@ -3,20 +3,16 @@ import { mount } from '@vue/test-utils';
 import { nextTick } from 'vue';
 import * as Hd from '../src/index';
 import { icons } from '../src/components/icons';
-import XFit from '../src/stories/explorations/parts/XFit.vue';
-import XKey from '../src/stories/explorations/parts/XKey.vue';
-import XContextMenu from '../src/stories/explorations/parts/XContextMenu.vue';
-import XAppShell from '../src/stories/explorations/parts/XAppShell.vue';
-import XOpenApps from '../src/stories/explorations/parts/XOpenApps.vue';
-import XAppsView from '../src/stories/explorations/parts/XAppsView.vue';
-import XMail from '../src/stories/explorations/apps/XMail.vue';
-import XWindow from '../src/stories/explorations/desktop/XWindow.vue';
-import XTopBar from '../src/stories/explorations/desktop/XTopBar.vue';
-import DesktopHome from '../src/stories/explorations/desktop/DesktopHome.vue';
-import DesktopWorkspace from '../src/stories/explorations/desktop/DesktopWorkspace.vue';
+import XFit from '../src/shell/parts/XFit.vue';
+import XKey from '../src/shell/parts/XKey.vue';
+import XContextMenu from '../src/shell/parts/XContextMenu.vue';
+import XAppShell from '../src/shell/parts/XAppShell.vue';
+import XOpenApps from '../src/shell/parts/XOpenApps.vue';
+import XAppsView from '../src/shell/parts/XAppsView.vue';
+import XMail from '../src/shell/apps/XMail.vue';
 import TabletHome from '../src/stories/explorations/tablet/TabletHome.vue';
-import { shellProps } from '../src/stories/explorations/parts/types';
-import { photo } from '../src/stories/explorations/parts/data';
+import { shellProps } from '../src/shell/parts/types';
+import { photo } from '../src/shell/parts/data';
 
 describe('squircle highlights in the library (no rounded squares on icon-shaped elements)', () => {
   it('ToolIcon uses the squircle highlight and exposes active', () => {
@@ -110,20 +106,6 @@ describe('exploration parts', () => {
     await w.get('[aria-label="Back"]').trigger('click');
     expect(w.find('.x-mail--list').exists()).toBe(true);
   });
-  it('XWindow places itself and emits close', async () => {
-    const w = mount(XWindow, { props: { title: 'Inbox', app: 'Mail', x: 10, y: 20, w: 300, h: 200 } });
-    expect(w.attributes('style')).toContain('left: 10px');
-    await w.get('[aria-label="Close"]').trigger('click');
-    expect(w.emitted('close')).toHaveLength(1);
-    expect(w.find('.hd-squircle').exists()).toBe(true);
-  });
-  it('XTopBar emits overview and events', async () => {
-    const w = mount(XTopBar, { props: { count: 3 } });
-    await w.get('[aria-label="Overview"]').trigger('click');
-    await w.get('[aria-label="3 notifications"]').trigger('click');
-    expect(w.emitted('overview')).toHaveLength(1);
-    expect(w.emitted('events')).toHaveLength(1);
-  });
   it('photo() returns an SVG data URI', () => expect(photo(3)).toMatch(/^data:image\/svg\+xml,/));
 });
 
@@ -135,25 +117,5 @@ describe('exploration scenes', () => {
     expect(w.find('.x-open').exists()).toBe(true);
     expect(mount(TabletHome, { props: { eventsBeside: true } }).find('.x-thome__beside').exists()).toBe(true);
     expect(mount(TabletHome, { props: { eventsBeside: true, orientation: 'portrait' } }).find('.x-thome__beside').exists()).toBe(false);
-  });
-  it('DesktopWorkspace: Super toggles the overview, typing filters, Escape closes', async () => {
-    const w = mount(DesktopWorkspace, { attachTo: document.body });
-    expect(w.find('.x-ov').exists()).toBe(false);
-    window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Meta' })); await nextTick();
-    expect(w.find('.x-ov').exists()).toBe(true);
-    window.dispatchEvent(new KeyboardEvent('keydown', { key: 'm' })); window.dispatchEvent(new KeyboardEvent('keydown', { key: 'u' })); await nextTick();
-    expect(w.findAll('.x-ov__apps .hd-app-icon').map((a) => a.text())).toEqual(['Music']);
-    window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' })); await nextTick();
-    expect(w.find('.x-ov').exists()).toBe(false);
-    w.unmount();
-  });
-  it('DesktopHome: Super minimises the app to reveal home; peek dock only in peek state', async () => {
-    const w = mount(DesktopHome, { attachTo: document.body });
-    expect(w.get('.x-dapp').classes()).not.toContain('is-away');
-    window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Meta' })); await nextTick();
-    expect(w.get('.x-dapp').classes()).toContain('is-away');
-    w.unmount();
-    expect(mount(DesktopHome, { props: { state: 'peek' } }).find('.x-peek').exists()).toBe(true);
-    expect(mount(DesktopHome, { props: { state: 'hover' } }).find('.hd-task-card__close').exists()).toBe(true);
   });
 });

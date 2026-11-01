@@ -1,13 +1,13 @@
 # Using with Quasar
 
-Most Etesian web work targets [Quasar 2](https://quasar.dev) (Vue 3). `etesian-design/quasar`
+Most Etesian web work targets [Quasar 2](https://quasar.dev) (Vue 3). `@etesian-design/quasar`
 styles **every built-in Quasar component** (all 123 entries of type "component" in Quasar's API,
 see coverage below) plus the Notify, Dialog, Loading, LoadingBar and BottomSheet plugins.
 
 ## Install
 
 ```bash
-npm i quasar etesian-design
+npm i quasar @etesian-design/tokens @etesian-design/vue @etesian-design/quasar   # from GitHub Packages, see the README
 ```
 
 ```ts
@@ -15,9 +15,11 @@ npm i quasar etesian-design
 import { createApp } from 'vue';
 import { Quasar, Notify, Dialog, Loading, BottomSheet } from 'quasar';
 import 'quasar/dist/quasar.css';               // or Quasar's SCSS build
-import 'etesian-design/style.css';            // tokens + base + Hd* components
-import 'etesian-design/quasar/theme.css';     // the Quasar theme (load last)
-import { etesianQuasarOptions, EtesianQuasar } from 'etesian-design/quasar';
+import '@etesian-design/tokens/styles/tokens.css';  // the design tokens
+import '@etesian-design/tokens/styles/base.css';    // base styles
+import '@etesian-design/vue/style.css';            // the Hd* components
+import '@etesian-design/quasar/theme.css';     // the Quasar theme (load last)
+import { etesianQuasarOptions, EtesianQuasar } from '@etesian-design/quasar';
 
 const app = createApp(App);
 app.use(Quasar, etesianQuasarOptions({ plugins: { Notify, Dialog, Loading, BottomSheet } }));
@@ -31,25 +33,25 @@ Quasar CLI (`quasar.config.ts`):
 framework: {
   plugins: ['Notify', 'Dialog', 'Loading', 'BottomSheet'],
   // iconSet/config come from etesianQuasarOptions(); in a boot file:
-  //   import { boot } from 'quasar/wrappers'; import { EtesianQuasar } from 'etesian-design/quasar';
+  //   import { boot } from 'quasar/wrappers'; import { EtesianQuasar } from '@etesian-design/quasar';
   //   export default boot(({ app }) => { app.use(EtesianQuasar); });
   config: { brand: { primary: '#4591FF', secondary: '#1C51AF', accent: '#09A7CC', positive: '#62B700',
     negative: '#DA201E', info: '#4591FF', warning: '#CC9900', dark: '#161616', 'dark-page': '#000000' },
     dark: 'auto' },
 },
-css: ['etesian.css'],  // src/css/etesian.css: @import 'etesian-design/style.css'; @import 'etesian-design/quasar/theme.css';
+css: ['etesian.css'],  // src/css/etesian.css: @import '@etesian-design/vue/style.css'; @import '@etesian-design/quasar/theme.css';
 ```
 
 ## What the pieces do
 
 | Piece | Purpose |
 |---|---|
-| `etesianQuasarOptions(extra)` | `iconSet` (HDL line icons as inline SVG, no icon font), `config.brand` (Etesian colours), `dark: 'auto'`, Notify (top, 3000 ms), Loading/Notify spinner = N9 squircle ring |
+| `etesianQuasarOptions(extra)` | `iconSet` (Etesian line icons as inline SVG, no icon font), `config.brand` (Etesian colours), `dark: 'auto'`, Notify (top, 3000 ms), Loading/Notify spinner = N9 squircle ring |
 | `EtesianQuasar` plugin | adds `.hd-quasar` to `<body>`, syncs `[data-hd-theme]` with Quasar Dark, patches default props (`etesianDefaultProps`: `no-caps`, `unelevated`, no ripple on buttons/tabs/chips, `outlined` fields, `flat` cards/date/time/stepper/uploader) |
 | `theme.css` (`src/quasar/etesian-quasar.css`) | component overrides scoped to `.hd-quasar`; `--q-primary` etc. re-pointed to `--hd-*` so accents and light/dark follow the Etesian tokens |
 | `variables.scss` | Quasar SCSS variables for SCSS builds (`$primary` ..., button radius, toolbar, tooltip, menu, no layout shadows) |
 | `HdQSpinnerSquircle` | QSpinner-compatible N9 squircle spinner |
-| `hdIcon(name)` | Quasar icon string for any HDL icon: `<q-icon :name="hdIcon('phone')" />` |
+| `hdIcon(name)` | Quasar icon string for any Etesian icon: `<q-icon :name="hdIcon('phone')" />` |
 | `quasarCoverage` | machine-readable map Quasar component -> theme selectors (tested) |
 
 ## Dark mode

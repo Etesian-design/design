@@ -39,7 +39,7 @@ Target: **WCAG 2.2 AA**.
 
 ## Touch
 
-- 44 x 44 CSS px minimum targets (N9 used 30-px release tolerance and 12-px touch expansion; HDL
+- 44 x 44 CSS px minimum targets (N9 used 30-px release tolerance and 12-px touch expansion; Etesian
   sizes the target itself).
 - Gestures always have a visible alternative (Back button for edge swipe, close button in task-card edit mode).
 

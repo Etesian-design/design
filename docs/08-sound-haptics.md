@@ -1,6 +1,8 @@
 # Sound & haptics
 
-No N9 sound files are included.
+No N9 sound files are included. Etesian has its own sounds, made from scratch: on the phone the startup
+sound (water drops on the boot ripple, then a warm chord). The N9's UI sounds (button click, edit mode, close)
+play only when the user imports their own N9 files.
 
 ## N9 behaviour (reference)
 

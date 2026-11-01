@@ -1,6 +1,6 @@
 <script setup lang="ts">
 /**
- * Phone v2: the Android 16 gap proposals (vendor/etesian/docs/android-feature-gap.md) as N9 phone mocks, 360 × 640,
+ * The phone's answers to today's Android features: the Android 16 gaps (vendor/etesian/docs/android-feature-gap.md) as N9 phone mocks, 360 × 640,
  * app window top corners 7px. Mockups only, not library API. Faithful first: the status menu is the real N9 one
  * (screenshots/review/n9-status-menu.png: drawn on black over the dimmed app grid, Profile segmented bar, flat magenta
  * Volume bar, rows of lit squircle tile + bold title + grey state, no switch widgets); sheets are the N9 toolbar menu;
@@ -20,14 +20,14 @@ import HdEventsFeedItem from '../../../components/HdEventsFeedItem.vue';
 import HdLockScreenNotificationCard from '../../../components/HdLockScreenNotificationCard.vue';
 import '../../../components/HdNotificationBanner.vue';
 import HdSearchField from '../../../components/HdSearchField.vue';
-import BelleWidget from '../../belle/BelleWidget.vue';
+import BelleWidget from '../../../shell/widgets/BelleWidget.vue';
 import N9Keyboard from '../../parts/N9Keyboard.vue';
 import HdTaskEditBar from '../../../components/HdTaskEditBar.vue';
-import { STATES, CORE, SMALL, type P2State } from './states';
+import { STATES, STATUS, STATUS_LABEL, CORE, SMALL, type P2State } from './states';
 const props = defineProps<{ state: P2State }>();
 const info = computed(() => STATES[props.state]);
 const is = (...s: string[]) => s.includes(props.state);
-/* inline reply family; hw = Pro1-X hardware keyboard out (no on-screen keys, only the white strip); land = landscape 640 × 360 */
+/* inline reply family; hw = a hardware keyboard out (no on-screen keys, only the white strip); land = landscape 640 × 360 */
 const reply = computed(() => is('events-reply', 'events-reply-hw', 'events-reply-hw-land', 'dictionary-tracker', 'dictionary-list', 'dictionary-hwkb'));
 const hw = computed(() => is('events-reply-hw', 'events-reply-hw-land', 'dictionary-hwkb'));
 const land = computed(() => is('events-reply-hw-land', 'dictionary-hwkb'));
@@ -68,7 +68,7 @@ const apps: [string, string, string][] = [['Phone', 'phone', '#62B700'], ['Messa
 <template>
   <div class="p2 hd-theme-dark" :class="{ 'p2--land': land }" :data-state="state">
     <!-- status bar: square, full width -->
-    <span class="p2-tags" :class="{ 'p2-tags--banner': is('banner') }"><span v-if="info.proposal" class="p2__proposal">Proposal · unverified (?)</span><span v-if="info.extra" class="p2-extra" :title="info.extra">Optional · Android extras</span></span>
+    <span class="p2-tags" :class="{ 'p2-tags--banner': is('banner') }"><span class="p2__status" :class="`is-${STATUS[state][0]}`" :title="STATUS[state][1]">{{ STATUS_LABEL[STATUS[state][0]] }}</span><span v-if="info.extra" class="p2-extra" :title="info.extra">Optional · off by default</span></span>
     <div class="p2-sb" :class="{ 'p2-sb--clear': is('lock-music', 'lock-glance', 'medical', 'medical-bar', 'medical-card', 'medical-a1', 'medical-a2', 'medical-a3') }">
       <HdIcon name="battery" :size="15" /><span class="p2-sb__sig"><i v-for="i in 4" :key="i" :style="{ height: `${3 + i * 2}px` }" /></span><HdIcon name="wifi" :size="13" />
       <template v-for="g in statusGlyphs" :key="g">
@@ -284,7 +284,8 @@ const apps: [string, string, string][] = [['Phone', 'phone', '#62B700'], ['Messa
 .p2 { position: relative; width: 360px; height: 640px; flex: none; display: flex; flex-direction: column; overflow: hidden; background: #000; color: #fff; font-family: var(--hd-font-family-base); }
 .p2-tags { position: absolute; z-index: 12; left: 50%; top: 4px; display: flex; gap: 4px; transform: translateX(-50%); white-space: nowrap; } /* dev tags live in the status bar: never over content */
 .p2-tags.p2-tags--banner { top: auto; bottom: 72px; left: auto; right: 8px; transform: none; } /* empty content area above the toolbar: covers no card, no toolbar button */
-.p2__proposal { padding: 1px 5px; border-radius: 3px; background: #E07A12; color: #fff; font: 700 9px/1.3 var(--hd-font-family-base); }
+.p2__status { padding: 1px 5px; border-radius: 3px; background: #62B700; color: #fff; font: 700 9px/1.3 var(--hd-font-family-base); }
+.p2__status.is-changed { background: #2A86D8; } .p2__status.is-partly { background: #E07A12; } .p2__status.is-later { background: #6B6B6B; } .p2__status.is-declined { background: #C0392B; }
 .p2-extra { margin: 0; padding: 1px 5px; border-radius: 3px; background: rgba(28,107,200,.95); color: #fff; font: 700 9px/1.3 var(--hd-font-family-base); }
 .p2-sb { flex: none; position: relative; z-index: 6; height: 22px; display: flex; align-items: center; gap: 5px; padding: 0 6px; background: #000; color: #fff; font-size: 13px; }
 .p2-sb--clear { background: transparent; position: absolute; left: 0; right: 0; }

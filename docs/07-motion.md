@@ -23,7 +23,8 @@
 - **Home** has three horizontal views: Events, Applications, Open applications. Swiping moves between them.
 - **App launch:** a loading ring runs around the tapped icon's squircle edge until the app has
   drawn, then the app slides in (~130ms).
-- **App restore:** the task card zooms away fast and the app slides in from the left.
+- **App restore:** the task card zooms away fast and the app slides in from the left. (EXT) Etesian brings
+  it back from the side it was swiped out to: swiped out to the right, it returns from the right.
 - **Lock screen:** swipe sideways to unlock.
 
 ## In-app transitions (N9)
@@ -33,7 +34,10 @@
 - Dialog: fades in with a slight scale (from 0.9).
 - Menu: rises from the toolbar.
 - Info banner: scales in from 0 (200ms OutQuad), out with InExpo.
-- Notification banner: drops from the top edge.
+- Notification banner: drops from the top edge. (EXT) On Etesian phones a notification over an app is a
+  floating card identical to the lock-screen card, just under the status bar; tap opens it, swipe up dismisses it.
+
+The desktop's own motion (the window carousel, snapping, the Overview) is in [The desktop](21-desktop.md).
 
 ## Web extrapolations (EXT)
 

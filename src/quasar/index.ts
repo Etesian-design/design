@@ -3,9 +3,9 @@
  *
  *   import { Quasar, Notify, Dialog, Loading, BottomSheet } from 'quasar';
  *   import 'quasar/dist/quasar.css';
- *   import 'etesian-design/style.css';
- *   import 'etesian-design/quasar/theme.css';
- *   import { etesianQuasarOptions, EtesianQuasar } from 'etesian-design/quasar';
+ *   import '@etesian-design/vue/style.css';
+ *   import '@etesian-design/quasar/theme.css';
+ *   import { etesianQuasarOptions, EtesianQuasar } from '@etesian-design/quasar';
  *   app.use(Quasar, etesianQuasarOptions({ plugins: { Notify, Dialog, Loading, BottomSheet } }));
  *   app.use(EtesianQuasar);
  */

@@ -10,8 +10,8 @@ import HdSectionHeader from '../components/HdSectionHeader.vue';
 import HdLockScreenStack from '../components/HdLockScreenStack.vue';
 import HdEventsHeader from '../components/HdEventsHeader.vue';
 import HdButton from '../components/HdButton.vue';
-import XFit from './explorations/parts/XFit.vue';
-import XMiniApp from './explorations/parts/XMiniApp.vue';
+import XFit from '../shell/parts/XFit.vue';
+import XMiniApp from '../shell/parts/XMiniApp.vue';
 
 const meta: Meta = { title: 'OS/Home & lock screen', excludeStories: ['apps', 'lockItems'], tags: ['autodocs'], parameters: { docs: { description: { component: '**Canon** (matched to the ROM, see docs/20-phone.md): lock-screen cards and the default stacked carousel, Open applications (2 per row by default; pinch: carousel, 2, 3, 4) with edit mode and the carousel action row, the Applications grid (4 columns), and the black Events view.' } } } };
 export default meta;

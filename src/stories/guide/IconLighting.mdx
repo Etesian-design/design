@@ -1,5 +1,6 @@
 import { Meta, Markdown, Canvas } from '@storybook/addon-docs/blocks';
 import md from '../../../docs/06b-icon-lighting.md?raw';
+import { Doc } from './Doc';
 import * as L from '../IconLighting.stories';
 
 <Meta title="Guide/Icon lighting" />
@@ -9,4 +10,4 @@ import * as L from '../IconLighting.stories';
 <Canvas of={L.FlatVsLit} />
 <Canvas of={L.Zoomed} />
 
-<Markdown>{md}</Markdown>
+<Doc md={md} />

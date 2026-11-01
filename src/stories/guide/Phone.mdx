@@ -1,13 +1,44 @@
-import { Meta, Markdown, Canvas } from '@storybook/addon-docs/blocks';
+import { Meta, Canvas } from '@storybook/addon-docs/blocks';
 import md from '../../../docs/20-phone.md?raw';
+import { Doc } from './Doc';
 import * as H from '../Home.stories';
+import { STATES, STATUS, STATUS_LABEL, CORE, SMALL, NO_MOCK, LEAVE_OUT, QUESTIONS, storyId } from '../explorations/phone2/states';
 
-<Meta title="Guide/Phone (reference)" />
+<Meta title="Guide/The phone" />
+
+<Doc md={md} />
+
+## Android features, the Etesian way
+
+Today's Android has features the N9 never had. Each row is one of them, with Etesian's answer as a mock (under *Phone / Android features*) and where it stands: **Built** (on the phone, with its device test), **Built, changed** (built differently from the mock), **Partly built**, **Not built yet** or **Declined**. Every addition is off by default.
+
+### All of them
+
+<table>
+  <thead><tr><th>Gap</th><th>Mock</th><th>Status</th><th>Notes</th><th>Story</th></tr></thead>
+  <tbody>
+    {[...CORE, ...SMALL].map((s) => <tr key={s}><td>{STATES[s].gaps.map((g) => '#' + g).join(', ')}</td><td>{STATES[s].title}</td><td><b>{STATUS_LABEL[STATUS[s][0]]}</b></td><td>{STATUS[s][0] === 'built' ? <>Device test: <code>{STATUS[s][1]}</code></> : STATUS[s][1]}</td><td><a href={`?path=/story/${storyId(s)}`}><code>{storyId(s)}</code></a></td></tr>)}
+    {NO_MOCK.map(([n, f, why]) => <tr key={n}><td>#{n}</td><td>{f}</td><td>–</td><td>{why}</td><td>–</td></tr>)}
+  </tbody>
+</table>
+
+### Not built yet
+
+- **Dictionary**: the N9 word tracker over the word being typed, its candidate list, and suggestions in the strip with a hardware keyboard.
+- **Lock-screen music**: waits for the lock screen redesign.
+- **Reply with a hardware keyboard**: the white strip on its own when the keyboard is out.
+- **In-app back animation**: the toolbar Back already reaches apps as Back; their own back animation is still to come.
+
+### Left out on purpose
+
+<ul>{LEAVE_OUT.map(([f, why]) => <li key={f}><b>{f}</b>: {why}</li>)}</ul>
+
+### Still open
+
+<ol>{QUESTIONS.map((q) => <li key={q}>{q}</li>)}</ol>
 
 ## Live parts
 
 <Canvas of={H.LockScreenCard} />
 <Canvas of={H.TaskCards} />
 <Canvas of={H.EventsFeed} />
-
-<Markdown>{md}</Markdown>

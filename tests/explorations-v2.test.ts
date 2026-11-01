@@ -1,25 +1,27 @@
 import { describe, it, expect } from 'vitest';
+import { readFileSync } from 'node:fs';
 import { mount } from '@vue/test-utils';
 import { nextTick } from 'vue';
-import { workArea, zoneRects, LAYOUTS, SCREEN, BAR_H, zoomStep, fitInto, OPEN_WINDOWS } from '../src/stories/explorations/desktop2/geometry';
-import { chromeOf } from '../src/stories/explorations/desktop2/chrome';
-import { STATES, CORE, IDEAS } from '../src/stories/explorations/desktop2/states';
-import XWin from '../src/stories/explorations/desktop2/XWin.vue';
-import XMenuBar from '../src/stories/explorations/desktop2/XMenuBar.vue';
-import XDock from '../src/stories/explorations/desktop2/XDock.vue';
-import XDockSettings from '../src/stories/explorations/desktop2/XDockSettings.vue';
-import XLayoutPicker from '../src/stories/explorations/desktop2/XLayoutPicker.vue';
-import XZones from '../src/stories/explorations/desktop2/XZones.vue';
-import XWindows from '../src/stories/explorations/desktop2/XWindows.vue';
-import XEventsPanel from '../src/stories/explorations/desktop2/XEventsPanel.vue';
-import XStatusPanel from '../src/stories/explorations/desktop2/XStatusPanel.vue';
-import DesktopV2 from '../src/stories/explorations/desktop2/DesktopV2.vue';
+import { workArea, zoneRects, LAYOUTS, SCREEN, BAR_H, zoomStep, fitInto, OPEN_WINDOWS } from '../src/shell/desktop/geometry';
+import { chromeOf } from '../src/shell/desktop/chrome';
+import { STATES, CORE } from '../src/shell/desktop/states';
+import XWin from '../src/shell/desktop/XWin.vue';
+import XMenuBar from '../src/shell/desktop/XMenuBar.vue';
+import XDock from '../src/shell/desktop/XDock.vue';
+import XDockSettings from '../src/shell/desktop/XDockSettings.vue';
+import XLayoutPicker from '../src/shell/desktop/XLayoutPicker.vue';
+import XZones from '../src/shell/desktop/XZones.vue';
+import XFit from '../src/shell/parts/XFit.vue';
+import XWindows from '../src/shell/desktop/XWindows.vue';
+import XEventsPanel from '../src/shell/desktop/XEventsPanel.vue';
+import XStatusPanel from '../src/shell/desktop/XStatusPanel.vue';
+import DesktopV2 from '../src/shell/desktop/DesktopV2.vue';
 
 const key = async (k: string, meta = false, shift = false) => { window.dispatchEvent(new KeyboardEvent('keydown', { key: k, metaKey: meta, shiftKey: shift })); await nextTick(); };
 const keyUp = async (k: string) => { window.dispatchEvent(new KeyboardEvent('keyup', { key: k })); await nextTick(); };
 const tapSuper = async () => { await key('Meta', true); await keyUp('Meta'); };
 
-describe('desktop v2 geometry', () => {
+describe('desktop geometry', () => {
   it('work area leaves room for the dock unless it auto-hides', () => {
     expect(workArea('left', 44)).toEqual({ x: 72, y: 0, w: SCREEN.w - 72, h: SCREEN.h - BAR_H });
     expect(workArea('bottom', 44).h).toBe(SCREEN.h - BAR_H - 72);
@@ -52,14 +54,13 @@ describe('desktop v2 geometry', () => {
     expect([t.w, t.h]).toEqual([50, 100]);
   });
   it('every state has a tab and a trade-off, with at least 3 new ideas', () => {
-    for (const s of [...CORE, ...IDEAS]) { expect(STATES[s].gain).toBeTruthy(); expect(STATES[s].cost).toBeTruthy(); }
-    expect(IDEAS.length).toBeGreaterThanOrEqual(1);
+    for (const s of CORE) { expect(STATES[s].gain).toBeTruthy(); expect(STATES[s].cost).toBeTruthy(); }
     expect(CORE).toContain('gestures');
     expect(CORE).toContain('switch');
   });
 });
 
-describe('desktop v2 parts', () => {
+describe('desktop parts', () => {
   it('XWin header: Back, title, actions, menu, then min/max/close; no app bar inside', () => {
     const w = mount(XWin, { props: { app: 'Mail', back: true, focused: true } });
     const labels = w.findAll('.x-win__bar button[aria-label]').map((b) => b.attributes('aria-label'));
@@ -250,8 +251,8 @@ describe('DesktopV2 scene', () => {
     expect(w.find('.x-wins--1').exists()).toBe(true);
     w.unmount();
   });
-  // v2 extends v1: Super opens v1's Overview (the main menu), never the spotlight.
-  it('tapping Super alone opens the v1 Overview (Events, Windows, Apps); typing filters; Super again closes', async () => {
+  // Super opens the Overview (the main menu), never the spotlight.
+  it('tapping Super alone opens the Overview (Events, Windows, Apps); typing filters; Super again closes', async () => {
     const w = mount(DesktopV2, { attachTo: document.body });
     await tapSuper();
     expect(w.find('.x-ov').exists()).toBe(true);
@@ -310,7 +311,7 @@ describe('DesktopV2 scene', () => {
     w.unmount();
   });
   it('renders every state', () => {
-    for (const s of [...CORE, ...IDEAS]) {
+    for (const s of CORE) {
       const w = mount(DesktopV2, { props: { state: s } });
       expect(w.find('.x-mbar').exists()).toBe(true);
       w.unmount();
@@ -358,7 +359,7 @@ describe('Open apps edit mode (measured from the N9)', () => {
   });
 });
 
-describe('phone v2 mock 19 decisions', async () => {
+describe('phone: decisions on what to leave out', async () => {
   const { STATES, SMALL, LEAVE_OUT } = await import('../src/stories/explorations/phone2/states');
   it('records the agreed directions', () => {
     expect(SMALL).not.toContain('history'); expect(SMALL).not.toContain('history-entry'); expect(SMALL).toContain('history-ghost');
@@ -367,5 +368,56 @@ describe('phone v2 mock 19 decisions', async () => {
     expect(STATES['screen-time'].idea).toMatch(/one-line/);
     expect(STATES['medical'].idea).toMatch(/No Emergency call button on the lock screen/); expect(STATES['medical-card'].idea).toMatch(/only Emergency call button/);
     expect(LEAVE_OUT.map((l) => l[0])).toEqual(expect.arrayContaining(['App shortcuts sheet in edit mode', 'Per-stream volume rows', 'Share in Open apps', 'Notification history']));
+  });
+});
+
+describe('XDock auto-hide', () => {
+  // regression: `.x-dock--left.is-hidden` lost to the centring rule `.x-dock.is-vertical:not(.is-panel)`, so a hidden dock stayed on screen
+  const css = readFileSync('src/shell/desktop/XDock.vue', 'utf8');
+  /** class-level specificity: classes, attribute selectors and the classes inside :not() */
+  const spec = (sel: string) => (sel.match(/\.[\w-]+/g) ?? []).length;
+  const centring = ['.x-dock.is-vertical:not(.is-panel)', '.x-dock:not(.is-vertical):not(.is-panel)'].map((s) => { expect(css).toContain(s + ' {'); return spec(s); });
+  for (const p of ['left', 'right', 'bottom', 'top']) {
+    it(`the ${p} hidden rule outranks the centring rules`, () => {
+      const m = css.match(new RegExp(`^([^{}\\n]*\\.x-dock--${p}\\.is-hidden) \\{`, 'm'));
+      expect(m, `no hidden rule for ${p}`).toBeTruthy();
+      expect(spec(m![1]!)).toBeGreaterThanOrEqual(Math.max(...centring));
+      expect(css.indexOf(m![0])).toBeGreaterThan(css.indexOf('.x-dock:not(.is-vertical):not(.is-panel) {'));
+    });
+  }
+  it('the settings report size and visibility', async () => {
+    const w = mount(XDockSettings);
+    await w.findAll('.x-dset__segbtn').find((b) => b.text() === 'Auto-hide')!.trigger('click');
+    await nextTick();
+    expect(w.emitted('update:visibility')?.[0]).toEqual(['autohide']);
+  });
+});
+
+describe('XFit before measuring', () => {
+  // regression: unmeasured (pre-rendered pages, before the scripts run) it drew the content at the `initial` 25%: a tiny box
+  it('hides the content until the host has a size', () => {
+    const w = mount(XFit, { props: { w: 360, h: 720, fit: 'contain' }, slots: { default: '<p>phone</p>' } });
+    expect((w.find('.x-fit__inner').element as HTMLElement).style.visibility).toBe('hidden');
+  });
+});
+
+describe('XEventsPanel separators', () => {
+  // regression (reported twice): a full-width rule under the time / the month, then the Notifications header's own line
+  const css = readFileSync('src/shell/desktop/XEventsPanel.vue', 'utf8');
+  for (const sel of ['.x-ev__now', '.x-ev__month']) {
+    it(`${sel} draws no rule above the section header`, () => {
+      const rule = css.match(new RegExp(`^\\${sel} \\{[^}]*\\}`, 'm'))?.[0] ?? '';
+      expect(rule).not.toBe('');
+      expect(rule).not.toMatch(/border/);
+    });
+  }
+});
+
+describe('XDockSettings widgets', () => {
+  it('reports a Widgets switch change', async () => {
+    const w = mount(XDockSettings, { props: { previews: true } });
+    await w.findAll('.x-dset__list li')[1]!.find('[role=switch], input, button').trigger('click');
+    await nextTick();
+    expect(w.emitted('widget')?.[0]).toEqual(['previews', false]);
   });
 });

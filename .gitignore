@@ -1,11 +1,12 @@
 node_modules
 dist
+packages/*/dist
+dist-packs
 storybook-static
 *.log
 screenshots/upgrade/
 screenshots/explorations/
 screenshots/explorations-v2/
 
-# Local captures and reference shots of real Nokia devices: never published. (The Etesian captures
-# already tracked under screenshots/ stay tracked.)
+# Review captures and reference shots: local only. (README images live in .github/readme/.)
 screenshots/
