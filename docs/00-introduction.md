@@ -8,6 +8,11 @@ badges. Content fills the screen; controls step back until you need them.
 
 This guide is the design language behind all three: its principles, tokens and the components they share.
 
+Everything is open source on GitHub: [the design language](https://github.com/etesian-design/design) (this guide and
+its components), [the phone](https://github.com/etesian-design/android_vendor_etesian),
+[KDE Plasma](https://github.com/etesian-design/plasma) and [the website](https://github.com/etesian-design/website).
+You can try Etesian in your browser at [etesian-design.com](https://etesian-design.com).
+
 ## Where each rule comes from
 
 Every rule, token and component carries one of two labels:
