@@ -327,19 +327,30 @@ body.hd-quasar.body--dark, .hd-quasar .q-dark, .hd-quasar.q-dark { color: var(--
 .hd-quasar .q-field__marginal { color: var(--hd-c-fg-secondary); height: var(--hd-size-field); }
 .hd-quasar .q-field__bottom { color: var(--hd-c-fg-secondary); font-size: var(--hd-font-size-xsmall); padding-top: 4px; }
 .hd-quasar .q-field--error .q-field__bottom, .hd-quasar .q-field--error .q-field__label { color: var(--hd-color-palette-warning); }
+/* outlined and filled fields take the N9 text field's shape: squircle-half ends (.hd-sqf in base.css, repeated here
+   because Quasar owns these elements' ::before (edge) and ::after (focus edge)) */
 .hd-quasar .q-field--outlined .q-field__control, .hd-quasar .q-field--filled .q-field__control {
-  background: var(--hd-c-surface); border-radius: var(--hd-radius-control); min-height: var(--hd-size-field); padding: 0 var(--hd-space-double);
-  box-shadow: inset 0 1px 2px rgba(0,0,0,.12);
+  --hd-sqf-h: 56px; --hd-sqf-edge: var(--hd-c-button-border); /* Quasar's field height (40 dense) */ --hd-sqf-edge-w: 1px;
+  background: none; border-radius: 0; min-height: var(--hd-size-field); padding: 0 calc(var(--hd-size-field) / 3); isolation: isolate;
 }
-.hd-quasar .q-field--outlined .q-field__control::before, .hd-quasar .q-field--filled .q-field__control::before { border: 1px solid var(--hd-c-button-border); border-radius: var(--hd-radius-control); background: transparent; opacity: 1; }
-.hd-quasar .q-field--outlined:hover .q-field__control::before { border-color: var(--hd-c-fg-secondary); }
-.hd-quasar .q-field--outlined .q-field__control::after, .hd-quasar .q-field--filled .q-field__control::after { border-radius: var(--hd-radius-control); border-width: 1px; height: auto; background: none; }
-.hd-quasar .q-field--outlined.q-field--focused .q-field__control::after, .hd-quasar .q-field--filled.q-field--focused .q-field__control::after { border: 2px solid var(--hd-c-focus); transform: none; }
-.hd-quasar .q-field--error.q-field--outlined .q-field__control::after { border-color: var(--hd-color-palette-warning); }
+.hd-quasar .q-field--outlined .q-field__control::before, .hd-quasar .q-field--filled .q-field__control::before, .hd-quasar .q-field--outlined .q-field__control::after, .hd-quasar .q-field--filled .q-field__control::after { --h: var(--hd-sqf-h);
+  -webkit-mask: var(--hd-squircle-mask) left top / var(--h) var(--h) no-repeat, var(--hd-squircle-mask) right top / var(--h) var(--h) no-repeat,
+    var(--hd-squircle-mask) left bottom / var(--h) var(--h) no-repeat, var(--hd-squircle-mask) right bottom / var(--h) var(--h) no-repeat,
+    linear-gradient(#000 0 0) center / calc(100% - var(--h)) 100% no-repeat, linear-gradient(#000 0 0) center / 100% calc(100% - var(--h)) no-repeat;
+  mask: var(--hd-squircle-mask) left top / var(--h) var(--h) no-repeat, var(--hd-squircle-mask) right top / var(--h) var(--h) no-repeat,
+    var(--hd-squircle-mask) left bottom / var(--h) var(--h) no-repeat, var(--hd-squircle-mask) right bottom / var(--h) var(--h) no-repeat,
+    linear-gradient(#000 0 0) center / calc(100% - var(--h)) 100% no-repeat, linear-gradient(#000 0 0) center / 100% calc(100% - var(--h)) no-repeat;
+  border: 0; border-radius: 0; opacity: 1; transform: none; transition: background var(--hd-motion-duration-instant); }
+.hd-quasar .q-field--outlined .q-field__control::before, .hd-quasar .q-field--filled .q-field__control::before { position: absolute; inset: 0; z-index: -1; background: var(--hd-sqf-edge); }
+.hd-quasar .q-field--outlined .q-field__control::after, .hd-quasar .q-field--filled .q-field__control::after { position: absolute; inset: var(--hd-sqf-edge-w); height: auto; z-index: -1; --h: calc(var(--hd-sqf-h) - 2 * var(--hd-sqf-edge-w));
+  background: linear-gradient(rgba(0,0,0,.06), transparent 4px), var(--hd-c-surface); }
+.hd-quasar .q-field--outlined:hover .q-field__control { --hd-sqf-edge: var(--hd-c-fg-secondary); }
+.hd-quasar .q-field--outlined.q-field--focused .q-field__control, .hd-quasar .q-field--filled.q-field--focused .q-field__control { --hd-sqf-edge: var(--hd-c-focus); --hd-sqf-edge-w: 2px; }
+.hd-quasar .q-field--error.q-field--outlined .q-field__control { --hd-sqf-edge: var(--hd-color-palette-warning); }
+.hd-quasar .q-field--dense .q-field__control { --hd-sqf-h: 40px; }
 .hd-quasar .q-field--standard .q-field__control::before { border-bottom-color: var(--hd-c-button-border); }
 .hd-quasar .q-field--standard .q-field__control::after { background: var(--hd-c-focus); height: 2px; }
 .hd-quasar .q-field--borderless .q-field__control { background: transparent; box-shadow: none; }
-.hd-quasar .q-field--rounded .q-field__control, .hd-quasar .q-field--rounded .q-field__control::before { border-radius: var(--hd-radius-pill); }
 .hd-quasar .q-field--dense .q-field__control, .hd-quasar .q-field--dense .q-field__marginal { min-height: 32px; height: auto; }
 .hd-quasar .q-field__native::selection { background: var(--hd-color-palette-select); color: #000; }
 .hd-quasar .q-field--disabled { opacity: var(--hd-opacity-disabled); }

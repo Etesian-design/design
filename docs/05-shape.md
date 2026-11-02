@@ -34,7 +34,10 @@ curvature changes continuously and its sides bulge outward).
 
 ## What is NOT a squircle
 
-- Controls: radio buttons are round (N9), checkboxes and fields have small radii, switch tracks are pills.
+- Controls: radio buttons are round (N9), checkboxes have small radii, switch tracks are pills. **N9**: text fields (and
+  search fields) have squircle ends: a squircle as tall as the field, cut in half and pulled apart, joined by straight
+  lines (blanco `meegotouch-textedit-background`, the same n = 2.8 curve as the icons). Taller fields keep those corners.
+  CSS: `.hd-sqf`.
 - Large surfaces: cards, sheets, banners use `--hd-radius-card` (EXT) or are square-edged (N9 pages).
 - Task cards (open applications) are screen-shaped rectangles with tiny radii (N9).
 

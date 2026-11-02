@@ -11,6 +11,5 @@ const emit = defineEmits<{ 'update:modelValue': [v: string]; search: [v: string]
   </form>
 </template>
 <style>
-.hd-search .hd-field__box { border-radius: 999px; }
 .hd-search input::-webkit-search-cancel-button { display: none; }
 </style>

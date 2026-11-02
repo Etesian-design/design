@@ -9,7 +9,7 @@ import HdTextArea from '../components/HdTextArea.vue';
 import HdSearchField from '../components/HdSearchField.vue';
 import HdButton from '../components/HdButton.vue';
 
-const meta: Meta = { title: 'Controls/Form controls', tags: ['autodocs'], parameters: { docs: { description: { component: '**N9**: Switch, CheckBox (42 n9px), RadioButton, Slider, TextField (52 n9px), TextArea. **EXT**: visible labels, helper/error text, required marker, SearchField pill, web form layout.' } } } };
+const meta: Meta = { title: 'Controls/Form controls', tags: ['autodocs'], parameters: { docs: { description: { component: '**N9**: Switch, CheckBox (42 n9px), RadioButton, Slider, TextField (52 n9px), TextArea. **EXT**: visible labels, helper/error text, required marker, web form layout. Fields have the N9 shape: squircle-half ends as tall as the field (n = 2.8).' } } } };
 export default meta;
 type S = StoryObj;
 
