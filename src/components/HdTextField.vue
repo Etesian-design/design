@@ -17,7 +17,7 @@ const describedBy = computed(() => [props.helper && `${id}-help`, props.error &&
 <template>
   <div class="hd-field" :class="{ 'is-error': error, 'is-disabled': disabled }">
     <label v-if="label" class="hd-field__label" :for="id">{{ label }}<span v-if="required" aria-hidden="true"> *</span></label>
-    <div class="hd-field__box" :class="{ 'hd-field__box--multi': multiline }">
+    <div class="hd-field__box hd-sqf" :class="{ 'hd-field__box--multi': multiline }">
       <HdIcon v-if="icon" :name="icon" :size="20" class="hd-field__icon" />
       <textarea v-if="multiline" :id="id" class="hd-field__input" :rows="rows" :value="modelValue" :placeholder="placeholder" :disabled="disabled" :readonly="readonly"
         :required="required" :name="name" :aria-invalid="error ? 'true' : undefined" :aria-describedby="describedBy" :aria-label="label ? undefined : ariaLabel"
@@ -37,13 +37,11 @@ const describedBy = computed(() => [props.helper && `${id}-help`, props.error &&
 .hd-field { display: flex; flex-direction: column; gap: var(--hd-space-medium); }
 .hd-field.is-disabled { opacity: var(--hd-opacity-disabled); }
 .hd-field__label { font: var(--hd-font-weight-regular) var(--hd-font-size-small)/1.2 var(--hd-font-family-base); color: var(--hd-c-fg-secondary); }
-.hd-field__box { display: flex; align-items: center; gap: var(--hd-space-double); min-height: var(--hd-size-field); padding: 0 var(--hd-space-double);
-  background: var(--hd-c-surface); border: 1px solid var(--hd-c-button-border); border-radius: var(--hd-radius-control);
-  box-shadow: inset 0 1px 2px rgba(0,0,0,.12); transition: border-color var(--hd-motion-duration-instant); }
+.hd-field__box { display: flex; align-items: center; gap: var(--hd-space-double); min-height: var(--hd-size-field); padding: 0 calc(var(--hd-size-field) / 3); }
 .hd-field__box--multi { align-items: flex-start; padding-top: var(--hd-space-double); padding-bottom: var(--hd-space-double); }
-.hd-field__box:hover { border-color: var(--hd-c-fg-secondary); }
-.hd-field__box:focus-within { border-color: var(--hd-c-focus); outline: 1px solid var(--hd-c-focus); }
-.is-error .hd-field__box { border-color: var(--hd-color-palette-warning); }
+.hd-field__box:hover { --hd-sqf-edge: var(--hd-c-fg-secondary); }
+.hd-field__box:focus-within { --hd-sqf-edge: var(--hd-c-focus); --hd-sqf-edge-w: 2px; }
+.is-error .hd-field__box { --hd-sqf-edge: var(--hd-color-palette-warning); }
 .hd-field__input { flex: 1; min-width: 0; border: 0; background: transparent; color: var(--hd-c-fg); outline: none; resize: vertical;
   font: var(--hd-font-weight-light) var(--hd-font-size-default)/1.3 var(--hd-font-family-light); }
 .hd-field__input::placeholder { color: var(--hd-c-fg-secondary); opacity: .8; }
