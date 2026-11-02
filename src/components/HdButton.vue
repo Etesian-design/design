@@ -18,7 +18,7 @@ defineEmits<{ click: [e: MouseEvent] }>();
 </script>
 <template>
   <component :is="href ? 'a' : 'button'" class="hd-button hd-focusable"
-    :class="[`hd-button--${variant}`, size !== 'default' && `hd-button--${size}`, { 'is-pressed': pressed, 'hd-button--block': block, 'hd-button--fixed': fixedWidth, 'hd-button--checked': checked, 'hd-button--flat': lighting === 'flat', 'hd-button--icon-only hd-sq': icon && !$slots.default }]"
+    :class="[`hd-button--${variant}`, size !== 'default' && `hd-button--${size}`, { 'is-pressed': pressed, 'hd-button--block': block, 'hd-button--fixed': fixedWidth, 'hd-button--checked': checked, 'hd-button--flat': lighting === 'flat', 'hd-button--icon-only hd-sq': icon && !$slots.default, 'hd-sqf': !(icon && !$slots.default) && variant !== 'plain' }]"
     :type="href ? undefined : type" :href="href && !disabled ? href : undefined"
     :disabled="href ? undefined : disabled" :aria-disabled="disabled ? 'true' : undefined"
     :aria-pressed="checked === undefined ? undefined : String(checked)"
@@ -63,5 +63,12 @@ defineEmits<{ click: [e: MouseEvent] }>();
 .hd-button.hd-button--dark:active:not(:disabled):not(.hd-sq), .hd-button.hd-button--dark.is-pressed:not(.hd-sq) { background: linear-gradient(#080808, #0C0C0C); box-shadow: none; color: #8C8C8C; }
 .hd-button--small { --hd-btn-h: 30px; padding: 0 12px; font-size: var(--hd-font-size-small); }
 .hd-button--bar { --hd-btn-h: 27.5px; height: 27.5px; min-height: 0; width: 120px; padding: 0 8px; }
+.hd-button.hd-sqf { --hd-sqf-h: var(--hd-btn-h); --hd-sqf-edge: var(--hd-btn-rim); --hd-sqf-fill: var(--hd-lit-fill);
+  background: none !important; border: 0 !important; box-shadow: none !important; border-radius: 0; } /* N9: squircle-half ends, drawn by .hd-sqf */
+.hd-button--flat.hd-sqf { --hd-sqf-fill: var(--hd-btn-base); --hd-sqf-edge: var(--hd-c-button-border); }
+.hd-button--accent.hd-button--flat.hd-sqf, .hd-button--negative.hd-button--flat.hd-sqf, .hd-button--checked.hd-button--flat.hd-sqf { --hd-sqf-edge: transparent; }
+.hd-button.hd-sqf:active:not(:disabled), .hd-button.hd-sqf.is-pressed { --hd-sqf-fill: linear-gradient(var(--hd-btn-bot), var(--hd-btn-base)); }
+.hd-button--dark.hd-sqf { --hd-sqf-fill: linear-gradient(#1C1C1C, #101010 50%, #080808); --hd-sqf-edge: #393839; }
+.hd-button--dark.hd-sqf:active:not(:disabled), .hd-button--dark.hd-sqf.is-pressed { --hd-sqf-fill: linear-gradient(#080808, #0C0C0C); }
 .hd-button:disabled, .hd-button[aria-disabled='true'] { opacity: var(--hd-opacity-disabled); cursor: default; }
 </style>

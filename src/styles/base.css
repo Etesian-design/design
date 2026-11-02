@@ -51,10 +51,11 @@
   outline: none; --hd-sq-ring: var(--hd-c-focus); --hd-sq-ring-width: var(--hd-size-focus-ring); --hd-sq-ring-offset: 3px;
 }
 
-/* A text field's shape (N9 blanco textedit background): a squircle as tall as the field (n = 2.8, like the icons), cut in
+/* A text field's and a button's shape (N9 blanco textedit and button backgrounds): a squircle as tall as the field (n = 2.8, like the icons), cut in
    half and pulled apart, joined by straight edges; taller fields keep those corners. Two masked layers, the edge and the
    fill, so the outline follows the curve. Set --hd-sqf-h to the single-line height, --hd-sqf-edge / -edge-w / -fill. */
-.hd-sqf { --hd-sqf-h: var(--hd-size-field); --hd-sqf-edge: var(--hd-c-button-border); --hd-sqf-edge-w: 1px; --hd-sqf-fill: var(--hd-c-surface);
+.hd-sqf { --hd-sqf-h: var(--hd-size-field); --hd-sqf-edge: var(--hd-c-button-border); --hd-sqf-edge-w: 1px;
+  --hd-sqf-fill: linear-gradient(rgba(0,0,0,.06), transparent 4px), var(--hd-c-surface); /* the N9's inset look */
   position: relative; isolation: isolate; }
 .hd-sqf::before, .hd-sqf::after { content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none; --h: var(--hd-sqf-h);
   -webkit-mask: var(--hd-squircle-mask) left top / var(--h) var(--h) no-repeat, var(--hd-squircle-mask) right top / var(--h) var(--h) no-repeat,
@@ -66,7 +67,7 @@
   transition: background var(--hd-motion-duration-instant); }
 .hd-sqf::before { background: var(--hd-sqf-edge); }
 .hd-sqf::after { inset: var(--hd-sqf-edge-w); --h: calc(var(--hd-sqf-h) - 2 * var(--hd-sqf-edge-w));
-  background: linear-gradient(rgba(0,0,0,.06), transparent 4px), var(--hd-sqf-fill); } /* the N9's inset look */
+  background: var(--hd-sqf-fill); }
 
 /* Focus (extrapolated): visible only for keyboard users, 2px ring in focus colour, 2px offset. */
 .hd-focusable:focus { outline: none; }
