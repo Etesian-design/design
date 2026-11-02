@@ -10,6 +10,7 @@
 </p>
 
 <p align="center">
+  <a href="https://language.etesian-design.com">Browse the guide</a> ·
   <a href="https://etesian-design.com">Website</a> ·
   <a href="https://github.com/etesian-design/android_vendor_etesian">Phone (LineageOS)</a> ·
   <a href="https://github.com/etesian-design/plasma">KDE Plasma</a>
@@ -18,7 +19,7 @@
 <p align="center">
   <img alt="Licence: MIT" src="https://img.shields.io/badge/licence-MIT-4591FF">
   <img alt="Vue 3" src="https://img.shields.io/badge/Vue-3-42B883">
-  <img alt="Storybook" src="https://img.shields.io/badge/Storybook-guide%20%2B%20components-FF4785">
+  <a href="https://language.etesian-design.com"><img alt="Storybook" src="https://img.shields.io/badge/Storybook-guide%20%2B%20components-FF4785"></a>
 </p>
 
 ---
