@@ -21,11 +21,10 @@ defineEmits<{ click: [] }>();
 .hd-tab-button:last-child { border-radius: 0 var(--hd-radius-control) var(--hd-radius-control) 0; }
 .hd-tab-button.is-selected { background: var(--hd-accent); color: #fff; border-color: transparent; }
 /* inside a segmented group: square inner edges, one 1px divider, the group owns the rim and lighting */
-.hd-tab-bar--segments > .hd-tab-button { margin: 0; border: 0; border-radius: 0; background: transparent; }
-.hd-tab-bar--segments > .hd-tab-button + .hd-tab-button { border-left: 1px solid var(--hd-btn-rim); }
+.hd-tab-bar--segments > .hd-tab-button { margin: 0; border: 0; border-radius: 0; background: var(--hd-lit-fill); }
 .hd-tab-bar--vertical > .hd-tab-button + .hd-tab-button { border-left: 0; border-top: 1px solid var(--hd-btn-rim); }
 .hd-tab-bar--segments > .hd-tab-button.is-selected { background: linear-gradient(color-mix(in srgb, var(--hd-accent) 88%, #fff), var(--hd-accent) 50%, color-mix(in srgb, var(--hd-accent) 88%, #000)); box-shadow: inset 0 1px 0 rgba(255,255,255,.3); color: #fff; }
-.hd-tab-bar--segments > .hd-tab-button:hover:not(.is-selected) { background: color-mix(in srgb, var(--hd-c-fg) 6%, transparent); }
+.hd-tab-bar--segments > .hd-tab-button:hover:not(.is-selected) { background: linear-gradient(color-mix(in srgb, var(--hd-c-fg) 6%, transparent) 0 0), var(--hd-lit-fill); }
 /* Icon tab (toolbar, N9): the selected tab is a lighter FULL-HEIGHT cell with square edges across the tab's width,
    not a shape behind the icon. */
 .hd-tab-button--icon { align-self: stretch; min-width: 64px; height: auto; border: 0; border-radius: 0; background: transparent; color: inherit; opacity: .6; }
