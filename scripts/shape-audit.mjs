@@ -9,7 +9,8 @@ import { firefox } from 'playwright';
 
 const BASE = process.env.BASE ?? 'http://localhost:6110';
 const ALLOWED = ['q-toggle', 'hd-switch', 'q-radio', 'hd-radio', 'q-linear-progress', 'hd-progress', 'hd-page-indicator',
-  'q-slider', 'q-range', 'q-scrollarea', 'bw-', 'q-carousel__navigation', 'q-spinner', 'hd-busy', 'hd-squircle', 'hd-sq',
+  'q-slider', 'q-range', 'q-scrollarea', // Belle widget artwork as on the 701 (panel heads, LCD digits, the music bar, the date bubble)
+  'bw-mail__head', 'bw-rss__head', 'bw-music__ctl', 'bw-datebub', 'bw-lcd__d', 'q-carousel__navigation', 'q-spinner', 'hd-busy', 'hd-squircle', 'hd-sq',
   'x-dock__run', 'x-ev__dot', 'md-finger', 'q-tab__indicator', 'q-field__control', 'q-focus-helper',
   // Surfaces, not controls: windows, chat bubbles (their own rounded speech-bubble shape)
   'x-win__bar', 'x-msg__bubble', 'q-message-text', 'xm-bub', 'p2-wt', 'q-tooltip', 'hd-tooltip', 'hd-selection__item',
@@ -18,6 +19,22 @@ const ALLOWED = ['q-toggle', 'hd-switch', 'q-radio', 'hd-radio', 'q-linear-progr
 // Large surfaces (cards, sheets, panels, hints, tiles) keep --hd-radius-card; scaled-down previews can make them look like pills.
 const CARD_RADIUS = 8;
 
+function one(el) {
+  const masked = (e) => { const m = (v) => v && v !== 'none'; return m(getComputedStyle(e).maskImage) || m(getComputedStyle(e, '::before').maskImage) || m(getComputedStyle(e, '::after').maskImage); };
+  const allowed = (e) => { for (let x = e; x && x !== document.body; x = x.parentElement) { const c = typeof x.className === 'string' ? x.className : ''; if (window.__ALLOWED.some((a) => c.includes(a))) return true; } return false; };
+  if (allowed(el) || masked(el)) return null;
+  for (const pe of [null, '::before', '::after']) {
+    const cs = getComputedStyle(el, pe); const rad = parseFloat(cs.borderTopLeftRadius) || 0;
+    if (pe && (cs.content === 'none' || cs.content === 'normal')) continue;
+    const painted = (cs.backgroundColor !== 'rgba(0, 0, 0, 0)' && cs.backgroundColor !== 'transparent') || cs.backgroundImage !== 'none';
+    if (rad > 2 && painted && Math.abs(rad - window.__CARD) > 0.6) {
+      const H = el.offsetHeight, W = el.offsetWidth;
+      return { name: `${el.tagName.toLowerCase()}.${String(el.className).trim().split(/\s+/).slice(0, 3).join('.')}${pe ?? ''}`, kind: 'hover',
+        why: rad >= H / 2 - 1 ? (W > H * 1.15 ? 'pill' : 'circle') : `rounded ${rad}px`, w: W, h: H };
+    }
+  }
+  return null;
+}
 function audit() {
   const out = [];
   const allowed = (el) => { for (let e = el; e && e !== document.body; e = e.parentElement) {
@@ -48,18 +65,36 @@ function audit() {
   return out;
 }
 
+// Hover states: links, buttons and tabs often paint a highlight only under the pointer (2026-11-05: the site
+// header's links showed a rounded rectangle). Hover each one and audit it and its pseudo-elements then.
+async function hovers(p) {
+  const out = [];
+  const n = await p.evaluate(() => { const els = [...document.querySelectorAll('a, button, [role="button"], [role="tab"], .q-tab, .q-item--clickable')]
+    .filter((e) => { const r = e.getBoundingClientRect(); return r.width >= 6 && r.height >= 6 && r.height <= 64 && r.bottom > 0 && r.top < innerHeight; });
+    els.forEach((e, i) => e.setAttribute('data-hv', String(i))); return Math.min(els.length, 60); });
+  for (let i = 0; i < n; i++) {
+    const ok = await p.hover(`[data-hv="${i}"]`, { timeout: 800, force: true }).then(() => true).catch(() => false);
+    if (!ok) continue;
+    await p.waitForTimeout(160);   // let hover transitions finish
+    const f = await p.evaluate((i) => { const el = document.querySelector(`[data-hv="${i}"]`); return el ? window.__one(el) : null; }, i).catch(() => null);
+    if (f) out.push({ ...f, why: 'on hover: ' + f.why });
+  }
+  await p.mouse.move(0, 0);
+  return out;
+}
+
 const index = await (await fetch(`${BASE}/index.json`)).json();
 const stories = Object.values(index.entries).filter((e) => e.type === 'story' && (!process.env.ONLY || new RegExp(process.env.ONLY).test(e.id)));   // ONLY=<regex of story ids>
 const browser = await firefox.launch();
 const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 }, deviceScaleFactor: 1 });
 const p = await ctx.newPage();
-await p.addInitScript(([a, c]) => { window.__ALLOWED = a; window.__CARD = c; }, [ALLOWED, CARD_RADIUS]);
+await p.addInitScript(([a, c, f]) => { window.__ALLOWED = a; window.__CARD = c; window.__one = new Function('return ' + f)(); }, [ALLOWED, CARD_RADIUS, one.toString()]);
 const found = new Map();
 for (const s of stories) {
   await p.goto(`${BASE}/iframe.html?id=${s.id}&viewMode=story`);
   await p.waitForSelector('#storybook-root > *', { timeout: 10000 }).catch(() => {});
   await p.waitForTimeout(400);
-  for (const f of await p.evaluate(audit).catch(() => [])) {
+  for (const f of [...await p.evaluate(audit).catch(() => []), ...await hovers(p)]) {
     const k = `${f.name} | ${f.why}`;
     if (!found.has(k)) found.set(k, { ...f, where: [] });
     found.get(k).where.push(s.id);

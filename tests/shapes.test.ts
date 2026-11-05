@@ -45,4 +45,16 @@ describe('chips, badges and count bubbles have squircle-half ends, never pills',
   it('the pickers\', empty state\'s and task edit bar\'s dark buttons have the .hd-sqf shape', () => {
     for (const f of ['HdTimePicker', 'HdColorPicker', 'HdEmptyState', 'HdTaskEditBar']) expect(read(`src/components/${f}.vue`)).toMatch(/class="hd-[a-z-]+(__[a-z]+)? hd-sqf hd-focusable"/);
   });
+  // 2026-11-05: the site header links (and the desktop menu bar) lit up as rounded rectangles on hover
+  it('hover highlights draw a squircle-half ::before and a matching focus ring', () => {
+    for (const c of ['.hd-site-header__link', '.x-mbar__menu', '.x-mbar__events', '.x-mbar__sicons', '.x-mbar__clock', '.q-bottom-sheet__item'])
+      expect(base).toMatch(new RegExp(`\\${c.replace(/[-.]/g, (m) => '\\' + m).slice(2)}::before[^{]*\\{[^}]*mask: var\\(--hd-sq-cap-l\\)`));
+    expect(base).toMatch(/\.hd-site-header__link:focus-visible::after[^{]*\{[^}]*mask-composite: intersect, exclude, intersect, add/);
+  });
+  // 2026-11-05: on the 701 the calendar widget's Create new event is a button like any other
+  it('the Belle calendar widget\'s Create new event button has the .hd-sqf shape', () => {
+    const w = read('src/shell/widgets/BelleWidget.vue');
+    expect(w).toContain('class="bw-lightpill hd-sqf"');
+    expect(w).not.toMatch(/\.bw-lightpill \{[^}]*border-radius: 18px/);
+  });
 });
