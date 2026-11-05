@@ -95,7 +95,7 @@ export const Kinds: S = {
       <li>Use squircles for icon-only buttons and tool icon highlights.</li></ul></div>
     <div><h3 style="margin:0 0 8px;color:#c0281e">Don't</h3><ul style="margin:0;padding-left:18px">
       <li>No outlined / ghost buttons and no full pills: the N9 has filled, lit buttons only.</li>
-      <li>No circular icon buttons (round buttons belong to Belle home widgets only).</li>
+      <li>No circular icon buttons anywhere, Belle home widgets included: their buttons follow the same squircle rules.</li>
       <li>Don't stretch edit-bar buttons to the full bar height or width.</li>
       <li>Don't group bar buttons left / centre / right with gaps; don't give action buttons a slot-wide pressed area.</li>
       <li>Don't light from below or add drop shadows under bar buttons.</li>
