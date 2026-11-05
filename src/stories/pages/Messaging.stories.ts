@@ -56,6 +56,14 @@ const CSS = `<component is="style">
 .xm-bub--out { align-self: flex-start; border-bottom-left-radius: 0; background: linear-gradient(#FFFAFF, #F6F6F6); color: #111; box-shadow: inset 0 0 0 1px #A9ABAD; }
 .xm-bub--out small { color: #8A8A8E; }
 .xm-bub--out::after { content: ''; position: absolute; bottom: 0; left: -7px; border-style: solid; border-width: 8px 0 0 8px; border-color: transparent transparent transparent transparent; border-right: 8px solid #F6F6F6; border-left: 0; }
+/* Group: received on the left next to the sender's picture, the tail pointing at it; what you sent on the right. */
+.xm-grow { display: flex; align-items: flex-start; gap: 4px; } .xm-grow--me { flex-direction: row-reverse; }
+.xm-grow > .xm-bub { align-self: auto; }
+.xm-grow > .xm-bub--in { text-align: left; border-top-right-radius: 10px; border-top-left-radius: 0; margin-left: 7px; }
+.xm-grow > .xm-bub--in::after { right: auto; left: -7px; border-width: 0 8px 8px 0; border-color: transparent #31B6D5 transparent transparent; }
+.xm-grow > .xm-bub--out { border-bottom-left-radius: 10px; border-bottom-right-radius: 0; margin-right: 7px; }
+.xm-grow > .xm-bub--out::after { left: auto; right: -7px; border-width: 8px 8px 0 0; border-color: transparent; border-right: 0; border-left: 8px solid #F6F6F6; border-top: 8px solid transparent; }
+.xm-grow__who { display: block; font-size: 11px; color: rgba(255,255,255,.8); }
 .xm-compose { flex: none; display: flex; align-items: center; gap: 10px; height: 48px; padding: 0 10px; background: #fff; border-top: 1px solid #D0D3D6; }
 .xm-compose input { flex: 1; min-width: 0; border: 0; outline: 0; font: 400 16px/1 var(--hd-font-family-base); color: #111; } .xm-compose input::placeholder { color: #9A9A9E; } .xm-typed { flex: 1; font-size: 16px; color: #111; }
 /* accounts */
@@ -111,6 +119,18 @@ export const MessagingConversation: S = {
       <div class="xm-bub xm-bub--in">Are we still on for lunch tomorrow?<small>17:39</small></div>
       <div class="xm-bub xm-bub--out">Yes! 12:30 at the usual place.<small>17:41</small></div>
       <div class="xm-bub xm-bub--in">Great, see you there. Bring the umbrella, it is meant to rain all afternoon.<small>17:42</small></div></div>
+    <div class="xm-compose"><HdSquircle :size="22" color="#62B700" lighting="lit"><HdIcon name="message" :size="13" lit /></HdSquircle>
+      <input v-model="draft" placeholder="Write your message here" aria-label="Message" /></div>`, '#DEE2E6') }),
+};
+
+export const MessagingGroup: S = {
+  name: 'Messaging: group conversation',
+  parameters: { docs: { description: { story: 'In a group the received messages go on the left, next to their sender\'s squircle picture, the bubble\'s tail pointing at it; what you sent is on the right with your picture. A one-to-one conversation keeps the N9 sides (received on the right). SIP had no group messages on the N9; groups came from SMS/MMS and chat rooms.' } } },
+  render: () => ({ components: comps, setup: () => ({ draft: ref('') }), template: CSS + phone(`<div class="xm-ch"><button type="button" class="xm-back hd-sqf">Messages</button><span class="xm-ch__name">Anna, Mikko</span></div>
+    <div class="xm-conv">
+      <div class="xm-grow"><HdSquircle :size="36" color="linear-gradient(135deg,#7fb0d8,#333)" /><div class="xm-bub xm-bub--in"><span class="xm-grow__who">Anna Virtanen</span>Lunch on Friday?<small>12:02</small></div></div>
+      <div class="xm-grow"><HdSquircle :size="36" color="linear-gradient(135deg,#d8a97f,#333)" /><div class="xm-bub xm-bub--in"><span class="xm-grow__who">Mikko Laine</span>I can do one o'clock.<small>12:05</small></div></div>
+      <div class="xm-grow xm-grow--me"><HdSquircle :size="36" color="linear-gradient(135deg,#09A7CC,#05607a)" /><div class="xm-bub xm-bub--out">One works for me too.<small>12:07</small></div></div></div>
     <div class="xm-compose"><HdSquircle :size="22" color="#62B700" lighting="lit"><HdIcon name="message" :size="13" lit /></HdSquircle>
       <input v-model="draft" placeholder="Write your message here" aria-label="Message" /></div>`, '#DEE2E6') }),
 };
