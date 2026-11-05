@@ -13,4 +13,5 @@ for (const p of PACKAGES) {
   writeFileSync(f, JSON.stringify(d, null, 2) + '\n');
 }
 execSync('npm run build', { stdio: 'inherit' });
-for (const p of PACKAGES) execSync('npm publish', { cwd: `packages/${p}`, stdio: 'inherit' });
+// From the root, so npm reads the root .npmrc (registry and token); inside packages/<p> it would not.
+for (const p of PACKAGES) execSync(`npm publish ./packages/${p}`, { stdio: 'inherit' });
