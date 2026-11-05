@@ -13,7 +13,7 @@ import HdToolIcon from '../../components/HdToolIcon.vue';
 const meta: Meta = {
   title: 'Examples/Messaging & Store',
   tags: ['autodocs'],
-  parameters: { docs: { description: { component: '**N9** Messaging (first run, compose, conversation), Accounts (opened from Messaging) and Store, at phone size. Service icons and names are generic samples. The received bubble in *Conversation* is a **guess** (not yet seen on the device).' } } },
+  parameters: { docs: { description: { component: '**N9** Messaging (first run, compose, conversation), Accounts (opened from Messaging) and Store, at phone size. Service icons and names are generic samples. The conversation is measured from the N9 (2026-11-05): received messages cyan on the right, sent ones white on the left.' } } },
 };
 export default meta;
 type S = StoryObj;
@@ -41,15 +41,21 @@ const CSS = `<component is="style">
 .xm-strip { flex: none; height: 42px; display: flex; align-items: center; gap: 8px; padding: 0 10px; background: #fff; border-top: 1px solid #E2E2E4; }
 .xm-strip__sp { flex: 1; } .xm-count { font: 700 16px/1 var(--hd-font-family-base); color: #444; } .xm-count small { font-weight: 400; font-size: 14px; }
 .xm-send { height: 27px; padding: 0 12px; border: 0; border-radius: 8px; background: linear-gradient(#2A2A2A, #000); color: #fff; font: 700 15px/1 var(--hd-font-family-base); }
-/* conversation */
-.xm-conv { flex: 1; display: flex; flex-direction: column; gap: 14px; padding: 14px 10px; background: linear-gradient(#93A9BE, #E8EBEE 70%); }
-.xm-bub { position: relative; max-width: 78%; padding: 8px 10px 6px; border-radius: 10px; font-size: 16px; line-height: 1.3; box-shadow: 0 1px 2px rgba(0,0,0,.2); }
-.xm-bub small { display: block; margin-top: 4px; text-align: right; font-size: 11px; }
-.xm-bub--out { align-self: flex-end; border-top-right-radius: 0; background: linear-gradient(#24AADD, #1A92C2); color: #fff; } .xm-bub--out small { color: rgba(255,255,255,.75); }
-.xm-bub--out::after { content: ''; position: absolute; top: 0; right: -8px; border-style: solid; border-width: 0 0 8px 8px; border-color: transparent transparent transparent #24AADD; }
-.xm-bub--in { align-self: flex-start; border-top-left-radius: 0; background: linear-gradient(#FFFFFF, #EEEEF0); color: #111; outline: 1px dashed #E07A12; outline-offset: 2px; } .xm-bub--in small { color: #8A8A8E; }
-.xm-bub--in::after { content: ''; position: absolute; top: 0; left: -8px; border-style: solid; border-width: 0 8px 8px 0; border-color: transparent #fff transparent transparent; }
-.xm-guess { align-self: flex-start; margin-top: -8px; font-size: 11px; color: #9a4c00; }
+/* conversation, measured from the N9 (2026-11-05, a SIP conversation): flat #DEE2E6; a light header with the
+   "Messages" back button, the name and the contact's squircle; RECEIVED messages are cyan on the RIGHT (tail at the
+   top right), what you SENT is white on the LEFT (tail at the bottom left); the time, or the status, inside the bubble. */
+.xm-ch { flex: none; display: flex; align-items: center; gap: 10px; height: 53px; padding: 0 8px 0 12px; background: #EEEAEE; border-bottom: 1px solid #fff; color: #333; }
+.xm-back { height: 30px; padding: 0 14px; --hd-sqf-h: 30px; --hd-sqf-edge: #C9C6CA; --hd-sqf-fill: linear-gradient(#FFFFFF, #F4F0F4); border: 0; background: none; font: 700 15px/1 var(--hd-font-family-base); color: #111; }
+.xm-ch__name { flex: 1; min-width: 0; font: 400 17px/1 var(--hd-font-family-base); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.xm-conv { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; gap: 12px; padding: 14px 12px; background: #DEE2E6; }
+.xm-bub { position: relative; max-width: 78%; padding: 7px 10px 6px; border-radius: 10px; font-size: 17px; line-height: 1.3; }
+.xm-bub small { display: block; margin-top: 3px; font-size: 11px; }
+.xm-bub--in { align-self: flex-end; text-align: right; border-top-right-radius: 0; background: linear-gradient(#31B6D5, #08A5CD 12px); color: #fff; box-shadow: inset 0 0 0 1px rgba(0,80,110,.25); }
+.xm-bub--in small { color: rgba(255,255,255,.7); }
+.xm-bub--in::after { content: ''; position: absolute; top: 0; right: -7px; border-style: solid; border-width: 0 0 8px 8px; border-color: transparent transparent transparent #31B6D5; }
+.xm-bub--out { align-self: flex-start; border-bottom-left-radius: 0; background: linear-gradient(#FFFAFF, #F6F6F6); color: #111; box-shadow: inset 0 0 0 1px #A9ABAD; }
+.xm-bub--out small { color: #8A8A8E; }
+.xm-bub--out::after { content: ''; position: absolute; bottom: 0; left: -7px; border-style: solid; border-width: 8px 0 0 8px; border-color: transparent transparent transparent transparent; border-right: 8px solid #F6F6F6; border-left: 0; }
 .xm-compose { flex: none; display: flex; align-items: center; gap: 10px; height: 48px; padding: 0 10px; background: #fff; border-top: 1px solid #D0D3D6; }
 .xm-compose input { flex: 1; min-width: 0; border: 0; outline: 0; font: 400 16px/1 var(--hd-font-family-base); color: #111; } .xm-compose input::placeholder { color: #9A9A9E; } .xm-typed { flex: 1; font-size: 16px; color: #111; }
 /* accounts */
@@ -98,14 +104,15 @@ export const MessagingCompose: S = {
       <span class="xm-strip__sp"></span><span class="xm-count">155<small>(1)</small></span><button type="button" class="xm-send hd-sqm">Send</button></div>${keyboard}`) }),
 };
 export const MessagingConversation: S = {
-  name: 'Messaging: conversation (received bubble is a guess)',
-  render: () => ({ components: comps, setup: () => ({ draft: ref('') }), template: CSS + phone(`<div class="xm-conv">
-      <div class="xm-bub xm-bub--out">Are we still on for lunch tomorrow?<small>26/10/26 | 5:39 PM</small></div>
-      <div class="xm-bub xm-bub--in">Yes! 12:30 at the usual place.<small>26/10/26 | 5:41 PM</small></div>
-      <span class="xm-guess">Received bubble: unverified guess</span>
-      <div class="xm-bub xm-bub--out">Great, see you there<small>26/10/26 | 5:42 PM</small></div></div>
+  name: 'Messaging: conversation (n9-sip-conversation.png)',
+  parameters: { docs: { description: { story: 'As captured on the N9: received messages cyan on the right, what you sent white on the left, the time (or the status, e.g. "Offline") small inside the bubble; a light header with the "Messages" back button, the name and the squircle picture; the composer is the service badge and "Write your message here".' } } },
+  render: () => ({ components: comps, setup: () => ({ draft: ref('') }), template: CSS + phone(`<div class="xm-ch"><button type="button" class="xm-back hd-sqf">Messages</button><span class="xm-ch__name">Anna Virtanen</span><HdSquircle :size="36" color="linear-gradient(135deg,#7fb0d8,#333)" /></div>
+    <div class="xm-conv">
+      <div class="xm-bub xm-bub--in">Are we still on for lunch tomorrow?<small>17:39</small></div>
+      <div class="xm-bub xm-bub--out">Yes! 12:30 at the usual place.<small>17:41</small></div>
+      <div class="xm-bub xm-bub--in">Great, see you there. Bring the umbrella, it is meant to rain all afternoon.<small>17:42</small></div></div>
     <div class="xm-compose"><HdSquircle :size="22" color="#62B700" lighting="lit"><HdIcon name="message" :size="13" lit /></HdSquircle>
-      <input v-model="draft" placeholder="Write your message here" aria-label="Message" /></div>`) }),
+      <input v-model="draft" placeholder="Write your message here" aria-label="Message" /></div>`, '#DEE2E6') }),
 };
 const strip = `<div class="xm-strip" aria-label="Keyboard strip"><HdSquircle :size="28" color="#F4F4F5" lighting="lit" tone="light"><HdIcon name="attach" :size="18" style="color:#222" /></HdSquircle>
       <HdSquircle :size="28" color="#F4F4F5" lighting="lit" tone="light"><svg width="20" height="20" viewBox="0 0 24 24" aria-label="Emoticon"><circle cx="12" cy="12" r="10" fill="#F5C518" stroke="#B88A00" /><circle cx="9" cy="10" r="1.4" /><circle cx="15" cy="10" r="1.4" /><path d="M8 14a5 5 0 0 0 8 0" stroke="#222" stroke-width="1.6" fill="none" /></svg></HdSquircle>
@@ -113,18 +120,21 @@ const strip = `<div class="xm-strip" aria-label="Keyboard strip"><HdSquircle :si
 export const MessagingConversationTyping: S = {
   name: 'Messaging: conversation, typing (white strip on the keyboard)',
   parameters: { docs: { description: { story: 'On the N9 the composer stays a plain field (service icon + text). Send, the SMS counter "155(1)" and the attach / emoticon squircles live in the white strip that is part of the keyboard; with the keyboard closed there is no Send and no counter.' } } },
-  render: () => ({ components: comps, template: CSS + phone(`<div class="xm-conv">
-      <div class="xm-bub xm-bub--out">Great, see you there<small>26/10/26 | 5:42 PM</small></div></div>
+  render: () => ({ components: comps, template: CSS + phone(`<div class="xm-ch"><button type="button" class="xm-back hd-sqf">Messages</button><span class="xm-ch__name">Anna Virtanen</span><HdSquircle :size="36" color="linear-gradient(135deg,#7fb0d8,#333)" /></div>
+    <div class="xm-conv">
+      <div class="xm-bub xm-bub--out">Great, see you there<small>17:42</small></div></div>
     <div class="xm-compose"><HdSquircle :size="22" color="#62B700" lighting="lit"><HdIcon name="message" :size="13" lit /></HdSquircle>
       <span class="xm-typed"><u>Lunch</u></span></div>${strip}${keyboard}`) }),
 };
 const hw = (land: boolean, inner: string): S => ({ name: '', parameters: { docs: { description: { story: 'Pro1-X hardware keyboard out: no on-screen keys; the white keyboard strip (attach, emoticon, counter, Send) sits on its own at the bottom.' + (land ? ' Landscape 640 × 360: the Pro1-X is landscape whenever the keyboard is out.' : '') } } }, render: () => ({ components: comps, template: CSS + phone(inner, '#fff', land) }) });
-export const MessagingConversationHw: S = { ...hw(false, `<div class="xm-conv">
-      <div class="xm-bub xm-bub--out">Great, see you there<small>26/10/26 | 5:42 PM</small></div></div>
+export const MessagingConversationHw: S = { ...hw(false, `<div class="xm-ch"><button type="button" class="xm-back hd-sqf">Messages</button><span class="xm-ch__name">Anna Virtanen</span><HdSquircle :size="36" color="linear-gradient(135deg,#7fb0d8,#333)" /></div>
+    <div class="xm-conv">
+      <div class="xm-bub xm-bub--out">Great, see you there<small>17:42</small></div></div>
     <div class="xm-compose"><HdSquircle :size="22" color="#62B700" lighting="lit"><HdIcon name="message" :size="13" lit /></HdSquircle>
       <span class="xm-typed"><u>Lunch</u></span></div>${strip}`), name: 'Messaging: conversation, hardware keyboard' };
-export const MessagingConversationHwLandscape: S = { ...hw(true, `<div class="xm-conv">
-      <div class="xm-bub xm-bub--out">Great, see you there<small>26/10/26 | 5:42 PM</small></div></div>
+export const MessagingConversationHwLandscape: S = { ...hw(true, `<div class="xm-ch"><button type="button" class="xm-back hd-sqf">Messages</button><span class="xm-ch__name">Anna Virtanen</span><HdSquircle :size="36" color="linear-gradient(135deg,#7fb0d8,#333)" /></div>
+    <div class="xm-conv">
+      <div class="xm-bub xm-bub--out">Great, see you there<small>17:42</small></div></div>
     <div class="xm-compose"><HdSquircle :size="22" color="#62B700" lighting="lit"><HdIcon name="message" :size="13" lit /></HdSquircle>
       <span class="xm-typed"><u>Lunch</u></span></div>${strip}`), name: 'Messaging: conversation, hardware keyboard (landscape)' };
 export const MessagingComposeHw: S = { ...hw(false, `<div class="xm-sheet"><button type="button" class="xm-cancel hd-sqf">Cancel</button><h2>New text message</h2></div>
