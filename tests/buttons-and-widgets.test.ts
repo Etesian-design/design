@@ -212,10 +212,17 @@ describe('Messaging, Accounts, Store, tabs', () => {
     expect(read('src/stories/parts/N9Keyboard.vue')).toContain('?123'); expect(m).toContain('<N9Keyboard />');
     expect(c).not.toContain('HdToolBar');
   });
-  it('conversation: cyan sent bubble with tail top-right, received bubble flagged as a guess, Send only in the keyboard strip', () => {
-    expect(m).toMatch(/\.xm-bub--out \{[^}]*border-top-right-radius: 0; background: linear-gradient\(#24AADD, #1A92C2\)/);
-    expect(m).toContain('Received bubble: unverified guess');
+  it('conversation as captured on the N9: received cyan on the right (tail top-right), sent white on the left (tail bottom-left), Send only in the keyboard strip', () => {
+    expect(m).toMatch(/\.xm-bub--in \{ align-self: flex-end;[^}]*border-top-right-radius: 0; background: linear-gradient\(#31B6D5, #08A5CD 12px\)/);
+    expect(m).toMatch(/\.xm-bub--out \{ align-self: flex-start;[^}]*border-bottom-left-radius: 0; background: linear-gradient\(#FFFAFF, #F6F6F6\)/);
+    expect(m).not.toContain('unverified guess');
     expect(m).not.toContain('<button v-if="draft"'); // Send lives in the keyboard strip, not the composer
+  });
+  it('group conversation: received on the left by the sender\'s picture, tail top-left pointing at it; sent on the right', () => {
+    expect(m).toContain("name: 'Messaging: group conversation'");
+    expect(m).toMatch(/\.xm-grow > \.xm-bub--in \{[^}]*border-top-left-radius: 0/);
+    expect(m).toMatch(/\.xm-grow > \.xm-bub--in::after \{[^}]*left: -7px/);
+    expect(m).toContain('.xm-grow--me { flex-direction: row-reverse; }');
   });
   it('page owned by another app: owner icon instead of Back', () => {
     const w = mount(HdToolBar, { props: { variant: 'dark', owner: { icon: 'wrench', label: 'Accounts' } } });
