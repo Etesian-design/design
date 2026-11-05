@@ -85,7 +85,7 @@ const wedge = (from: number, to: number) => { const p = (a: number) => `${40 + 6
     <!-- ---- 2×1 Wi-Fi / FM switch: dark lit panel with Belle's on/off switch (BelleOnOff: squircle track and knob) ---- -->
     <div v-else-if="kind === 'wifi' || kind === 'fm'" class="bw-pill">
       <span class="bw-power"><BelleOnOff :on="on" /></span>
-      <span v-if="kind === 'wifi'" class="bw-pill__side"><HdIcon name="wifi" :size="34" /><b v-if="on" class="bw-badge">4</b></span>
+      <span v-if="kind === 'wifi'" class="bw-pill__side"><HdIcon name="wifi" :size="34" /><b v-if="on" class="bw-badge hd-sqm">4</b></span>
       <span v-else class="bw-pill__freq" :class="{ on }">{{ on ? '98.40 MHz' : 'FM Radio' }}</span>
     </div>
     <!-- ---- 4×1 switches: four of Belle's metal caps (BelleCap), blue glow under the raised ones ---- -->
@@ -130,7 +130,7 @@ const wedge = (from: number, to: number) => { const p = (a: number) => `${40 + 6
           <div v-for="e in dayEvents" :key="e[0]" class="bw-agenda__row">
             <svg viewBox="0 0 24 24" width="26" height="26" style="color:#77777B"><path :d="G.people" fill="currentColor" /></svg><i class="bw-cyan" /><span><b>{{ e[0] }}</b><small>{{ e[1] }}</small></span></div>
         </div>
-        <div class="bw-agenda__foot"><span class="bw-lightpill"><HdIcon name="add" :size="18" /> Create new event</span></div>
+        <div class="bw-agenda__foot"><span class="bw-lightpill hd-sqf"><HdIcon name="add" :size="18" /> Create new event</span></div>
       </div></div>
     <!-- ---- clocks ---- -->
     <div v-else-if="kind === 'analog' || kind === 'bigclock'" class="bw-sqdial" :class="{ big: kind === 'bigclock' }">
@@ -156,7 +156,7 @@ const wedge = (from: number, to: number) => { const p = (a: number) => `${40 + 6
     </div>
     <!-- ---- Weather (4×2): grey glass, icon breaking out above, big temp, place tab, two forecast days ---- -->
     <div v-else-if="kind === 'weather'" class="bw-weather">
-      <div class="bw-glass bw-weather__body"><div class="bw-weather__now"><div class="bw-weather__t"><span>12°</span><small>14° / 6°</small></div><span class="bw-label bw-weather__place" role="button" @click.stop="emit('place')">{{ place }}</span></div>
+      <div class="bw-glass bw-weather__body"><div class="bw-weather__now"><div class="bw-weather__t"><span>12°</span><small>14° / 6°</small></div><span class="bw-label bw-weather__place hd-sqm" role="button" @click.stop="emit('place')">{{ place }}</span></div>
         <div v-for="d in [['Tue', '13° / 5°', 'rain'], ['Wed', '15° / 7°', 'sun']]" :key="d[0]" class="bw-weather__day"><svg viewBox="0 0 40 40" width="40" height="40"><use :href="`#bw-wx-${d[2]}`" /></svg><span>{{ d[1] }}</span><span>{{ d[0] }}</span></div></div>
       <svg class="bw-weather__icon" viewBox="0 0 40 40" width="84" height="84"><use href="#bw-wx-cloudsun" /></svg>
       <svg width="0" height="0" style="position:absolute"><defs>
@@ -178,7 +178,7 @@ const wedge = (from: number, to: number) => { const p = (a: number) => `${40 + 6
          title on the right above prev / bigger play / next in a recessed groove (squircles by our rule) -->
     <!-- Mail (Belle Mail widget 4.5): the account and unread count in the blue header, then up to 20 mails that scroll -->
     <div v-else-if="kind === 'mail'" class="bw-mail">
-      <div class="bw-mail__head"><span>anna@example.org</span><b class="bw-mail__count">{{ MAILS.filter((m) => m[3]).length }}</b></div>
+      <div class="bw-mail__head"><span>anna@example.org</span><b class="bw-mail__count hd-sqm">{{ MAILS.filter((m) => m[3]).length }}</b></div>
       <div class="bw-mail__body bw-scroll" tabindex="0" aria-label="Mails"><div v-for="m in MAILS" :key="m[1]" class="bw-mail__row"><i class="bw-mail__dot" :class="{ read: !m[3] }" /><span><b>{{ m[0] }}</b><small>{{ m[1] }}</small></span><time>{{ m[2] }}</time></div></div>
     </div>
     <!-- Latest mail (Belle stackemail): one mail at a time; ▲ ▼ step through, disabled at the ends -->
@@ -287,7 +287,8 @@ const wedge = (from: number, to: number) => { const p = (a: number) => `${40 + 6
 .bw-agenda__row .bw-cyan { width: 4px; height: 70%; }
 .bw-agenda__row span { display: flex; flex-direction: column; min-width: 0; } .bw-agenda__row b { font-weight: 400; font-size: 17px; } .bw-agenda__row small { font-size: 15px; color: #6E6E73; }
 .bw-agenda__foot { padding: 10px 0; display: grid; place-items: center; }
-.bw-lightpill { display: inline-flex; align-items: center; gap: 8px; height: 36px; padding: 0 22px; border-radius: 18px; border: 1px solid #B5B5B8; background: linear-gradient(#F6F6F7, #D8D8DB); font-size: 16px; }
+/* a button like any other: squircle-half ends (checked on the 701, 2026-11-05) */
+.bw-lightpill { display: inline-flex; align-items: center; gap: 8px; height: 36px; padding: 0 22px; font-size: 16px; --hd-sqf-h: 36px; --hd-sqf-edge: #B5B5B8; --hd-sqf-fill: linear-gradient(#F6F6F7, #D8D8DB); border: 0; border-radius: 0; background: none; }
 /* square dial 120 (2×2) / 220 (4×3) */
 .bw--analog, .bw--bigclock, .bw--gearclock { display: grid; place-items: center; }
 .bw-sqdial, .bw-gear { position: relative; width: 120px !important; height: 120px !important; }

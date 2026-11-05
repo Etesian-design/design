@@ -632,7 +632,8 @@ body.hd-quasar.body--dark, .hd-quasar .q-dark, .hd-quasar.q-dark { color: var(--
 .hd-quasar .q-bottom-sheet .q-card__section { color: var(--hd-c-fg-secondary); font-size: var(--hd-font-size-small); }
 .hd-quasar .q-bottom-sheet .q-item { color: var(--hd-c-fg); min-height: var(--hd-size-list-item-small); }
 .hd-quasar .q-bottom-sheet .q-item__label, .hd-quasar .q-bottom-sheet .q-item__section { font: var(--hd-font-weight-light) var(--hd-font-size-large)/1.2 var(--hd-font-family-light); }
-.hd-quasar .q-bottom-sheet__item { border-radius: var(--hd-radius-control); }
+/* the grid tiles' highlight is a squircle (.hd-sqh rules in base.css); list rows are square and full width, as on the N9 */
+.hd-quasar .q-bottom-sheet .q-item { border-radius: 0; }
 .hd-quasar .q-bottom-sheet__avatar { background-color: var(--hd-accent); }
 .hd-quasar .q-bottom-sheet--grid .q-bottom-sheet__item { font-size: var(--hd-font-size-xsmall); }
 
