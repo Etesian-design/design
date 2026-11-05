@@ -1,7 +1,7 @@
 # Etesian Design Language
 
 Etesian is one calm, gesture-first interface for every screen: the **KDE Plasma desktop**, **phones running
-LineageOS** and the **web**. Its influence is the Nokia N9's Swipe UI, re-envisioned for how we use our screens today.
+LineageOS** and the **web**, with **S60** planned later. Its influence is the Nokia N9's Swipe UI, re-envisioned for how we use our screens today. It is not a copy of the N9.
 
 You move by swiping from the edges, never hunting for a Home button. What's new waits in Events, not in a dozen
 badges. Content fills the screen; controls step back until you need them.
