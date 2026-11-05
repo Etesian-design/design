@@ -54,14 +54,14 @@ function key(e: KeyboardEvent, col: 'h' | 'm') {
           class="hd-timepicker__item" :class="{ 'is-sel': r.o === 0 }" :style="{ opacity: r.o === 0 ? 1 : Math.abs(r.o) === 1 ? 0.5 : 0.22 }"
           @click="r.o && (col === 'h' ? setHourIndex(hourIndex + r.o) : setMinuteIndex(minuteIndex + r.o))">{{ pad(r.v, col === 'h') }}</button>
       </div>
-      <div v-if="!hour24" class="hd-timepicker__ampm hd-btn-group-lit" role="radiogroup" aria-label="AM or PM">
+      <div v-if="!hour24" class="hd-timepicker__ampm hd-btn-group-lit hd-vertical" role="radiogroup" aria-label="AM or PM">
         <button type="button" role="radio" class="hd-timepicker__ap hd-focusable" :class="{ 'is-on': !pm }" :aria-checked="!pm ? 'true' : 'false'" @click="setPm(false)">AM</button>
         <button type="button" role="radio" class="hd-timepicker__ap hd-focusable" :class="{ 'is-on': pm }" :aria-checked="pm ? 'true' : 'false'" @click="setPm(true)">PM</button>
       </div>
     </div>
     <footer class="hd-timepicker__buttons">
-      <button type="button" class="hd-dark-btn hd-focusable" @click="emit('accept', value)">{{ acceptLabel }}</button>
-      <button type="button" class="hd-dark-btn hd-focusable" @click="emit('cancel')">{{ cancelLabel }}</button>
+      <button type="button" class="hd-dark-btn hd-sqf hd-focusable" @click="emit('accept', value)">{{ acceptLabel }}</button>
+      <button type="button" class="hd-dark-btn hd-sqf hd-focusable" @click="emit('cancel')">{{ cancelLabel }}</button>
     </footer>
   </section>
 </template>

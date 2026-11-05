@@ -68,7 +68,7 @@ const apps: [string, string, string][] = [['Phone', 'phone', '#62B700'], ['Messa
 <template>
   <div class="p2 hd-theme-dark" :class="{ 'p2--land': land }" :data-state="state">
     <!-- status bar: square, full width -->
-    <span class="p2-tags" :class="{ 'p2-tags--banner': is('banner') }"><span class="p2__status" :class="`is-${STATUS[state][0]}`" :title="STATUS[state][1]">{{ STATUS_LABEL[STATUS[state][0]] }}</span><span v-if="info.extra" class="p2-extra" :title="info.extra">Optional · off by default</span></span>
+    <span class="p2-tags" :class="{ 'p2-tags--banner': is('banner') }"><span class="p2__status hd-sqm" :class="`is-${STATUS[state][0]}`" :title="STATUS[state][1]">{{ STATUS_LABEL[STATUS[state][0]] }}</span><span v-if="info.extra" class="p2-extra hd-sqm" :title="info.extra">Optional · off by default</span></span>
     <div class="p2-sb" :class="{ 'p2-sb--clear': is('lock-music', 'lock-glance', 'medical', 'medical-bar', 'medical-card', 'medical-a1', 'medical-a2', 'medical-a3') }">
       <HdIcon name="battery" :size="15" /><span class="p2-sb__sig"><i v-for="i in 4" :key="i" :style="{ height: `${3 + i * 2}px` }" /></span><HdIcon name="wifi" :size="13" />
       <template v-for="g in statusGlyphs" :key="g">
@@ -155,7 +155,7 @@ const apps: [string, string, string][] = [['Phone', 'phone', '#62B700'], ['Messa
             <span v-else class="p2-field"><u>Running 5 min late</u></span></div>
           <div class="p2-kstrip" aria-label="Keyboard strip"><HdSquircle :size="28" color="#F4F4F5" lighting="lit" tone="light"><HdIcon name="smile" :size="18" style="color:#222" /></HdSquircle>
             <span v-if="is('dictionary-hwkb')" class="p2-sugg" aria-label="Suggestions (proposal)"><b>late</b><span>list</span><span>lose</span></span>
-            <span class="p2-kstrip__sp" /><span class="p2-count">137<small>(1)</small></span><button type="button" class="p2-send">Send</button></div>
+            <span class="p2-kstrip__sp" /><span class="p2-count">137<small>(1)</small></span><button type="button" class="p2-send hd-sqf">Send</button></div>
           <N9Keyboard v-if="!hw" /></div>
         <div v-if="is('dictionary-list')" class="p2-sel p2-wl" role="dialog" aria-label="Candidates"><div v-for="(c, i) in ['late', 'list', 'lose', 'lste']" :key="c" class="p2-wl__r" :class="{ on: i === 0 }">{{ c }}</div></div>
       </template>
@@ -367,7 +367,7 @@ const apps: [string, string, string][] = [['Phone', 'phone', '#62B700'], ['Messa
 .p2-reply__q { padding: 10px 12px 6px; font-size: 14px; color: #555; } .p2-reply__f { display: flex; align-items: center; gap: 10px; padding: 0 10px 8px; }
 .p2-field { flex: 1; padding: 6px 2px; font-size: 16px; }
 .p2-kstrip { display: flex; align-items: center; gap: 8px; height: 40px; padding: 0 10px; background: #fff; border-top: 1px solid #E2E2E4; } .p2-kstrip__sp { flex: 1; } .p2-count { font: 700 16px/1 var(--hd-font-family-base); color: #444; } .p2-count small { font-weight: 400; font-size: 14px; }
-.p2-send { height: 27px; padding: 0 12px; border: 1px solid #393839; border-radius: 6px; background: linear-gradient(#1C1C1C, #101010 50%, #080808); color: #fff; font: 700 15px/1 var(--hd-font-family-base); }
+.p2-send { height: 27px; padding: 0 12px; --hd-sqf-h: 27px; --hd-sqf-edge: #393839; --hd-sqf-fill: linear-gradient(#1C1C1C, #101010 50%, #080808); border: 0; background: none; color: #fff; font: 700 15px/1 var(--hd-font-family-base); }
 /* lock (n9-lock-music.png) */
 .p2-lock { position: absolute; inset: 0; display: flex; flex-direction: column; padding: 30px 12px 10px; background: radial-gradient(circle at 30% 30%, #3c6e78, #12262c 70%); }
 .p2-lock__song { align-self: flex-end; font: 700 38px/1.1 var(--hd-font-family-base); } .p2-lock__artist { align-self: flex-end; font-size: 17px; }

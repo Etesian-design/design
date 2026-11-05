@@ -38,6 +38,11 @@ curvature changes continuously and its sides bulge outward).
   and buttons have squircle ends: a squircle as tall as the field, cut in half and pulled apart, joined by straight
   lines (blanco `meegotouch-textedit-background` and `meegotouch-button-background`, the same n = 2.8 curve as the icons). Taller fields keep those corners.
   CSS: `.hd-sqf`.
+- **Badges, count bubbles, chips and tags** have the same squircle-half ends as buttons (a single-digit count is a
+  whole squircle). Never a pill. CSS: `.hd-sqm` masks the element itself with the two end caps (any height); an
+  element with a 1px edge uses `.hd-sqf`, or a rim plus a face layer, so the edge follows the curve.
+- Segmented controls (button groups, toggles, segmented tabs, QTabs outside a bar) have the text field shape:
+  squircle-half caps at start and end, flat between. A bottom bar's selected tab is the full, square cell (N9).
 - Large surfaces: cards, sheets, banners use `--hd-radius-card` (EXT) or are square-edged (N9 pages).
 - Task cards (open applications) are screen-shaped rectangles with tiny radii (N9).
 
@@ -48,3 +53,9 @@ hover highlight behind toolbar and tab icons are squircles too. Use `.hd-sq` (ba
 its rectangular hit area, `::before` draws `--hd-sq-fill` and `::after` the border / focus ring
 (`--hd-sq-ring`), both clipped to the n = 2.8 squircle, sized `--hd-sq-size` (capped at the element height).
 The Quasar theme does the same for flat round `q-btn` focus helpers and toolbar `q-tab` highlights.
+
+## Checking
+
+`npm run shape-audit` (Storybook on port 6110) opens every story in Firefox and lists any control drawn as a pill
+or a rounded rectangle instead of a squircle; the website has the same audit for its pages. Allowed round or pill:
+radio dots, switch tracks, progress bars, sliders, page dots; small radii: checkboxes, key caps.

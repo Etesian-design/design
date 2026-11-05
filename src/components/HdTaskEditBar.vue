@@ -12,7 +12,7 @@ defineEmits<{ done: []; closeAll: []; action: [name: string] }>();
 <template>
   <div class="hd-task-edit-bar-wrap">
     <div v-if="actions?.length" class="hd-task-edit-bar__actions" role="toolbar" aria-label="Actions for the centred app">
-      <button v-for="a in actions" :key="a" type="button" class="hd-task-edit-bar__act hd-focusable" @click="$emit('action', a)">{{ a }}</button>
+      <button v-for="a in actions" :key="a" type="button" class="hd-task-edit-bar__act hd-sqf hd-focusable" @click="$emit('action', a)">{{ a }}</button>
     </div>
     <div class="hd-task-edit-bar" role="toolbar" aria-label="Open applications edit mode">
       <!-- both are the one N9 edit-bar button: HdButton dark / bar, identical size, font and rim -->
@@ -27,4 +27,6 @@ defineEmits<{ done: []; closeAll: []; action: [name: string] }>();
 /* 180×41 n9px, 8 n9px apart, centred in the 72 n9px bar (n9-grid-edit.png) */
 .hd-task-edit-bar__btn.hd-button--bar { flex: 0 1 120px; font: 700 var(--hd-font-size-button)/1 var(--hd-font-family-base); }
 .hd-task-edit-bar__act { border: 1px solid #393839; background: linear-gradient(#1C1C1C, #101010 50%, #080808); color: #fff; font-weight: 700; cursor: pointer; flex: 0 0 auto; height: 36px; padding: 0 10px; border-radius: calc(36px * .21); font-size: .875rem; }
+/* N9: squircle-half ends with the rim following the curve (.hd-sqf) */
+.hd-task-edit-bar__act.hd-sqf { --hd-sqf-h: 36px; --hd-sqf-edge: #393839; --hd-sqf-fill: linear-gradient(#1C1C1C, #101010 50%, #080808); border: 0; border-radius: 0; background: none; }
 </style>
