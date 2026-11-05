@@ -73,3 +73,21 @@ describe('font alternatives', () => {
     expect(fontVars(undefined)).toEqual({});
   });
 });
+
+// Nokia Pure is never bundled, so the Font alternatives story shows it as a picture of the real font, not as live text
+// that would quietly fall back to another typeface.
+describe('Nokia Pure specimen', () => {
+  const story = readFileSync('src/stories/typography/FontAlternatives.stories.ts', 'utf8');
+  it('is a picture in both colour modes', () => {
+    for (const m of ['hybrid', 'dark']) {
+      const png = readFileSync(`src/assets/nokia-pure-specimen-${m}.png`);
+      expect(png.subarray(1, 4).toString()).toBe('PNG');
+      expect(story).toContain(`assets/nokia-pure-specimen-${m}.png`);
+    }
+    expect(story).toMatch(/<img v-if="f.key === 'nokia-pure'"/);
+    expect(story).toMatch(/<div v-else style="display:flex/);
+  });
+  it('ships no font file', () => {
+    expect(story).not.toMatch(/\.ttf|\.otf|\.woff/);
+  });
+});
