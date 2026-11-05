@@ -1,0 +1,90 @@
+# Releases, the same way as cloud-companion. Every push to main: the commit messages are checked (Conventional Commits),
+# the tests run, then go-semantic-release reads the commits since the last tag (feat = minor, fix = patch, breaking =
+# major; below 1.0 a breaking change is a minor bump; docs, chore, ci, test, ... release nothing), makes the tag and
+# the GitHub release with generated notes, and only when it made a version are the packages published at it.
+# Nobody tags by hand.
+name: Release
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# one release run at a time, in push order: each works out its version from the tags the previous one made
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  commits:
+    name: Commit messages are Conventional Commits (the release reads them)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm install --no-audit --no-fund
+        working-directory: .github/commitlint
+      - name: lint the commits of the pull request / of the push
+        env:
+          EVENT: ${{ github.event_name }}
+          BASE: ${{ github.event.pull_request.base.sha }}
+          BEFORE: ${{ github.event.before }}
+          SHA: ${{ github.sha }}
+        run: |
+          if [ "$EVENT" = pull_request ]; then from=$BASE; else from=$BEFORE; fi
+          case "$from" in ''|0000000000000000000000000000000000000000) from="$SHA~1" ;; esac
+          cd .github/commitlint && npx commitlint --config "$GITHUB_WORKSPACE/.github/commitlint/commitlint.config.js" --cwd "$GITHUB_WORKSPACE" --from "$from" --to "$SHA" --verbose
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm ci
+      - run: npm test
+
+  release:
+    needs: [commits, test]
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    outputs:
+      version: ${{ steps.semrel.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # go-semantic-release needs the full tag history, not a shallow clone
+      - name: The semantic-release binary, v2.31.0, checked against its published sha256
+        run: |
+          curl -fsSL -o "$RUNNER_TEMP/semantic-release" https://github.com/go-semantic-release/semantic-release/releases/download/v2.31.0/semantic-release_v2.31.0_linux_amd64
+          echo "b8f518b1aeb1d1742f4e6e91a179b707cea4309a64fe3854f465bf724f04f6d3  $RUNNER_TEMP/semantic-release" | sha256sum -c -
+          chmod +x "$RUNNER_TEMP/semantic-release"
+      - name: Next version, tag and GitHub release
+        id: semrel
+        uses: go-semantic-release/action@2e9dc4247a6004f8377781bef4cb9dad273a741f   # v1
+        with:
+          allow-initial-development-versions: 'true'
+          bin: ${{ runner.temp }}/semantic-release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  packages:
+    needs: release
+    if: needs.release.outputs.version != ''
+    permissions:
+      contents: read
+      packages: write
+    uses: ./.github/workflows/packages.yml
+    with:
+      version: ${{ needs.release.outputs.version }}
