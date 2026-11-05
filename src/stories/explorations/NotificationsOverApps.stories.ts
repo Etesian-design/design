@@ -10,22 +10,23 @@ const meta: Meta = {
   parameters: { layout: 'centered', docs: { description: { component:
     'How a notification shows while an app is open. **Discreet (N9)**, measured on the N9: the app\'s icon appears in the status bar next to the time, ' +
     'then one line slides down over the status bar and scrolls until the whole text has been seen; the item is in Events afterwards. System notices ' +
-    '(Charging, Unplug the charger) are a small inset banner. **Strip (Belle)**: a dark strip across the full width, its transparency a setting (on ' +
-    'Belle it came from the theme). **Card**: the lock screen card under the status bar. **Colour**: a bubble in the app\'s colour with squircle-half ' +
-    'ends. All slide in from the top. The lock screen keeps its cards whatever is chosen. A notification for the conversation that is open shows nothing.' } } },
+    '(Charging, Unplug the charger) are a small inset banner. **Strip (Belle)**: a dark strip across the full width, over the status bar, its transparency a setting (on ' +
+    'Belle it came from the theme). **Card**: the lock screen card under the status bar. **Colour**: a bubble with squircle-half ends in the app\'s colour, Android\'s system accent or a colour you pick. ' +
+    '**Android**: the stock pop-up. The default is Discreet (N9). All slide in from the top. The lock screen keeps its cards whatever is chosen. A notification for the conversation that is open shows nothing.' } } },
 };
 export default meta;
 
-type Args = { look: 'n9' | 'belle' | 'card' | 'colour'; shade: 'light' | 'medium' | 'dark' | 'solid'; kind: 'message' | 'system' };
+type Args = { look: 'n9' | 'belle' | 'card' | 'colour' | 'android'; shade: 'light' | 'medium' | 'dark' | 'solid'; colour: string; kind: 'message' | 'system' };
 export const TryIt: StoryObj<Args> = {
   name: 'Try it',
-  args: { look: 'n9', shade: 'medium', kind: 'message' },
+  args: { look: 'n9', shade: 'medium', colour: 'app', kind: 'message' },
   argTypes: {
-    look: { name: 'Style', control: { type: 'inline-radio' }, options: ['n9', 'belle', 'card', 'colour'] },
+    look: { name: 'Style', control: { type: 'inline-radio' }, options: ['n9', 'belle', 'card', 'colour', 'android'] },
     shade: { name: 'Strip transparency (Belle)', control: { type: 'inline-radio' }, options: ['light', 'medium', 'dark', 'solid'] },
+    colour: { name: 'Bubble colour (Colour)', control: { type: 'inline-radio' }, options: ['app', 'system', '#2A86D8', '#3FA34D', '#E8742A', '#D63A7A', '#7B4FD0'] },
     kind: { name: 'Notification', control: { type: 'inline-radio' }, options: ['message', 'system'] },
   },
-  render: (args) => ({ components: { NotifOver }, setup: () => ({ args }), template: '<NotifOver :look="args.look" :shade="args.shade" :kind="args.kind" />' }),
+  render: (args) => ({ components: { NotifOver }, setup: () => ({ args }), template: '<NotifOver :look="args.look" :shade="args.shade" :colour="args.colour" :kind="args.kind" />' }),
 };
 
 export const SideBySide: StoryObj = {

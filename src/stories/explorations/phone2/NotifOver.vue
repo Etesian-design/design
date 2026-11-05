@@ -5,8 +5,9 @@
  * - n9: as measured on the N9 (2026-11-05): the app's icon appears in the status bar next to the time, then ONE line
  *   slides down over the status bar and scrolls until the whole text has been seen, then slides away; the item is in
  *   Events afterwards. System notices (Charging…) are an inset dark banner with a thin light edge under the status bar.
- * - belle: as Symbian Belle: a black strip across the full width at the top; its transparency follows a setting.
+ * - belle: as Symbian Belle: a black strip across the full width at the top, over the status bar; its transparency is a setting.
  * - card: the lock-screen card floating under the status bar (what the ROM has today).
+ * - android: Android's own heads-up (with its buttons), for whoever wants it.
  * - colour: a bubble in the app's colour with squircle-half ends (n = 2.8), the sender's picture a squircle.
  */
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
@@ -14,10 +15,15 @@ import HdIcon from '../../../components/HdIcon.vue';
 import HdSquircle from '../../../components/HdSquircle.vue';
 import HdLockScreenNotificationCard from '../../../components/HdLockScreenNotificationCard.vue';
 
-export type OverStyle = 'n9' | 'belle' | 'card' | 'colour';
+export type OverStyle = 'n9' | 'belle' | 'card' | 'colour' | 'android';
 export type BelleShade = 'light' | 'medium' | 'dark' | 'solid';
-const props = withDefaults(defineProps<{ look?: OverStyle; shade?: BelleShade; kind?: 'message' | 'system'; loop?: boolean; replay?: number }>(),
-  { look: 'n9', shade: 'medium', kind: 'message', loop: true, replay: 0 });
+/** Colour style: the app's own colour (default), Android's system accent, or a fixed colour (any CSS colour). */
+export type BubbleColour = 'app' | 'system' | string;
+const props = withDefaults(defineProps<{ look?: OverStyle; shade?: BelleShade; colour?: BubbleColour; kind?: 'message' | 'system'; loop?: boolean; replay?: number }>(),
+  { look: 'n9', shade: 'medium', colour: 'app', kind: 'message', loop: true, replay: 0 });
+/** Android's system accent (Material You), as a stand-in colour here */
+const SYSTEM_ACCENT = '#6750A4';
+const bubble = computed(() => props.colour === 'app' ? msg.value.accent : props.colour === 'system' ? SYSTEM_ACCENT : props.colour);
 
 const SHADE: Record<BelleShade, number> = { light: 0.55, medium: 0.72, dark: 0.86, solid: 1 };
 const msg = computed(() => props.kind === 'system'
@@ -56,7 +62,7 @@ function run() {
 const scrollMs = computed(() => Math.round((scroll.value / 60) * 1000));
 onMounted(run);
 onBeforeUnmount(clear);
-watch(() => [props.look, props.kind, props.shade, props.replay], run);
+watch(() => [props.look, props.kind, props.replay], run);
 const shown = computed(() => phase.value === 'in');
 </script>
 
@@ -100,9 +106,17 @@ const shown = computed(() => phase.value === 'in');
         <HdLockScreenNotificationCard :message="msg.text || msg.from" :source="msg.text ? msg.from : 'System'" time="14:20" :icon="msg.icon" :accent="msg.accent" />
       </div>
     </Transition>
+    <!-- Android: the stock heads-up -->
+    <Transition name="no-drop">
+      <div v-if="look === 'android' && shown" class="no-and" role="status">
+        <div class="no-and__top"><HdIcon :name="msg.icon" :size="14" /><span>{{ msg.text ? 'Messages' : 'System' }} · now</span></div>
+        <b>{{ msg.from }}</b><span v-if="msg.text">{{ msg.text }}</span>
+        <div v-if="msg.text" class="no-and__acts"><span>Reply</span><span>Mark as read</span></div>
+      </div>
+    </Transition>
     <!-- Colour: a squircle bubble in the app's colour -->
     <Transition name="no-drop">
-      <div v-if="look === 'colour' && shown" class="no-col" role="status" :style="{ '--no-acc': msg.accent }">
+      <div v-if="look === 'colour' && shown" class="no-col" role="status" :style="{ '--no-acc': bubble }">
         <HdSquircle :size="40" :color="'rgba(255,255,255,.22)'" lighting="flat"><HdIcon :name="msg.icon" :size="22" /></HdSquircle>
         <span class="no-col__t"><b>{{ msg.from }}</b><span v-if="msg.text">{{ msg.text }}</span></span>
       </div>
@@ -136,6 +150,12 @@ const shown = computed(() => phase.value === 'in');
 /* Card */
 .no-card { position: absolute; z-index: 8; top: 30px; left: 12px; right: 12px; }
 .no-card .hd-lock-card { background: rgba(12, 15, 18, .92); box-shadow: 0 6px 18px rgba(0,0,0,.45); -webkit-backdrop-filter: none; backdrop-filter: none; }
+/* Android heads-up (stock look: a card) */
+.no-and { position: absolute; z-index: 8; top: 30px; left: 8px; right: 8px; display: flex; flex-direction: column; gap: 2px; padding: 12px 16px; border-radius: var(--hd-radius-card, 8px);
+  background: #F3EDF7; color: #1D1B20; font-size: 14px; box-shadow: 0 4px 14px rgba(0,0,0,.35); }
+.no-and__top { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #49454F; }
+.no-and span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.no-and__acts { display: flex; gap: 20px; margin-top: 6px; color: #6750A4; font-weight: 700; font-size: 13px; }
 /* Colour: squircle-half ends (the caps scale with the height) */
 .no-col { position: absolute; z-index: 8; top: 30px; left: 10px; right: 10px; height: 64px; display: flex; align-items: center; gap: 12px; padding: 0 22px 0 14px; color: #fff;
   background: linear-gradient(color-mix(in srgb, var(--no-acc) 82%, #fff), var(--no-acc) 50%, color-mix(in srgb, var(--no-acc) 82%, #000));
