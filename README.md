@@ -5,7 +5,7 @@
 <h1 align="center">Etesian Design</h1>
 
 <p align="center">
-  <b>The Nokia N9's design language, written down and rebuilt as Vue 3 components.</b><br>
+  <b>Etesian's design language, written down and built as Vue 3 components.</b><br>
   Squircles, lit icons, big plain type and content before chrome, for phones, desktops and the web.
 </p>
 
@@ -24,13 +24,19 @@
 
 ---
 
-The N9's interface was never documented. Its rules lived in Nokia's designers' heads and in one phone's firmware. This
-repository works them out, from the exact curve of an icon's corner to how a list scrolls, and turns them into
+This repository is the Etesian design system: the guide, the npm packages and the Storybook. Etesian is a
+cross-platform design language that re-envisions the Nokia N9's Swipe UI for today; it is not a copy of the N9. The
+guide works out its rules, from the exact curve of an icon's corner to how a list scrolls, and turns them into
 something you can build with.
 
 Everything the [Etesian phone](https://github.com/etesian-design/android_vendor_etesian), the
 [Plasma desktop](https://github.com/etesian-design/plasma) and the [website](https://etesian-design.com) look like comes
 from here.
+
+**Related projects.** Etesian runs on an [Android ROM](https://github.com/etesian-design/android_vendor_etesian) for any
+LineageOS phone (the F(x)tec Pro1-X is only the reference device), on [KDE Plasma](https://github.com/etesian-design/plasma)
+and on the [web](https://github.com/etesian-design/website), with S60 planned later. [Cloud Companion](https://github.com/Phorepoc/cloud-companion), a
+Phorepoc project for any device, wears this look on its web desktop.
 
 ## What's inside
 
