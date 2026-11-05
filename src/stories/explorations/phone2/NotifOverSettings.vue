@@ -2,16 +2,24 @@
 /** Settings → Events and notifications → Over apps: the style of notifications over apps, a live preview on top
  *  (the page's preview row), the Belle strip's transparency only while Belle is chosen. */
 import { ref } from 'vue';
-import NotifOver, { type OverStyle, type BelleShade } from './NotifOver.vue';
+import NotifOver, { type OverStyle, type BelleShade, type BubbleColour } from './NotifOver.vue';
 
 const look = ref<OverStyle>('n9');
 const shade = ref<BelleShade>('medium');
 const kind = ref<'message' | 'system'>('message');
+const colour = ref<BubbleColour>('app');
+const COLOURS: { id: BubbleColour; title: string; sum?: string; dot?: string }[] = [
+  { id: 'app', title: 'App’s colour', sum: 'Each app’s own colour' },
+  { id: 'system', title: 'System accent', sum: 'Android’s colour from your wallpaper', dot: '#6750A4' },
+  { id: '#2A86D8', title: 'Blue', dot: '#2A86D8' }, { id: '#3FA34D', title: 'Green', dot: '#3FA34D' },
+  { id: '#E8742A', title: 'Orange', dot: '#E8742A' }, { id: '#D63A7A', title: 'Pink', dot: '#D63A7A' }, { id: '#7B4FD0', title: 'Purple', dot: '#7B4FD0' },
+];
 const STYLES: { id: OverStyle; title: string; sum: string }[] = [
   { id: 'n9', title: 'Discreet (N9)', sum: 'One line over the status bar; system notices as a small banner' },
   { id: 'belle', title: 'Strip (Belle)', sum: 'A dark strip across the top of the screen' },
   { id: 'card', title: 'Card', sum: 'The lock screen card under the status bar' },
   { id: 'colour', title: 'Colour', sum: 'A bubble in the app’s colour' },
+  { id: 'android', title: 'Android', sum: 'Android’s own pop-up, with its buttons' },
 ];
 const SHADES: { id: BelleShade; title: string }[] = [
   { id: 'light', title: 'Light' }, { id: 'medium', title: 'Medium' }, { id: 'dark', title: 'Dark' }, { id: 'solid', title: 'Solid' },
@@ -24,7 +32,7 @@ const SHADES: { id: BelleShade; title: string }[] = [
     <div class="nos-page">
       <div class="nos-head">Events and notifications</div>
       <div class="nos-prev">
-        <div class="nos-prev__phone"><NotifOver :look="look" :shade="shade" :kind="kind" /></div>
+        <div class="nos-prev__phone"><NotifOver :look="look" :shade="shade" :colour="colour" :kind="kind" /></div>
         <div class="nos-prev__kind" role="radiogroup" aria-label="Preview">
           <button v-for="k in (['message', 'system'] as const)" :key="k" type="button" role="radio" :aria-checked="kind === k" class="nos-chip hd-sqm" :class="{ 'is-on': kind === k }" @click="kind = k">{{ k === 'message' ? 'Message' : 'System' }}</button>
         </div>
@@ -42,6 +50,16 @@ const SHADES: { id: BelleShade; title: string }[] = [
           <label v-for="s in SHADES" :key="s.id" class="nos-row nos-row--short">
             <span class="nos-row__t"><span>{{ s.title }}</span></span>
             <input v-model="shade" type="radio" name="nos-shade" :value="s.id" class="nos-radio" />
+          </label>
+        </div>
+      </template>
+      <template v-if="look === 'colour'">
+        <div class="nos-cat">Bubble colour</div>
+        <div role="radiogroup" aria-label="Bubble colour">
+          <label v-for="c in COLOURS" :key="c.id" class="nos-row" :class="{ 'nos-row--short': !c.sum }">
+            <span v-if="c.dot" class="nos-dot hd-sqm" :style="{ background: c.dot }" />
+            <span class="nos-row__t"><span>{{ c.title }}</span><small v-if="c.sum">{{ c.sum }}</small></span>
+            <input v-model="colour" type="radio" name="nos-colour" :value="c.id" class="nos-radio" />
           </label>
         </div>
       </template>
@@ -66,5 +84,6 @@ const SHADES: { id: BelleShade; title: string }[] = [
 .nos-row--short { min-height: 48px; }
 .nos-row__t { flex: 1; display: flex; flex-direction: column; font-size: 18px; } .nos-row__t small { font-size: 14px; color: #8C8C8C; }
 .nos-radio { width: 22px; height: 22px; accent-color: var(--hd-accent, #09A7CC); }
+.nos-dot { width: 24px; height: 24px; flex: none; }
 .nos-note { margin: 12px 16px 24px; color: #8C8C8C; font-size: 14px; }
 </style>
