@@ -205,7 +205,7 @@ const nowPlaying = (cover: string, title: string, artist: string, album: string,
     ${cover}
     <div class="row items-baseline no-wrap q-px-md" style="margin-top:14px"><div class="hd-q-t ellipsis" style="flex:1;font-size:1.0625rem">${title}</div><div class="hd-q-sub" style="margin-left:12px">${pos}</div></div>
     <div class="row items-center no-wrap q-px-md" style="margin-top:12px"><div style="flex:1;min-width:0"><div class="hd-q-sub ellipsis" style="font-size:1rem;line-height:1.6">${artist}</div><div class="hd-q-sub ellipsis" style="font-size:1rem;line-height:1.6">${album}</div></div>
-      <div aria-label="More about this song" role="button" style="width:26px;height:26px;border-radius:50%;background:#fff;color:#000;display:grid;place-items:center;font:900 14px/1 var(--hd-font-family-base);letter-spacing:1px">•••</div></div>
+      <div aria-label="More about this song" role="button" class="hd-sqm" style="width:26px;height:26px;background:#fff;color:#000;display:grid;place-items:center;font:900 14px/1 var(--hd-font-family-base);letter-spacing:1px">•••</div></div>
     <div class="row justify-between items-center q-px-md" style="margin-top:16px"><q-btn flat dense round :icon="ic('first')" aria-label="Previous" /><q-btn flat dense round :icon="ic('pause')" aria-label="Pause" /><q-btn flat dense round :icon="ic('last')" aria-label="Next" /></div>
     <div class="q-px-md" style="margin-top:22px"><div style="position:relative;height:5px;background:#3a3a3c;border-radius:3px"><div style="position:absolute;inset:0 ${100 - pct}% 0 0;background:${MAGENTA};border-radius:3px"></div><div style="position:absolute;top:0;left:calc(${pct}% - 2px);width:4px;height:5px;background:#fff"></div></div>
       <div class="row justify-between hd-q-sub" style="margin-top:8px;font-size:.9375rem"><span>${at}</span><span>${len}</span></div></div>
@@ -218,7 +218,7 @@ export const MusicApp = qs(CSS + `<component is="style">
   phone(`<q-page-container><q-page class="hd-q-music-main">
     <div style="display:grid;grid-template-columns:repeat(3,120px);grid-template-rows:repeat(3,120px)">
       <div style="grid-column:1/3;grid-row:1/3;position:relative">${genArt('In Search Of Sunrise 5', '#FF5A00', 240)}
-        <div style="position:absolute;left:4px;right:4px;bottom:4px;height:17px;border-radius:9px;background:${MAGENTA};color:#fff;display:flex;align-items:center;gap:8px;padding:0 10px;font:700 .75rem/1 var(--hd-font-family-base)"><span>▶</span><span class="ellipsis">In Search Of Sunrise 5 (CD 1)</span></div></div>
+        <div class="hd-sqm" style="position:absolute;left:4px;right:4px;bottom:4px;height:17px;background:${MAGENTA};color:#fff;display:flex;align-items:center;gap:8px;padding:0 10px;font:700 .75rem/1 var(--hd-font-family-base)"><span>▶</span><span class="ellipsis">In Search Of Sunrise 5 (CD 1)</span></div></div>
       ${genArt('Unknown album', '#8E10C4', 120)}
       ${photoArt('#6d5a4a', '#2b211b', '120px', 'Podcast')}
       ${photoArt('#a8c84a', '#3d6b1f', '120px', 'Every Direction Is North')}${photoArt('#e0a04a', '#5a2b10', '120px', 'Rocks')}${photoArt('#f6a5d0', '#9b2f6d', '120px', 'Call On Me')}

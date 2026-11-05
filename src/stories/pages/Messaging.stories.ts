@@ -33,7 +33,7 @@ const CSS = `<component is="style">
 .xm-row { display: flex; gap: 16px; flex-wrap: wrap; align-items: flex-start; }
 /* compose */
 .xm-sheet { flex: none; height: 52px; display: flex; align-items: center; justify-content: space-between; padding: 0 12px; background: linear-gradient(#EEEDEF, #E2E0E4); border-bottom: 1px solid #C8C6CA; }
-.xm-cancel { width: 117px; height: 30px; border-radius: 8px; border: 1px solid #B5B4B8; background: linear-gradient(#FFFFFF, #ECECEE 50%, #DDDDE0); box-shadow: inset 0 1px 0 #fff; font: 700 15px/1 var(--hd-font-family-base); color: #111; }
+.xm-cancel { width: 117px; height: 30px; --hd-sqf-h: 30px; --hd-sqf-edge: #B5B4B8; --hd-sqf-fill: linear-gradient(#FFFFFF, #ECECEE 50%, #DDDDE0); border: 0; background: none; font: 700 15px/1 var(--hd-font-family-base); color: #111; }
 .xm-sheet h2 { margin: 0; font: 300 18px/1 var(--hd-font-family-light); color: #333; }
 .xm-to { flex: none; height: 46px; display: flex; align-items: center; gap: 12px; padding: 0 12px; background: #D9DFE5; font-size: 16px; color: #666; }
 .xm-chip { padding: 3px 6px; background: #1C6BC8; color: #fff; font-size: 17px; }
@@ -90,12 +90,12 @@ export const MessagingEmpty: S = {
 };
 export const MessagingCompose: S = {
   name: 'Messaging: new text message (sheet + keyboard)',
-  render: () => ({ components: comps, template: CSS + phone(`<div class="xm-sheet"><button type="button" class="xm-cancel">Cancel</button><h2>New text message</h2></div>
+  render: () => ({ components: comps, template: CSS + phone(`<div class="xm-sheet"><button type="button" class="xm-cancel hd-sqf">Cancel</button><h2>New text message</h2></div>
     <div class="xm-to">To: <span class="xm-chip">Elena Virta</span></div>
     <div class="xm-body"><u>Hello</u></div>
     <div class="xm-strip"><HdSquircle :size="28" color="#F4F4F5" lighting="lit" tone="light"><HdIcon name="attach" :size="18" style="color:#222" /></HdSquircle>
       <HdSquircle :size="28" color="#F4F4F5" lighting="lit" tone="light"><svg width="20" height="20" viewBox="0 0 24 24" aria-label="Emoticon"><circle cx="12" cy="12" r="10" fill="#F5C518" stroke="#B88A00" /><circle cx="9" cy="10" r="1.4" /><circle cx="15" cy="10" r="1.4" /><path d="M8 14a5 5 0 0 0 8 0" stroke="#222" stroke-width="1.6" fill="none" /></svg></HdSquircle>
-      <span class="xm-strip__sp"></span><span class="xm-count">155<small>(1)</small></span><button type="button" class="xm-send">Send</button></div>${keyboard}`) }),
+      <span class="xm-strip__sp"></span><span class="xm-count">155<small>(1)</small></span><button type="button" class="xm-send hd-sqm">Send</button></div>${keyboard}`) }),
 };
 export const MessagingConversation: S = {
   name: 'Messaging: conversation (received bubble is a guess)',
@@ -109,7 +109,7 @@ export const MessagingConversation: S = {
 };
 const strip = `<div class="xm-strip" aria-label="Keyboard strip"><HdSquircle :size="28" color="#F4F4F5" lighting="lit" tone="light"><HdIcon name="attach" :size="18" style="color:#222" /></HdSquircle>
       <HdSquircle :size="28" color="#F4F4F5" lighting="lit" tone="light"><svg width="20" height="20" viewBox="0 0 24 24" aria-label="Emoticon"><circle cx="12" cy="12" r="10" fill="#F5C518" stroke="#B88A00" /><circle cx="9" cy="10" r="1.4" /><circle cx="15" cy="10" r="1.4" /><path d="M8 14a5 5 0 0 0 8 0" stroke="#222" stroke-width="1.6" fill="none" /></svg></HdSquircle>
-      <span class="xm-strip__sp"></span><span class="xm-count">151<small>(1)</small></span><button type="button" class="xm-send">Send</button></div>`;
+      <span class="xm-strip__sp"></span><span class="xm-count">151<small>(1)</small></span><button type="button" class="xm-send hd-sqm">Send</button></div>`;
 export const MessagingConversationTyping: S = {
   name: 'Messaging: conversation, typing (white strip on the keyboard)',
   parameters: { docs: { description: { story: 'On the N9 the composer stays a plain field (service icon + text). Send, the SMS counter "155(1)" and the attach / emoticon squircles live in the white strip that is part of the keyboard; with the keyboard closed there is no Send and no counter.' } } },
@@ -127,10 +127,10 @@ export const MessagingConversationHwLandscape: S = { ...hw(true, `<div class="xm
       <div class="xm-bub xm-bub--out">Great, see you there<small>26/10/26 | 5:42 PM</small></div></div>
     <div class="xm-compose"><HdSquircle :size="22" color="#62B700" lighting="lit"><HdIcon name="message" :size="13" lit /></HdSquircle>
       <span class="xm-typed"><u>Lunch</u></span></div>${strip}`), name: 'Messaging: conversation, hardware keyboard (landscape)' };
-export const MessagingComposeHw: S = { ...hw(false, `<div class="xm-sheet"><button type="button" class="xm-cancel">Cancel</button><h2>New text message</h2></div>
+export const MessagingComposeHw: S = { ...hw(false, `<div class="xm-sheet"><button type="button" class="xm-cancel hd-sqf">Cancel</button><h2>New text message</h2></div>
     <div class="xm-to">To: <span class="xm-chip">Elena Virta</span></div>
     <div class="xm-body"><u>Hello</u></div>${strip}`), name: 'Messaging: new text message, hardware keyboard' };
-export const MessagingComposeHwLandscape: S = { ...hw(true, `<div class="xm-sheet"><button type="button" class="xm-cancel">Cancel</button><h2>New text message</h2></div>
+export const MessagingComposeHwLandscape: S = { ...hw(true, `<div class="xm-sheet"><button type="button" class="xm-cancel hd-sqf">Cancel</button><h2>New text message</h2></div>
     <div class="xm-to">To: <span class="xm-chip">Elena Virta</span></div>
     <div class="xm-body"><u>Hello</u></div>${strip}`), name: 'Messaging: new text message, hardware keyboard (landscape)' };
 const svcs: [string, string, string][] = [

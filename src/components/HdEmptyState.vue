@@ -12,7 +12,7 @@ defineEmits<{ action: [label: string] }>();
   <section class="hd-empty-state">
     <p class="hd-empty-state__text">{{ text }}</p>
     <div v-if="actions.length || $slots.default" class="hd-empty-state__actions">
-      <slot><button v-for="a in actions" :key="a" type="button" class="hd-empty-state__btn hd-focusable" @click="$emit('action', a)">{{ a }}</button></slot>
+      <slot><button v-for="a in actions" :key="a" type="button" class="hd-empty-state__btn hd-sqf hd-focusable" @click="$emit('action', a)">{{ a }}</button></slot>
     </div>
   </section>
 </template>
@@ -25,4 +25,7 @@ defineEmits<{ action: [label: string] }>();
 .hd-empty-state__btn { height: 33px; border-radius: calc(33px * .21); border: 1px solid #393839; background: linear-gradient(#2A2A2B, #161617 50%, #0C0C0C); box-shadow: inset 0 1px 0 rgba(255,255,255,.09);
   color: #fff; font: 700 var(--hd-font-size-button)/1 var(--hd-font-family-base); cursor: pointer; }
 .hd-empty-state__btn:active { background: linear-gradient(#080808, #0C0C0C); color: #8C8C8C; }
+/* N9: squircle-half ends with the rim following the curve (.hd-sqf) */
+.hd-empty-state__btn.hd-sqf { --hd-sqf-h: 33px; --hd-sqf-edge: #393839; --hd-sqf-fill: linear-gradient(#2A2A2B, #161617 50%, #0C0C0C); border: 0; border-radius: 0; background: none; box-shadow: none; }
+.hd-empty-state__btn.hd-sqf:active { --hd-sqf-fill: linear-gradient(#080808, #0C0C0C); background: none; }
 </style>

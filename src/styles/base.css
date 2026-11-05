@@ -75,6 +75,24 @@
 .hd-sqf::after { inset: var(--hd-sqf-edge-w); --h: calc(var(--hd-sqf-h) - 2 * var(--hd-sqf-edge-w));
   background: var(--hd-sqf-fill); }
 
+/* Squircle-half ends by masking the element itself: badges, count bubbles, tags, chips and other small filled shapes
+   without an edge. The same two caps as the button groups, sized by the element's own height, so it works at any
+   size and a square one (a single-digit count) is a whole n = 2.8 squircle. Never border-radius; an element with a
+   1px edge uses .hd-sqf instead (a mask would cut its edge off at the ends). */
+.hd-sqm, .hd-count, .hd-app-icon__badge, .hd-tool-icon__badge, .hd-site-header__skip, .x-shell__skip, .x-wmail__count,
+.x-zones__cap, .x-win__address, .hd-tab-bar:not(.hd-tab-bar--segments) > .hd-tab-button.is-selected:not(.hd-tab-button--icon) {
+  border-radius: 0 !important;
+  -webkit-mask: var(--hd-sq-cap-l) left center / auto 100% no-repeat, var(--hd-sq-cap-r) right center / auto 100% no-repeat;
+  -webkit-mask-composite: source-in;
+  mask: var(--hd-sq-cap-l) left center / auto 100% no-repeat, var(--hd-sq-cap-r) right center / auto 100% no-repeat;
+  mask-composite: intersect;
+}
+
+/* The pickers' dark buttons (HdTimePicker, HdColorPicker). */
+/* N9: squircle-half ends with the rim following the curve, as HdButton variant="dark". */
+.hd-dark-btn.hd-sqf { --hd-sqf-h: 48px; --hd-sqf-edge: #393839; --hd-sqf-fill: linear-gradient(#1C1C1C, #101010 50%, #080808); border: 0; border-radius: 0; background: none; box-shadow: none; }
+.hd-dark-btn.hd-sqf:active { --hd-sqf-fill: #111; background: none; }
+
 /* Focus (extrapolated): visible only for keyboard users, 2px ring in focus colour, 2px offset. */
 .hd-focusable:focus { outline: none; }
 .hd-focusable:focus-visible {

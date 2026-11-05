@@ -29,5 +29,7 @@ defineEmits<{ click: [] }>();
    not a shape behind the icon. */
 .hd-tab-button--icon { align-self: stretch; min-width: 64px; height: auto; border: 0; border-radius: 0; background: transparent; color: inherit; opacity: .6; }
 .hd-tab-button--icon:hover { background: color-mix(in srgb, var(--hd-c-pressed) 50%, transparent); }
+/* the N9 bottom bar's selected cell: square, the full cell (as the Quasar footer tabs) */
+.hd-tab-button--icon, .hd-tab-button--icon:first-child, .hd-tab-button--icon:last-child { border-radius: 0; }
 .hd-tab-button--icon.is-selected { background: var(--hd-tab-selected, linear-gradient(rgba(255,255,255,.22), rgba(255,255,255,.08))); color: inherit; opacity: 1; }
 </style>

@@ -1,6 +1,6 @@
 {
   "name": "@etesian-design/quasar",
-  "version": "0.3.2",
+  "version": "0.4.0",
   "description": "Etesian theme and integration for Quasar 2: brand colours, icon set, the squircle spinner and colour modes",
   "license": "MIT",
   "type": "module",
@@ -35,8 +35,8 @@
     "./variables.scss": "./dist/quasar-variables.scss"
   },
   "dependencies": {
-    "@etesian-design/tokens": "^0.3.2",
-    "@etesian-design/vue": "^0.3.2"
+    "@etesian-design/tokens": "^0.4.0",
+    "@etesian-design/vue": "^0.4.0"
   },
   "peerDependencies": {
     "vue": "^3.5.0",

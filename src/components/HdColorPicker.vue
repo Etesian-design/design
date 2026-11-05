@@ -74,8 +74,8 @@ function hueKey(e: KeyboardEvent) {
       </div>
     </div>
     <footer class="hd-colorpicker__buttons">
-      <button type="button" class="hd-dark-btn hd-focusable" @click="emit('done', hex)">{{ doneLabel }}</button>
-      <button type="button" class="hd-dark-btn hd-focusable" @click="emit('cancel')">{{ cancelLabel }}</button>
+      <button type="button" class="hd-dark-btn hd-sqf hd-focusable" @click="emit('done', hex)">{{ doneLabel }}</button>
+      <button type="button" class="hd-dark-btn hd-sqf hd-focusable" @click="emit('cancel')">{{ cancelLabel }}</button>
     </footer>
   </section>
 </template>

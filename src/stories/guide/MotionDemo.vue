@@ -70,8 +70,8 @@ const ICONS = ['#62B700', '#09A7CC', '#0067BC', '#EF5500', '#821DDE', '#CC09BA',
         <div class="md-tb" />
       </div>
       <div v-if="kind === 'drill'" class="md-app md-page"><div class="md-head md-head--plain">Message</div><div v-for="n in 3" :key="n" class="md-row"><i /><i /></div><div class="md-tb"><span class="md-back hd-squircle" /></div></div>
-      <div v-if="kind === 'sheet'" class="md-sheet"><div class="md-sheet__bar"><span>Cancel</span><b>New</b><span>Done</span></div><div class="md-field" /><div class="md-field" /></div>
-      <template v-if="kind === 'dialog'"><div class="md-scrim" /><div class="md-dialog"><b>Delete message?</b><span class="md-btn">Delete</span><span class="md-btn">Cancel</span></div></template>
+      <div v-if="kind === 'sheet'" class="md-sheet"><div class="md-sheet__bar"><span>Cancel</span><b>New</b><span>Done</span></div><div class="md-field hd-sqm" /><div class="md-field hd-sqm" /></div>
+      <template v-if="kind === 'dialog'"><div class="md-scrim" /><div class="md-dialog"><b>Delete message?</b><span class="md-btn hd-sqf">Delete</span><span class="md-btn hd-sqf">Cancel</span></div></template>
       <div v-if="kind === 'info'" class="md-info">Message sent</div>
       <div v-if="kind === 'card'" class="md-card"><span class="md-icon hd-squircle" style="background:#09A7CC" /><span><b>Anna</b><i>Lunch on Friday?</i></span></div>
       <div v-if="['minimise', 'close', 'launch', 'restore'].includes(kind)" class="md-app md-run"><div class="md-head" style="background:#09A7CC">Messages</div><div v-for="n in 5" :key="n" class="md-row"><b /><i /></div><div class="md-tb" /></div>
@@ -113,7 +113,7 @@ figcaption { font: 400 12px/1.4 var(--hd-font-family-base); color: var(--hd-c-fg
 /* dialog */
 .md-scrim { position: absolute; inset: 0; background: rgba(0,0,0,.88); opacity: 0; transition: opacity var(--def) var(--o); }
 .md-dialog { position: absolute; inset: 70px 14px auto; display: flex; flex-direction: column; gap: 6px; color: #fff; text-align: center; font: 300 11px/1.3 var(--hd-font-family-base); opacity: 0; transform: scale(.9); transition: opacity var(--def) var(--o), transform var(--def) var(--o); }
-.md-btn { padding: 6px; border-radius: 4px; background: linear-gradient(#1C1C1C, #080808); box-shadow: inset 0 0 0 1px #393839; font-weight: 700; font-size: 9px; }
+.md-btn { padding: 6px; --hd-sqf-h: 21px; --hd-sqf-edge: #393839; --hd-sqf-fill: linear-gradient(#1C1C1C, #080808); font-weight: 700; font-size: 9px; }
 [data-state='open'] .md-scrim { opacity: 1; } [data-state='open'] .md-dialog { opacity: 1; transform: none; }
 /* info banner */
 .md-info { position: absolute; left: 12px; right: 12px; top: 120px; padding: 10px; border-radius: 6px; background: rgba(20,20,20,.92); color: #fff; font: 300 11px/1 var(--hd-font-family-base); text-align: center; transform: scale(0); transition: transform var(--def) var(--in); }
