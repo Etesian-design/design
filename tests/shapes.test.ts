@@ -35,6 +35,13 @@ describe('chips, badges and count bubbles have squircle-half ends, never pills',
   it('the time picker AM/PM column is a vertical group (top and bottom caps)', () => {
     expect(read('src/components/HdTimePicker.vue')).toContain('class="hd-timepicker__ampm hd-btn-group-lit hd-vertical"');
   });
+  // 2026-11-05: AM/PM read as an eye: the column was capped with squircle halves as wide as the column, and its
+  // buttons had collapsed to 16px. Corners are now a button tall (--hd-vcap) and the buttons keep their height.
+  it('vertical groups round only their corners, a button tall, and keep their buttons\' height', () => {
+    expect(base).toMatch(/\.hd-btn-group-lit\.hd-vertical[^{]*\{ --hd-vcap: calc\(var\(--hd-size-button\) \+ 2px\); -webkit-mask: var\(--hd-squircle-mask\) left top \/ var\(--hd-vcap\) var\(--hd-vcap\)/);
+    expect(base).toMatch(/\.hd-btn-group-lit\.hd-vertical > \*[^{]*\{ flex: 1 1 auto; \}/);
+    expect(read('src/components/HdTimePicker.vue')).toContain('--hd-vcap: 46px;');
+  });
   it('the pickers\', empty state\'s and task edit bar\'s dark buttons have the .hd-sqf shape', () => {
     for (const f of ['HdTimePicker', 'HdColorPicker', 'HdEmptyState', 'HdTaskEditBar']) expect(read(`src/components/${f}.vue`)).toMatch(/class="hd-[a-z-]+(__[a-z]+)? hd-sqf hd-focusable"/);
   });

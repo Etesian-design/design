@@ -18,8 +18,10 @@ describe('button groups and toggles have the text field shape', () => {
     expect(g).toContain('mask-composite: intersect');
     expect(g).toContain('--hd-cap-a: var(--hd-sq-cap-l); --hd-cap-b: var(--hd-sq-cap-r)');
   });
-  it('vertical groups cap top and bottom', () => {
-    expect(rule('.hd-btn-group-lit.hd-tab-bar--vertical')).toContain('--hd-cap-a: var(--hd-sq-cap-t); --hd-cap-b: var(--hd-sq-cap-b)');
+  it('vertical groups round their top and bottom corners, a button tall (not caps as wide as the column)', () => {
+    const v = rule('.hd-btn-group-lit.hd-tab-bar--vertical, .hd-btn-group-lit.hd-vertical, .hd-quasar .q-btn-group.column, .hd-quasar .q-btn-group.hd-vertical {');
+    expect(v).toContain('--hd-vcap: calc(var(--hd-size-button) + 2px)');
+    for (const c of ['left top', 'right top', 'left bottom', 'right bottom']) expect(v).toContain(`var(--hd-squircle-mask) ${c} / var(--hd-vcap) var(--hd-vcap)`);
   });
   it('middle buttons are flat and share the space; only the first and last take a cap', () => {
     const all = rule('.hd-btn-group-lit > *, ');

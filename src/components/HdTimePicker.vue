@@ -75,7 +75,7 @@ function key(e: KeyboardEvent, col: 'h' | 'm') {
 .hd-timepicker__label { position: absolute; top: calc(var(--hd-tp-row) * 2 + 6px); right: 2px; font: 700 10px/1 var(--hd-font-family-base); color: var(--hd-accent); letter-spacing: .04em; }
 .hd-timepicker__item { flex: none; height: var(--hd-tp-row); padding: 0; border: 0; background: none; color: #fff; font: var(--hd-font-weight-light) 44px/1 var(--hd-font-family-light); font-variant-numeric: tabular-nums; cursor: inherit; }
 .hd-timepicker__item.is-sel { font-size: 52px; }
-.hd-timepicker__ampm { position: relative; z-index: 1; align-self: center; flex-direction: column; margin-left: 10px; --hd-c-button-bg: #1C1C1C; }
+.hd-timepicker__ampm { position: relative; z-index: 1; align-self: center; flex-direction: column; margin-left: 10px; --hd-c-button-bg: #1C1C1C; --hd-vcap: 46px; /* a 44px button + the rim */ }
 .hd-timepicker__ap { width: 64px; height: 44px; padding: 0; border: 0; background: transparent; color: #fff; font: 700 var(--hd-font-size-default)/1 var(--hd-font-family-base); cursor: pointer; }
 .hd-timepicker__ap + .hd-timepicker__ap { border-top: 1px solid var(--hd-btn-rim); }
 .hd-timepicker__ap.is-on { background: linear-gradient(color-mix(in srgb, var(--hd-accent) 88%, #fff), var(--hd-accent) 50%, color-mix(in srgb, var(--hd-accent) 88%, #000)); box-shadow: inset 0 1px 0 rgba(255,255,255,.3); }
