@@ -29,4 +29,10 @@ describe('Settings split with real pages', () => {
     await w.find('.x-sset__back').trigger('click');
     expect(w.classes()).not.toContain('is-page');
   });
+  it('keeps the open page while the list is searched or the owner is not known yet', async () => {
+    const w = mount(XSettingsSplit, { props: { groups: GROUPS, page: 'conn', owner: false }, slots: { page: ({ page }: { page: string }) => h('p', { class: 'real' }, `page ${page}`) } });
+    expect(w.find('.real').text()).toBe('page conn');
+    await w.find('.x-sset__side input').setValue('zzz');
+    expect(w.find('.real').text()).toBe('page conn');
+  });
 });

@@ -34,7 +34,8 @@ const groups = computed(() => (props.groups ?? DEFAULT).map((g) => ({ ...g, page
 const current = ref(props.page ?? 'connections');
 watch(() => props.page, (p) => { if (p) { current.value = p; showPage.value = true; } });
 const showPage = ref(props.narrowPage);
-const cur = computed(() => groups.value.flatMap((g) => g.pages).find((p) => p.id === current.value));
+// the open page stays while the list is searched or the owner is still being checked: the filters narrow the list, not the page
+const cur = computed(() => (props.groups ?? DEFAULT).flatMap((g) => g.pages).find((p) => p.id === current.value));
 function open(id: string) { current.value = id; showPage.value = true; emit('open', id); emit('update:page', id); }
 const grey = ref(false), quality = ref(70);
 </script>
