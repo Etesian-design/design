@@ -68,7 +68,8 @@ function key(e: KeyboardEvent, which: 'h' | 'm') {
 .hd-td__time { font: 200 3.4rem/1 var(--hd-font-family-light); letter-spacing: 3px; color: var(--hd-c-fg); }
 .hd-td__ring { position: relative; flex: none; border-radius: 50%; touch-action: none; background: linear-gradient(#eeeeee 10%, #c9c9c9);
   box-shadow: inset 0 2px 3px rgba(0, 0, 0, .3), 0 1px 0 rgba(255, 255, 255, .9); }
-.hd-td__core { position: absolute; border-radius: 50%; background: linear-gradient(#0a0a0a, #393839 7%, #2a2a2a 30%, #202020 55%);
+/* black; the light from above only catches a little of its top, just under the shadow of the rim */
+.hd-td__core { position: absolute; border-radius: 50%; background: radial-gradient(ellipse 75% 32% at 50% 6%, rgba(255, 255, 255, .13), transparent 75%), #0d0d0d;
   box-shadow: inset 0 3px 3px rgba(0, 0, 0, .7), 0 1.5px 0 #fff; }
 .hd-td__knob { position: absolute; display: grid; place-items: center; border-radius: 50%; cursor: grab; font: 200 1.625rem/1 var(--hd-font-family-light); box-shadow: 0 1px 3px rgba(0, 0, 0, .35); user-select: none; }
 .hd-td__knob:active { cursor: grabbing; }
