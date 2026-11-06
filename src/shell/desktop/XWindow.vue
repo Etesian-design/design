@@ -15,7 +15,9 @@ import HdSquircle from '../../components/HdSquircle.vue';
 import HdIcon from '../../components/HdIcon.vue';
 import HdToolIcon from '../../components/HdToolIcon.vue';
 import HdTooltip from '../../components/HdTooltip.vue';
+import HdToolBar from '../../components/HdToolBar.vue';
 import type { IconTone } from '../../lighting';
+import type { XAction } from '../parts/types';
 
 export interface WindowCard { x: number; y: number; s: number; z: number; side: boolean }
 const props = withDefaults(defineProps<{
@@ -31,11 +33,37 @@ const props = withDefaults(defineProps<{
   resizable?: boolean;
   /** the view menu starts open (Storybook) */
   menuOpen?: boolean;
-}>(), { x: 0, y: 0, w: 900, h: 600, z: 1, card: null, resizable: true, menuOpen: false });
+  /**
+   * The app's actions in priority order (instead of the `actions` slot). The header shows as many as fit, from the first;
+   * the rest go into ⋯ at the right end. Below `narrowAt` px the window takes the phone pattern: Back and the first three
+   * actions move to a bottom toolbar, the rest into its ⋯; the header keeps the title and the window controls. Nothing is
+   * ever cut off, and minimise, maximise and close never move.
+   */
+  tools?: XAction[]; narrowAt?: number;
+  /** ⋯ starts open (Storybook) */
+  moreOpen?: boolean;
+}>(), { x: 0, y: 0, w: 900, h: 600, z: 1, card: null, resizable: true, menuOpen: false, narrowAt: 560, moreOpen: false });
 const emit = defineEmits<{
   close: []; minimise: []; maximise: []; focus: []; back: []; 'update:view': [view: string];
-  grab: [e: PointerEvent]; resize: [handle: string, e: PointerEvent];
+  grab: [e: PointerEvent]; resize: [handle: string, e: PointerEvent]; tool: [label: string];
 }>();
+const more = ref(props.moreOpen);
+watch(() => props.moreOpen, (v) => (more.value = v));
+watch(() => props.focused, (f) => { if (!f) more.value = false; });
+const narrow = computed(() => !!props.tools && props.w < props.narrowAt);
+/** header room for actions: the width less the lead, the title, the drag gap, ⋯, the divider and the window controls */
+const fits = computed(() => {
+  const t = props.tools ?? [];
+  const title = (props.views?.length ? (props.view ?? props.views[0] ?? '') : props.title).length * 11 + (props.views?.length ? 44 : 16);
+  const room = props.w - 6 - 40 - title - 48 - 5 - 132;
+  const n = Math.max(0, Math.floor(room / 40));
+  return n >= t.length ? t.length : Math.max(0, Math.floor((room - 40) / 40));
+});
+const BOTTOM = 3;
+const shown = computed(() => (props.tools ?? []).slice(0, narrow.value ? 0 : fits.value));
+const below = computed(() => (props.tools ?? []).slice(0, BOTTOM));
+const folded = computed(() => (props.tools ?? []).slice(narrow.value ? BOTTOM : fits.value));
+function tool(label: string) { more.value = false; emit('tool', label); }
 const HANDLES = ['n', 's', 'e', 'w', 'ne', 'nw', 'se', 'sw'];
 
 const menu = ref(props.menuOpen);
@@ -60,7 +88,7 @@ const style = computed(() => {
     :aria-label="`${title} window`" @pointerdown.capture="emit('focus')" @keydown="onKey">
     <header class="x-win__bar hd-on-chrome" @pointerdown="barDown" @dblclick="barDbl">
       <span class="x-win__lead">
-        <HdTooltip v-if="back" text="Back (Alt+Left)" placement="bottom"><HdToolIcon icon="back" label="Back" @click="emit('back')" /></HdTooltip>
+        <HdTooltip v-if="back && !narrow" text="Back (Alt+Left)" placement="bottom"><HdToolIcon icon="back" label="Back" @click="emit('back')" /></HdTooltip>
         <HdSquircle v-else :size="26" :color="color" lighting="lit" :tone="tone" class="x-win__appicon"><HdIcon :name="icon" :size="15" :lit="tone === 'light' ? 'dark' : true" /></HdSquircle>
       </span>
       <button v-if="views?.length" type="button" class="x-win__title x-win__title--menu hd-focusable" :aria-expanded="menu ? 'true' : 'false'" aria-haspopup="listbox"
@@ -70,7 +98,11 @@ const style = computed(() => {
       <slot v-else-if="$slots.title" name="title" />
       <h2 v-else class="x-win__title">{{ title }}</h2>
       <span class="x-win__drag" aria-hidden="true"></span>
-      <span v-if="$slots.actions" class="x-win__actions"><slot name="actions" /></span>
+      <span v-if="tools && !narrow" class="x-win__actions" role="toolbar" :aria-label="`${title} actions`">
+        <HdTooltip v-for="t in shown" :key="t.label" :text="t.label" placement="bottom"><HdToolIcon :icon="t.icon" :label="t.label" @click="tool(t.label)" /></HdTooltip>
+        <HdToolIcon v-if="folded.length" icon="more" label="More" :aria-expanded="more ? 'true' : 'false'" class="x-win__more" @click.stop="more = !more" />
+      </span>
+      <span v-else-if="$slots.actions" class="x-win__actions"><slot name="actions" /></span>
       <span class="x-win__sep" aria-hidden="true"></span>
       <span class="x-win__ctl">
         <HdToolIcon icon="minimize" label="Minimise" @click="emit('minimise')" />
@@ -81,6 +113,15 @@ const style = computed(() => {
     <div class="x-win__body hd-on-page">
       <slot />
       <div v-if="busy || card" class="x-win__shield" aria-hidden="true"></div>
+    </div>
+    <HdToolBar v-if="narrow" class="x-win__bottom" :back="back" :label="`${title} toolbar`" @back="emit('back')">
+      <HdToolIcon v-for="t in below" :key="t.label" :icon="t.icon" :label="t.label" @click="tool(t.label)" />
+      <template v-if="folded.length" #right><HdToolIcon icon="more" label="More" :aria-expanded="more ? 'true' : 'false'" class="x-win__more" @click.stop="more = !more" /></template>
+    </HdToolBar>
+    <div v-if="more && folded.length" class="x-moremenu hd-on-overlay" :class="{ 'is-below': narrow }" role="menu" :aria-label="`${title} more actions`">
+      <button v-for="t in folded" :key="t.label" type="button" role="menuitem" class="x-viewmenu__item hd-focusable" @click="tool(t.label)">
+        <HdIcon :name="t.icon" :size="20" /><span>{{ t.label }}</span>
+      </button>
     </div>
     <div v-if="menu && views?.length" class="x-viewmenu hd-on-overlay" role="listbox" :aria-label="`${title} views`">
       <button v-for="v in views" :key="v" type="button" role="option" class="x-viewmenu__item hd-focusable" :aria-selected="v === (view ?? views[0]) ? 'true' : 'false'" @click="pick(v)">
@@ -140,5 +181,9 @@ const style = computed(() => {
 .x-win__rz.is-ne, .x-win__rz.is-nw, .x-win__rz.is-se, .x-win__rz.is-sw { width: 16px; height: 16px; }
 .x-win__rz.is-ne { top: -4px; right: -4px; cursor: nesw-resize; } .x-win__rz.is-sw { bottom: -4px; left: -4px; cursor: nesw-resize; }
 .x-win__rz.is-nw { top: -4px; left: -4px; cursor: nwse-resize; } .x-win__rz.is-se { bottom: -4px; right: -4px; cursor: nwse-resize; }
+.x-moremenu { position: absolute; z-index: 5; top: 42px; right: 140px; min-width: 220px; padding: 6px 0; border-radius: var(--hd-radius-card); background: var(--hd-surface-overlay); color: var(--hd-c-fg); box-shadow: var(--hd-shadow-overlay), 0 0 0 1px var(--hd-c-divider); }
+.x-moremenu.is-below { top: auto; bottom: 60px; right: 8px; }
+.x-win__bottom { flex: none; border-radius: 0 0 var(--hd-radius-card) var(--hd-radius-card); }
+.x-win:has(.x-win__bottom) .x-win__body { border-radius: 0; }
 @media (prefers-reduced-motion: reduce) { .x-win, .x-win.is-card { transition: none; } }
 </style>
