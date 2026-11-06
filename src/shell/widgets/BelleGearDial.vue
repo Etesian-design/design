@@ -1,10 +1,9 @@
 <script setup lang="ts">
 /**
- * The Belle gear clock's dial (belle-ref11): a skeleton dial. A wide light bezel with oval ticks round a face plate that is
- * mostly solid, with an S-shaped bridge carrying the hands; through openings cut in the plate (a large one on the right, a
- * crescent top left, a round window on the left, the hole round the centre) the movement shows in a dark recess: flat,
- * low-contrast toothed gears (one with three spokes) that turn with the seconds. The plate casts a soft shadow into the
- * recess. Broad tapered metal hands, a thin light second hand, a silver cap; the day in a dark disc low on the left, the date
+ * The Belle gear clock's dial (belle-ref11, its shapes traced on a grid over the photo): a skeleton dial. A dark bezel lit
+ * from above with oval ticks; a face plate darkening downwards with a raised fin top left; a dark S-shaped bridge from 12 to 6
+ * that wraps the centre ring; through the openings on its right, round the centre and in a round window on the left, flat
+ * low-contrast gears (one with three spokes) that turn with the seconds, and a disc at the bottom. Broad tapered metal hands, a thin light second hand, a silver cap; the day in a dark disc low on the left, the date
  * in a dark rounded square at 3 o'clock. Drawn on a 200 grid; it fills its box (keep it square).
  */
 import { computed, useId } from 'vue';
@@ -24,11 +23,24 @@ function gear(cx: number, cy: number, r: number, teeth: number, depth: number, s
   return d;
 }
 /* x, y, radius, teeth, tooth depth, spokes, hub */
-const GEARS = [[124, 62, 22, 30, 2.2, 0, 6], [153, 92, 33, 40, 2.6, 3, 7], [100, 100, 21, 36, 1.8, 0, 6], [42, 103, 13, 18, 1.8, 0, 4], [106, 157, 22, 28, 2, 0, 8]]
+const GEARS = [[122, 60, 23, 32, 2.2, 0, 6], [153, 92, 30, 40, 2.6, 3, 9], [100, 100, 21, 40, 1.6, 0, 6], [41, 103, 14, 18, 1.8, 0, 4]]
   .map(([x, y, r, t, dp, sp, hub]) => ({ x: x!, y: y!, r: r!, hub: hub!, spokes: sp!, d: gear(x!, y!, r!, t!, dp!, sp!, hub!) }));
-/* the plate's openings: the right one bounded by the S of the bridge, and the crescent top left */
-const RIGHT = 'M96 0 C97 22 86 36 94 52 C104 68 124 78 124 100 C124 122 104 132 97 146 C92 158 99 172 104 200 L200 200 L200 0 Z';
-const CRESCENT = 'M35 77 C40 60 58 44 83 36 C80 50 84 62 98 70 C90 74 80 76 72 77 Z';
+/* the plate's large opening, right of the bridge */
+const RIGHT = 'M100 18 C92 30 88 44 96 56 C104 66 120 72 126 84 C129 96 128 110 126 118 C132 126 146 130 160 128 C170 127 176 123 182 118 L200 118 L200 0 L100 0 Z';
+/** a smooth closed outline through points (Catmull-Rom as cubic Beziers) */
+function smooth(pts: number[][]): string {
+  let d = `M${pts[0]![0]} ${pts[0]![1]}`;
+  for (let i = 0; i < pts.length - 1; i++) {
+    const p0 = pts[i - 1] ?? pts[i]!, p1 = pts[i]!, p2 = pts[i + 1]!, p3 = pts[i + 2] ?? p2;
+    d += `C${(p1[0]! + (p2[0]! - p0[0]!) / 6).toFixed(1)} ${(p1[1]! + (p2[1]! - p0[1]!) / 6).toFixed(1)} ${(p2[0]! - (p3[0]! - p1[0]!) / 6).toFixed(1)} ${(p2[1]! - (p3[1]! - p1[1]!) / 6).toFixed(1)} ${p2[0]} ${p2[1]}`;
+  }
+  return d;
+}
+/* the S bridge: its two edges, thin at 12 and 6 and widest where it wraps the centre ring */
+const BL = [[98, 14], [88, 32], [90, 50], [100, 62], [114, 72], [120, 86], [121, 100], [118, 113], [106, 121], [95, 131], [88, 145], [90, 165], [97, 188]];
+const BR = [[106, 14], [96, 32], [98, 48], [108, 56], [126, 68], [136, 86], [136, 106], [130, 124], [114, 134], [104, 142], [98, 152], [101, 168], [108, 188]];
+const BRIDGE = `${smooth(BL)}L${smooth([...BR].reverse()).slice(1)}Z`;
+const FIN = 'M37 77 C44 58 62 42 82 35 C78 48 76 62 72 80 C60 78 48 76 37 77 Z';
 const sec = computed(() => props.s * 6);
 const min = computed(() => props.m * 6 + props.s * 0.1);
 const hour = computed(() => (props.h % 12) * 30 + props.m * 0.5);
@@ -39,50 +51,58 @@ const u = (n: string) => `url(#${id}${n})`;
 <template>
   <svg class="bw-geardial" viewBox="0 0 200 200" aria-hidden="true">
     <defs>
-      <linearGradient :id="`${id}bz`" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#46474a" /><stop offset=".5" stop-color="#36373a" /><stop offset="1" stop-color="#303134" /></linearGradient>
-      <radialGradient :id="`${id}pl`" cx=".5" cy=".25" r=".8"><stop offset="0" stop-color="#3a3b3e" /><stop offset="1" stop-color="#2f3033" /></radialGradient>
-      <linearGradient :id="`${id}gm`" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3f4043" /><stop offset="1" stop-color="#333437" /></linearGradient>
+      <linearGradient :id="`${id}bz`" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#424346" /><stop offset=".5" stop-color="#2e2f32" /><stop offset="1" stop-color="#1c1d1f" /></linearGradient>
+      <linearGradient :id="`${id}pl`" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#38393c" /><stop offset=".55" stop-color="#2a2b2e" /><stop offset="1" stop-color="#1b1c1e" /></linearGradient>
+      <linearGradient :id="`${id}gm`" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#434447" /><stop offset="1" stop-color="#2c2d30" /></linearGradient>
       <linearGradient :id="`${id}hd`" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" /><stop offset=".5" stop-color="#f2f2f3" /><stop offset=".51" stop-color="#cfd0d2" /><stop offset="1" stop-color="#e4e4e6" /></linearGradient>
       <radialGradient :id="`${id}cp`" cx=".4" cy=".35" r=".7"><stop offset="0" stop-color="#f0f0f2" /><stop offset=".6" stop-color="#a5a6aa" /><stop offset="1" stop-color="#5a5b5f" /></radialGradient>
-      <filter :id="`${id}ps`" x="-10%" y="-10%" width="120%" height="120%"><feDropShadow dx="0" dy="1.5" stdDeviation="1.6" flood-color="#000" flood-opacity=".7" /></filter>
+      <filter :id="`${id}ps`" x="-10%" y="-10%" width="120%" height="120%"><feDropShadow dx="0" dy="1.2" stdDeviation="1.4" flood-color="#000" flood-opacity=".8" /></filter>
+      <filter :id="`${id}bb`" x="-10%" y="-10%" width="120%" height="120%"><feGaussianBlur stdDeviation=".7" /><feDropShadow dx="0" dy="1" stdDeviation="1.2" flood-color="#000" flood-opacity=".6" /></filter>
       <filter :id="`${id}hs`"><feDropShadow dx="0" dy="1.2" stdDeviation="1" flood-color="#000" flood-opacity=".6" /></filter>
-      <clipPath :id="`${id}in`"><circle cx="100" cy="100" r="85" /></clipPath>
+      <clipPath :id="`${id}in`"><circle cx="100" cy="100" r="81" /></clipPath>
       <mask :id="`${id}mk`">
-        <circle cx="100" cy="100" r="85" fill="#fff" /><path :d="RIGHT" fill="#000" /><path :d="CRESCENT" fill="#000" />
-        <circle cx="100" cy="100" r="25" fill="#000" /><circle cx="46" cy="104" r="19" fill="#000" /><circle cx="118" cy="30" r="4.5" fill="#fff" />
+        <circle cx="100" cy="100" r="81" fill="#fff" /><path :d="RIGHT" fill="#000" /><circle cx="100" cy="100" r="24" fill="#000" />
+        <circle cx="44" cy="103" r="17" fill="#000" /><circle cx="117" cy="152" r="23" fill="#000" /><circle cx="118" cy="29" r="5" fill="#fff" />
       </mask>
     </defs>
-    <circle cx="100" cy="100" r="99" fill="#141416" />
-    <circle cx="100" cy="100" r="97.5" :fill="u('bz')" />
+    <circle cx="100" cy="100" r="93" fill="#0e0e0f" />
+    <circle cx="100" cy="100" r="92" :fill="u('bz')" />
     <g :clip-path="u('in')">
-      <circle cx="100" cy="100" r="85" fill="#222325" />
-      <circle cx="100" cy="100" r="85" fill="none" stroke="rgba(0,0,0,.45)" stroke-width="3" />
+      <circle cx="100" cy="100" r="81" fill="#1e1f21" />
       <g v-for="(g, i) in GEARS" :key="i">
         <g :transform="turn(g, i)">
-          <path :d="g.d" :fill="u('gm')" fill-rule="evenodd" stroke="#1a1b1d" stroke-width=".4" />
-          <circle v-if="!g.spokes" :cx="g.x" :cy="g.y" :r="g.r * 0.62" fill="none" stroke="#2f3033" :stroke-width="g.r * 0.1" />
+          <path :d="g.d" :fill="u('gm')" fill-rule="evenodd" stroke="#18191b" stroke-width=".4" />
+          <circle v-if="!g.spokes" :cx="g.x" :cy="g.y" :r="g.r * 0.6" fill="none" stroke="#343538" :stroke-width="g.r * 0.08" />
         </g>
-        <circle :cx="g.x" :cy="g.y" :r="g.hub" fill="#333437" stroke="#1d1e20" stroke-width=".5" /><circle :cx="g.x" :cy="g.y" :r="g.hub * 0.3" fill="#232426" />
+        <circle :cx="g.x" :cy="g.y" :r="g.hub" fill="#3a3b3e" stroke="#1d1e20" stroke-width=".5" /><circle :cx="g.x" :cy="g.y" :r="g.hub * 0.35" fill="#232426" />
       </g>
-      <circle cx="118" cy="30" r="4.5" fill="#151517" /><circle cx="160" cy="146" r="4.5" fill="#151517" />
-      <g :filter="u('ps')"><rect width="200" height="200" :fill="u('pl')" :mask="u('mk')" /></g>
+      <circle cx="50" cy="96" r="1.6" fill="#111" /><circle cx="58" cy="105" r="6" fill="#1a1b1d" />
+      <circle cx="117" cy="152" r="21" fill="#2e2f32" /><circle cx="106" cy="160" r="11" fill="#28292c" stroke="#26272a" stroke-width="1.4" /><circle cx="106" cy="160" r="4" fill="#2a2b2e" />
+      <circle cx="162" cy="146" r="5" fill="#141416" /><circle cx="118" cy="29" r="5" fill="#141416" />
+      <g :filter="u('ps')">
+        <rect width="200" height="200" :fill="u('pl')" :mask="u('mk')" />
+        <path :d="FIN" fill="#303134" stroke="#242527" stroke-width=".6" />
+      </g>
+      <path :d="BRIDGE" fill="#1b1c1e" :filter="u('bb')" />
+      <circle cx="100" cy="100" r="26" fill="none" stroke="#1b1c1e" stroke-width="5" :filter="u('bb')" />
+      <circle cx="100" cy="100" r="80.5" fill="none" stroke="rgba(255,255,255,.06)" stroke-width=".6" />
     </g>
-    <ellipse v-for="i in 12" :key="i" cx="100" cy="8.4" rx="1.2" ry="2.8" fill="#b4b5b8" :transform="`rotate(${i * 30} 100 100)`" />
+    <ellipse v-for="i in 12" :key="i" cx="100" cy="12.5" rx="1.1" ry="2.6" fill="#b4b5b8" :transform="`rotate(${i * 30} 100 100)`" />
     <template v-if="day">
-      <circle cx="61" cy="143" r="21" fill="#28292c" stroke="#202123" />
-      <text x="61" y="147.5" text-anchor="middle" font-size="12.5" fill="#b9babd" class="bw-geardial__t">{{ day }}</text>
+      <circle cx="57" cy="145" r="18" fill="#1c1d1f" stroke="#18191a" />
+      <text x="57" y="149.5" text-anchor="middle" font-size="12" fill="#b9babd" class="bw-geardial__t">{{ day }}</text>
     </template>
     <template v-if="date !== ''">
-      <rect x="164" y="91" width="20" height="20" rx="7" fill="#121214" :filter="u('hs')" />
-      <text x="174" y="106" text-anchor="middle" font-size="15" fill="#f2f2f3" class="bw-geardial__t">{{ date }}</text>
+      <rect x="165" y="95" width="18" height="18" rx="6" fill="#121214" :filter="u('hs')" />
+      <text x="174" y="108.5" text-anchor="middle" font-size="13.5" fill="#f2f2f3" class="bw-geardial__t">{{ date }}</text>
     </template>
     <g :filter="u('hs')">
       <path d="M97.2 104 L96.4 54 L100 41 L103.6 54 L102.8 104 Z" :fill="u('hd')" :transform="`rotate(${hour} 100 100)`" />
       <path d="M98.2 104 L97.8 26 L100 17 L102.2 26 L101.8 104 Z" :fill="u('hd')" :transform="`rotate(${min} 100 100)`" />
       <line x1="100" y1="124" x2="100" y2="18" stroke="#d9d9db" stroke-width=".8" :transform="`rotate(${sec} 100 100)`" />
     </g>
-    <circle cx="100" cy="100" r="8" :fill="u('cp')" stroke="#3a3b3e" stroke-width=".5" :filter="u('hs')" />
-    <circle cx="100" cy="100" r="3.6" fill="none" stroke="#8a8b8f" stroke-width=".6" /><circle cx="100" cy="100" r="1.4" fill="#7a7b7f" />
+    <circle cx="100" cy="100" r="7" :fill="u('cp')" stroke="#3a3b3e" stroke-width=".5" />
+    <circle cx="100" cy="100" r="1.6" fill="#7a7b7f" />
   </svg>
 </template>
 <style>

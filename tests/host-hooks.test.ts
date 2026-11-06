@@ -147,7 +147,7 @@ describe('gear clock dial', () => {
     const BelleGearDial = (await import('../src/shell/widgets/BelleGearDial.vue')).default;
     const w = mount(BelleGearDial, { props: { h: 10, m: 30, s: 0, day: 'Mon', date: 1 } });
     const gears = w.findAll('path[fill-rule=evenodd]');
-    expect(gears.length).toBe(5);
+    expect(gears.length).toBe(4);
     expect((gears[0]!.attributes('d')!.match(/L/g) ?? []).length).toBeGreaterThan(100); // fine teeth, not a few blunt cogs
     expect(w.text()).toContain('Mon');
     expect(w.findAll('path[transform]').map((p) => p.attributes('transform'))).toEqual(['rotate(315 100 100)', 'rotate(180 100 100)']);
