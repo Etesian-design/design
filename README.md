@@ -80,6 +80,8 @@ npm install @etesian-design/vue @etesian-design/tokens     # and @etesian-design
 | `npm run tokens` | Regenerate CSS and TypeScript from `tokens/tokens.json` |
 | `npm run build-storybook` | A static Storybook to host anywhere |
 
+Run `git config core.hooksPath .githooks` once after cloning: the hooks lint commit messages and run `npm test` before each commit.
+
 ## Licence
 
 MIT. The icons are original; no Nokia fonts, icons, wallpapers or sounds are included.
