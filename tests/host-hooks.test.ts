@@ -151,5 +151,6 @@ describe('gear clock dial', () => {
     expect((gears[0]!.attributes('d')!.match(/L/g) ?? []).length).toBeGreaterThan(100); // fine teeth, not a few blunt cogs
     expect(w.text()).toContain('Mon');
     expect(w.findAll('path[transform]').map((p) => p.attributes('transform'))).toEqual(['rotate(315 100 100)', 'rotate(180 100 100)']);
+    expect(w.find('mask').exists()).toBe(true); // a skeleton dial: the gears show through openings in the plate
   });
 });
