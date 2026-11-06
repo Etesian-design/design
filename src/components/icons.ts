@@ -74,6 +74,7 @@ export const icons: Record<string, string> = {
   drag: 'M5 9h14M5 15h14',
   alarm: 'M12 5a8 8 0 1 1 0 16 8 8 0 0 1 0-16zM12 9v4l2.5 1.5M4 6l3-3M20 6l-3-3',
   hourglass: 'M6 3h12M6 21h12M7 3c0 5 10 5 10 9s-10 4-10 9M17 3c0 5-10 5-10 9s10 4 10 9',
+  rss: 'M5 5a14 14 0 0 1 14 14M5 11a8 8 0 0 1 8 8M6 18h.01',
   stopwatch: 'M12 6a7.5 7.5 0 1 1 0 15 7.5 7.5 0 0 1 0-15zM12 10v4M10 2h4M12 2v4',
 };
 export type IconName = keyof typeof icons;
