@@ -80,6 +80,8 @@ npm install @etesian-design/vue @etesian-design/tokens     # and @etesian-design
 | `npm run tokens` | Regenerate CSS and TypeScript from `tokens/tokens.json` |
 | `npm run build-storybook` | A static Storybook to host anywhere |
 
+Run `git config core.hooksPath .githooks` once after cloning: the hooks lint commit messages and run `npm test` before each commit.
+
 ## Licence
 
 Etesian, founded by Kyriakos Bompotis. Licensed under the GNU Affero General Public License, version 3 only (AGPL-3.0-only, [LICENSE](LICENSE)), Storybook and the published packages included, with additional terms under its section 7 ([ADDITIONAL-TERMS.md](ADDITIONAL-TERMS.md)): the attribution "Etesian, founded by Kyriakos Bompotis" must be kept, also where a work based on it shows legal notices; no rights are granted to the Etesian names and logos ([TRADEMARKS.md](TRADEMARKS.md)); the Phorepoc project has an exception. Commercial licences are available from the founder.
