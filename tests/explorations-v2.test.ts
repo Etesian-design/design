@@ -23,8 +23,8 @@ const tapSuper = async () => { await key('Meta', true); await keyUp('Meta'); };
 
 describe('desktop geometry', () => {
   it('work area leaves room for the dock unless it auto-hides', () => {
-    expect(workArea('left', 44)).toEqual({ x: 72, y: 0, w: SCREEN.w - 72, h: SCREEN.h - BAR_H });
-    expect(workArea('bottom', 44).h).toBe(SCREEN.h - BAR_H - 72);
+    expect(workArea('left', 44)).toEqual({ x: 64, y: 0, w: SCREEN.w - 64, h: SCREEN.h - BAR_H });
+    expect(workArea('bottom', 44).h).toBe(SCREEN.h - BAR_H - 64);
     expect(workArea('left', 44, true).x).toBe(0);
   });
   it('zones tile the area with even gaps and no overlap', () => {

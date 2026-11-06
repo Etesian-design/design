@@ -6,7 +6,7 @@ export type DockPos = 'left' | 'bottom' | 'right' | 'top';
 export interface Rect { x: number; y: number; w: number; h: number }
 
 /** Dock thickness for an icon size (icon + padding). */
-export const dockThickness = (icon: number) => icon + 20;
+export const dockThickness = (icon: number) => icon + 12;
 
 /** The free work area under the bar, minus a visible (not auto-hidden) dock. Coordinates are inside the area below the bar. */
 export function workArea(pos: DockPos = 'left', icon = 44, autoHide = false): Rect {

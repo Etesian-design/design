@@ -7,6 +7,7 @@
  */
 import { computed, onMounted, onUnmounted, ref } from 'vue';
 import BelleDial from './BelleDial.vue';
+import BelleGearDial from './BelleGearDial.vue';
 import BelleCap from './BelleCap.vue';
 import BelleOnOff from './BelleOnOff.vue';
 import { squircleRectPath } from '../../squircle';
@@ -147,12 +148,7 @@ const wedge = (from: number, to: number) => { const p = (a: number) => `${40 + 6
       <BelleDial :h="hh" :m="mm" :s="ss" :date="now.getDate()" :second="kind === 'bigclock'" />
       <span v-if="kind === 'bigclock'" class="bw-dayname">{{ DAY3[now.getDay()] }}</span>
     </div>
-    <div v-else-if="kind === 'gearclock'" class="bw-gear">
-      <i v-for="(g, i) in [[66, 31, 42], [31, 66, 38], [50, 50, 36], [69, 65, 22]]" :key="i" class="bw-gear__g" :style="{ left: `${g[0]}%`, top: `${g[1]}%`, width: `${g[2] * 2}%`, height: `${g[2] * 2}%` }" />
-      <BelleDial :h="hh" :m="mm" :s="ss" second face="none" :marks="false" />
-      <svg class="bw-marks" viewBox="0 0 100 100"><path stroke="#8E8F94" stroke-width="1.2" stroke-linecap="round" d="M50,6V12M50,88V94M6,50H12M88,50H94" /></svg>
-      <span class="bw-dayname">{{ DAY3[now.getDay()] }}</span><span class="bw-datebub">{{ now.getDate() }}</span>
-    </div>
+    <div v-else-if="kind === 'gearclock'" class="bw-gear"><BelleGearDial :h="hh" :m="mm" :s="ss" :day="DAY3[now.getDay()]" :date="now.getDate()" /></div>
     <div v-else-if="kind === 'flipclock'" class="bw-flip">
       <div v-for="(t, i) in [pad(hh), pad(mm)]" :key="i" class="bw-flip__tile"><span class="bw-flip__n">{{ t }}</span><i class="bw-flip__hinge" /><i class="bw-pin" style="left:0" /><i class="bw-pin" style="right:0" /><small v-if="i" class="bw-flip__date">{{ DAY3[now.getDay()] }} {{ MON3[now.getMonth()] }} {{ now.getDate() }}</small></div>
     </div>
@@ -311,10 +307,7 @@ const wedge = (from: number, to: number) => { const p = (a: number) => `${40 + 6
 .big .bw-datebub { font-size: 14px; }
 .bw-dayname { position: absolute; left: 24.5%; top: 50%; transform: translate(-50%, -50%); font-size: 14px; color: #B4B5B9; z-index: 1; }
 /* Gear clock (belle-ref11): the day low on the left, a round date at 3 o'clock. */
-.bw-gear .bw-dayname { left: 31%; top: 72%; font-size: 13px; }
-.bw-gear .bw-datebub { left: 87%; width: 11%; height: 11%; border-radius: 50%; box-sizing: border-box; border: 1px solid #77787C; display: grid; place-items: center; background: linear-gradient(#3A3B3F, #1A1A1C); font-size: 13px; }
-.bw-gear { border-radius: 50%; overflow: hidden; background: radial-gradient(circle at 50% 40%, #4A4B4F, #141416 70%); box-shadow: inset 0 0 0 2px #050506; }
-.bw-gear__g { position: absolute; transform: translate(-50%, -50%); border-radius: 50%; background: radial-gradient(#1A1B1E 30%, #2E2F33 31% 80%, transparent 81%), repeating-conic-gradient(#2E2F33 0 12deg, transparent 12deg 26deg); opacity: .9; }
+.bw-gear { filter: drop-shadow(0 4px 8px rgba(0, 0, 0, .5)); }
 /* flip clock 4×2: two black tiles, 16px corners, hinge + pins */
 .bw-flip { display: flex; gap: 6px; padding: 2px; }
 .bw-flip__tile { position: relative; flex: 1; display: grid; place-items: center; border-radius: 16px; border: 1.5px solid #000; background: linear-gradient(rgba(255,255,255,.12), rgba(255,255,255,0) 40%), linear-gradient(#2C2D31, #111214 50%, #000); box-shadow: 0 3px 0 rgba(0,0,0,.4); }

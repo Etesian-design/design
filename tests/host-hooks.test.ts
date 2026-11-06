@@ -116,3 +116,40 @@ describe('Belle mail widgets with real mail', () => {
     expect(mount(BelleWidget, { props: { kind: 'mail', mails: [], empty: 'Mail is not set up.' } }).text()).toContain('Mail is not set up.');
   });
 });
+
+describe('dock and recycle bin', () => {
+  it('shows the bin empty, or full with how many items, and reports a press', async () => {
+    const XShellDock = (await import('../src/shell/desktop/XShellDock.vue')).default;
+    const empty = mount(XShellDock, { props: { items: [], binCount: 0 } });
+    expect(empty.find('.x-shell-dock__bin').attributes('aria-label')).toBe('Recycle bin, empty');
+    expect(empty.find('.x-shell-dock__count').exists()).toBe(false);
+    const full = mount(XShellDock, { props: { items: [], binCount: 3 } });
+    expect(full.find('.x-shell-dock__bin').classes()).toContain('is-full');
+    expect(full.find('.x-shell-dock__count').text()).toBe('3');
+    await full.find('.x-shell-dock__bin').trigger('click');
+    expect(full.emitted('bin')).toHaveLength(1);
+  });
+  it('draws the Overview button and the bin as squircle icons, not bare glyphs on the dock', async () => {
+    const XShellDock = (await import('../src/shell/desktop/XShellDock.vue')).default;
+    const w = mount(XShellDock, { props: { items: [] } });
+    expect(w.find('.x-shell-dock__overview .hd-squircle, .x-shell-dock__overview svg').exists()).toBe(true);
+    expect(w.findAllComponents({ name: 'HdSquircle' }).length).toBe(2);
+  });
+  it('has no bin at all for a host without one', () => {
+    const w = mount(XShell, { props: { apps: [], bin: false }, attachTo: document.body });
+    expect(w.find('.x-shell-dock__bin').exists()).toBe(false);
+    w.unmount();
+  });
+});
+
+describe('gear clock dial', () => {
+  it('draws toothed gears, the hands at the time, the day and the date', async () => {
+    const BelleGearDial = (await import('../src/shell/widgets/BelleGearDial.vue')).default;
+    const w = mount(BelleGearDial, { props: { h: 10, m: 30, s: 0, day: 'Mon', date: 1 } });
+    const gears = w.findAll('path[fill-rule=evenodd]');
+    expect(gears.length).toBe(5);
+    expect((gears[0]!.attributes('d')!.match(/L/g) ?? []).length).toBeGreaterThan(100); // fine teeth, not a few blunt cogs
+    expect(w.text()).toContain('Mon');
+    expect(w.findAll('path[transform]').map((p) => p.attributes('transform'))).toEqual(['rotate(315 100 100)', 'rotate(180 100 100)']);
+  });
+});
