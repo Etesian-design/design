@@ -87,5 +87,6 @@ describe('Belle mail widgets with real mail', () => {
     await w.find('[aria-label="Older mail"]').trigger('click');
     expect(w.find('.bw-stack__mail').text()).toContain('Bank');
     expect(mount(BelleWidget, { props: { kind: 'stackmail', mails: [] } }).text()).toContain('No mail.');
+    expect(mount(BelleWidget, { props: { kind: 'mail', mails: [], empty: 'Mail is not set up.' } }).text()).toContain('Mail is not set up.');
   });
 });
