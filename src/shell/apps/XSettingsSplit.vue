@@ -50,7 +50,7 @@ const grey = ref(false), quality = ref(70);
       </template>
     </nav>
     <section v-if="cur" class="x-sset__page" :aria-label="cur.title">
-      <button type="button" class="x-sset__back hd-focusable" @click="showPage = false"><HdIcon name="back" :size="18" />Settings</button>
+      <button type="button" class="x-sset__back hd-sqh hd-focusable" @click="showPage = false"><HdIcon name="back" :size="18" />Settings</button>
       <slot v-if="$slots.page" name="page" :page="cur.id" />
       <template v-else>
       <h2 class="x-sset__title">{{ cur.title }}</h2>
