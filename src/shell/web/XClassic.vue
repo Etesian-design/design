@@ -62,7 +62,7 @@ function pickView(v: string) { viewMenu.value = false; emit('view', v); host.emi
       <span class="x-cl__sep" aria-hidden="true"></span>
       <HdToolIcon v-if="back && !narrow" icon="back" label="Back" @click="goBack" />
       <HdSquircle v-else-if="cur" :size="28" :color="cur.color" lighting="lit"><HdIcon :name="cur.icon" :size="16" lit /></HdSquircle>
-      <button v-if="views?.length" type="button" class="x-cl__title is-menu hd-focusable" :aria-expanded="viewMenu ? 'true' : 'false'" aria-haspopup="listbox" @click="viewMenu = !viewMenu">{{ shownTitle }}<HdIcon name="chevron-down" :size="16" /></button>
+      <button v-if="views?.length" type="button" class="x-cl__title is-menu hd-sqh hd-focusable" :aria-expanded="viewMenu ? 'true' : 'false'" aria-haspopup="listbox" @click="viewMenu = !viewMenu">{{ shownTitle }}<HdIcon name="chevron-down" :size="16" /></button>
       <h1 v-else class="x-cl__title">{{ shownTitle }}</h1>
       <span class="x-cl__gap"></span>
       <span v-if="!narrow" class="x-cl__actions" role="toolbar" :aria-label="`${shownTitle} actions`">

@@ -8,9 +8,9 @@ defineEmits<{ pick: [id: string]; close: [id: string]; add: [] }>();
 </script>
 <template>
   <div class="x-bt" :class="{ 'is-vertical': vertical }" role="tablist" aria-label="Tabs" :aria-orientation="vertical ? 'vertical' : undefined">
-    <div v-for="t in tabs" :key="t.id" class="x-bt__tab" :class="{ 'is-on': t.id === current }" role="tab" :aria-selected="t.id === current ? 'true' : 'false'" tabindex="0" @click="$emit('pick', t.id)">
+    <div v-for="t in tabs" :key="t.id" class="x-bt__tab hd-sqh" :class="{ 'is-on': t.id === current }" role="tab" :aria-selected="t.id === current ? 'true' : 'false'" tabindex="0" @click="$emit('pick', t.id)">
       <HdIcon :name="t.icon ?? 'globe'" :size="14" /><span class="x-bt__label">{{ t.title }}</span>
-      <button type="button" class="x-bt__x" :aria-label="`Close ${t.title}`" @click.stop="$emit('close', t.id)"><HdIcon name="close" :size="12" /></button>
+      <button type="button" class="x-bt__x hd-sqh" :aria-label="`Close ${t.title}`" @click.stop="$emit('close', t.id)"><HdIcon name="close" :size="12" /></button>
     </div>
     <HdToolIcon icon="add" label="New tab" class="x-bt__add" :disabled="max !== undefined && tabs.length >= max" @click="$emit('add')" />
   </div>
