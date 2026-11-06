@@ -1,8 +1,8 @@
 <script setup lang="ts">
 /**
  * The browser's frame: one row under the window header with Back, Forward, Reload, the address field (the site's state as a
- * lock or a warning, squircle-half ends) and ⋯ for zoom, other devices and the rest. The tabs are XBrowserTabs, in the
- * window header, or a list on the left (`tabsAt: side`); the tab count opens a picker of page thumbnails at any width,
+ * lock or a warning, squircle-half ends) and ⋯ for zoom, other devices and the rest. The tabs are XBrowserTabs: a strip
+ * above the row, as in Chrome (`tabsAt: top`), or a list on the left (`tabsAt: side`); the tab count opens a picker of page thumbnails at any width,
  * and in a narrow window it is the only way to the tabs. A host puts its own ⋮ menu in the `more` slot: it sits inside the
  * button's box, so a popup menu there anchors to the button (Quasar's q-menu takes its parent). In a narrow window (container under 560 px) the row moves to the bottom, as on the phone.
  */
@@ -12,7 +12,7 @@ import { ref, watch } from 'vue';
 import XBrowserTabs, { type BrowserTab } from './XBrowserTabs.vue';
 const props = withDefaults(defineProps<{
   address?: string; secure?: boolean; back?: boolean; forward?: boolean; loading?: number;
-  /** the open tabs; `side` lists them on the left (the header then shows none), `top` leaves them to the header */
+  /** the open tabs; `top`: a strip above the navigation row, `side`: a list on the left */
   tabs?: BrowserTab[]; current?: string; tabsAt?: 'top' | 'side'; max?: number;
   /** the tab picker (page thumbnails) starts open (Storybook) */
   pickerOpen?: boolean;
@@ -24,6 +24,7 @@ function choose(id: string) { picker.value = false; emit('pick', id); }
 </script>
 <template>
   <div class="x-bf">
+    <XBrowserTabs v-if="tabsAt === 'top' && tabs.length" class="x-bf__strip" :tabs="tabs" :current="current ?? tabs[0]!.id" :max="max" @pick="$emit('pick', $event)" @close="$emit('close', $event)" @add="$emit('add')" />
     <div class="x-bf__row hd-on-chrome" role="toolbar" aria-label="Navigation">
       <HdToolIcon icon="back" label="Back" :disabled="!back" @click="$emit('back')" />
       <HdToolIcon icon="back" label="Forward" class="x-bf__fwd" :disabled="!forward" @click="$emit('forward')" />
@@ -69,6 +70,7 @@ function choose(id: string) { picker.value = false; emit('pick', id); }
 .x-bf .x-web__bar { display: none; }
 /* the tab count: a squircle-ish outlined square with the number, as mobile browsers */
 .x-bf__count { position: relative; flex: none; width: 26px; height: 26px; margin: 0 7px; border: 0; --hd-sq-size: 26px; --hd-sq-ring: currentColor; background: none; color: inherit; font: 700 12px/1 var(--hd-font-family-base); cursor: pointer; }
+.x-bf__strip { flex: none; margin: 0; padding: 6px 6px 0; background: var(--hd-surface-chrome); }
 .x-bf__main { position: relative; flex: 1; min-width: 0; min-height: 0; display: flex; }
 .x-bf__side { flex: none; width: 240px; border-right: 1px solid var(--hd-c-divider); background: color-mix(in srgb, var(--hd-c-fg) 4%, var(--hd-c-bg)); }
 .x-bf__picker { position: absolute; inset: 0; z-index: 3; overflow: auto; padding: 16px; background: var(--hd-surface-home); color: #fff; }
@@ -82,5 +84,5 @@ function choose(id: string) { picker.value = false; emit('pick', id); }
 .x-bf__cap span { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .x-bf__new { align-items: center; justify-content: center; aspect-ratio: 3 / 4; border: 2px dashed rgba(255,255,255,.3); border-radius: var(--hd-radius-card); background: none; color: inherit; cursor: pointer; }
 .x-bf__page { flex: 1; min-width: 0; min-height: 0; overflow: auto; display: flex; }
-@container (max-width: 559px) { .x-bf__side { display: none; } .x-bf__row { order: 2; border-bottom: 0; border-top: 1px solid var(--hd-c-divider); } }
+@container (max-width: 559px) { .x-bf__side, .x-bf__strip { display: none; } .x-bf__row { order: 2; border-bottom: 0; border-top: 1px solid var(--hd-c-divider); } }
 </style>
