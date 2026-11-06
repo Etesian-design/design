@@ -3,6 +3,7 @@ import type { Meta } from '@storybook/vue3-vite';
 import { ref, computed } from 'vue';
 import { qs } from './q';
 import HdTimePicker from '../../components/HdTimePicker.vue';
+import HdSwitch from '../../components/HdSwitch.vue';
 import HdFastScroll from '../../components/HdFastScroll.vue';
 const meta: Meta = {
   title: 'Quasar/Examples',
@@ -275,27 +276,66 @@ export const StoreApp = qs(CSS + phone(`${footer(tool('share', 'Share'), { menu:
     <div><div class="hd-q-t">About</div><p class="hd-q-sub q-mb-none">Read your favourite sites in the Events view. Pull down to refresh, swipe to the next story.</p></div>
   </q-page></q-page-container>`, ';height:760px;margin:0 auto'), () => ({ slide: ref(0), shots: [['#ff8500', '#3b1d00'], ['#09a7cc', '#06303b'], ['#821dde', '#250a40']] }), { name: 'Store app details' });
 
-/* ---- Clock ---- */
-export const ClockApp = qs(CSS + row(
-  phone(`${footer(tool('clock', 'Clock') + tool('calendar', 'World clock'), { back: false, menu: true })}
-  <q-page-container><q-page>
-    <div class="column items-center q-py-lg" style="gap:4px"><div style="font:200 4rem/1 var(--hd-font-family-light)">12:45</div><div class="hd-q-sub">Saturday 24 October</div></div>
-    <div class="hd-q-head" style="justify-content:space-between;align-items:center">Alarms <q-btn unelevated round size="sm" :icon="ic('add')" aria-label="New alarm" /></div>
-    <q-list separator><q-item v-for="a in alarms" :key="a.t" tag="label"><q-item-section side><q-toggle v-model="a.on" :aria-label="'Alarm ' + a.t" /></q-item-section>
-      <q-item-section><q-item-label style="font:300 1.75rem/1.1 var(--hd-font-family-light)">{{ a.t }}</q-item-label><q-item-label caption>{{ a.label }}</q-item-label></q-item-section><q-item-section side><q-icon :name="ic('chevron-right')" /></q-item-section></q-item></q-list>
-  </q-page></q-page-container>`),
-  phone(`${head('New alarm')}
-  ${footer('')}
-  <q-page-container><q-page class="q-pa-md column" style="gap:12px">
-    <HdTimePicker v-model="t" title="Alarm time" hour24 />
-    <q-input v-model="label" outlined label="Title" />
-    <div class="hd-q-sub">Repeat</div>
-    <q-btn-toggle v-model="rep" spread :options="[{label:'Once',value:'once'},{label:'Weekdays',value:'wd'},{label:'Daily',value:'day'}]" />
-    <q-toggle v-model="snooze" label="Snooze 10 minutes" />
-    <q-btn unelevated color="primary" label="Save" />
-  </q-page></q-page-container>`, ';height:860px')),
-() => ({ alarms: ref([{ t: '07:00', label: 'Weekdays', on: true }, { t: '08:30', label: 'Saturday · Gym', on: false }, { t: '11:08', label: 'Once', on: false }]), t: ref('06:45'), label: ref('Alarm'), rep: ref('wd'), snooze: ref(true) }),
-{ name: 'Clock app' }, { HdTimePicker });
+/* ---- Clock (the phone's DeskClock, after the N9 Clock): the clock in a light panel, digital or analog, over the alarms ---- */
+const CLOCK_CSS = `<component is="style">
+.hd-q-clock .ck-face { display:flex; flex-direction:column; align-items:center; height:296px; padding:22px 16px 0; background:#ECEFF0; }
+.hd-q-clock .ck-city { font:400 .8125rem/1 var(--hd-font-family-base); color:#555; }
+.hd-q-clock .ck-digital { margin-top:82px; font:200 5.2rem/1 var(--hd-font-family-light); letter-spacing:-1px; color:#111; }
+.hd-q-clock .ck-digital b { font-weight:inherit; color:#F26B1D; }
+.hd-q-clock .ck-rule { align-self:stretch; height:1px; margin:18px 8px 0; background:#bfc3c5; }
+.hd-q-clock .ck-date { align-self:flex-start; margin:22px 0 0 10px; font:300 1.125rem/1 var(--hd-font-family-light); color:#444; }
+.hd-q-clock .ck-dial { position:relative; width:254px; height:254px; margin-top:20px; border-radius:50%; background:radial-gradient(circle at 50% 35%, #e9e9ea, #c9c9cb 75%); box-shadow:0 0 0 1px #fff, 0 2px 6px rgba(0,0,0,.25); }
+.hd-q-clock .ck-day { position:absolute; left:18px; top:94px; font:400 .6875rem/1 var(--hd-font-family-base); color:#555; }
+.hd-q-clock .ck-day b { display:block; margin-top:6px; font:200 1.75rem/1 var(--hd-font-family-light); color:#222; }
+.hd-q-clock .ck-hand { position:absolute; left:50%; top:50%; height:10px; margin-top:-5px; border-radius:5px; background:#fff; box-shadow:0 2px 3px rgba(0,0,0,.3); transform-origin:5px 50%; }
+.hd-q-clock .ck-sec { position:absolute; left:50%; top:50%; width:110px; height:2px; margin-top:-1px; background:#F26B1D; transform-origin:0 50%; }
+.hd-q-app .q-page.hd-q-clock { background:#E5E6E7; }
+.hd-q-clock .ck-head { display:flex; align-items:center; justify-content:space-between; padding:20px 12px 14px 16px; border-top:1px solid #cfd1d2; font:300 1.75rem/1 var(--hd-font-family-light); }
+.hd-q-app .hd-q-clock .q-btn.ck-add { width:40px; height:40px; min-width:0; min-height:0; padding:0; border-radius:0 !important; --hd-sq-size:40px; --hd-sq-fill:linear-gradient(#F7F7F8, #E6E6E8 50%, #D4D4D7); --hd-sq-ring:rgba(0,0,0,.18); color:#1A1A1A; }
+.hd-q-clock .ck-row { display:flex; align-items:center; gap:16px; padding:12px 12px 12px 14px; border-top:1px solid #d3d4d5; }
+.hd-q-clock .ck-row:first-child { border-top:0; }
+.hd-q-clock .ck-t { font:700 1.375rem/1.15 var(--hd-font-family-base); color:#222; }
+.hd-q-clock .ck-l { font:400 .9375rem/1.3 var(--hd-font-family-base); color:#666; } .hd-q-clock .ck-l small { margin-left:6px; color:#999; font-size:.8125rem; }
+.hd-q-clock .ck-edit { background:#DCDFE3; box-sizing:border-box; min-height:680px; padding:10px 14px; display:flex; flex-direction:column; align-items:center; }
+.hd-q-clock .ck-bar { display:flex; justify-content:space-between; align-self:stretch; }
+.hd-q-clock .ck-btn { min-width:110px; height:38px; font:700 1rem/1 var(--hd-font-family-base); }
+.hd-q-app .bg-ck-orange { background-color:#F26B1D !important; color:#fff !important; }
+.hd-q-clock .ck-title { align-self:stretch; height:36px; margin-top:12px; padding:0 14px; display:flex; align-items:center; background:#fff; color:#999; font:400 1rem/1 var(--hd-font-family-base); }
+.hd-q-clock .ck-big { margin:14px 0 10px; font:200 3.4rem/1 var(--hd-font-family-light); color:#222; }
+.hd-q-clock .ck-ring { position:relative; width:292px; height:292px; border-radius:50%; background:radial-gradient(circle at 50% 30%, #f1f1f1, #c8c8c9 80%); box-shadow:0 0 0 2px #fff, 0 1px 4px rgba(0,0,0,.3); }
+.hd-q-clock .ck-core { position:absolute; inset:66px; border-radius:50%; background:radial-gradient(circle at 50% 25%, #3a3a3a, #141414 70%); }
+.hd-q-clock .ck-knob { position:absolute; display:grid; place-items:center; width:52px; height:52px; margin:-26px 0 0 -26px; border-radius:50%; font:300 1.375rem/1 var(--hd-font-family-light); box-shadow:0 2px 4px rgba(0,0,0,.4); }
+.hd-q-clock .ck-knob.is-min { background:radial-gradient(circle at 50% 30%, #4a3a30, #241a14); color:#fff; }
+.hd-q-clock .ck-knob.is-hour { background:radial-gradient(circle at 50% 30%, #e8e8e8, #b4b4b4); color:#222; }
+.hd-q-clock .ck-more { align-self:stretch; display:flex; justify-content:space-between; align-items:center; margin-top:24px; padding:22px 2px; font:700 1.0625rem/1 var(--hd-font-family-base); color:#222; }
+</component>`;
+/** a knob on the picker: angle in degrees from 12 o'clock, radius from the centre */
+const knob = (cls: string, v: string, deg: number, r: number) => `<span class="ck-knob ${cls}" style="left:${146 + r * Math.sin(deg * Math.PI / 180)}px;top:${146 - r * Math.cos(deg * Math.PI / 180)}px">${v}</span>`;
+const hand = (w: number, deg: number) => `<span class="ck-hand" style="width:${w}px;margin-left:-5px;transform:rotate(${deg - 90}deg)"></span>`;
+const alarmList = `<div class="ck-alarms">
+      <div class="ck-head">Alarms <q-btn flat class="hd-sq ck-add" :icon="ic('add')" aria-label="New alarm" /></div>
+      <div v-for="a in alarms" :key="a.t" class="ck-row"><HdSwitch v-model="a.on" :aria-label="'Alarm ' + a.t" />
+        <div style="flex:1"><div class="ck-t">{{ a.t }}</div><div class="ck-l">{{ a.label }}<small>{{ a.days }}</small></div></div><q-icon :name="ic('chevron-right')" size="26px" /></div>
+    </div>`;
+const clockBar = footer(tool('alarm', 'Alarms') + tool('globe', 'World clock') + tool('hourglass', 'Timer') + tool('stopwatch', 'Stopwatch') + tool('settings', 'Settings'));
+export const ClockApp = qs(CSS + CLOCK_CSS + row(
+  phone(`${clockBar}<q-page-container><q-page class="hd-q-clock">
+    <div class="ck-face"><span class="ck-city">London GMT+0:00</span><div class="ck-digital">15:12<b>:31</b></div><div class="ck-rule"></div><div class="ck-date">6 Nov 2026</div></div>
+    ${alarmList}</q-page></q-page-container>`),
+  phone(`${clockBar}<q-page-container><q-page class="hd-q-clock">
+    <div class="ck-face"><span class="ck-city">London GMT+0:00</span>
+      <div class="ck-dial" role="img" aria-label="15:15"><span class="ck-day">FRI<b>06</b></span>${hand(80, 97)}${hand(110, 90)}<span class="ck-sec" style="transform:rotate(-2deg)"></span></div></div>
+    ${alarmList}</q-page></q-page-container>`),
+  // set alarm: a sheet, Cancel and Save on top, the time on two rings: minutes outside (dark knob), hours inside (light knob)
+  phone(`<q-page-container><q-page class="hd-q-clock"><div class="ck-edit">
+    <div class="ck-bar"><q-btn unelevated no-caps class="ck-btn" label="Cancel" /><q-btn unelevated no-caps class="ck-btn bg-ck-orange" label="Save" /></div>
+    <div class="ck-title hd-sqh">Alarm title</div>
+    <div class="ck-big">23:49</div>
+    <div class="ck-ring" role="group" aria-label="Alarm time">${knob('is-min', '49', 294, 120)}<div class="ck-core"></div>${knob('is-hour', '23', 330, 66)}</div>
+    <div class="ck-more">More options <q-icon :name="ic('chevron-right')" size="26px" /></div>
+  </div></q-page></q-page-container>`)),
+() => ({ alarms: ref([{ t: '8:00', label: 'Alarm', days: 'Mon, Tue, Wed, Thu, Fri', on: false }, { t: '11:08', label: 'Alarm', days: '', on: false }]) }),
+{ name: 'Clock app' }, { HdSwitch });
 
 /* ---- Feeds ---- */
 export const FeedsApp = qs(CSS + phone(`${head('Feeds', ' <small>updated {{ updated }}</small>', '#FF8500')}
