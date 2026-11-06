@@ -15,9 +15,13 @@ import HdSquircle from '../../components/HdSquircle.vue';
 export type BelleKind = 'switch' | 'wifi' | 'fm' | 'toggles' | 'data' | 'notes' | 'today' | 'agenda' | 'bigclock' | 'gearclock' | 'analog'
   | 'flipclock' | 'lcdclock' | 'wordclock' | 'web' | 'contact' | 'weather' | 'rss' | 'mail' | 'stackmail' | 'music' | 'music-large' | 'm-clock' | 'm-analog' | 'm-calendar'
   | 'm-feeds' | 'm-music' | 'm-weather' | 'm-shortcuts';
-const props = withDefaults(defineProps<{ kind: BelleKind; cols?: number; rows?: number; on?: boolean; glyph?: string; word?: string; editing?: boolean; cell?: number; art?: string; title?: string; out?: string; place?: string; at?: string }>(), { cell: 90, place: 'Tampere' });
-/** place: tapping the place on a weather widget opens the place picker (BellePlacePicker) */
-const emit = defineEmits<{ place: [] }>();
+/** a mail for the mail widgets: when is shown as given ("10:02", "Yesterday") */
+export interface BelleMail { from: string; subject: string; when: string; unread: boolean }
+const props = withDefaults(defineProps<{ kind: BelleKind; cols?: number; rows?: number; on?: boolean; glyph?: string; word?: string; editing?: boolean; cell?: number; art?: string; title?: string; out?: string; place?: string; at?: string;
+  /** the mail widgets' mails and account (a host's real ones; sample mail without them) */
+  mails?: BelleMail[]; account?: string }>(), { cell: 90, place: 'Tampere' });
+/** place: tapping the place on a weather widget opens the place picker (BellePlacePicker); open: a mail was tapped (its index) */
+const emit = defineEmits<{ place: []; open: [index: number] }>();
 /* default grid size per widget (targetCellWidth / Height in the appwidget-provider xml) */
 const SIZE: Record<BelleKind, [number, number]> = {
   switch: [1, 1], wifi: [2, 1], fm: [2, 1], toggles: [4, 1], data: [1, 1], notes: [4, 2], today: [4, 1], agenda: [4, 3], bigclock: [4, 3],
@@ -32,6 +36,7 @@ const MAILS: [string, string, string, boolean][] = [['Mikko Lahti', 'Photos from
   ['Anna Virtanen', 'Re: Lunch on Friday?', '08:15', true], ['Library', 'Your loan is due next week', 'Yesterday', false], ['Sauna club', 'Winter evenings are back', 'Yesterday', false],
   ['Electricity company', 'Your October bill', 'Mon', false], ['Jussi K', 'Slides for Thursday', 'Mon', false], ['Cycling club', 'Last ride of the season', 'Sun', false],
   ['Bookshop', 'New in: winter reading', 'Sat', false], ['Mikko Lahti', 'Re: Cabin dates', 'Fri', false]];
+const mails = computed<BelleMail[]>(() => props.mails ?? MAILS.map(([from, subject, when, unread]) => ({ from, subject, when, unread })));
 const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 const EVENTS: [string, string][][] = [[['Team stand-up', '@Anna Virtanen'], ['Lunch with Mikko', '@Mikko Laine'], ['Design review', '14:00'], ['Dentist', '16:30'], ['Sauna evening', '19:00']], [['Gym', '07:30']], []];
 const day = ref(0);
@@ -178,16 +183,17 @@ const wedge = (from: number, to: number) => { const p = (a: number) => `${40 + 6
          title on the right above prev / bigger play / next in a recessed groove (squircles by our rule) -->
     <!-- Mail (Belle Mail widget 4.5): the account and unread count in the blue header, then up to 20 mails that scroll -->
     <div v-else-if="kind === 'mail'" class="bw-mail">
-      <div class="bw-mail__head"><span>anna@example.org</span><b class="bw-mail__count hd-sqm">{{ MAILS.filter((m) => m[3]).length }}</b></div>
-      <div class="bw-mail__body bw-scroll" tabindex="0" aria-label="Mails"><div v-for="m in MAILS" :key="m[1]" class="bw-mail__row"><i class="bw-mail__dot" :class="{ read: !m[3] }" /><span><b>{{ m[0] }}</b><small>{{ m[1] }}</small></span><time>{{ m[2] }}</time></div></div>
+      <div class="bw-mail__head"><span>{{ account ?? 'anna@example.org' }}</span><b v-if="mails.some((m) => m.unread)" class="bw-mail__count hd-sqm">{{ mails.filter((m) => m.unread).length }}</b></div>
+      <div class="bw-mail__body bw-scroll" tabindex="0" aria-label="Mails"><p v-if="!mails.length" class="bw-mail__none">No mail.</p><div v-for="(m, i) in mails.slice(0, 20)" :key="i" class="bw-mail__row" @click="emit('open', i)"><i class="bw-mail__dot" :class="{ read: !m.unread }" /><span><b>{{ m.from }}</b><small>{{ m.subject }}</small></span><time>{{ m.when }}</time></div></div>
     </div>
     <!-- Latest mail (Belle stackemail): one mail at a time; ▲ ▼ step through, disabled at the ends -->
     <div v-else-if="kind === 'stackmail'" class="bw-mail bw-stack">
-      <div class="bw-mail__head"><span>Latest mail</span></div>
+      <div class="bw-mail__head"><span>{{ account ?? 'Latest mail' }}</span></div>
       <div class="bw-stack__body">
-        <span class="bw-stack__mail"><b>{{ MAILS[stack][0] }}</b><small>{{ MAILS[stack][2] }} · {{ stack + 1 }} / {{ MAILS.length }}</small><span>{{ MAILS[stack][1] }}</span></span>
+        <span v-if="!mails.length" class="bw-stack__mail"><span>No mail.</span></span>
+        <span v-else class="bw-stack__mail" @click="emit('open', Math.min(stack, mails.length - 1))"><b>{{ mails[Math.min(stack, mails.length - 1)]!.from }}</b><small>{{ mails[Math.min(stack, mails.length - 1)]!.when }} · {{ Math.min(stack, mails.length - 1) + 1 }} / {{ mails.length }}</small><span>{{ mails[Math.min(stack, mails.length - 1)]!.subject }}</span></span>
         <span class="bw-stack__nav"><button type="button" aria-label="Newer mail" :disabled="stack === 0" @click="stack--"><HdIcon name="chevron-up" :size="22" /></button>
-          <button type="button" aria-label="Older mail" :disabled="stack === MAILS.length - 1" @click="stack++"><HdIcon name="chevron-down" :size="22" /></button></span>
+          <button type="button" aria-label="Older mail" :disabled="stack >= mails.length - 1" @click="stack++"><HdIcon name="chevron-down" :size="22" /></button></span>
       </div>
     </div>
     <div v-else-if="kind === 'music'" class="bw-music">
@@ -348,6 +354,7 @@ const wedge = (from: number, to: number) => { const p = (a: number) => `${40 + 6
 .bw-mail__head { position: relative; display: flex; align-items: center; justify-content: center; height: 40px; border-radius: 10px 10px 0 0; background: linear-gradient(#4DB2F0, #0E6CB8); font-size: 18px; text-shadow: 0 1px 1px rgba(0,0,0,.5); }
 .bw-mail__count { position: absolute; right: 6px; display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(#fff, #D6E6F2); color: #0E5E9E; font-size: 15px; text-shadow: none; }
 .bw-mail__body { flex: 1; min-height: 0; border-radius: 0 0 10px 10px; background: linear-gradient(#fff, #E9E9EB); color: #1A1A1A; }
+.bw-mail__none { margin: 8px 10px; opacity: .7; }
 .bw-mail__row { display: flex; align-items: center; gap: 9px; height: 58px; padding: 0 12px 0 10px; box-sizing: border-box; } .bw-mail__row + .bw-mail__row { border-top: 1px solid #DADADD; }
 .bw-mail__row span { flex: 1; min-width: 0; display: flex; flex-direction: column; } .bw-mail__row b, .bw-mail__row small { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
 .bw-mail__row b { font-size: 16px; } .bw-mail__row small { font-size: 14px; color: #6E6E73; } .bw-mail__row time { align-self: flex-start; margin-top: 9px; font-size: 14px; color: #1C8FD8; }
