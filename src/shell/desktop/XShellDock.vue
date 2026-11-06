@@ -19,8 +19,10 @@ export interface ShellDockItem { id: string; title: string; icon: string; color:
 const props = withDefaults(defineProps<{
   items: ShellDockItem[]; overviewOpen?: boolean; position?: DockPos; size?: number; autoHide?: boolean; panel?: boolean; editing?: boolean;
   launcher?: boolean; trash?: boolean; preview?: boolean;
-}>(), { position: 'left', size: 44, launcher: true, trash: true, preview: false });
-const emit = defineEmits<{ overview: []; item: [id: string]; minimise: [id: string]; close: [id: string]; settings: []; remove: [id: string]; move: [pos: DockPos] }>();
+  /** how many items are in the recycle bin: 0 shows it empty, more shows it full with the count */
+  binCount?: number;
+}>(), { position: 'left', size: 44, launcher: true, trash: true, preview: false, binCount: 0 });
+const emit = defineEmits<{ overview: []; bin: []; item: [id: string]; minimise: [id: string]; close: [id: string]; settings: []; remove: [id: string]; move: [pos: DockPos] }>();
 const vertical = computed(() => props.position === 'left' || props.position === 'right');
 const nav = ref<HTMLElement>();
 
@@ -96,7 +98,8 @@ function moveUp(e: PointerEvent) {
   <nav ref="nav" class="x-dock hd-on-home x-shell-dock" :class="[`x-dock--${position}`, { 'is-vertical': vertical, 'is-panel': panel, 'is-hidden': hidden, 'is-autohide': autoHide, 'is-editing': editing }]"
     :style="style" aria-label="Dock">
     <span v-if="launcher" class="x-dock__slot">
-      <HdTooltip text="Overview" :placement="tip"><button type="button" class="x-dock__launcher hd-sq hd-focusable" :class="{ 'is-active': overviewOpen }" aria-label="Overview" @click="emit('overview')"><HdIcon name="grid" :size="Math.round(size / 2)" /></button></HdTooltip>
+      <HdTooltip text="Overview" :placement="tip"><button type="button" class="x-dock__item x-shell-dock__overview hd-focusable" :class="{ 'is-active': overviewOpen }" aria-label="Overview" @click="emit('overview')">
+        <HdSquircle :size="size" color="#E9EAEC" lighting="lit" tone="light"><HdIcon name="grid" :size="Math.round(size / 2)" lit="dark" /></HdSquircle></button></HdTooltip>
       <button v-if="editing" type="button" class="x-dock__rm hd-sq x-shell-dock__rm" aria-label="Remove the Overview button" @click="emit('remove', 'launcher')">×</button>
     </span>
     <span v-if="items.length && launcher" class="x-dock__div" aria-hidden="true"></span>
@@ -107,7 +110,10 @@ function moveUp(e: PointerEvent) {
       <button v-if="editing" type="button" class="x-dock__rm hd-sq x-shell-dock__rm" :aria-label="`Remove ${i.title}`" @click="emit('remove', i.id)">×</button>
     </span>
     <span v-if="trash" class="x-dock__div" aria-hidden="true"></span>
-    <span v-if="trash" class="x-dock__slot"><HdTooltip text="Recycle bin" :placement="tip"><button type="button" class="x-dock__applet hd-sq hd-focusable" aria-label="Recycle bin"><HdIcon name="delete" :size="Math.round(size / 2)" /></button></HdTooltip>
+    <span v-if="trash" class="x-dock__slot"><HdTooltip :text="binCount ? `Recycle bin · ${binCount} item${binCount === 1 ? '' : 's'}` : 'Recycle bin · empty'" :placement="tip">
+      <button type="button" class="x-dock__item x-shell-dock__bin hd-focusable" :class="{ 'is-full': binCount > 0 }" :aria-label="binCount ? `Recycle bin, ${binCount} item${binCount === 1 ? '' : 's'}` : 'Recycle bin, empty'" @click="emit('bin')">
+        <HdSquircle :size="size" :color="binCount ? '#8C9199' : '#5E636B'" lighting="lit"><HdIcon name="delete" :size="Math.round(size / 2)" lit /></HdSquircle>
+        <b v-if="binCount" class="x-shell-dock__count hd-sqm" aria-hidden="true">{{ binCount > 99 ? '99+' : binCount }}</b></button></HdTooltip>
       <button v-if="editing" type="button" class="x-dock__rm hd-sq x-shell-dock__rm" aria-label="Remove the recycle bin" @click="emit('remove', 'trash')">×</button></span>
     <template v-if="editing">
       <span class="x-dock__move" title="Drag to any screen edge" role="button" aria-label="Move the dock: drag to any screen edge" @pointerdown="moveDown" @pointerup="moveUp" @pointercancel="moveUp"><i></i><i></i><i></i></span>
@@ -135,7 +141,23 @@ function moveUp(e: PointerEvent) {
    the work area); an auto-hiding dock comes up over them */
 .x-dock.x-shell-dock:not(.is-autohide) { z-index: 1; } /* above the widgets (0), under the windows (2 and up: XShell draws them at z + 1) */
 .x-dock.x-shell-dock.is-autohide { z-index: 7500; }
-.x-dock.x-shell-dock { -webkit-backdrop-filter: none; backdrop-filter: none; } /* blur bleeds on GPUs: none on the web */ .x-dock-edge.x-shell-dock-edge { z-index: 7499; }
+.x-dock.x-shell-dock { -webkit-backdrop-filter: none; backdrop-filter: none; }
+/* glass, as the N9's: a dark tinted pane lit from above, a bright top edge, a soft reflection across its upper half and a dark
+   lower edge; gradients only (blur bleeds on GPUs). The icons sit 6 px from every edge. */
+.x-dock.x-shell-dock { gap: 6px; padding: 6px; border-radius: calc(var(--x-dock-i) * .36 + 6px); color: #fff;
+  background: linear-gradient(180deg, rgba(255,255,255,.16), rgba(255,255,255,.05) 48%, rgba(255,255,255,0) 52%, rgba(255,255,255,.04)), rgba(14,16,20,.62);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.32), inset 0 0 0 1px rgba(255,255,255,.1), inset 0 -1px 0 rgba(0,0,0,.45), 0 10px 32px rgba(0,0,0,.5); }
+.x-dock.x-shell-dock::before { content: ''; position: absolute; inset: 1px 1px 50% 1px; border-radius: inherit; border-bottom-left-radius: 40% 12px; border-bottom-right-radius: 40% 12px;
+  background: linear-gradient(180deg, rgba(255,255,255,.14), rgba(255,255,255,.03)); pointer-events: none; }
+.x-dock.x-shell-dock:not(.is-vertical)::before { inset: 1px 1px 52% 1px; }
+.x-dock.x-shell-dock.is-panel { border-radius: var(--hd-radius-card); }
+.x-shell-dock .x-dock__item { position: relative; width: var(--x-dock-i); height: var(--x-dock-i); border-radius: calc(var(--x-dock-i) * .3); background: none; --hd-sq-size: var(--x-dock-i); }
+.x-shell-dock .x-dock__item:hover, .x-shell-dock .x-dock__slot.is-active .x-dock__item, .x-shell-dock__overview.is-active { --hd-sq-fill: transparent; filter: brightness(1.12); }
+.x-shell-dock .x-dock__div { width: 60%; margin: 1px 0; background: linear-gradient(90deg, transparent, rgba(255,255,255,.22), transparent); }
+.x-dock.x-shell-dock:not(.is-vertical) .x-dock__div { width: 1px; height: 60%; margin: 0 1px; background: linear-gradient(transparent, rgba(255,255,255,.22), transparent); }
+.x-shell-dock .x-dock__run { background: rgba(255,255,255,.75); }
+.x-shell-dock__count { position: absolute; top: -4px; right: -6px; min-width: 18px; height: 18px; padding: 0 4px; box-sizing: border-box; display: grid; place-items: center;
+  background: #FF8500; color: #fff; font: 700 11px/1 var(--hd-font-family-base); box-shadow: 0 1px 3px rgba(0,0,0,.5); } /* blur bleeds on GPUs: none on the web */ .x-dock-edge.x-shell-dock-edge { z-index: 7499; }
 .x-shell-hcard { position: absolute; z-index: 7600; min-width: 240px; max-width: 320px; padding: 12px 12px 6px; border-radius: var(--hd-radius-card); background: var(--hd-surface-overlay); color: var(--hd-c-fg);
   box-shadow: var(--hd-shadow-overlay), 0 0 0 1px var(--hd-c-divider); font: 400 var(--hd-font-size-small)/1.4 var(--hd-font-family-base); }
 .x-shell-hcard header { display: flex; align-items: center; gap: 10px; font-size: var(--hd-font-size-medium); }

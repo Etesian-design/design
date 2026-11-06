@@ -50,5 +50,6 @@ export { default as XOpenApps } from './parts/XOpenApps.vue';
 export { default as XOverview } from './parts/XOverview.vue';
 export { default as BelleCap } from './widgets/BelleCap.vue';
 export { default as BelleDial } from './widgets/BelleDial.vue';
+export { default as BelleGearDial } from './widgets/BelleGearDial.vue';
 export { default as BelleOnOff } from './widgets/BelleOnOff.vue';
 export { default as BelleWidget, type BelleMail, type BelleKind } from './widgets/BelleWidget.vue';

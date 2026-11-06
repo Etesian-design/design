@@ -60,8 +60,10 @@ const props = withDefaults(defineProps<{
   /** per app: Back in the header, or a view menu */
   meta?: Record<string, { back?: boolean; views?: string[] }>;
   dockPreview?: boolean;
-}>(), { name: 'Etesian', menus: () => [], meta: () => ({}) });
-const emit = defineEmits<{ open: [id: string]; close: [id: string]; menu: [id: string]; back: [id: string]; view: [id: string, view: string] }>();
+  /** the host's recycle bin: how many items are in it (the dock shows it full or empty), or false when the host has no bin (no bin in the dock or its settings) */
+  bin?: number | false;
+}>(), { name: 'Etesian', menus: () => [], meta: () => ({}), bin: 0 });
+const emit = defineEmits<{ open: [id: string]; close: [id: string]; menu: [id: string]; back: [id: string]; view: [id: string, view: string]; bin: [] }>();
 const slots = useSlots();
 const byId = computed(() => Object.fromEntries(props.apps.map((a) => [a.id, a])));
 
@@ -382,12 +384,12 @@ const tone = (id: string): IconTone | undefined => byId.value[id]?.tone;
 
       <XContextMenu v-if="ctx" :open="true" :items="ctx.items" :label="ctx.label" :x="ctx.x" :y="ctx.y" @select="ctxPick" @update:open="ctx = null" />
       <div v-if="dockSettings" class="x-shell-dset" :style="{ [dock.pos === 'right' ? 'right' : 'left']: `${dockThickness(dock.size) + 5 * GAP}px`, top: '24px' }">
-        <XDockSettings v-model:position="dock.pos" v-model:size="dock.size" v-model:visibility="dock.vis" v-model:panel="dock.panel" :launcher="dock.launcher" :trash="dock.trash" :previews="dock.previews"
+        <XDockSettings v-model:position="dock.pos" v-model:size="dock.size" v-model:visibility="dock.vis" v-model:panel="dock.panel" :launcher="dock.launcher" :trash="dock.trash" :bin="bin !== false" :previews="dock.previews"
           @widget="(id, on) => { if (id === 'launcher' || id === 'trash' || id === 'previews') dock[id] = on; }" @done="dockSettings = false; dockEdit = false" />
       </div>
 
       <XShellDock :items="dockItems" :overview-open="overview" :position="dock.pos" :size="dock.size" :auto-hide="dock.vis !== 'always'" :panel="dock.panel" :editing="dockEdit"
-        :launcher="dock.launcher" :trash="dock.trash" :preview="dock.previews" @overview="toggle('overview')" @item="(id) => (wm.get(id) ? wm.activate(id) : open(id))" @minimise="minimise" @close="close"
+        :launcher="dock.launcher" :trash="bin !== false && dock.trash" :bin-count="bin || 0" :preview="dock.previews" @bin="emit('bin')" @overview="toggle('overview')" @item="(id) => (wm.get(id) ? wm.activate(id) : open(id))" @minimise="minimise" @close="close"
         @settings="dockSettings = true" @remove="dockRemove" @move="(p) => (dock.pos = p)">
         <template v-if="$slots.card" #card="{ id }"><slot name="card" :id="id" /></template>
         <template v-if="$slots.preview" #preview="{ id }"><slot name="preview" :id="id" /></template>

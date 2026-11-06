@@ -7,7 +7,9 @@ import HdSwitch from '../../components/HdSwitch.vue';
 import HdButton from '../../components/HdButton.vue';
 import HdIcon from '../../components/HdIcon.vue';
 import type { DockPos } from './geometry';
-const props = withDefaults(defineProps<{ position?: DockPos; size?: number; visibility?: 'always' | 'autohide' | 'dodge'; panel?: boolean; previews?: boolean; launcher?: boolean; trash?: boolean }>(), { position: 'left', size: 44, visibility: 'always', panel: false, launcher: true, trash: true });
+const props = withDefaults(defineProps<{ position?: DockPos; size?: number; visibility?: 'always' | 'autohide' | 'dodge'; panel?: boolean; previews?: boolean; launcher?: boolean; trash?: boolean;
+  /** the host has a recycle bin (otherwise it is not offered) */
+  bin?: boolean }>(), { position: 'left', size: 44, visibility: 'always', panel: false, launcher: true, trash: true, bin: true });
 const emit = defineEmits<{ done: []; 'update:position': [p: DockPos]; 'update:panel': [on: boolean]; 'update:size': [px: number]; 'update:visibility': [v: 'always' | 'autohide' | 'dodge']; widget: [id: string, on: boolean] }>();
 const style = ref(props.panel ? 'panel' : 'strip');
 const STYLES = [{ id: 'strip', label: 'Floating strip' }, { id: 'panel', label: 'Full-height panel' }] as const;
@@ -20,7 +22,7 @@ const VIS = [{ id: 'always', label: 'Always visible' }, { id: 'autohide', label:
 const widgets = ref([
   { id: 'launcher', label: 'Launcher button (first)', icon: 'grid', on: props.launcher },
   { id: 'previews', label: 'Window previews on hover', icon: 'window', on: props.previews },
-  { id: 'trash', label: 'Recycle bin (last)', icon: 'delete', on: props.trash },
+  ...(props.bin ? [{ id: 'trash', label: 'Recycle bin (last)', icon: 'delete', on: props.trash }] : []),
   { id: 'clock', label: 'Clock', icon: 'clock', on: props.panel },
   { id: 'battery', label: 'Battery', icon: 'battery', on: false },
 ]);
