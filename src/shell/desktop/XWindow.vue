@@ -19,6 +19,7 @@ import HdToolBar from '../../components/HdToolBar.vue';
 import type { IconTone } from '../../lighting';
 import type { XAction } from '../parts/types';
 import { provideChromeHost } from '../parts/chrome';
+import XBrowserTabs from '../apps/XBrowserTabs.vue';
 
 export interface WindowCard { x: number; y: number; s: number; z: number; side: boolean }
 const props = withDefaults(defineProps<{
@@ -56,6 +57,8 @@ const views = computed(() => pc.value?.views ?? props.views);
 const view = computed(() => pc.value?.view ?? props.view);
 const back = computed(() => pc.value?.back ?? props.back);
 const tools = computed(() => pc.value?.tools ?? props.tools);
+/** a browser's tabs, in place of the title */
+const tabs = computed(() => pc.value?.tabs);
 const more = ref(props.moreOpen);
 watch(() => props.moreOpen, (v) => (more.value = v));
 watch(() => props.focused, (f) => { if (!f) more.value = false; });
@@ -63,7 +66,7 @@ const narrow = computed(() => !!tools.value && props.w < props.narrowAt);
 /** header room for actions: the width less the lead, the title, the drag gap, ⋯, the divider and the window controls */
 const fits = computed(() => {
   const t = tools.value ?? [];
-  const tw = (views.value?.length ? (view.value ?? views.value[0] ?? '') : title.value).length * 11 + (views.value?.length ? 44 : 16);
+  const tw = tabs.value ? Math.min(tabs.value.list.length * 200 + 44, props.w * 0.6) : (views.value?.length ? (view.value ?? views.value[0] ?? '') : title.value).length * 11 + (views.value?.length ? 44 : 16);
   const room = props.w - 6 - 40 - tw - 48 - 5 - 132;
   const n = Math.max(0, Math.floor(room / 40));
   return n >= t.length ? t.length : Math.max(0, Math.floor((room - 40) / 40));
@@ -101,7 +104,9 @@ const style = computed(() => {
         <HdTooltip v-if="back && !narrow" text="Back (Alt+Left)" placement="bottom"><HdToolIcon icon="back" label="Back" @click="goBack" /></HdTooltip>
         <HdSquircle v-else :size="26" :color="color" lighting="lit" :tone="tone" class="x-win__appicon"><HdIcon :name="icon" :size="15" :lit="tone === 'light' ? 'dark' : true" /></HdSquircle>
       </span>
-      <button v-if="views?.length" type="button" class="x-win__title x-win__title--menu hd-focusable" :aria-expanded="menu ? 'true' : 'false'" aria-haspopup="listbox"
+      <XBrowserTabs v-if="tabs" class="x-win__tabs" :tabs="tabs.list" :current="tabs.current" :max="tabs.max"
+        @pick="host.emit('tab', $event)" @close="host.emit('tab-close', $event)" @add="host.emit('tab-add')" />
+      <button v-else-if="views?.length" type="button" class="x-win__title x-win__title--menu hd-focusable" :aria-expanded="menu ? 'true' : 'false'" aria-haspopup="listbox"
         title="Views (Alt+V)" @click.stop="menu = !menu">
         <span>{{ view ?? views[0] }}</span><HdIcon name="chevron-down" :size="16" />
       </button>
@@ -164,6 +169,8 @@ const style = computed(() => {
 .x-win__title--menu { display: inline-flex; align-items: center; gap: 4px; height: 34px; padding: 0 8px; margin: 0 2px; border-radius: 6px; cursor: pointer; }
 .x-win__title--menu:hover, .x-win__title--menu[aria-expanded=true] { background: var(--hd-c-pressed); }
 .x-win__drag { flex: 1; align-self: stretch; }
+.x-win__tabs + .x-win__drag { min-width: 56px; }
+.x-win__tabs { margin: 0 2px; }
 .x-win__actions, .x-win__ctl { flex: none; display: inline-flex; align-items: center; }
 .x-win__sep { flex: none; width: 1px; height: 22px; margin: 0 2px; background: var(--hd-c-divider); }
 /* the window controls: 44 px targets, the squircle highlight smaller inside them */

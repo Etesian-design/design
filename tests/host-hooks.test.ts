@@ -6,6 +6,8 @@ import XShell from '../src/shell/desktop/XShell.vue';
 import HdToastStack from '../src/components/HdToastStack.vue';
 import HdStatusState from '../src/components/HdStatusState.vue';
 import BelleWidget from '../src/shell/widgets/BelleWidget.vue';
+import XWindow from '../src/shell/desktop/XWindow.vue';
+import XClassic from '../src/shell/web/XClassic.vue';
 
 describe('browser frame for a host', () => {
   it('puts the host menu inside the ⋮ button box and still reports the press', async () => {
@@ -23,6 +25,30 @@ describe('browser frame for a host', () => {
     const side = mount(XBrowserFrame, { props: { tabs, current: 'a', tabsAt: 'side' } });
     expect(side.find('.x-bf__strip').exists()).toBe(false);
     expect(side.findAll('.x-bf__side [role=tab]')).toHaveLength(2);
+  });
+  it('in a window, puts the tabs in its decoration in place of the title, with no strip of their own', async () => {
+    const tabs = [{ id: 'a', title: 'One' }, { id: 'b', title: 'Two' }];
+    const w = mount(XWindow, { props: { title: 'Browser', icon: 'globe', color: '#2a6' }, slots: { default: () => h(XBrowserFrame, { tabs, current: 'b', max: 3 }) } });
+    await nextTick();
+    const bar = w.find('.x-win__bar');
+    expect(bar.findAll('[role=tab]')).toHaveLength(2);
+    expect(bar.find('[role=tab][aria-selected=true]').text()).toContain('Two');
+    expect(bar.find('h2.x-win__title').exists()).toBe(false);
+    expect(w.find('.x-bf__strip').exists()).toBe(false);
+    const frame = w.findComponent(XBrowserFrame);
+    await bar.findAll('[role=tab]')[0]!.trigger('click');
+    await bar.find('[aria-label="Close Two"]').trigger('click');
+    await bar.find('[aria-label="New tab"]').trigger('click');
+    expect(frame.emitted('pick')).toEqual([['a']]);
+    expect(frame.emitted('close')).toEqual([['b']]);
+    expect(frame.emitted('add')).toHaveLength(1);
+  });
+  it('in the classic layout, puts the tabs in the header bar', async () => {
+    const tabs = [{ id: 'a', title: 'One' }];
+    const w = mount(XClassic, { props: { apps: [{ id: 'web', title: 'Browser', icon: 'globe', color: '#2a6' }], app: 'web' }, slots: { default: () => h(XBrowserFrame, { tabs, current: 'a' }) } });
+    await nextTick();
+    expect(w.findAll('.x-cl__bar [role=tab]')).toHaveLength(1);
+    expect(w.find('.x-bf__strip').exists()).toBe(false);
   });
   it('gives the address field squircle-half ends, not a pill', () => {
     expect(mount(XBrowserFrame).find('.x-bf__addr').classes()).toContain('hd-sqm');
