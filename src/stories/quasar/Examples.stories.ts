@@ -300,7 +300,7 @@ const CLOCK_CSS = `<component is="style">
 .hd-q-clock .ck-t { font:700 1.375rem/1.15 var(--hd-font-family-base); color:#222; }
 .hd-q-clock .ck-l { font:400 .9375rem/1.3 var(--hd-font-family-base); color:#666; } .hd-q-clock .ck-l small { margin-left:6px; color:#999; font-size:.8125rem; }
 .hd-q-clock .ck-edit { background:#DEE2E6; box-sizing:border-box; min-height:680px; padding:0 14px 10px; display:flex; flex-direction:column; align-items:center; }
-.hd-q-clock .ck-bar { display:flex; justify-content:space-between; align-self:stretch; margin:0 -14px; padding:7px 14px; background:linear-gradient(#e6e3e6, #d5d2d5); border-bottom:1px solid #c4c4c6; }
+.hd-q-clock .ck-bar { display:flex; justify-content:space-between; align-self:stretch; margin:0 -14px; padding:7px 14px; background:linear-gradient(#e5e5e5, #d4d4d4); border-bottom:1px solid #c4c4c6; }
 .hd-q-app .bg-ck-grey { background-color:#d8d8da !important; color:#111 !important; }
 .hd-q-clock .ck-btn { min-width:110px; height:38px; font:700 1rem/1 var(--hd-font-family-base); }
 .hd-q-app .bg-ck-orange { background-color:#F26B1D !important; color:#fff !important; }
@@ -330,7 +330,7 @@ export const ClockApp = qs(CSS + CLOCK_CSS + row(
     <HdTimeDial v-model="t" :size="298" label="Alarm time" class="q-mt-sm" />
     <div class="ck-more">More options <q-icon :name="ic('chevron-right')" size="26px" /></div>
   </div></q-page></q-page-container>`)),
-() => ({ t: ref('23:49'), alarms: ref([{ t: '8:00', label: 'Alarm', days: 'Mon, Tue, Wed, Thu, Fri', on: false }, { t: '11:08', label: 'Alarm', days: '', on: false }]) }),
+() => ({ t: ref('08:25'), alarms: ref([{ t: '8:00', label: 'Alarm', days: 'Mon, Tue, Wed, Thu, Fri', on: false }, { t: '11:08', label: 'Alarm', days: '', on: false }]) }),
 { name: 'Clock app' }, { HdSwitch, HdTimeDial });
 
 /* ---- Feeds ---- */
