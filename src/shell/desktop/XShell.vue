@@ -9,7 +9,7 @@
  *    Edit dock and its settings. Kept on the device.
  *  - Windows (XWindow + windowManager.ts): the app's actions in the header, overlapping, resizable from any edge; dragged to
  *    a side edge they snap to that half, to the top edge they show the snap layouts; double-click the bar maximises.
- *    Kept on the device under `storageKey`.
+ *    Kept under `storageKey`, in `storage` (default: this device's localStorage).
  *  - Overview (the dock button, View): Events | the open windows themselves, as cards | the apps, type to search.
  *    Search (View): the compact version. Windows switcher (View > Windows): arrows or Tab, Enter, Escape.
  *  - Events (the count or the clock) and the status menu: panels the host fills.
@@ -36,7 +36,7 @@ import XDock from './XDock.vue';
 import XMenuBar from './XMenuBar.vue';
 import XWindows from './XWindows.vue';
 defineOptions({ components: { XDock, XMenuBar, XWindows } });
-import { createWindowManager, createDesktopKeys, HALF_LEFT, HALF_RIGHT, LAYOUT_IDS, type Snap, type WmWin } from './windowManager';
+import { createWindowManager, createDesktopKeys, HALF_LEFT, HALF_RIGHT, LAYOUT_IDS, localShellStorage, type ShellStorage, type Snap, type WmWin } from './windowManager';
 import { windowCards, CARD_TITLE } from './cards';
 import { GAP, LAYOUTS, ZOOM_LEVELS, dockThickness, zoneRects, zoomStep, type DockPos, type LayoutId, type Rect, type ZoomLevel } from './geometry';
 import type { XMenuItem } from '../parts/types';
@@ -49,8 +49,10 @@ const props = withDefaults(defineProps<{
   name?: string;
   /** the host's menus, before View and Window; picking an item emits `menu` with its id */
   menus?: ShellMenu[];
-  /** keep the windows and the dock on this device under this key */
+  /** keep the windows and the dock under this key */
   storageKey?: string;
+  /** where they are kept (default: this device's localStorage); read once when the desktop starts */
+  storage?: ShellStorage;
   /** where a newly opened window goes (defaults to a cascade) */
   place?: (id: string, n: number, area: Rect) => Partial<Rect>;
   /** the Events count in the menu bar (hidden when undefined) */
@@ -69,8 +71,9 @@ const size = reactive({ w: 1440, h: 860 });
 const dockKey = props.storageKey ? `${props.storageKey}:dock` : undefined;
 const dock = reactive<{ pos: DockPos; size: number; vis: 'always' | 'autohide' | 'dodge'; panel: boolean; launcher: boolean; trash: boolean; previews: boolean; removed: string[] }>(
   { pos: 'left', size: 44, vis: 'always', panel: false, launcher: true, trash: true, previews: !!props.dockPreview, removed: [] });
-try { if (dockKey) Object.assign(dock, JSON.parse(localStorage.getItem(dockKey) || '{}')); } catch { /* the defaults */ }
-if (dockKey) watch(dock, () => { try { localStorage.setItem(dockKey, JSON.stringify(dock)); } catch { /* not kept */ } }, { deep: true });
+const store = props.storage ?? localShellStorage;
+try { if (dockKey) Object.assign(dock, JSON.parse(store.get(dockKey) || '{}')); } catch { /* the defaults */ }
+if (dockKey) watch(dock, () => store.set(dockKey, JSON.stringify(dock)), { deep: true });
 const dockEdit = ref(false), dockSettings = ref(false);
 /** the free area beside a dock that is always shown */
 const work = computed<Rect>(() => {
@@ -80,7 +83,7 @@ const work = computed<Rect>(() => {
 });
 
 /* ---------- windows ---------- */
-const wm = createWindowManager({ area: work, place: props.place, storageKey: props.storageKey });
+const wm = createWindowManager({ area: work, place: props.place, storageKey: props.storageKey, storage: props.storage });
 const known = (w: WmWin) => !!byId.value[w.id];
 function open(id: string) { closeOverlays(); if (!wm.get(id)) emit('open', id); wm.open(id); }
 function close(id: string) { wm.close(id); emit('close', id); focusControls(); }
