@@ -16,6 +16,8 @@
     "shape-audit": "node scripts/shape-audit.mjs"
   },
   "devDependencies": {
+    "@commitlint/cli": "19.8.1",
+    "@commitlint/config-conventional": "19.8.1",
     "@fontsource/fira-sans": "^5.3.0",
     "@fontsource/hind": "^5.3.0",
     "@fontsource/inter": "^5.3.0",
