@@ -80,7 +80,7 @@ npm install @etesian-design/vue @etesian-design/tokens     # and @etesian-design
 | `npm run tokens` | Regenerate CSS and TypeScript from `tokens/tokens.json` |
 | `npm run build-storybook` | A static Storybook to host anywhere |
 
-Run `git config core.hooksPath .githooks` once after cloning: the hooks lint commit messages and run `npm test` before each commit.
+`npm install` sets up the git hooks: commit messages are linted, and the types are checked before each commit.
 
 ## Licence
 
