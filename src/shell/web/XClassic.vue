@@ -14,6 +14,7 @@ import HdToolBar from '../../components/HdToolBar.vue';
 import HdSearchField from '../../components/HdSearchField.vue';
 import type { XAction } from '../parts/types';
 import { provideChromeHost } from '../parts/chrome';
+import XBrowserTabs from '../apps/XBrowserTabs.vue';
 export interface ClassicApp { id: string; title: string; icon: string; color: string }
 const props = withDefaults(defineProps<{
   brand?: string; apps: ClassicApp[]; app: string; title?: string; views?: string[]; view?: string; back?: boolean; tools?: XAction[];
@@ -33,14 +34,17 @@ const pc = computed(() => host.state.c);
 const views = computed(() => pc.value?.views ?? props.views);
 const back = computed(() => pc.value?.back ?? props.back);
 const tools = computed<XAction[]>(() => pc.value?.tools ?? props.tools);
+const narrow = computed(() => w.value < 600);
+/** a browser's tabs, in place of the title (not when narrow: the page's tab count shows them there) */
+const tabs = computed(() => (narrow.value ? undefined : pc.value?.tabs));
 const grid = ref(props.gridOpen), more = ref(props.moreOpen), viewMenu = ref(false), q = ref('');
 watch(() => props.gridOpen, (v) => (grid.value = v));
 const cur = computed(() => props.apps.find((a) => a.id === props.app));
-const narrow = computed(() => w.value < 600);
 const shownTitle = computed(() => (views.value?.length ? (pc.value?.view ?? props.view ?? views.value[0]!) : (pc.value?.title ?? props.title ?? cur.value?.title ?? '')));
 /** room for actions: the width less the apps button, the brand, the title, ⋮ and the status */
 const fits = computed(() => {
-  const room = w.value - 56 - (w.value >= 900 ? 190 : 0) - 44 - shownTitle.value.length * 12 - 40 - 48 - 140;
+  const tw = tabs.value ? Math.min(tabs.value.list.length * 200 + 44, w.value * 0.5) : shownTitle.value.length * 12;
+  const room = w.value - 56 - (w.value >= 900 ? 190 : 0) - 44 - tw - 40 - 48 - 140;
   const n = Math.max(0, Math.floor(room / 44));
   return n >= tools.value.length ? tools.value.length : Math.max(0, Math.floor((room - 44) / 44));
 });
@@ -62,7 +66,9 @@ function pickView(v: string) { viewMenu.value = false; emit('view', v); host.emi
       <span class="x-cl__sep" aria-hidden="true"></span>
       <HdToolIcon v-if="back && !narrow" icon="back" label="Back" @click="goBack" />
       <HdSquircle v-else-if="cur" :size="28" :color="cur.color" lighting="lit"><HdIcon :name="cur.icon" :size="16" lit /></HdSquircle>
-      <button v-if="views?.length" type="button" class="x-cl__title is-menu hd-sqh hd-focusable" :aria-expanded="viewMenu ? 'true' : 'false'" aria-haspopup="listbox" @click="viewMenu = !viewMenu">{{ shownTitle }}<HdIcon name="chevron-down" :size="16" /></button>
+      <XBrowserTabs v-if="tabs" class="x-cl__tabs" :tabs="tabs.list" :current="tabs.current" :max="tabs.max"
+        @pick="host.emit('tab', $event)" @close="host.emit('tab-close', $event)" @add="host.emit('tab-add')" />
+      <button v-else-if="views?.length" type="button" class="x-cl__title is-menu hd-sqh hd-focusable" :aria-expanded="viewMenu ? 'true' : 'false'" aria-haspopup="listbox" @click="viewMenu = !viewMenu">{{ shownTitle }}<HdIcon name="chevron-down" :size="16" /></button>
       <h1 v-else class="x-cl__title">{{ shownTitle }}</h1>
       <span class="x-cl__gap"></span>
       <span v-if="!narrow" class="x-cl__actions" role="toolbar" :aria-label="`${shownTitle} actions`">

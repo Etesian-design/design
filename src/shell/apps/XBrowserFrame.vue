@@ -1,14 +1,17 @@
 <script setup lang="ts">
 /**
  * The browser's frame: one row under the window header with Back, Forward, Reload, the address field (the site's state as a
- * lock or a warning, squircle-half ends) and ⋯ for zoom, other devices and the rest. The tabs are XBrowserTabs: a strip
- * above the row, as in Chrome (`tabsAt: top`), or a list on the left (`tabsAt: side`); the tab count opens a picker of page thumbnails at any width,
+ * lock or a warning, squircle-half ends) and ⋯ for zoom, other devices and the rest. The tabs are XBrowserTabs: in the
+ * window's decoration, in place of its title, as Chrome has them in its title bar (`tabsAt: top`; the frame declares them
+ * with useChrome, so the page around it must not declare its own header), or a list on the left (`tabsAt: side`). Outside a
+ * window or the classic layout (no host) the top tabs are a strip above the row; the tab count opens a picker of page thumbnails at any width,
  * and in a narrow window it is the only way to the tabs. A host puts its own ⋮ menu in the `more` slot: it sits inside the
  * button's box, so a popup menu there anchors to the button (Quasar's q-menu takes its parent). In a narrow window (container under 560 px) the row moves to the bottom, as on the phone.
  */
 import HdIcon from '../../components/HdIcon.vue';
 import HdToolIcon from '../../components/HdToolIcon.vue';
-import { ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
+import { useChrome } from '../parts/chrome';
 import XBrowserTabs, { type BrowserTab } from './XBrowserTabs.vue';
 const props = withDefaults(defineProps<{
   address?: string; secure?: boolean; back?: boolean; forward?: boolean; loading?: number;
@@ -21,10 +24,16 @@ const emit = defineEmits<{ go: [address: string]; back: []; forward: []; reload:
 const picker = ref(props.pickerOpen);
 watch(() => props.pickerOpen, (v) => (picker.value = v));
 function choose(id: string) { picker.value = false; emit('pick', id); }
+/* the tabs in the host's header (a window's decoration, the classic header bar) */
+const top = computed(() => props.tabsAt === 'top' && props.tabs.length > 0);
+const chrome = useChrome(() => (top.value ? { tabs: { list: props.tabs.map((t) => ({ id: t.id, title: t.title, icon: t.icon })), current: props.current ?? props.tabs[0]!.id, max: props.max } } : {}));
+chrome.on('tab', (id) => id && emit('pick', id));
+chrome.on('tab-close', (id) => id && emit('close', id));
+chrome.on('tab-add', () => emit('add'));
 </script>
 <template>
   <div class="x-bf">
-    <XBrowserTabs v-if="tabsAt === 'top' && tabs.length" class="x-bf__strip" :tabs="tabs" :current="current ?? tabs[0]!.id" :max="max" @pick="$emit('pick', $event)" @close="$emit('close', $event)" @add="$emit('add')" />
+    <XBrowserTabs v-if="top && !chrome.hosted" class="x-bf__strip hd-on-chrome" :tabs="tabs" :current="current ?? tabs[0]!.id" :max="max" @pick="$emit('pick', $event)" @close="$emit('close', $event)" @add="$emit('add')" />
     <div class="x-bf__row hd-on-chrome" role="toolbar" aria-label="Navigation">
       <HdToolIcon icon="back" label="Back" :disabled="!back" @click="$emit('back')" />
       <HdToolIcon icon="back" label="Forward" class="x-bf__fwd" :disabled="!forward" @click="$emit('forward')" />
