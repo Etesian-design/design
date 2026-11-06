@@ -4,11 +4,11 @@
  * Overview button | separator | pinned and running apps | separator | recycle bin (always last). A running app has a dot on
  * the edge side, the focused one a longer bar. Hovering a running app shows its card: its state ("In front · Left half",
  * "Minimised"), the app's own line (the `card` slot: what is playing, how much mail is unread), Show or Minimise, and Close;
- * with `preview` it also shows the live window (the `preview` slot). Auto-hidden, it slides off its edge and comes back
+ * with `preview` it also shows the window: the host's `preview` slot, or else a scaled copy of the open window as it is now. Auto-hidden, it slides off its edge and comes back
  * when the pointer reaches that edge. Editing (Edit dock): a dashed outline, × on each item, a handle that drags the dock
  * to the nearest edge, and the settings gear.
  */
-import { ref, computed, watch, onBeforeUnmount } from 'vue';
+import { ref, computed, watch, nextTick, onBeforeUnmount, useSlots } from 'vue';
 import HdSquircle from '../../components/HdSquircle.vue';
 import HdIcon from '../../components/HdIcon.vue';
 import HdTooltip from '../../components/HdTooltip.vue';
@@ -55,6 +55,29 @@ function enter(it: ShellDockItem, e: PointerEvent) {
 function leave() { window.clearTimeout(t); t = window.setTimeout(() => (card.value = null), 250); }
 function keep() { window.clearTimeout(t); }
 const carded = computed(() => props.items.find((i) => i.id === card.value?.id));
+
+/* the preview without a host slot: a copy of the window (canvases copied as pixels), scaled to the card; none when minimised */
+const slots = useSlots();
+const PREV_W = 280, PREV_H = 170;
+const shot = ref<HTMLElement>();
+const hasShot = ref(false);
+watch(() => (props.preview ? carded.value?.id : undefined), async (id) => {
+  hasShot.value = false;
+  if (!id || slots.preview) return;
+  const win = document.querySelector<HTMLElement>(`[data-win="${CSS.escape(id)}"]`);
+  if (!win || !win.offsetWidth) return;
+  hasShot.value = true;
+  await nextTick();
+  if (!shot.value) return;
+  const copy = win.cloneNode(true) as HTMLElement;
+  const from = win.querySelectorAll('canvas'), to = copy.querySelectorAll('canvas');
+  from.forEach((c, i) => { const t = to[i]!; t.width = c.width; t.height = c.height; try { t.getContext('2d')?.drawImage(c, 0, 0); } catch { /* a canvas it cannot read */ } });
+  copy.querySelectorAll('[id]').forEach((e) => e.removeAttribute('id'));
+  copy.removeAttribute('data-win');
+  const k = Math.min(PREV_W / win.offsetWidth, PREV_H / win.offsetHeight);
+  Object.assign(copy.style, { position: 'absolute', left: `${(PREV_W - win.offsetWidth * k) / 2}px`, top: `${(PREV_H - win.offsetHeight * k) / 2}px`, width: `${win.offsetWidth}px`, height: `${win.offsetHeight}px`, transform: `scale(${k})`, transformOrigin: '0 0', zIndex: 'auto' });
+  shot.value.replaceChildren(copy);
+});
 function act(f: () => void) { f(); card.value = null; }
 onBeforeUnmount(() => { window.removeEventListener('pointermove', away); window.clearTimeout(t); });
 
@@ -93,6 +116,7 @@ function moveUp(e: PointerEvent) {
   </nav>
   <div v-if="carded" class="x-shell-hcard hd-on-overlay" role="dialog" :aria-label="carded.title" :style="card!.style" @pointerenter="keep" @pointerleave="leave">
     <div v-if="preview && $slots.preview" class="x-shell-hcard__prev" inert><slot name="preview" :id="carded.id" /></div>
+    <div v-else-if="preview && hasShot" ref="shot" class="x-shell-hcard__prev x-shell-hcard__shot" inert data-test="dock-preview"></div>
     <header><HdSquircle :size="28" :color="carded.color" lighting="lit" :tone="carded.tone"><HdIcon :name="carded.icon" :size="16" :lit="carded.tone === 'light' ? 'dark' : true" /></HdSquircle><b>{{ carded.title }}</b></header>
     <p class="x-shell-hcard__state">{{ carded.state }}</p>
     <slot name="card" :id="carded.id" />
@@ -121,5 +145,6 @@ function moveUp(e: PointerEvent) {
 .x-shell-hcard__btn { min-width: 44px; height: 36px; padding: 0 12px; border: 0; border-radius: 6px; background: none; color: var(--hd-c-accent-text); font: 700 var(--hd-font-size-small)/1 var(--hd-font-family-base); cursor: pointer; }
 .x-shell-hcard__btn:hover { background: var(--hd-c-pressed); }
 .x-shell-hcard__btn--close { color: var(--hd-color-palette-warning); }
+.x-shell-hcard__shot { position: relative; }
 .x-shell-hcard__prev { width: 280px; height: 170px; margin: -4px 0 10px; overflow: hidden; border-radius: 6px; pointer-events: none; }
 </style>
