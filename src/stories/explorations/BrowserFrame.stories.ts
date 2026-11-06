@@ -2,7 +2,6 @@ import type { Meta, StoryObj } from '@storybook/vue3-vite';
 import { ref } from 'vue';
 import XWindow from '../../shell/desktop/XWindow.vue';
 import XBrowserFrame from '../../shell/apps/XBrowserFrame.vue';
-import XBrowserTabs from '../../shell/apps/XBrowserTabs.vue';
 import XBrowser from '../../shell/apps/XBrowser.vue';
 import { photo } from '../../shell/parts/data';
 
@@ -17,7 +16,7 @@ export const Frame: StoryObj<Args> = {
   args: { tabsAt: 'top', picker: true },
   argTypes: { tabsAt: { control: 'inline-radio', options: ['top', 'side'] } },
   render: (args) => ({
-    components: { XWindow, XBrowserFrame, XBrowserTabs, XBrowser },
+    components: { XWindow, XBrowserFrame, XBrowser },
     setup: () => {
       const tabs = ref([{ id: 'a', title: 'A tablet for the swipe generation', thumb: photo(2) }, { id: 'b', title: 'Etesian design language', thumb: photo(4) }, { id: 'c', title: 'Weather · Helsinki', thumb: photo(6) }]);
       const cur = ref('a');
@@ -25,7 +24,6 @@ export const Frame: StoryObj<Args> = {
     },
     template: `<div style="display:flex;gap:20px;align-items:flex-start;padding:20px;min-height:100vh;background:var(--hd-surface-home)">
       <div style="position:relative;width:1000px;height:600px"><XWindow title="Browser" icon="globe" color="#2EA8C7" :w="1000" :h="600" focused :resizable="false">
-        <template v-if="args.tabsAt === 'top'" #title><XBrowserTabs :tabs="tabs" :current="cur" :max="3" @pick="cur = $event" /></template>
         <XBrowserFrame :loading="60" :tabs="tabs" :current="cur" :tabs-at="args.tabsAt" :max="3" @pick="cur = $event"><XBrowser chrome="none" density="pointer" :hints="false" id-prefix="bf1" /></XBrowserFrame></XWindow></div>
       <div style="position:relative;width:400px;height:600px"><XWindow title="Browser" icon="globe" color="#2EA8C7" :w="400" :h="600" focused :resizable="false">
         <XBrowserFrame :secure="false" address="http://old.example" :tabs="tabs" :current="cur" :tabs-at="args.tabsAt" :max="3" :picker-open="args.picker" @pick="cur = $event"><XBrowser chrome="none" density="pointer" :hints="false" id-prefix="bf2" /></XBrowserFrame></XWindow></div>

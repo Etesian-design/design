@@ -14,6 +14,15 @@ describe('browser frame for a host', () => {
     await box.find('[aria-label^="More"]').trigger('click');
     expect(w.emitted('more')).toHaveLength(1);
   });
+  it('draws the tabs as a strip above the row, or as a list on the side', () => {
+    const tabs = [{ id: 'a', title: 'One' }, { id: 'b', title: 'Two' }];
+    const top = mount(XBrowserFrame, { props: { tabs, current: 'a', tabsAt: 'top' } });
+    expect(top.findAll('.x-bf__strip [role=tab]')).toHaveLength(2);
+    expect(top.find('.x-bf__side').exists()).toBe(false);
+    const side = mount(XBrowserFrame, { props: { tabs, current: 'a', tabsAt: 'side' } });
+    expect(side.find('.x-bf__strip').exists()).toBe(false);
+    expect(side.findAll('.x-bf__side [role=tab]')).toHaveLength(2);
+  });
   it('gives the address field squircle-half ends, not a pill', () => {
     expect(mount(XBrowserFrame).find('.x-bf__addr').classes()).toContain('hd-sqm');
   });
