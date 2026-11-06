@@ -337,7 +337,7 @@ const tone = (id: string): IconTone | undefined => byId.value[id]?.tone;
 
       <!-- windows (in the switcher and the Overview: scaled into their cards) -->
       <XWindow v-for="w in drawn" :key="w.id" :data-win="w.id" :title="app(w.id).title" :icon="app(w.id).icon" :color="app(w.id).color" :tone="tone(w.id)"
-        v-bind="wm.rectOf(w)" :z="w.z" :focused="wm.focused.value === w.id && !cardIds.length" :tiled="w.snap !== null" :maximised="w.snap === 'max'" :dragging="op?.kind === 'move' && wm.moving() === w.id"
+        v-bind="wm.rectOf(w)" :z="w.z + 1" :focused="wm.focused.value === w.id && !cardIds.length" :tiled="w.snap !== null" :maximised="w.snap === 'max'" :dragging="op?.kind === 'move' && wm.moving() === w.id"
         :busy="!!op" :card="cards[w.id] ?? null" :back="meta[w.id]?.back" :views="meta[w.id]?.views"
         @focus="wm.focus(w.id)" @close="close(w.id)" @minimise="minimise(w.id)" @maximise="wm.toggleMax(w.id)" @back="emit('back', w.id)" @update:view="(v) => emit('view', w.id, v)"
         @grab="(e) => grab(w.id, e)" @resize="(h, e) => resize(w.id, h, e)">

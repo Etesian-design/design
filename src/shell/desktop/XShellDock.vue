@@ -107,7 +107,11 @@ function moveUp(e: PointerEvent) {
 .x-shell-dock__rm { padding: 0; border: 0; cursor: pointer; font: 700 13px/1 var(--hd-font-family-base); }
 .x-shell-dock .x-dock__move { touch-action: none; }
 /* above the windows (their z stays under 1000), under the switcher and the Overview */
-.x-dock.x-shell-dock { z-index: 7500; -webkit-backdrop-filter: none; backdrop-filter: none; } /* blur bleeds on GPUs: none on the web */ .x-dock-edge.x-shell-dock-edge { z-index: 7499; }
+/* a dock that is always shown sits under the windows: a floating window can be dragged over it (a maximised one stops at its edge,
+   the work area); an auto-hiding dock comes up over them */
+.x-dock.x-shell-dock:not(.is-autohide) { z-index: 1; } /* above the widgets (0), under the windows (2 and up: XShell draws them at z + 1) */
+.x-dock.x-shell-dock.is-autohide { z-index: 7500; }
+.x-dock.x-shell-dock { -webkit-backdrop-filter: none; backdrop-filter: none; } /* blur bleeds on GPUs: none on the web */ .x-dock-edge.x-shell-dock-edge { z-index: 7499; }
 .x-shell-hcard { position: absolute; z-index: 7600; min-width: 240px; max-width: 320px; padding: 12px 12px 6px; border-radius: var(--hd-radius-card); background: var(--hd-surface-overlay); color: var(--hd-c-fg);
   box-shadow: var(--hd-shadow-overlay), 0 0 0 1px var(--hd-c-divider); font: 400 var(--hd-font-size-small)/1.4 var(--hd-font-family-base); }
 .x-shell-hcard header { display: flex; align-items: center; gap: 10px; font-size: var(--hd-font-size-medium); }
