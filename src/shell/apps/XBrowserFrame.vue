@@ -3,7 +3,8 @@
  * The browser's frame: one row under the window header with Back, Forward, Reload, the address field (the site's state as a
  * lock or a warning, squircle-half ends) and ⋯ for zoom, other devices and the rest. The tabs are XBrowserTabs, in the
  * window header, or a list on the left (`tabsAt: side`); the tab count opens a picker of page thumbnails at any width,
- * and in a narrow window it is the only way to the tabs. In a narrow window (container under 560 px) the row moves to the bottom, as on the phone.
+ * and in a narrow window it is the only way to the tabs. A host puts its own ⋮ menu in the `more` slot: it sits inside the
+ * button's box, so a popup menu there anchors to the button (Quasar's q-menu takes its parent). In a narrow window (container under 560 px) the row moves to the bottom, as on the phone.
  */
 import HdIcon from '../../components/HdIcon.vue';
 import HdToolIcon from '../../components/HdToolIcon.vue';
@@ -27,13 +28,13 @@ function choose(id: string) { picker.value = false; emit('pick', id); }
       <HdToolIcon icon="back" label="Back" :disabled="!back" @click="$emit('back')" />
       <HdToolIcon icon="back" label="Forward" class="x-bf__fwd" :disabled="!forward" @click="$emit('forward')" />
       <HdToolIcon icon="refresh" label="Reload" @click="$emit('reload')" />
-      <label class="x-bf__addr hd-focusable">
+      <label class="x-bf__addr hd-sqm hd-focusable">
         <HdIcon :name="secure ? 'lock' : 'warning'" :size="16" :class="{ 'is-warn': !secure }" :aria-label="secure ? 'Secure connection' : 'Not secure'" />
         <input :value="address" aria-label="Address" spellcheck="false" @keydown.enter="$emit('go', ($event.target as HTMLInputElement).value)" />
         <HdIcon name="star" :size="16" aria-label="Bookmark" />
       </label>
       <button v-if="tabs.length" type="button" class="x-bf__count hd-sq hd-focusable" :aria-label="`${tabs.length} tabs: show them as pages`" :aria-expanded="picker ? 'true' : 'false'" @click="picker = !picker">{{ tabs.length }}</button>
-      <HdToolIcon icon="more-vert" label="More: zoom, other devices, find in page" @click="$emit('more')" />
+      <span class="x-bf__more"><HdToolIcon icon="more-vert" label="More: zoom, other devices, find in page" @click="$emit('more')" /><slot name="more" /></span>
       <span v-if="loading !== undefined" class="x-bf__load" :style="{ width: `${loading}%` }" aria-hidden="true"></span>
     </div>
     <div class="x-bf__main">
@@ -46,7 +47,7 @@ function choose(id: string) { picker.value = false; emit('pick', id); }
               <img v-if="t.thumb" :src="t.thumb" alt="" /><span v-else class="x-bf__blank"><HdIcon :name="t.icon ?? 'globe'" :size="32" /></span>
             </button>
             <div class="x-bf__cap"><HdIcon :name="t.icon ?? 'globe'" :size="14" /><span>{{ t.title }}</span>
-              <button type="button" class="x-bt__x" :aria-label="`Close ${t.title}`" @click="$emit('close', t.id)"><HdIcon name="close" :size="12" /></button></div>
+              <button type="button" class="x-bt__x hd-sqh" :aria-label="`Close ${t.title}`" @click="$emit('close', t.id)"><HdIcon name="close" :size="12" /></button></div>
           </div>
           <button v-if="max === undefined || tabs.length < max" type="button" class="x-bf__card x-bf__new hd-focusable" @click="picker = false; $emit('add')"><HdIcon name="add" :size="32" /><span>New tab</span></button>
         </div>
@@ -59,8 +60,9 @@ function choose(id: string) { picker.value = false; emit('pick', id); }
 .x-bf__row { position: relative; flex: none; min-width: 0; display: flex; align-items: center; gap: 2px; height: 46px; padding: 0 6px; background: var(--hd-surface-chrome); color: var(--hd-c-fg); border-bottom: 1px solid var(--hd-c-divider); }
 .x-bf__row .hd-tool-icon { flex: none; width: 38px; height: 40px; --hd-sq-size: 32px; }
 .x-bf__row .hd-tool-icon svg { width: 20px; height: 20px; }
+.x-bf__more { flex: none; display: flex; }
 .x-bf__fwd svg { transform: scaleX(-1); }
-.x-bf__addr { flex: 1; min-width: 0; display: flex; align-items: center; gap: 8px; height: 32px; margin: 0 6px; padding: 0 14px; border-radius: 16px; background: color-mix(in srgb, var(--hd-c-fg) 10%, transparent); color: var(--hd-c-fg-secondary); }
+.x-bf__addr { flex: 1; min-width: 0; display: flex; align-items: center; gap: 8px; height: 32px; margin: 0 6px; padding: 0 14px; background: color-mix(in srgb, var(--hd-c-fg) 10%, transparent); color: var(--hd-c-fg-secondary); }
 .x-bf__addr input { flex: 1; min-width: 0; border: 0; background: none; color: var(--hd-c-fg); font: 400 var(--hd-font-size-small)/1 var(--hd-font-family-base); outline: none; }
 .x-bf__addr .is-warn { color: var(--hd-color-palette-warning); }
 .x-bf__load { position: absolute; left: 0; bottom: -1px; height: 2px; background: var(--hd-accent); }

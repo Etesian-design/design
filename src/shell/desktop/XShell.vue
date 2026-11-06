@@ -13,7 +13,7 @@
  *  - Overview (the dock button, View): Events | the open windows themselves, as cards | the apps, type to search.
  *    Search (View): the compact version. Windows switcher (View > Windows): arrows or Tab, Enter, Escape.
  *  - Events (the count or the clock) and the status menu: panels the host fills.
- *  - Widgets on the wallpaper (the host's `widgets` slot), Edit desktop moves the windows aside.
+ *  - Widgets on the wallpaper (the host's `widgets` slot, given `area`: the free rectangle beside a dock that is always shown), Edit desktop moves the windows aside.
  *  - Right-click menus on the desktop, a title bar, a dock icon and the dock. Inside a window it belongs to the app.
  * No Super or Ctrl+Alt shortcuts: in a browser the operating system takes them first (see createDesktopKeys).
  *
@@ -312,7 +312,7 @@ const tone = (id: string): IconTone | undefined => byId.value[id]?.tone;
     <div id="x-shell-area" ref="areaEl" tabindex="-1" class="x-desktop__area x-v2 x-shell__area" :class="{ 'x-v2--dock-edit': dockEdit }"
       @contextmenu="onContext" @pointermove="onMove" @pointerup="onUp" @pointercancel="onUp">
       <!-- widgets on the wallpaper, under the windows -->
-      <slot name="widgets" :editing="editWidgets" :done="() => (editWidgets = false)" />
+      <slot name="widgets" :editing="editWidgets" :done="() => (editWidgets = false)" :area="work" />
 
       <!-- the Overview's backdrop and side columns; its middle column is the windows themselves -->
       <div v-if="overview" class="x-shell-ov hd-on-home" role="dialog" aria-label="Overview" @pointerdown.self="overview = false">
