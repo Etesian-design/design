@@ -10,6 +10,7 @@ export const icons: Record<string, string> = {
   'chevron-up': 'M5 15l7-7 7 7',
   menu: 'M6 10l6 6 6-6',
   more: 'M5 12h.01M12 12h.01M19 12h.01',
+  'more-vert': 'M12 5h.01M12 12h.01M12 19h.01',
   add: 'M12 5v14M5 12h14',
   close: 'M6 6l12 12M18 6L6 18',
   check: 'M5 12.5l4.5 4.5L19 7',

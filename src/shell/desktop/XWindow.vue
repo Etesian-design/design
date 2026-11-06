@@ -100,7 +100,7 @@ const style = computed(() => {
       <span class="x-win__drag" aria-hidden="true"></span>
       <span v-if="tools && !narrow" class="x-win__actions" role="toolbar" :aria-label="`${title} actions`">
         <HdTooltip v-for="t in shown" :key="t.label" :text="t.label" placement="bottom"><HdToolIcon :icon="t.icon" :label="t.label" @click="tool(t.label)" /></HdTooltip>
-        <HdToolIcon v-if="folded.length" icon="more" label="More" :aria-expanded="more ? 'true' : 'false'" class="x-win__more" @click.stop="more = !more" />
+        <HdToolIcon v-if="folded.length" icon="more-vert" label="More" :aria-expanded="more ? 'true' : 'false'" class="x-win__more" @click.stop="more = !more" />
       </span>
       <span v-else-if="$slots.actions" class="x-win__actions"><slot name="actions" /></span>
       <span class="x-win__sep" aria-hidden="true"></span>
@@ -116,7 +116,7 @@ const style = computed(() => {
     </div>
     <HdToolBar v-if="narrow" class="x-win__bottom" :back="back" :label="`${title} toolbar`" @back="emit('back')">
       <HdToolIcon v-for="t in below" :key="t.label" :icon="t.icon" :label="t.label" @click="tool(t.label)" />
-      <template v-if="folded.length" #right><HdToolIcon icon="more" label="More" :aria-expanded="more ? 'true' : 'false'" class="x-win__more" @click.stop="more = !more" /></template>
+      <template v-if="folded.length" #right><HdToolIcon icon="more-vert" label="More" :aria-expanded="more ? 'true' : 'false'" class="x-win__more" @click.stop="more = !more" /></template>
     </HdToolBar>
     <div v-if="more && folded.length" class="x-moremenu hd-on-overlay" :class="{ 'is-below': narrow }" role="menu" :aria-label="`${title} more actions`">
       <button v-for="t in folded" :key="t.label" type="button" role="menuitem" class="x-viewmenu__item hd-focusable" @click="tool(t.label)">
