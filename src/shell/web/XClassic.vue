@@ -13,6 +13,7 @@ import HdToolIcon from '../../components/HdToolIcon.vue';
 import HdToolBar from '../../components/HdToolBar.vue';
 import HdSearchField from '../../components/HdSearchField.vue';
 import type { XAction } from '../parts/types';
+import { provideChromeHost } from '../parts/chrome';
 export interface ClassicApp { id: string; title: string; icon: string; color: string }
 const props = withDefaults(defineProps<{
   brand?: string; apps: ClassicApp[]; app: string; title?: string; views?: string[]; view?: string; back?: boolean; tools?: XAction[];
@@ -26,24 +27,32 @@ const w = ref(1200);
 let ro: ResizeObserver | undefined;
 onMounted(() => { ro = new ResizeObserver(([e]) => (w.value = e!.contentRect.width)); ro.observe(root.value!); });
 onBeforeUnmount(() => ro?.disconnect());
+/* the page inside declares its header with useChrome(); it wins over the props */
+const host = provideChromeHost();
+const pc = computed(() => host.state.c);
+const views = computed(() => pc.value?.views ?? props.views);
+const back = computed(() => pc.value?.back ?? props.back);
+const tools = computed<XAction[]>(() => pc.value?.tools ?? props.tools);
 const grid = ref(props.gridOpen), more = ref(props.moreOpen), viewMenu = ref(false), q = ref('');
 watch(() => props.gridOpen, (v) => (grid.value = v));
 const cur = computed(() => props.apps.find((a) => a.id === props.app));
 const narrow = computed(() => w.value < 600);
-const shownTitle = computed(() => (props.views?.length ? (props.view ?? props.views[0]!) : (props.title ?? cur.value?.title ?? '')));
+const shownTitle = computed(() => (views.value?.length ? (pc.value?.view ?? props.view ?? views.value[0]!) : (pc.value?.title ?? props.title ?? cur.value?.title ?? '')));
 /** room for actions: the width less the apps button, the brand, the title, ⋮ and the status */
 const fits = computed(() => {
   const room = w.value - 56 - (w.value >= 900 ? 190 : 0) - 44 - shownTitle.value.length * 12 - 40 - 48 - 140;
   const n = Math.max(0, Math.floor(room / 44));
-  return n >= props.tools.length ? props.tools.length : Math.max(0, Math.floor((room - 44) / 44));
+  return n >= tools.value.length ? tools.value.length : Math.max(0, Math.floor((room - 44) / 44));
 });
-const shown = computed(() => props.tools.slice(0, narrow.value ? 0 : fits.value));
-const below = computed(() => props.tools.slice(0, 3));
-const folded = computed(() => props.tools.slice(narrow.value ? 3 : fits.value));
+const shown = computed(() => tools.value.slice(0, narrow.value ? 0 : fits.value));
+const below = computed(() => tools.value.slice(0, 3));
+const folded = computed(() => tools.value.slice(narrow.value ? 3 : fits.value));
 const recentApps = computed(() => props.recent.map((id) => props.apps.find((a) => a.id === id)).filter((a): a is ClassicApp => !!a));
 const found = computed(() => props.apps.filter((a) => a.title.toLowerCase().includes(q.value.toLowerCase())));
 function open(id: string) { grid.value = false; emit('open', id); }
-function tool(l: string) { more.value = false; emit('tool', l); }
+function tool(l: string) { more.value = false; emit('tool', l); host.emit('tool', l); }
+function goBack() { emit('back'); host.emit('back'); }
+function pickView(v: string) { viewMenu.value = false; emit('view', v); host.emit('view', v); }
 </script>
 <template>
   <div ref="root" class="x-cl" :class="{ 'is-narrow': narrow }">
@@ -51,7 +60,7 @@ function tool(l: string) { more.value = false; emit('tool', l); }
       <button type="button" class="x-cl__apps hd-sq hd-focusable" aria-label="Apps" :aria-expanded="grid ? 'true' : 'false'" @click="grid = !grid"><HdIcon name="grid" :size="22" /></button>
       <span v-if="w >= 900" class="x-cl__brand"><slot name="logo" />{{ brand }}</span>
       <span class="x-cl__sep" aria-hidden="true"></span>
-      <HdToolIcon v-if="back && !narrow" icon="back" label="Back" @click="emit('back')" />
+      <HdToolIcon v-if="back && !narrow" icon="back" label="Back" @click="goBack" />
       <HdSquircle v-else-if="cur" :size="28" :color="cur.color" lighting="lit"><HdIcon :name="cur.icon" :size="16" lit /></HdSquircle>
       <button v-if="views?.length" type="button" class="x-cl__title is-menu hd-focusable" :aria-expanded="viewMenu ? 'true' : 'false'" aria-haspopup="listbox" @click="viewMenu = !viewMenu">{{ shownTitle }}<HdIcon name="chevron-down" :size="16" /></button>
       <h1 v-else class="x-cl__title">{{ shownTitle }}</h1>
@@ -63,7 +72,7 @@ function tool(l: string) { more.value = false; emit('tool', l); }
       <span v-if="status && w >= 760" class="x-cl__status" :class="{ 'is-off': !online }"><HdIcon :name="online ? 'check' : 'warning'" :size="16" />{{ status }}</span>
     </header>
     <div v-if="viewMenu && views?.length" class="x-cl__pop x-cl__views hd-on-overlay" role="listbox">
-      <button v-for="v in views" :key="v" type="button" role="option" class="x-cl__item hd-focusable" :aria-selected="v === shownTitle ? 'true' : 'false'" @click="viewMenu = false; emit('view', v)">
+      <button v-for="v in views" :key="v" type="button" role="option" class="x-cl__item hd-focusable" :aria-selected="v === shownTitle ? 'true' : 'false'" @click="pickView(v)">
         <span class="x-cl__mark hd-sq" :class="{ 'is-on': v === shownTitle }"><HdIcon v-if="v === shownTitle" name="check" :size="14" /></span>{{ v }}</button>
     </div>
     <div v-if="grid" class="x-cl__pop x-cl__grid" role="dialog" aria-label="Apps">
@@ -77,7 +86,7 @@ function tool(l: string) { more.value = false; emit('tool', l); }
       <button v-for="t in folded" :key="t.label" type="button" role="menuitem" class="x-cl__item hd-focusable" @click="tool(t.label)"><HdIcon :name="t.icon" :size="20" /><span>{{ t.label }}</span></button>
     </div>
     <main class="x-cl__main"><slot /></main>
-    <HdToolBar v-if="narrow && (back || tools.length)" :back="back" :label="`${shownTitle} toolbar`" @back="emit('back')">
+    <HdToolBar v-if="narrow && (back || tools.length)" :back="back" :label="`${shownTitle} toolbar`" @back="goBack">
       <HdToolIcon v-for="t in below" :key="t.label" :icon="t.icon" :label="t.label" @click="tool(t.label)" />
       <template v-if="folded.length" #right><HdToolIcon icon="more-vert" label="More" @click.stop="more = !more" /></template>
     </HdToolBar>

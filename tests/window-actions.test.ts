@@ -34,3 +34,24 @@ describe('window actions fold by width', () => {
     expect(w.find('.x-win__more').element.innerHTML).toContain('M12 5h.01');
   });
 });
+
+describe('a page declares its header with useChrome', () => {
+  it('shows the page title, views and actions in the window, and sends the clicks back', async () => {
+    const { defineComponent, h, nextTick } = await import('vue');
+    const { useChrome } = await import('../src/shell/parts/chrome');
+    const got: string[] = [];
+    const Page = defineComponent({ setup() {
+      const c = useChrome(() => ({ views: ['Inbox', 'Sent'], tools: [{ icon: 'add', label: 'Write' }, { icon: 'refresh', label: 'Refresh' }] }));
+      c.on('tool', (l) => got.push(`tool:${l}`)); c.on('view', (v) => got.push(`view:${v}`));
+      return () => h('p', 'page');
+    } });
+    const w = mount(XWindow, { props: { title: 'Mail', icon: 'mail', color: '#1C6FD1', w: 1000, h: 400 }, slots: { default: () => h(Page) } });
+    await nextTick();
+    expect(w.find('.x-win__title--menu').text()).toContain('Inbox');
+    expect(labels(w.find('.x-win__actions').element)).toEqual(['Write', 'Refresh']);
+    await w.find('.x-win__actions [aria-label=Write]').trigger('click');
+    await w.find('.x-win__title--menu').trigger('click');
+    await w.findAll('.x-viewmenu__item')[1]!.trigger('click');
+    expect(got).toEqual(['tool:Write', 'view:Sent']);
+  });
+});

@@ -18,6 +18,7 @@ import HdTooltip from '../../components/HdTooltip.vue';
 import HdToolBar from '../../components/HdToolBar.vue';
 import type { IconTone } from '../../lighting';
 import type { XAction } from '../parts/types';
+import { provideChromeHost } from '../parts/chrome';
 
 export interface WindowCard { x: number; y: number; s: number; z: number; side: boolean }
 const props = withDefaults(defineProps<{
@@ -47,35 +48,44 @@ const emit = defineEmits<{
   close: []; minimise: []; maximise: []; focus: []; back: []; 'update:view': [view: string];
   grab: [e: PointerEvent]; resize: [handle: string, e: PointerEvent]; tool: [label: string];
 }>();
+/* a page inside can declare its header with useChrome(): its title, views, Back and actions win over the props */
+const host = provideChromeHost();
+const pc = computed(() => host.state.c);
+const title = computed(() => pc.value?.title ?? props.title);
+const views = computed(() => pc.value?.views ?? props.views);
+const view = computed(() => pc.value?.view ?? props.view);
+const back = computed(() => pc.value?.back ?? props.back);
+const tools = computed(() => pc.value?.tools ?? props.tools);
 const more = ref(props.moreOpen);
 watch(() => props.moreOpen, (v) => (more.value = v));
 watch(() => props.focused, (f) => { if (!f) more.value = false; });
-const narrow = computed(() => !!props.tools && props.w < props.narrowAt);
+const narrow = computed(() => !!tools.value && props.w < props.narrowAt);
 /** header room for actions: the width less the lead, the title, the drag gap, ⋯, the divider and the window controls */
 const fits = computed(() => {
-  const t = props.tools ?? [];
-  const title = (props.views?.length ? (props.view ?? props.views[0] ?? '') : props.title).length * 11 + (props.views?.length ? 44 : 16);
-  const room = props.w - 6 - 40 - title - 48 - 5 - 132;
+  const t = tools.value ?? [];
+  const tw = (views.value?.length ? (view.value ?? views.value[0] ?? '') : title.value).length * 11 + (views.value?.length ? 44 : 16);
+  const room = props.w - 6 - 40 - tw - 48 - 5 - 132;
   const n = Math.max(0, Math.floor(room / 40));
   return n >= t.length ? t.length : Math.max(0, Math.floor((room - 40) / 40));
 });
 const BOTTOM = 3;
-const shown = computed(() => (props.tools ?? []).slice(0, narrow.value ? 0 : fits.value));
-const below = computed(() => (props.tools ?? []).slice(0, BOTTOM));
-const folded = computed(() => (props.tools ?? []).slice(narrow.value ? BOTTOM : fits.value));
-function tool(label: string) { more.value = false; emit('tool', label); }
+const shown = computed(() => (tools.value ?? []).slice(0, narrow.value ? 0 : fits.value));
+const below = computed(() => (tools.value ?? []).slice(0, BOTTOM));
+const folded = computed(() => (tools.value ?? []).slice(narrow.value ? BOTTOM : fits.value));
+function tool(label: string) { more.value = false; emit('tool', label); host.emit('tool', label); }
+function goBack() { emit('back'); host.emit('back'); }
 const HANDLES = ['n', 's', 'e', 'w', 'ne', 'nw', 'se', 'sw'];
 
 const menu = ref(props.menuOpen);
 watch(() => props.menuOpen, (v) => (menu.value = v));
 watch(() => props.focused, (f) => { if (!f) menu.value = false; });
-function pick(v: string) { menu.value = false; emit('update:view', v); }
+function pick(v: string) { menu.value = false; emit('update:view', v); host.emit('view', v); }
 function barDown(e: PointerEvent) {
   if (e.button !== 0 || (e.target as Element).closest('button, a, input, select, textarea, [role=textbox]')) return;
   emit('grab', e);
 }
 function barDbl(e: MouseEvent) { if (!(e.target as Element).closest('button, a, input')) emit('maximise'); }
-function onKey(e: KeyboardEvent) { if (e.altKey && (e.key === 'v' || e.key === 'V') && props.views?.length) { e.preventDefault(); menu.value = !menu.value; } }
+function onKey(e: KeyboardEvent) { if (e.altKey && (e.key === 'v' || e.key === 'V') && views.value?.length) { e.preventDefault(); menu.value = !menu.value; } }
 
 const style = computed(() => {
   const c = props.card;
@@ -88,7 +98,7 @@ const style = computed(() => {
     :aria-label="`${title} window`" @pointerdown.capture="emit('focus')" @keydown="onKey">
     <header class="x-win__bar hd-on-chrome" @pointerdown="barDown" @dblclick="barDbl">
       <span class="x-win__lead">
-        <HdTooltip v-if="back && !narrow" text="Back (Alt+Left)" placement="bottom"><HdToolIcon icon="back" label="Back" @click="emit('back')" /></HdTooltip>
+        <HdTooltip v-if="back && !narrow" text="Back (Alt+Left)" placement="bottom"><HdToolIcon icon="back" label="Back" @click="goBack" /></HdTooltip>
         <HdSquircle v-else :size="26" :color="color" lighting="lit" :tone="tone" class="x-win__appicon"><HdIcon :name="icon" :size="15" :lit="tone === 'light' ? 'dark' : true" /></HdSquircle>
       </span>
       <button v-if="views?.length" type="button" class="x-win__title x-win__title--menu hd-focusable" :aria-expanded="menu ? 'true' : 'false'" aria-haspopup="listbox"
@@ -114,7 +124,7 @@ const style = computed(() => {
       <slot />
       <div v-if="busy || card" class="x-win__shield" aria-hidden="true"></div>
     </div>
-    <HdToolBar v-if="narrow" class="x-win__bottom" :back="back" :label="`${title} toolbar`" @back="emit('back')">
+    <HdToolBar v-if="narrow" class="x-win__bottom" :back="back" :label="`${title} toolbar`" @back="goBack">
       <HdToolIcon v-for="t in below" :key="t.label" :icon="t.icon" :label="t.label" @click="tool(t.label)" />
       <template v-if="folded.length" #right><HdToolIcon icon="more-vert" label="More" :aria-expanded="more ? 'true' : 'false'" class="x-win__more" @click.stop="more = !more" /></template>
     </HdToolBar>

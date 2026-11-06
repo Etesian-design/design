@@ -34,6 +34,7 @@ export * from './desktop/shell';
 export { default as XShell } from './desktop/XShell.vue';
 export { default as XShellDock } from './desktop/XShellDock.vue';
 export { default as XZones } from './desktop/XZones.vue';
+export * from './parts/chrome';
 export { default as XAppShell } from './parts/XAppShell.vue';
 export { default as XAppsView } from './parts/XAppsView.vue';
 export { default as XContextMenu } from './parts/XContextMenu.vue';
