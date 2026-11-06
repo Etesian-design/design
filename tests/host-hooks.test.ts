@@ -5,6 +5,7 @@ import XBrowserFrame from '../src/shell/apps/XBrowserFrame.vue';
 import XShell from '../src/shell/desktop/XShell.vue';
 import HdToastStack from '../src/components/HdToastStack.vue';
 import HdStatusState from '../src/components/HdStatusState.vue';
+import BelleWidget from '../src/shell/widgets/BelleWidget.vue';
 
 describe('browser frame for a host', () => {
   it('puts the host menu inside the ⋮ button box and still reports the press', async () => {
@@ -67,5 +68,24 @@ describe('status state', () => {
     expect(e.attributes('role')).toBe('alert');
     expect(e.text()).toContain('No answer');
     expect(e.find('button').text()).toBe('Retry');
+  });
+});
+
+describe('Belle mail widgets with real mail', () => {
+  const mails = [{ from: 'Mikko', subject: 'Cabin', when: '10:02', unread: true }, { from: 'Bank', subject: 'Statement', when: 'Mon', unread: false }];
+  it('list the host mail, its account and unread count, and report a tap', async () => {
+    const w = mount(BelleWidget, { props: { kind: 'mail', mails, account: 'me@example.org' } });
+    expect(w.find('.bw-mail__head').text()).toContain('me@example.org');
+    expect(w.find('.bw-mail__count').text()).toBe('1');
+    expect(w.findAll('.bw-mail__row')).toHaveLength(2);
+    await w.findAll('.bw-mail__row')[1]!.trigger('click');
+    expect(w.emitted('open')?.[0]).toEqual([1]);
+  });
+  it('step through one mail at a time, and say when there is none', async () => {
+    const w = mount(BelleWidget, { props: { kind: 'stackmail', mails } });
+    expect(w.find('.bw-stack__mail').text()).toContain('Mikko');
+    await w.find('[aria-label="Older mail"]').trigger('click');
+    expect(w.find('.bw-stack__mail').text()).toContain('Bank');
+    expect(mount(BelleWidget, { props: { kind: 'stackmail', mails: [] } }).text()).toContain('No mail.');
   });
 });
