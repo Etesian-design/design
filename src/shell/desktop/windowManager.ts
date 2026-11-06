@@ -3,7 +3,7 @@
  * focus, snapping to halves, to maximised and to the zones of a snap layout, moving and resizing, Show desktop, the Windows
  * switcher (arrows or Tab, Enter, Escape; Ctrl + wheel zooms), and the keys inside the desktop's overlays (no Super or
  * Ctrl+Alt shortcuts: the operating system takes those). Shared by the website and cloud-companion; the windows'
- * contents are theirs. Optionally kept on the device (localStorage) under `storageKey`.
+ * contents are theirs. Optionally kept under `storageKey`, in `storage` (default: this device's localStorage).
  */
 import { computed, reactive, ref, watch, type Ref } from 'vue';
 import { GAP, LAYOUTS, zoneRects, type LayoutId, type Rect, type ZoomLevel } from './geometry';
@@ -23,11 +23,21 @@ export interface WmOptions {
   area: Ref<Rect>;
   /** the size and place a newly opened window gets (n: how many windows are showing, for the cascade) */
   place?: (id: string, n: number, area: Rect) => Partial<Rect>;
-  /** keep the windows on this device under this key */
+  /** keep the windows under this key */
   storageKey?: string;
+  /** where they are kept (defaults to this device's localStorage); a host can keep them on its server */
+  storage?: ShellStorage;
 }
 
+/** a place to keep the desktop's state: read when the desktop starts, written on every change */
+export interface ShellStorage { get(key: string): string | null; set(key: string, value: string): void }
+export const localShellStorage: ShellStorage = {
+  get: (k) => { try { return localStorage.getItem(k); } catch { return null; } },
+  set: (k, v) => { try { localStorage.setItem(k, v); } catch { /* private window: not kept */ } },
+};
+
 export function createWindowManager(opts: WmOptions) {
+  const store = opts.storage ?? localShellStorage;
   const wins = reactive<WmWin[]>(load());
   const focused = ref<string | null>(null);
   let zTop = Math.max(0, ...wins.map((w) => w.z));
@@ -37,11 +47,11 @@ export function createWindowManager(opts: WmOptions) {
   function load(): WmWin[] {
     if (!opts.storageKey) return [];
     try {
-      const s = JSON.parse(localStorage.getItem(opts.storageKey) || '[]');
+      const s = JSON.parse(store.get(opts.storageKey) || '[]');
       return Array.isArray(s) ? s.filter((w: WmWin) => w && typeof w.id === 'string' && Number.isFinite(w.w) && Number.isFinite(w.h)) : [];
     } catch { return []; }
   }
-  if (opts.storageKey) watch(wins, () => { try { localStorage.setItem(opts.storageKey!, JSON.stringify(wins)); } catch { /* private window: not kept */ } }, { deep: true });
+  if (opts.storageKey) watch(wins, () => store.set(opts.storageKey!, JSON.stringify(wins)), { deep: true });
 
   const get = (id: string) => wins.find((w) => w.id === id);
   const shown = computed(() => wins.filter((w) => !w.min));

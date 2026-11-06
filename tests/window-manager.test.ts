@@ -102,6 +102,17 @@ describe('window manager', () => {
     const again = createWindowManager({ area, storageKey: 'wm-test' });
     expect(again.get('mail')).toMatchObject({ x: 50, y: 60, w: 700, h: 500, snap: HALF_RIGHT });
   });
+
+  it('keeps the windows in the storage the host gives', async () => {
+    const kept = new Map<string, string>();
+    const storage = { get: (k: string) => kept.get(k) ?? null, set: (k: string, v: string) => void kept.set(k, v) };
+    const wm = createWindowManager({ area, storageKey: 'srv', storage });
+    wm.open('mail', { x: 10, y: 20, w: 600, h: 400 });
+    await nextTick();
+    expect(kept.has('srv')).toBe(true);
+    expect(localStorage.getItem('srv')).toBeNull();
+    expect(createWindowManager({ area, storageKey: 'srv', storage }).get('mail')).toMatchObject({ x: 10, y: 20, w: 600, h: 400 });
+  });
 });
 
 describe('the keyboard: a browser page, so no system shortcuts', () => {
