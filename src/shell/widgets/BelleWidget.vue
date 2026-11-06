@@ -19,7 +19,9 @@ export type BelleKind = 'switch' | 'wifi' | 'fm' | 'toggles' | 'data' | 'notes' 
 export interface BelleMail { from: string; subject: string; when: string; unread: boolean }
 const props = withDefaults(defineProps<{ kind: BelleKind; cols?: number; rows?: number; on?: boolean; glyph?: string; word?: string; editing?: boolean; cell?: number; art?: string; title?: string; out?: string; place?: string; at?: string;
   /** the mail widgets' mails and account (a host's real ones; sample mail without them) */
-  mails?: BelleMail[]; account?: string }>(), { cell: 90, place: 'Tampere' });
+  mails?: BelleMail[]; account?: string;
+  /** shown when there is no mail (a host's reason: not set up, offline) */
+  empty?: string }>(), { cell: 90, place: 'Tampere', empty: 'No mail.' });
 /** place: tapping the place on a weather widget opens the place picker (BellePlacePicker); open: a mail was tapped (its index) */
 const emit = defineEmits<{ place: []; open: [index: number] }>();
 /* default grid size per widget (targetCellWidth / Height in the appwidget-provider xml) */
@@ -184,13 +186,13 @@ const wedge = (from: number, to: number) => { const p = (a: number) => `${40 + 6
     <!-- Mail (Belle Mail widget 4.5): the account and unread count in the blue header, then up to 20 mails that scroll -->
     <div v-else-if="kind === 'mail'" class="bw-mail">
       <div class="bw-mail__head"><span>{{ account ?? 'anna@example.org' }}</span><b v-if="mails.some((m) => m.unread)" class="bw-mail__count hd-sqm">{{ mails.filter((m) => m.unread).length }}</b></div>
-      <div class="bw-mail__body bw-scroll" tabindex="0" aria-label="Mails"><p v-if="!mails.length" class="bw-mail__none">No mail.</p><div v-for="(m, i) in mails.slice(0, 20)" :key="i" class="bw-mail__row" @click="emit('open', i)"><i class="bw-mail__dot" :class="{ read: !m.unread }" /><span><b>{{ m.from }}</b><small>{{ m.subject }}</small></span><time>{{ m.when }}</time></div></div>
+      <div class="bw-mail__body bw-scroll" tabindex="0" aria-label="Mails"><p v-if="!mails.length" class="bw-mail__none">{{ empty }}</p><div v-for="(m, i) in mails.slice(0, 20)" :key="i" class="bw-mail__row" @click="emit('open', i)"><i class="bw-mail__dot" :class="{ read: !m.unread }" /><span><b>{{ m.from }}</b><small>{{ m.subject }}</small></span><time>{{ m.when }}</time></div></div>
     </div>
     <!-- Latest mail (Belle stackemail): one mail at a time; ▲ ▼ step through, disabled at the ends -->
     <div v-else-if="kind === 'stackmail'" class="bw-mail bw-stack">
       <div class="bw-mail__head"><span>{{ account ?? 'Latest mail' }}</span></div>
       <div class="bw-stack__body">
-        <span v-if="!mails.length" class="bw-stack__mail"><span>No mail.</span></span>
+        <span v-if="!mails.length" class="bw-stack__mail"><span>{{ empty }}</span></span>
         <span v-else class="bw-stack__mail" @click="emit('open', Math.min(stack, mails.length - 1))"><b>{{ mails[Math.min(stack, mails.length - 1)]!.from }}</b><small>{{ mails[Math.min(stack, mails.length - 1)]!.when }} · {{ Math.min(stack, mails.length - 1) + 1 }} / {{ mails.length }}</small><span>{{ mails[Math.min(stack, mails.length - 1)]!.subject }}</span></span>
         <span class="bw-stack__nav"><button type="button" aria-label="Newer mail" :disabled="stack === 0" @click="stack--"><HdIcon name="chevron-up" :size="22" /></button>
           <button type="button" aria-label="Older mail" :disabled="stack >= mails.length - 1" @click="stack++"><HdIcon name="chevron-down" :size="22" /></button></span>
