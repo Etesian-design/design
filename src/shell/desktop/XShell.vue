@@ -96,7 +96,8 @@ const query = ref('');
 const ctx = ref<{ x: number; y: number; label: string; items: XMenuItem[]; act: (id: string) => void } | null>(null);
 const editWidgets = ref(false);
 function closeOverlays(): boolean {
-  const any = overview.value || launcher.value || events.value || status.value || !!picker.value || !!ctx.value || dockSettings.value || dockEdit.value || editWidgets.value;
+  const any = overview.value || launcher.value || events.value || status.value || !!picker.value || !!ctx.value || dockSettings.value || dockEdit.value || editWidgets.value || !!openMenu.value;
+  openMenu.value = null;
   overview.value = launcher.value = events.value = status.value = false; picker.value = null; ctx.value = null; dockSettings.value = dockEdit.value = false; editWidgets.value = false; query.value = '';
   return any;
 }
@@ -209,6 +210,10 @@ const menus = computed<ShellMenu[]>(() => [
   { label: 'Window', items: [...winItems(wm.focusedWin.value), ...wm.recent.value.filter(known).map((w, i) => ({ id: `w:show:${w.id}`, label: byId.value[w.id]!.title + (w.min ? ' (minimised)' : ''), divider: i === 0 }))] },
 ]);
 const openMenu = ref<string | null>(null);
+/* with a menu open, moving onto another opens that one; the click that follows must not close it again */
+let hoverAt = 0;
+function hoverMenu(label: string) { if (openMenu.value && openMenu.value !== label) { openMenu.value = label; hoverAt = Date.now(); } }
+function clickMenu(label: string) { if (openMenu.value === label && Date.now() - hoverAt < 400) return; openMenu.value = openMenu.value === label ? null : label; }
 function winAct(id: string, w?: WmWin) {
   if (!w) return;
   if (id === 'w:minimise') { if (w.min) open(w.id); else minimise(w.id); } else if (id === 'w:maximise') wm.toggleMax(w.id); else if (id === 'w:close') close(w.id);
@@ -288,7 +293,7 @@ const tone = (id: string): IconTone | undefined => byId.value[id]?.tone;
       <span class="x-mbar__app">{{ barApp }}</span>
       <span v-for="m in menus" :key="m.label" class="x-mbar__m">
         <button type="button" role="menuitem" class="x-mbar__menu hd-focusable" :class="{ 'is-open': openMenu === m.label }" :aria-expanded="openMenu === m.label ? 'true' : 'false'" aria-haspopup="menu"
-          @click="openMenu = openMenu === m.label ? null : m.label" @mouseenter="openMenu && (openMenu = m.label)">{{ m.label }}</button>
+          @click="clickMenu(m.label)" @mouseenter="hoverMenu(m.label)">{{ m.label }}</button>
         <span v-if="openMenu === m.label" class="x-mbar__drop x-shell__drop"><XContextMenu :open="true" :items="m.items" :label="m.label" @select="onMenu" @update:open="openMenu = null" /></span>
       </span>
       <span class="x-mbar__sp"></span>
