@@ -5,6 +5,9 @@ import { qs } from './q';
 import HdTimePicker from '../../components/HdTimePicker.vue';
 import HdSwitch from '../../components/HdSwitch.vue';
 import HdTimeDial from '../../components/HdTimeDial.vue';
+import XFeedList from '../../shell/apps/XFeedList.vue';
+import XFeedPosts from '../../shell/apps/XFeedPosts.vue';
+import XFeedReader from '../../shell/apps/XFeedReader.vue';
 import HdFastScroll from '../../components/HdFastScroll.vue';
 const meta: Meta = {
   title: 'Quasar/Examples',
@@ -334,18 +337,29 @@ export const ClockApp = qs(CSS + CLOCK_CSS + row(
 { name: 'Clock app' }, { HdSwitch, HdTimeDial });
 
 /* ---- Feeds ---- */
-export const FeedsApp = qs(CSS + phone(`${head('Feeds', ' <small>updated {{ updated }}</small>', '#FF8500')}
-  ${footer(tool('refresh', 'Refresh') + tool('add', 'Add feed'), { back: false, menu: true })}
-  <q-page-container><q-page><q-pull-to-refresh @refresh="refresh" :icon="ic('refresh')">
-    <div class="hd-q-pull"><q-icon :name="ic('arrow-down')" size="16px" />Pull down to refresh</div>
-    <q-list separator><q-item v-for="f in feeds" :key="f[1]" clickable><q-item-section avatar top><q-avatar color="orange" text-color="white" :icon="ic('globe')" /></q-item-section>
-      <q-item-section><q-item-label class="hd-q-t">{{ f[0] }}</q-item-label><q-item-label lines="3" class="hd-q-body">{{ f[1] }}</q-item-label><q-item-label caption>{{ f[2] }}</q-item-label></q-item-section></q-item></q-list>
-  </q-pull-to-refresh></q-page></q-page-container>`, ';margin:0 auto'),
-() => {
-  const updated = ref('12:18');
-  return { updated, feeds: [['Brain Pickings', 'Ursula K. Le Guin on the meaning of life: we are the survivors of immense and minute events.', '12:18'], ['IEEE Spectrum', 'Why engineers should brave Capitol Hill', '11:51'], ['Design weekly', 'Why squircles feel softer than rounded rectangles', '10:53'], ['Hacker News', 'Show HN: a squircle calculator for the Etesian design language', '09:30']],
-    refresh: (done: () => void) => setTimeout(() => { updated.value = 'now'; done(); }, 600) };
-}, { name: 'Feeds reader' });
+export const FeedsApp = qs(CSS + row(
+  // the feeds: the brand header, All posts first; + adds a feed, refresh, search
+  phone(`${head('Feeds', '', '#FF8500')}
+  ${footer(tool('add', 'Add feed') + tool('refresh', 'Refresh') + tool('search', 'Search posts'), { back: false })}
+  <q-page-container><q-page><XFeedList :feeds="feeds" @open="(id) => (at = id)" /></q-page></q-page-container>`),
+  // the posts of all feeds (or one): unread ones marked orange
+  phone(`${footer(tool('refresh', 'Refresh'), { menu: true })}
+  <q-page-container><q-page><XFeedPosts :title="at === 'all' ? 'All posts' : feeds.find((f) => f.id === at)?.title" :show-feed="at === 'all'" :posts="at === 'all' ? posts : posts.filter((p) => p.feedId === at)" @open="(id) => (post = id)" /></q-page></q-page-container>`),
+  // one post: the toolbar opens it in the browser; the menu has Share, Star, Mark as unread
+  phone(`${footer(tool('globe', 'Open in browser'), { menu: true })}
+  <q-page-container><q-page><XFeedReader :post="posts.find((p) => p.id === post)" @link="(u) => (link = u)" /><p class="hd-q-sub q-px-md" v-if="link">Opens {{ link }}</p></q-page></q-page-container>`)),
+() => ({
+  at: ref('all'), post: ref('p1'), link: ref(''),
+  feeds: [{ id: 'hn', title: 'Hacker News: Front Page', unread: 3, updated: '14:44' }, { id: 'ex', title: 'Example News', color: '#2EA8C7', updated: '12:18' }, { id: 'sky', title: 'Sky Weekly', color: '#7C4DBA', error: "Can't update", updated: '09:02' }],
+  posts: [
+    { id: 'p1', feedId: 'hn', title: 'University libraries are being swarmed by AI bots, putting public access at risk', feed: 'Hacker News: Front Page', when: '06/11/2026 14:13', unread: true,
+      html: '<p>Article URL: <a href="https://example.org/libraries">https://example.org/libraries</a></p><p>Comments URL: <a href="https://news.example.org/item?id=1">https://news.example.org/item?id=1</a></p><p>Points: 11<br># Comments: 1</p>' },
+    { id: 'p2', feedId: 'hn', title: 'We have built an open-source feature flag server for 11 years', feed: 'Hacker News: Front Page', when: '06/11/2026', unread: true },
+    { id: 'p3', feedId: 'ex', title: 'City opens new tram line to the harbour', feed: 'Example News', when: '05/11/2026' },
+    { id: 'p4', feedId: 'hn', title: 'Living beyond the limits of survival: wood ants trapped in a gigantic pitfall', feed: 'Hacker News: Front Page', when: '05/11/2026', unread: true },
+  ],
+}),
+{ name: 'Feeds' }, { XFeedList, XFeedPosts, XFeedReader });
 
 /* ---- Web admin dashboard ---- */
 const orders = [
