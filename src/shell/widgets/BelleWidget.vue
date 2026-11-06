@@ -10,6 +10,7 @@ import BelleDial from './BelleDial.vue';
 import BelleCap from './BelleCap.vue';
 import BelleOnOff from './BelleOnOff.vue';
 import { squircleRectPath } from '../../squircle';
+import type { FeedPost } from '../apps/feeds';
 import HdIcon from '../../components/HdIcon.vue';
 import HdSquircle from '../../components/HdSquircle.vue';
 export type BelleKind = 'switch' | 'wifi' | 'fm' | 'toggles' | 'data' | 'notes' | 'today' | 'agenda' | 'bigclock' | 'gearclock' | 'analog'
@@ -21,9 +22,11 @@ const props = withDefaults(defineProps<{ kind: BelleKind; cols?: number; rows?: 
   /** the mail widgets' mails and account (a host's real ones; sample mail without them) */
   mails?: BelleMail[]; account?: string;
   /** shown when there is no mail (a host's reason: not set up, offline) */
-  empty?: string }>(), { cell: 90, place: 'Tampere', empty: 'No mail.' });
+  empty?: string;
+  /** the feeds widget's posts (a host's real ones; sample posts without them), and the feed's name when it shows one feed */
+  posts?: FeedPost[]; source?: string; updated?: string }>(), { cell: 90, place: 'Tampere', empty: 'No mail.' });
 /** place: tapping the place on a weather widget opens the place picker (BellePlacePicker); open: a mail was tapped (its index) */
-const emit = defineEmits<{ place: []; open: [index: number] }>();
+const emit = defineEmits<{ place: []; open: [index: number]; post: [id: string]; refresh: [] }>();
 /* default grid size per widget (targetCellWidth / Height in the appwidget-provider xml) */
 const SIZE: Record<BelleKind, [number, number]> = {
   switch: [1, 1], wifi: [2, 1], fm: [2, 1], toggles: [4, 1], data: [1, 1], notes: [4, 2], today: [4, 1], agenda: [4, 3], bigclock: [4, 3],
@@ -176,9 +179,10 @@ const wedge = (from: number, to: number) => { const p = (a: number) => `${40 + 6
     </div>
     <!-- ---- RSS for one site (4×3): orange header, white rows with orange dots ---- -->
     <div v-else-if="kind === 'rss'" class="bw-rss">
-      <div class="bw-rss__head"><span><b>Example News</b><small>Updated 09:30</small></span><HdIcon name="refresh" :size="26" /></div>
+      <div class="bw-rss__head"><span><b>{{ source ?? (posts ? 'All feeds' : 'Example News') }}</b><small>Updated {{ updated ?? '09:30' }}</small></span><button type="button" class="bw-rss__refresh" aria-label="Refresh" @click="emit('refresh')"><HdIcon name="refresh" :size="26" /></button></div>
       <!-- up to 20 posts that scroll, titles up to three lines (Belle rsswidget3: scrollablebox, feed1..feed20, max-line-amount 3) -->
-      <div class="bw-rss__body bw-scroll" tabindex="0" aria-label="Posts"><div v-for="(t, i) in POSTS" :key="t" class="bw-rss__row"><i class="bw-dot" :class="{ read: i > 3 }" /><span>{{ t }}</span></div></div>
+      <div class="bw-rss__body bw-scroll" tabindex="0" aria-label="Posts"><template v-if="posts"><p v-if="!posts.length" class="bw-mail__none">No posts yet.</p><div v-for="p in posts.slice(0, 20)" :key="p.id" class="bw-rss__row" :data-post="p.id" @click="emit('post', p.id)"><i class="bw-dot" :class="{ read: !p.unread }" /><span>{{ p.title }}</span></div></template>
+        <template v-else><div v-for="(t, i) in POSTS" :key="t" class="bw-rss__row"><i class="bw-dot" :class="{ read: i > 3 }" /><span>{{ t }}</span></div></template></div>
     </div>
     <!-- ---- Music classic (4×2): grey glass, square art shown as is, round lit buttons ---- -->
     <!-- small music (Belle, belle-music-widget-small.jpg): dark glossy panel; square art on the left rising above the top edge;
@@ -356,6 +360,7 @@ const wedge = (from: number, to: number) => { const p = (a: number) => `${40 + 6
 .bw-mail__head { position: relative; display: flex; align-items: center; justify-content: center; height: 40px; border-radius: 10px 10px 0 0; background: linear-gradient(#4DB2F0, #0E6CB8); font-size: 18px; text-shadow: 0 1px 1px rgba(0,0,0,.5); }
 .bw-mail__count { position: absolute; right: 6px; display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(#fff, #D6E6F2); color: #0E5E9E; font-size: 15px; text-shadow: none; }
 .bw-mail__body { flex: 1; min-height: 0; border-radius: 0 0 10px 10px; background: linear-gradient(#fff, #E9E9EB); color: #1A1A1A; }
+.bw-rss__refresh { display: grid; padding: 0; border: 0; background: none; color: inherit; cursor: pointer; }
 .bw-mail__none { margin: 8px 10px; opacity: .7; }
 .bw-mail__row { display: flex; align-items: center; gap: 9px; height: 58px; padding: 0 12px 0 10px; box-sizing: border-box; } .bw-mail__row + .bw-mail__row { border-top: 1px solid #DADADD; }
 .bw-mail__row span { flex: 1; min-width: 0; display: flex; flex-direction: column; } .bw-mail__row b, .bw-mail__row small { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
