@@ -142,15 +142,17 @@ describe('dock and recycle bin', () => {
   });
 });
 
+const GEARS_AT_0 = ['rotate(0.00 195 118)', 'rotate(0.00 161.7 87.3)', 'rotate(0.00 131.3 130.3)', 'rotate(0.00 145 192)'];
 describe('gear clock dial', () => {
   it('draws toothed gears, the hands at the time, the day and the date', async () => {
     const BelleGearDial = (await import('../src/shell/widgets/BelleGearDial.vue')).default;
     const w = mount(BelleGearDial, { props: { h: 10, m: 30, s: 0, day: 'Mon', date: 1 } });
-    const gears = w.findAll('path[fill-rule=evenodd]');
+    const gears = w.findAll('.bw-geardial__gear');
     expect(gears.length).toBe(4);
     expect((gears[0]!.attributes('d')!.match(/L/g) ?? []).length).toBeGreaterThan(100); // fine teeth, not a few blunt cogs
     expect(w.text()).toContain('Mon');
-    expect(w.findAll('path[transform]').map((p) => p.attributes('transform'))).toEqual(['rotate(315 100 100)', 'rotate(180 100 100)']);
-    expect(w.find('mask').exists()).toBe(true); // a skeleton dial: the gears show through openings in the plate
+    expect(w.findAll('path[transform]:not(.bw-geardial__gear)').map((p) => p.attributes('transform'))).toEqual(['rotate(315 131 131)', 'rotate(180 131 131)']);
+    expect((w.find('.bw-geardial__plate').attributes('d')!.match(/M/g) ?? []).length).toBe(6); // a skeleton dial: the plate with its openings
+    expect(w.findAll('.bw-geardial__gear').map((g) => g.attributes('transform'))).toEqual(GEARS_AT_0);
   });
 });

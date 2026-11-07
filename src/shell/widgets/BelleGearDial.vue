@@ -1,108 +1,103 @@
 <script setup lang="ts">
 /**
- * The Belle gear clock's dial (belle-ref11, its shapes traced on a grid over the photo): a skeleton dial. A dark bezel lit
- * from above with oval ticks; a face plate darkening downwards with a raised fin top left; a dark S-shaped bridge from 12 to 6
- * that wraps the centre ring; through the openings on its right, round the centre and in a round window on the left, flat
- * low-contrast gears (one with three spokes) that turn with the seconds, and a disc at the bottom. Broad tapered metal hands, a thin light second hand, a silver cap; the day in a dark disc low on the left, the date
- * in a dark rounded square at 3 o'clock. Drawn on a 200 grid; it fills its box (keep it square).
+ * The Belle gear clock's dial, Etesian's own drawing of it: a skeleton plate over a movement. A bezel with oval ticks; a plate
+ * lit from the top, darkening downwards, with a light rim and a soft shadow into its openings: a large one on the right, a
+ * crescent top left, a window on the left, a ring round the centre. Through them four gears (a light one at the top, a
+ * three-spoked one on the right, one under the centre, one with holes at the bottom) turn with the seconds over the darker
+ * movement, all under smoked glass. The day sits in a round well low on the left, the date in a dark square at 3 o'clock; tapered metal hands, a thin
+ * light second hand, a silver cap. Sizes, positions and tones are measured from the 701's widget (reference only, nothing of
+ * it is used); the outlines are our own smoothed curves. Drawn on a 262 grid; it fills its box (keep it square).
  */
 import { computed, useId } from 'vue';
 const props = withDefaults(defineProps<{ h: number; m: number; s?: number; day?: string; date?: number | string }>(), { s: 0, day: '', date: '' });
 const id = useId();
-/** a gear: toothed rim (trapezoid teeth), then spoke windows between rim and hub, for an even-odd fill */
-function gear(cx: number, cy: number, r: number, teeth: number, depth: number, spokes: number, hub: number): string {
-  const ri = r - depth, P = (a: number, rr: number) => `${(cx + rr * Math.cos(a)).toFixed(2)} ${(cy + rr * Math.sin(a)).toFixed(2)}`;
+const P = (cx: number, cy: number, a: number, r: number) => `${(cx + r * Math.cos(a)).toFixed(2)} ${(cy + r * Math.sin(a)).toFixed(2)}`;
+const circle = (cx: number, cy: number, r: number) => `M${cx + r} ${cy}A${r} ${r} 0 1 0 ${cx - r} ${cy}A${r} ${r} 0 1 0 ${cx + r} ${cy}Z`;
+/** a toothed rim (trapezoid teeth between root and tip radius), with any cut-outs added for an even-odd fill */
+function rim(cx: number, cy: number, tip: number, root: number, teeth: number): string {
   const st = (Math.PI * 2) / teeth, pts: string[] = [];
-  for (let i = 0; i < teeth; i++) { const a = i * st; pts.push(P(a, ri), P(a + st * 0.12, r), P(a + st * 0.42, r), P(a + st * 0.54, ri)); }
-  let d = `M${pts.join('L')}Z`;
-  const ro = ri - r * 0.12, rh = hub * 1.6;
-  for (let i = 0; i < spokes; i++) {
-    const a0 = (i / spokes) * Math.PI * 2 + 0.3, a1 = ((i + 1) / spokes) * Math.PI * 2 - 0.3;
-    d += `M${P(a0, ro)}A${ro} ${ro} 0 0 1 ${P(a1, ro)}L${P(a1 - 0.12, rh)}A${rh} ${rh} 0 0 0 ${P(a0 + 0.12, rh)}Z`;
-  }
-  return d;
+  for (let i = 0; i < teeth; i++) { const a = i * st; pts.push(P(cx, cy, a, root), P(cx, cy, a + st * 0.18, root), P(cx, cy, a + st * 0.32, tip), P(cx, cy, a + st * 0.68, tip), P(cx, cy, a + st * 0.82, root)); }
+  return `M${pts.join('L')}Z`;
 }
-/* x, y, radius, teeth, tooth depth, spokes, hub */
-const GEARS = [[122, 60, 23, 32, 2.2, 0, 6], [153, 92, 30, 40, 2.6, 3, 9], [100, 100, 21, 40, 1.6, 0, 6], [41, 103, 14, 18, 1.8, 0, 4]]
-  .map(([x, y, r, t, dp, sp, hub]) => ({ x: x!, y: y!, r: r!, hub: hub!, spokes: sp!, d: gear(x!, y!, r!, t!, dp!, sp!, hub!) }));
-/* the plate's large opening, right of the bridge */
-const RIGHT = 'M100 18 C92 30 88 44 96 56 C104 66 120 72 126 84 C129 96 128 110 126 118 C132 126 146 130 160 128 C170 127 176 123 182 118 L200 118 L200 0 L100 0 Z';
-/** a smooth closed outline through points (Catmull-Rom as cubic Beziers) */
-function smooth(pts: number[][]): string {
-  let d = `M${pts[0]![0]} ${pts[0]![1]}`;
-  for (let i = 0; i < pts.length - 1; i++) {
-    const p0 = pts[i - 1] ?? pts[i]!, p1 = pts[i]!, p2 = pts[i + 1]!, p3 = pts[i + 2] ?? p2;
-    d += `C${(p1[0]! + (p2[0]! - p0[0]!) / 6).toFixed(1)} ${(p1[1]! + (p2[1]! - p0[1]!) / 6).toFixed(1)} ${(p2[0]! - (p3[0]! - p1[0]!) / 6).toFixed(1)} ${(p2[1]! - (p3[1]! - p1[1]!) / 6).toFixed(1)} ${p2[0]} ${p2[1]}`;
+/* x, y, tip and root radius, teeth, kind, tone */
+const GEARS = [
+  { x: 195, y: 118, tip: 43.3, root: 40.3, teeth: 48, kind: 'spokes', fill: '#5a5a55' },
+  { x: 161.7, y: 87.3, tip: 29.3, root: 26.3, teeth: 36, kind: 'ring', fill: '#686864' },
+  { x: 131.3, y: 130.3, tip: 25, root: 22.3, teeth: 38, kind: 'plain', fill: '#4c4c4b' },
+  { x: 145, y: 192, tip: 26.7, root: 24, teeth: 36, kind: 'holes', fill: '#53534e' },
+].map((g) => {
+  let d = rim(g.x, g.y, g.tip, g.root, g.teeth);
+  if (g.kind === 'spokes') {
+    d += circle(g.x, g.y, 31) + circle(g.x, g.y, 9); // the rim, three spokes and the hub
+    for (let i = 0; i < 3; i++) {
+      const a0 = (i / 3) * Math.PI * 2 + 0.17, a1 = ((i + 1) / 3) * Math.PI * 2 - 0.17;
+      d += `M${P(g.x, g.y, a0, 30)}A30 30 0 0 1 ${P(g.x, g.y, a1, 30)}L${P(g.x, g.y, a1 - 0.2, 16)}A16 16 0 0 0 ${P(g.x, g.y, a0 + 0.2, 16)}Z`;
+    }
+    d = d.replace(circle(g.x, g.y, 31) + circle(g.x, g.y, 9), circle(g.x, g.y, 9));
   }
-  return d;
-}
-/* the S bridge: its two edges, thin at 12 and 6 and widest where it wraps the centre ring */
-const BL = [[98, 14], [88, 32], [90, 50], [100, 62], [114, 72], [120, 86], [121, 100], [118, 113], [106, 121], [95, 131], [88, 145], [90, 165], [97, 188]];
-const BR = [[106, 14], [96, 32], [98, 48], [108, 56], [126, 68], [136, 86], [136, 106], [130, 124], [114, 134], [104, 142], [98, 152], [101, 168], [108, 188]];
-const BRIDGE = `${smooth(BL)}L${smooth([...BR].reverse()).slice(1)}Z`;
-const FIN = 'M37 77 C44 58 62 42 82 35 C78 48 76 62 72 80 C60 78 48 76 37 77 Z';
+  if (g.kind === 'holes') { d += circle(g.x, g.y, 9); for (let i = 0; i < 3; i++) { const a = (i / 3) * Math.PI * 2 - Math.PI / 2; d += circle(+(g.x + 16 * Math.cos(a)).toFixed(2), +(g.y + 16 * Math.sin(a)).toFixed(2), 3.4); } }
+  return { ...g, d };
+});
+/* the movement's darker and lighter parts, and the plate with its openings (our own smoothed outlines) */
+const BACK: [string, string][] = [
+  ['M205.7 180.3C204.0 181.0 201.7 183.3 201.0 185.0C200.3 186.7 200.6 189.1 201.3 190.7C202.0 192.2 203.7 193.7 205.3 194.3C206.9 194.9 209.4 195.0 211.0 194.3C212.6 193.6 214.3 191.8 215.0 190.3C215.7 188.8 215.9 186.9 215.3 185.3C214.7 183.7 212.9 181.5 211.3 180.7C209.7 179.9 207.4 179.6 205.7 180.3Z', '#262624'],
+  ['M19.3 166.3C19.4 166.5 21.2 173.6 24.0 179.3C26.8 185.0 32.2 194.8 36.3 200.7C40.3 206.6 44.2 210.6 48.3 214.7C52.4 218.8 56.4 222.1 60.7 225.3C65.0 228.5 68.7 231.2 74.0 234.0C79.3 236.8 86.9 240.2 92.7 242.3C98.5 244.4 103.3 245.6 109.0 246.7C114.7 247.8 120.7 248.5 127.0 248.7C133.3 248.9 140.8 248.4 146.7 247.7C152.6 247.0 157.4 245.8 162.7 244.3C168.0 242.8 172.7 241.3 178.3 238.7C183.9 236.1 190.5 232.6 196.3 228.7C202.1 224.8 208.3 219.4 213.0 215.0C217.7 210.6 221.0 206.4 224.3 202.0C227.6 197.6 230.0 194.5 233.0 188.7C236.0 182.9 242.2 167.3 242.3 167.0C242.4 166.7 236.4 181.7 233.7 187.0C231.0 192.3 228.9 195.1 226.3 198.7C223.7 202.3 222.9 204.1 218.3 208.7C213.7 213.3 203.9 222.1 198.7 226.3C193.5 230.5 192.3 231.0 187.0 233.7C181.7 236.4 173.4 240.1 167.0 242.3C160.6 244.5 155.1 245.8 148.7 246.7C142.2 247.6 134.6 248.1 128.3 248.0C122.0 247.9 116.8 247.3 111.0 246.3C105.2 245.3 99.8 244.1 93.7 242.0C87.7 239.9 79.8 236.3 74.7 233.7C69.6 231.1 66.6 228.9 63.0 226.3C59.4 223.7 57.6 222.9 53.0 218.3C48.4 213.7 40.2 205.4 35.3 198.7C30.4 192.0 26.4 183.7 23.7 178.3C21.0 172.9 19.2 166.1 19.3 166.3Z', '#262624'],
+  ['M125.3 165.0C120.0 166.1 115.2 168.9 111.0 172.0C106.8 175.1 102.3 180.0 100.0 183.3C97.7 186.6 97.9 190.1 97.0 191.7C96.1 193.3 95.2 190.1 94.7 193.0C94.2 195.9 94.1 205.5 94.3 209.3C94.5 213.1 94.2 212.4 95.7 216.0C97.2 219.6 100.1 226.8 103.3 231.0C106.5 235.2 112.0 238.8 115.0 241.0C118.0 243.2 118.6 243.1 121.3 244.0C124.0 244.9 126.8 246.1 131.0 246.3C135.2 246.5 142.1 246.1 146.3 245.3C150.5 244.5 153.6 242.7 156.3 241.3C159.0 239.9 160.1 239.6 162.7 237.0C165.3 234.4 169.6 230.4 172.0 226.0C174.4 221.6 176.4 214.8 177.3 210.7C178.2 206.6 177.9 204.7 177.7 201.7C177.5 198.7 177.0 195.8 176.0 192.7C175.0 189.6 173.8 186.1 171.7 183.0C169.6 179.9 166.3 176.6 163.7 174.3C161.1 172.0 159.0 170.5 156.3 169.0C153.6 167.5 147.5 165.1 147.7 165.3C147.9 165.5 158.5 170.3 157.7 170.3C156.9 170.3 148.1 166.2 142.7 165.3C137.3 164.4 130.6 163.9 125.3 165.0Z', '#262624'],
+  ['M78.7 113.0C78.0 113.1 78.1 115.5 77.3 115.7C76.5 115.9 74.8 113.8 74.0 114.0C73.2 114.2 73.4 116.7 72.7 117.0C72.0 117.3 70.4 115.4 69.7 115.7C69.0 116.0 69.4 118.6 68.7 119.0C68.0 119.4 66.3 117.6 65.7 118.0C65.1 118.4 65.9 120.8 65.3 121.3C64.7 121.8 62.4 120.8 62.0 121.3C61.6 121.8 63.2 123.7 62.7 124.3C62.2 124.9 59.7 124.1 59.3 124.7C58.9 125.3 60.7 127.0 60.3 127.7C59.9 128.4 57.3 128.0 57.0 128.7C56.7 129.4 58.9 131.0 58.7 131.7C58.5 132.4 55.9 132.0 55.7 132.7C55.5 133.4 57.8 135.0 57.7 135.7C57.6 136.4 55.1 136.3 55.0 137.0C54.9 137.7 57.3 138.8 57.3 139.7C57.3 140.6 54.9 141.9 55.0 142.7C55.1 143.5 57.8 144.0 57.7 144.3C57.7 144.6 55.4 144.4 54.7 144.7C54.0 145.0 53.5 145.2 53.7 146.0C53.9 146.8 55.6 148.1 56.0 149.3C56.4 150.5 56.0 152.3 56.3 153.0C56.6 153.7 57.8 153.3 58.0 153.7C58.2 154.1 57.2 154.6 57.7 155.3C58.2 156.0 60.5 157.1 61.0 157.7C61.5 158.3 60.4 158.4 60.7 159.0C61.0 159.6 62.1 160.7 62.7 161.0C63.3 161.3 64.0 160.7 64.3 161.0C64.6 161.3 64.3 162.2 64.7 162.7C65.1 163.2 66.2 163.9 66.7 164.0C67.2 164.1 67.3 163.0 68.0 163.3C68.7 163.6 70.0 165.7 70.7 166.0C71.4 166.3 71.8 165.1 72.3 165.3C72.8 165.5 72.9 166.8 73.7 167.0C74.5 167.2 76.2 166.1 77.0 166.3C77.8 166.5 77.9 167.9 78.7 168.0C79.5 168.1 80.8 167.0 81.7 167.0C82.6 167.0 83.2 168.1 84.0 168.0C84.8 167.9 86.1 166.4 86.7 166.3C87.3 166.2 87.1 167.2 87.7 167.3C88.3 167.4 89.7 167.1 90.3 166.7C90.9 166.3 90.8 165.2 91.3 165.0C91.8 164.8 92.3 166.0 93.0 165.7C93.7 165.4 95.1 163.3 95.7 163.0C96.3 162.7 96.2 163.8 96.7 163.7C97.2 163.6 98.3 162.9 98.7 162.3C99.1 161.7 99.0 160.6 99.3 160.3C99.6 160.0 100.1 161.0 100.7 160.7C101.3 160.4 102.7 158.9 103.0 158.3C103.3 157.7 102.1 157.3 102.3 157.0C102.5 156.7 103.7 157.1 104.3 156.7C104.9 156.3 105.6 155.3 105.7 154.7C105.8 154.1 104.8 153.4 105.0 153.0C105.2 152.6 106.5 152.8 107.0 152.3C107.5 151.8 108.0 150.6 108.0 150.0C108.0 149.4 106.9 149.0 107.0 148.7C107.1 148.4 108.3 148.6 108.7 148.0C109.1 147.4 109.9 145.7 109.3 145.0C108.7 144.3 105.5 144.5 105.3 144.0C105.1 143.5 107.9 142.7 108.0 142.0C108.1 141.3 105.7 140.6 105.7 139.7C105.7 138.8 108.1 137.0 108.0 136.3C107.9 135.6 105.4 135.9 105.3 135.3C105.2 134.7 107.5 133.4 107.3 132.7C107.1 132.0 104.6 132.0 104.3 131.3C104.0 130.6 106.0 129.0 105.7 128.3C105.4 127.6 102.7 128.0 102.3 127.3C101.9 126.6 103.7 125.0 103.3 124.3C102.9 123.6 100.2 123.9 99.7 123.3C99.2 122.7 100.8 121.1 100.3 120.7C99.8 120.3 97.6 121.5 97.0 121.0C96.4 120.5 97.2 118.1 96.7 117.7C96.2 117.3 94.5 119.2 93.7 118.7C92.9 118.2 92.7 115.3 92.0 115.0C91.3 114.7 89.9 116.9 89.3 116.7C88.7 116.5 89.0 113.9 88.3 113.7C87.6 113.5 85.7 115.8 85.0 115.7C84.3 115.6 84.5 113.1 84.0 113.0C83.5 112.9 82.6 115.3 81.7 115.3C80.8 115.3 79.4 112.9 78.7 113.0Z', '#262624'],
+  ['M73.3 135.0C74.5 133.1 77.1 131.2 79.3 130.7C81.5 130.2 84.8 130.9 86.7 132.0C88.6 133.1 90.2 135.2 90.7 137.3C91.2 139.4 91.4 142.5 90.0 144.3C88.6 146.1 85.1 147.9 82.3 148.0C79.5 148.1 75.0 145.7 73.3 144.7C71.6 143.7 72.0 143.6 72.0 142.0C72.0 140.4 72.1 136.9 73.3 135.0Z', '#34342f'],
+  ['M142.7 68.3C142.3 68.6 143.4 70.6 142.7 71.3C142.0 72.0 139.3 71.6 138.7 72.3C138.1 73.0 139.8 74.7 139.3 75.3C138.9 75.9 136.4 75.3 136.0 76.0C135.6 76.7 137.4 78.5 137.0 79.3C136.6 80.1 134.0 80.0 133.7 80.7C133.4 81.4 135.5 82.9 135.3 83.7C135.1 84.5 132.5 85.0 132.3 85.7C132.1 86.4 134.4 87.2 134.3 88.0C134.2 88.8 132.0 89.5 132.0 90.3C132.0 91.1 134.2 91.7 134.3 92.7C134.4 93.7 132.1 95.4 132.3 96.3C132.5 97.2 135.1 97.2 135.3 98.0C135.5 98.8 133.5 100.3 133.7 101.0C133.9 101.7 136.3 101.2 136.7 102.0C137.1 102.8 135.6 105.0 136.0 105.7C136.4 106.4 138.6 105.3 139.0 106.0C139.4 106.7 138.2 109.2 138.7 109.7C139.1 110.2 141.1 108.8 141.7 109.3C142.2 109.8 141.4 112.5 142.0 113.0C142.6 113.5 144.2 111.8 145.0 112.3C145.8 112.8 146.1 115.8 146.7 116.3C147.3 116.8 148.1 115.1 148.7 115.0C149.3 114.9 149.9 113.9 150.3 115.7C150.7 117.5 150.4 122.4 151.0 125.7C151.6 129.0 152.3 132.0 153.7 135.3C155.1 138.6 157.4 142.6 159.3 145.3C161.2 148.0 162.6 149.6 165.0 151.7C167.4 153.8 170.7 156.3 173.7 158.0C176.7 159.7 179.7 161.0 183.0 162.0C186.3 163.0 190.8 163.7 193.7 164.0C196.6 164.3 197.9 164.1 200.7 163.7C203.5 163.3 207.3 162.6 210.3 161.7C213.3 160.8 215.2 160.3 218.7 158.0C222.1 155.7 227.6 151.9 231.0 148.0C234.4 144.1 237.2 138.7 239.0 134.7C240.8 130.7 241.2 127.3 241.7 124.0C242.2 120.7 242.6 119.2 242.0 115.0C241.4 110.8 239.4 103.0 238.0 99.0C236.6 95.0 235.3 93.7 233.3 91.0C231.3 88.3 228.9 85.5 226.0 83.0C223.1 80.5 219.1 78.0 215.7 76.3C212.3 74.6 209.1 73.7 205.7 73.0C202.2 72.3 198.7 71.8 195.0 72.0C191.3 72.2 185.3 74.0 183.3 74.0C181.3 74.0 183.7 72.5 183.0 72.0C182.3 71.5 179.9 71.9 179.3 71.3C178.7 70.7 179.7 68.6 179.3 68.3C178.9 68.0 177.4 69.7 176.7 69.3C176.0 68.9 176.0 66.1 175.3 65.7C174.6 65.3 173.4 67.3 172.7 67.0C172.0 66.7 171.7 64.0 171.0 63.7C170.3 63.4 169.1 65.5 168.3 65.3C167.5 65.1 167.0 62.5 166.3 62.3C165.6 62.1 164.8 64.3 164.0 64.3C163.2 64.2 162.1 62.0 161.3 62.0C160.5 62.0 159.9 64.2 159.0 64.3C158.1 64.3 156.6 62.1 155.7 62.3C154.8 62.5 154.5 65.1 153.7 65.3C152.9 65.5 151.4 63.4 150.7 63.7C150.0 64.0 150.1 66.6 149.3 67.0C148.5 67.4 146.7 65.6 146.0 66.0C145.3 66.4 145.9 68.9 145.3 69.3C144.8 69.7 143.1 68.0 142.7 68.3Z', '#262624'],
+  ['M153.3 37.0C151.6 37.5 149.2 39.5 148.3 41.0C147.4 42.5 147.6 44.8 148.0 46.3C148.4 47.8 149.5 49.5 151.0 50.3C152.5 51.1 155.3 51.6 157.0 51.3C158.7 51.0 160.1 50.1 161.0 48.7C161.9 47.3 162.7 44.5 162.3 42.7C161.9 40.9 160.2 38.7 158.7 37.7C157.2 36.8 155.0 36.5 153.3 37.0Z', '#262624'],
+  ['M186.0 72.3C188.0 72.5 200.9 71.8 205.7 72.3C210.5 72.8 211.8 73.9 215.0 75.3C218.2 76.7 224.4 80.6 224.7 80.7C225.0 80.8 219.8 77.2 216.7 75.7C213.6 74.2 209.8 72.8 206.0 72.0C202.2 71.2 197.0 71.0 193.7 71.0C190.4 71.0 184.0 72.1 186.0 72.3Z', '#484843'],
+  ['M62.7 36.0C74.4 38.0 138.4 35.4 152.7 36.0C167.0 36.6 149.2 38.2 148.3 39.7C147.4 41.2 146.9 43.2 147.0 44.7C147.1 46.2 147.6 47.8 148.7 49.0C149.8 50.2 151.5 51.7 153.3 52.0C155.1 52.3 157.7 52.0 159.3 51.0C160.9 50.0 162.6 47.5 163.0 45.7C163.4 43.9 162.9 41.6 162.0 40.0C161.1 38.4 151.1 36.7 157.3 36.0C163.5 35.3 194.1 37.3 199.0 36.0C203.9 34.7 192.0 30.9 187.0 28.3C182.0 25.7 174.7 22.4 169.0 20.3C163.3 18.2 158.5 17.1 152.7 16.0C146.9 14.9 140.1 14.2 134.3 14.0C128.5 13.8 123.9 14.0 118.0 14.7C112.1 15.4 104.9 16.7 99.0 18.3C93.1 19.9 88.8 21.4 82.7 24.3C76.7 27.2 51.0 34.0 62.7 36.0Z', '#484843'],
+  ['M153.7 36.3C155.6 36.0 158.4 36.8 160.0 38.0C161.6 39.2 162.7 42.0 163.0 43.7C163.3 45.4 162.9 46.9 161.7 48.3C160.5 49.7 157.8 51.6 156.0 52.0C154.2 52.4 152.1 51.8 150.7 50.7C149.2 49.7 147.6 47.5 147.3 45.7C147.0 43.9 147.6 41.3 148.7 39.7C149.8 38.1 151.8 36.6 153.7 36.3Z', '#363632'],
+];
+const PLATE = 'M128.7 113.0C126.6 113.3 124.2 114.0 122.3 115.0C120.3 116.0 118.5 117.3 117.0 119.3C115.5 121.2 114.0 124.4 113.3 126.7C112.6 129.0 112.7 130.9 113.0 133.0C113.3 135.1 114.0 137.4 115.0 139.3C116.0 141.2 117.5 143.2 119.3 144.7C121.1 146.1 123.4 147.3 125.7 148.0C128.0 148.7 130.4 149.1 133.0 148.7C135.6 148.3 138.9 147.0 141.0 145.7C143.1 144.4 144.5 142.8 145.7 141.0C146.9 139.2 147.8 136.8 148.3 134.7C148.8 132.6 149.0 130.8 148.7 128.7C148.4 126.6 147.8 124.2 146.7 122.3C145.6 120.3 144.2 118.5 142.3 117.0C140.4 115.5 137.3 114.0 135.0 113.3C132.7 112.6 130.8 112.7 128.7 113.0ZM124.7 14.0C117.7 14.3 112.5 14.9 105.3 16.7C98.1 18.5 88.9 21.5 81.7 24.7C74.5 27.9 68.4 31.6 62.3 36.0C56.2 40.4 50.3 45.6 45.0 51.3C39.7 57.0 34.8 63.5 30.7 70.3C26.6 77.1 22.9 85.0 20.3 92.3C17.7 99.6 16.1 106.8 15.0 114.3C13.9 121.8 13.7 130.0 14.0 137.0C14.3 144.0 15.0 149.2 16.7 156.3C18.4 163.4 21.1 172.1 24.3 179.3C27.5 186.5 31.0 192.6 36.0 199.3C41.0 206.0 48.2 213.8 54.3 219.3C60.4 224.8 66.2 228.6 72.7 232.3C79.2 236.0 85.9 239.2 93.3 241.7C100.7 244.1 109.7 246.0 117.0 247.0C124.3 248.0 130.4 248.0 137.0 247.7C143.6 247.4 149.1 246.8 156.3 245.0C163.5 243.2 172.2 240.7 180.0 237.0C187.8 233.3 196.8 227.6 203.3 222.7C209.9 217.8 214.5 212.9 219.3 207.3C224.1 201.7 228.6 195.3 232.3 189.0C236.0 182.7 238.9 176.7 241.3 169.3C243.8 161.9 245.9 152.1 247.0 144.7C248.1 137.3 248.0 131.3 247.7 124.7C247.4 118.1 246.8 112.5 245.0 105.3C243.2 98.1 240.6 89.3 237.0 81.7C233.4 74.1 228.6 66.3 223.7 59.7C218.8 53.1 213.1 47.4 207.3 42.3C201.5 37.2 195.3 33.0 189.0 29.3C182.7 25.6 176.2 22.7 169.3 20.3C162.4 17.9 154.7 16.1 147.3 15.0C139.9 13.9 131.7 13.7 124.7 14.0ZM67.0 114.0C69.7 113.6 72.3 114.0 74.7 114.7C77.1 115.4 79.3 116.5 81.3 118.0C83.3 119.5 85.4 121.9 86.7 124.0C88.0 126.1 88.8 128.4 89.0 130.7C89.2 133.0 88.6 135.7 87.7 138.0C86.8 140.3 85.2 142.6 83.7 144.3C82.2 146.0 80.8 147.0 79.0 148.0C77.2 149.0 74.9 149.9 72.7 150.3C70.5 150.7 68.5 150.9 66.0 150.3C63.5 149.7 59.9 148.2 57.7 146.7C55.5 145.2 54.0 143.6 52.7 141.3C51.4 139.0 50.1 135.0 49.7 132.7C49.3 130.4 49.7 129.5 50.3 127.7C50.9 125.9 51.9 123.8 53.3 122.0C54.7 120.2 56.4 118.3 58.7 117.0C61.0 115.7 64.3 114.4 67.0 114.0ZM126.0 107.3C129.4 106.8 133.8 106.9 137.3 107.7C140.8 108.5 144.3 110.3 147.0 112.3C149.7 114.3 152.0 116.9 153.7 119.7C155.4 122.5 156.8 126.0 157.3 129.0C157.8 132.0 157.5 134.8 156.7 137.7C155.9 140.6 154.3 144.0 152.3 146.7C150.3 149.4 147.6 151.9 144.7 153.7C141.8 155.5 138.4 156.9 134.7 157.3C131.0 157.7 126.0 157.1 122.7 156.3C119.4 155.5 117.5 154.2 115.0 152.3C112.5 150.4 109.8 147.6 108.0 144.7C106.2 141.8 104.8 137.6 104.3 134.7C103.8 131.8 103.9 130.1 104.7 127.3C105.5 124.5 107.3 120.4 109.3 117.7C111.3 115.0 113.9 112.7 116.7 111.0C119.5 109.3 122.6 107.8 126.0 107.3ZM110.3 54.7C110.2 56.5 107.4 61.6 106.7 65.0C106.0 68.4 106.0 71.8 106.3 75.3C106.6 78.8 107.5 83.1 108.7 86.3C109.9 89.5 113.9 92.1 113.3 94.3C112.7 96.5 107.9 97.1 105.0 99.7C102.1 102.3 98.7 109.3 95.7 110.0C92.8 110.7 90.4 105.7 87.3 104.0C84.2 102.3 81.0 100.8 77.3 100.0C73.6 99.2 68.6 99.0 65.3 99.3C62.0 99.6 59.0 101.4 57.3 101.7C55.6 102.0 53.9 103.7 55.0 101.0C56.1 98.3 59.9 90.4 63.7 85.3C67.5 80.2 72.1 74.8 77.7 70.3C83.3 65.8 92.4 60.7 97.3 58.0C102.2 55.3 105.1 54.8 107.3 54.3C109.5 53.8 110.4 52.9 110.3 54.7ZM132.3 37.0C134.9 36.3 143.9 37.7 149.3 38.7C154.7 39.7 160.0 41.3 164.7 43.0C169.4 44.7 172.7 46.0 177.7 49.0C182.7 52.0 189.8 56.8 194.7 61.0C199.6 65.2 203.5 69.7 207.0 74.0C210.5 78.3 213.2 82.7 215.7 87.0C218.1 91.3 220.0 94.8 221.7 100.0C223.4 105.2 226.4 115.1 226.0 118.0C225.6 120.9 221.2 117.2 219.0 117.3C216.8 117.3 214.5 117.6 212.7 118.3C210.9 119.0 209.2 120.6 208.3 121.7C207.4 122.8 207.3 122.2 207.0 124.7C206.7 127.2 206.4 133.9 206.7 137.0C207.0 140.1 207.6 141.4 208.7 143.0C209.8 144.6 210.5 145.8 213.3 146.3C216.1 146.9 223.6 146.0 225.7 146.3C227.8 146.6 227.1 144.2 226.0 148.3C224.9 152.4 222.3 163.5 219.0 170.7C215.7 177.9 210.2 186.1 206.0 191.7C201.8 197.3 198.4 200.4 193.7 204.3C189.0 208.2 183.7 212.1 178.0 215.3C172.3 218.5 165.9 221.3 159.3 223.3C152.7 225.3 143.2 226.7 138.3 227.3C133.4 227.9 130.8 228.1 130.0 227.0C129.2 225.9 133.0 222.9 133.7 220.7C134.4 218.5 134.4 215.8 134.0 213.7C133.6 211.6 133.1 210.2 131.3 208.0C129.5 205.8 125.2 202.6 123.3 200.3C121.4 198.0 120.5 196.1 119.7 194.3C118.9 192.5 118.4 191.8 118.3 189.7C118.2 187.6 118.1 184.3 119.3 181.7C120.5 179.1 123.6 176.0 125.7 174.3C127.8 172.6 126.9 173.0 131.7 171.7C136.5 170.4 149.2 168.4 154.3 166.3C159.4 164.2 159.4 162.9 162.0 159.3C164.6 155.7 168.1 149.8 169.7 144.7C171.2 139.6 171.6 134.0 171.3 129.0C171.0 124.0 169.5 118.7 168.0 114.7C166.5 110.8 164.2 107.8 162.3 105.3C160.4 102.8 159.5 101.8 156.7 99.7C153.9 97.7 150.2 94.9 145.3 93.0C140.4 91.1 131.0 89.8 127.0 88.3C123.0 86.8 122.8 85.6 121.3 83.7C119.8 81.8 118.6 79.2 118.3 77.0C118.0 74.8 118.3 73.0 119.3 70.7C120.2 68.4 121.9 65.8 124.0 63.3C126.1 60.8 130.1 57.9 131.7 56.0C133.3 54.1 133.3 53.9 133.7 51.7C134.1 49.5 134.2 45.2 134.0 42.7C133.8 40.2 129.8 37.7 132.3 37.0Z';
 const sec = computed(() => props.s * 6);
 const min = computed(() => props.m * 6 + props.s * 0.1);
 const hour = computed(() => (props.h % 12) * 30 + props.m * 0.5);
 /** neighbouring gears turn the other way, the small ones faster */
-const turn = (g: { x: number; y: number; r: number }, i: number) => `rotate(${((i % 2 ? -1 : 1) * sec.value * 20) / g.r} ${g.x} ${g.y})`;
+const turn = (g: { x: number; y: number; tip: number }, i: number) => `rotate(${(((i % 2 ? -1 : 1) * sec.value * 26) / g.tip).toFixed(2)} ${g.x} ${g.y})`;
 const u = (n: string) => `url(#${id}${n})`;
 </script>
 <template>
-  <svg class="bw-geardial" viewBox="0 0 200 200" aria-hidden="true">
+  <svg class="bw-geardial" viewBox="0 0 262 262" aria-hidden="true">
     <defs>
-      <linearGradient :id="`${id}bz`" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#424346" /><stop offset=".5" stop-color="#2e2f32" /><stop offset="1" stop-color="#1c1d1f" /></linearGradient>
-      <linearGradient :id="`${id}pl`" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#38393c" /><stop offset=".55" stop-color="#2a2b2e" /><stop offset="1" stop-color="#1b1c1e" /></linearGradient>
-      <linearGradient :id="`${id}gm`" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#434447" /><stop offset="1" stop-color="#2c2d30" /></linearGradient>
+      <linearGradient :id="`${id}bk`" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#66665f" /><stop offset=".55" stop-color="#3e3e3a" /><stop offset="1" stop-color="#2a2a27" /></linearGradient>
+      <linearGradient :id="`${id}pl`" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6a6a66" /><stop offset=".45" stop-color="#4c4c48" /><stop offset="1" stop-color="#32322d" /></linearGradient>
+      <linearGradient :id="`${id}rm`" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9a9a96" stop-opacity=".9" /><stop offset=".5" stop-color="#9a9a96" stop-opacity="0" /></linearGradient>
+      <radialGradient :id="`${id}wl`" cx=".5" cy=".42" r=".55"><stop offset=".7" stop-color="#36362f" /><stop offset="1" stop-color="#262624" /></radialGradient>
       <linearGradient :id="`${id}hd`" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" /><stop offset=".5" stop-color="#f2f2f3" /><stop offset=".51" stop-color="#cfd0d2" /><stop offset="1" stop-color="#e4e4e6" /></linearGradient>
       <radialGradient :id="`${id}cp`" cx=".4" cy=".35" r=".7"><stop offset="0" stop-color="#f0f0f2" /><stop offset=".6" stop-color="#a5a6aa" /><stop offset="1" stop-color="#5a5b5f" /></radialGradient>
-      <filter :id="`${id}ps`" x="-10%" y="-10%" width="120%" height="120%"><feDropShadow dx="0" dy="1.2" stdDeviation="1.4" flood-color="#000" flood-opacity=".8" /></filter>
-      <filter :id="`${id}bb`" x="-10%" y="-10%" width="120%" height="120%"><feGaussianBlur stdDeviation=".7" /><feDropShadow dx="0" dy="1" stdDeviation="1.2" flood-color="#000" flood-opacity=".6" /></filter>
-      <filter :id="`${id}hs`"><feDropShadow dx="0" dy="1.2" stdDeviation="1" flood-color="#000" flood-opacity=".6" /></filter>
-      <clipPath :id="`${id}in`"><circle cx="100" cy="100" r="81" /></clipPath>
-      <mask :id="`${id}mk`">
-        <circle cx="100" cy="100" r="81" fill="#fff" /><path :d="RIGHT" fill="#000" /><circle cx="100" cy="100" r="24" fill="#000" />
-        <circle cx="44" cy="103" r="17" fill="#000" /><circle cx="117" cy="152" r="23" fill="#000" /><circle cx="118" cy="29" r="5" fill="#fff" />
-      </mask>
+      <filter :id="`${id}ps`" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="2" stdDeviation="2.4" flood-color="#000" flood-opacity=".75" /></filter>
+      <filter :id="`${id}gs`" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="1.5" stdDeviation="1.6" flood-color="#000" flood-opacity=".6" /></filter>
     </defs>
-    <circle cx="100" cy="100" r="93" fill="#0e0e0f" />
-    <circle cx="100" cy="100" r="92" :fill="u('bz')" />
-    <g :clip-path="u('in')">
-      <circle cx="100" cy="100" r="81" fill="#1e1f21" />
-      <g v-for="(g, i) in GEARS" :key="i">
-        <g :transform="turn(g, i)">
-          <path :d="g.d" :fill="u('gm')" fill-rule="evenodd" stroke="#18191b" stroke-width=".4" />
-          <circle v-if="!g.spokes" :cx="g.x" :cy="g.y" :r="g.r * 0.6" fill="none" stroke="#343538" :stroke-width="g.r * 0.08" />
-        </g>
-        <circle :cx="g.x" :cy="g.y" :r="g.hub" fill="#3a3b3e" stroke="#1d1e20" stroke-width=".5" /><circle :cx="g.x" :cy="g.y" :r="g.hub * 0.35" fill="#232426" />
-      </g>
-      <circle cx="50" cy="96" r="1.6" fill="#111" /><circle cx="58" cy="105" r="6" fill="#1a1b1d" />
-      <circle cx="117" cy="152" r="21" fill="#2e2f32" /><circle cx="106" cy="160" r="11" fill="#28292c" stroke="#26272a" stroke-width="1.4" /><circle cx="106" cy="160" r="4" fill="#2a2b2e" />
-      <circle cx="162" cy="146" r="5" fill="#141416" /><circle cx="118" cy="29" r="5" fill="#141416" />
-      <g :filter="u('ps')">
-        <rect width="200" height="200" :fill="u('pl')" :mask="u('mk')" />
-        <path :d="FIN" fill="#303134" stroke="#242527" stroke-width=".6" />
-      </g>
-      <path :d="BRIDGE" fill="#1b1c1e" :filter="u('bb')" />
-      <circle cx="100" cy="100" r="26" fill="none" stroke="#1b1c1e" stroke-width="5" :filter="u('bb')" />
-      <circle cx="100" cy="100" r="80.5" fill="none" stroke="rgba(255,255,255,.06)" stroke-width=".6" />
+    <circle cx="131" cy="131" r="117" :fill="u('bk')" />
+    <path v-for="(b, i) in BACK" :key="i" :d="b[0]" :fill="b[1]" />
+    <g v-for="(g, i) in GEARS" :key="'g' + i" :filter="u('gs')">
+      <path class="bw-geardial__gear" :d="g.d" :fill="g.fill" fill-rule="evenodd" stroke="#2a2a26" stroke-width=".5" :transform="turn(g, i)" />
+      <template v-if="g.kind === 'ring'"><circle :cx="g.x" :cy="g.y" :r="g.root * 0.62" fill="none" stroke="#4a4a45" stroke-width="1.6" /><circle :cx="g.x" :cy="g.y" r="1.4" fill="#1f1f1d" /></template>
+      <template v-if="g.kind === 'plain'"><circle :cx="g.x" :cy="g.y" r="20" fill="#4a4a4b" /><circle :cx="g.x" :cy="g.y" r="17" fill="#303032" /></template>
+      <circle v-if="g.kind === 'spokes'" :cx="g.x" :cy="g.y" r="3" fill="#1f1f1d" />
     </g>
-    <ellipse v-for="i in 12" :key="i" cx="100" cy="12.5" rx="1.1" ry="2.6" fill="#b4b5b8" :transform="`rotate(${i * 30} 100 100)`" />
-    <template v-if="day">
-      <circle cx="57" cy="145" r="18" fill="#1c1d1f" stroke="#18191a" />
-      <text x="57" y="149.5" text-anchor="middle" font-size="12" fill="#b9babd" class="bw-geardial__t">{{ day }}</text>
-    </template>
-    <template v-if="date !== ''">
-      <rect x="165" y="95" width="18" height="18" rx="6" fill="#121214" :filter="u('hs')" />
-      <text x="174" y="108.5" text-anchor="middle" font-size="13.5" fill="#f2f2f3" class="bw-geardial__t">{{ date }}</text>
-    </template>
-    <g :filter="u('hs')">
-      <path d="M97.2 104 L96.4 54 L100 41 L103.6 54 L102.8 104 Z" :fill="u('hd')" :transform="`rotate(${hour} 100 100)`" />
-      <path d="M98.2 104 L97.8 26 L100 17 L102.2 26 L101.8 104 Z" :fill="u('hd')" :transform="`rotate(${min} 100 100)`" />
-      <line x1="100" y1="124" x2="100" y2="18" stroke="#d9d9db" stroke-width=".8" :transform="`rotate(${sec} 100 100)`" />
+    <g :filter="u('ps')"><path class="bw-geardial__plate" :d="PLATE" :fill="u('pl')" fill-rule="evenodd" /></g>
+    <path :d="PLATE" fill="none" :stroke="u('rm')" stroke-width="1" />
+    <circle cx="85" cy="183" r="27" :fill="u('wl')" />
+    <rect x="209" y="119" width="25" height="25" rx="7" fill="#1f1f1f" :filter="u('gs')" />
+    <ellipse v-for="i in 12" :key="'t' + i" cx="131" cy="20.5" rx="1.3" ry="3" fill="#a1a1a1" :transform="`rotate(${i * 30} 131 131)`" />
+    <!-- the widget shows the movement dimmed, as if under smoked glass (measured: about 0.6 of the parts' own light) -->
+    <circle cx="131" cy="131" r="118" fill="#000" fill-opacity=".38" />
+    <!-- the bezel: a lighter ring that carries the ticks, a fine dark edge where the face starts -->
+    <circle cx="131" cy="131" r="112.5" fill="none" stroke="#fff" stroke-opacity=".03" stroke-width="10" />
+    <circle cx="131" cy="131" r="107.3" fill="none" stroke="#000" stroke-opacity=".25" stroke-width="1" />
+    <text v-if="day" x="85" y="189" text-anchor="middle" font-size="16" fill="#cfcfcc" class="bw-geardial__t">{{ day }}</text>
+    <text v-if="date !== ''" x="221.5" y="137.5" text-anchor="middle" font-size="16" fill="#f2f2f3" class="bw-geardial__t">{{ date }}</text>
+    <g :filter="u('gs')">
+      <path d="M127.3 136 L126.2 70 L131 53 L135.8 70 L134.7 136 Z" :fill="u('hd')" :transform="`rotate(${hour} 131 131)`" />
+      <path d="M128.6 136 L128 34 L131 22 L134 34 L133.4 136 Z" :fill="u('hd')" :transform="`rotate(${min} 131 131)`" />
+      <line x1="131" y1="162" x2="131" y2="24" stroke="#d9d9db" stroke-width="1" :transform="`rotate(${sec} 131 131)`" />
     </g>
-    <circle cx="100" cy="100" r="7" :fill="u('cp')" stroke="#3a3b3e" stroke-width=".5" />
-    <circle cx="100" cy="100" r="1.6" fill="#7a7b7f" />
+    <circle cx="131" cy="131" r="9" :fill="u('cp')" stroke="#3a3b3e" stroke-width=".6" />
+    <circle cx="131" cy="131" r="2" fill="#7a7b7f" />
   </svg>
 </template>
 <style>
