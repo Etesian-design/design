@@ -151,7 +151,7 @@ describe('gear clock dial', () => {
     expect(gears.length).toBe(4);
     expect((gears[0]!.attributes('d')!.match(/L/g) ?? []).length).toBeGreaterThan(100); // fine teeth, not a few blunt cogs
     expect(w.text()).toContain('Mon');
-    expect(w.findAll('path[transform]:not(.bw-geardial__gear)').map((p) => p.attributes('transform'))).toEqual(['rotate(315 131 131)', 'rotate(180 131 131)']);
+    expect(w.findAll('.bw-geardial__hand').map((p) => p.attributes('transform'))).toEqual(['rotate(315 131 131)', 'rotate(180 131 131)']);
     expect((w.find('.bw-geardial__plate').attributes('d')!.match(/M/g) ?? []).length).toBe(6); // a skeleton dial: the plate with its openings
     expect(w.findAll('.bw-geardial__gear').map((g) => g.attributes('transform'))).toEqual(GEARS_AT_0);
   });

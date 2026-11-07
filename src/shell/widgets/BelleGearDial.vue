@@ -9,6 +9,7 @@
  * it is used); the outlines are our own smoothed curves. Drawn on a 262 grid; it fills its box (keep it square).
  */
 import { computed, useId } from 'vue';
+import { LIGHTING as L } from '../../lighting';
 const props = withDefaults(defineProps<{ h: number; m: number; s?: number; day?: string; date?: number | string }>(), { s: 0, day: '', date: '' });
 const id = useId();
 const P = (cx: number, cy: number, a: number, r: number) => `${(cx + r * Math.cos(a)).toFixed(2)} ${(cy + r * Math.sin(a)).toFixed(2)}`;
@@ -68,13 +69,35 @@ const u = (n: string) => `url(#${id}${n})`;
       <radialGradient :id="`${id}wl`" cx=".5" cy=".42" r=".55"><stop offset=".7" stop-color="#36362f" /><stop offset="1" stop-color="#262624" /></radialGradient>
       <linearGradient :id="`${id}hd`" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" /><stop offset=".5" stop-color="#f2f2f3" /><stop offset=".51" stop-color="#cfd0d2" /><stop offset="1" stop-color="#e4e4e6" /></linearGradient>
       <radialGradient :id="`${id}cp`" cx=".4" cy=".35" r=".7"><stop offset="0" stop-color="#f0f0f2" /><stop offset=".6" stop-color="#a5a6aa" /><stop offset="1" stop-color="#5a5b5f" /></radialGradient>
-      <filter :id="`${id}ps`" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="2" stdDeviation="2.4" flood-color="#000" flood-opacity=".75" /></filter>
-      <filter :id="`${id}gs`" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="1.5" stdDeviation="1.6" flood-color="#000" flood-opacity=".6" /></filter>
+      <filter :id="`${id}ps`" x="-15%" y="-15%" width="130%" height="130%">
+        <feOffset in="SourceAlpha" dy="1.6" result="dn" /><feComposite in="SourceAlpha" in2="dn" operator="out" result="ra" />
+        <feFlood flood-color="#fff" :flood-opacity="L.rimOpacity" /><feComposite in2="ra" operator="in" result="rim" />
+        <feOffset in="SourceAlpha" dy="-1.6" result="up" /><feComposite in="SourceAlpha" in2="up" operator="out" result="ba" />
+        <feFlood flood-color="#fff" :flood-opacity="L.bottomLineOpacity" /><feComposite in2="ba" operator="in" result="bot" />
+        <feOffset in="SourceAlpha" dy="3.5" result="co" /><feGaussianBlur in="co" stdDeviation="3.5" result="cb" />
+        <feFlood flood-color="#000" :flood-opacity="L.castOpacity" /><feComposite in2="cb" operator="in" result="cast" />
+        <feMerge><feMergeNode in="cast" /><feMergeNode in="SourceGraphic" /><feMergeNode in="rim" /><feMergeNode in="bot" /></feMerge>
+      </filter>
+      <filter :id="`${id}gs`" x="-15%" y="-15%" width="130%" height="130%">
+        <feOffset in="SourceAlpha" dy="1.1" result="dn" /><feComposite in="SourceAlpha" in2="dn" operator="out" result="ra" />
+        <feFlood flood-color="#fff" :flood-opacity="L.rimOpacity" /><feComposite in2="ra" operator="in" result="rim" />
+        <feOffset in="SourceAlpha" dy="-1.1" result="up" /><feComposite in="SourceAlpha" in2="up" operator="out" result="ba" />
+        <feFlood flood-color="#fff" :flood-opacity="L.bottomLineOpacity" /><feComposite in2="ba" operator="in" result="bot" />
+        <feOffset in="SourceAlpha" dy="1.8" result="co" /><feGaussianBlur in="co" stdDeviation="1.6" result="cb" />
+        <feFlood flood-color="#000" :flood-opacity="L.castOpacity" /><feComposite in2="cb" operator="in" result="cast" />
+        <feMerge><feMergeNode in="cast" /><feMergeNode in="SourceGraphic" /><feMergeNode in="rim" /><feMergeNode in="bot" /></feMerge>
+      </filter>
+      <!-- the icons' tile gradient: lighter at the top (10 %), darker from 72 % down; it stays lit from above while a gear turns -->
+      <linearGradient :id="`${id}sh`" x1="0" y1="0" x2="0" y2="1">
+        <stop :offset="L.gradientStart" stop-color="#fff" :stop-opacity="L.lightnessDelta" /><stop :offset="(L.gradientStart + L.gradientEnd) / 2" stop-color="#fff" stop-opacity="0" /><stop :offset="L.gradientEnd" stop-color="#000" :stop-opacity="L.lightnessDelta" />
+      </linearGradient>
+      <mask v-for="(g, i) in GEARS" :id="`${id}m${i}`" :key="'m' + i" maskUnits="userSpaceOnUse" x="0" y="0" width="262" height="262"><path :d="g.d" fill="#fff" fill-rule="evenodd" :transform="turn(g, i)" /></mask>
     </defs>
     <circle cx="131" cy="131" r="117" :fill="u('bk')" />
     <path v-for="(b, i) in BACK" :key="i" :d="b[0]" :fill="b[1]" />
     <g v-for="(g, i) in GEARS" :key="'g' + i" :filter="u('gs')">
       <path class="bw-geardial__gear" :d="g.d" :fill="g.fill" fill-rule="evenodd" stroke="#2a2a26" stroke-width=".5" :transform="turn(g, i)" />
+      <rect :x="g.x - g.tip" :y="g.y - g.tip" :width="g.tip * 2" :height="g.tip * 2" :fill="u('sh')" :mask="u('m' + i)" />
       <template v-if="g.kind === 'ring'"><circle :cx="g.x" :cy="g.y" :r="g.root * 0.62" fill="none" stroke="#4a4a45" stroke-width="1.6" /><circle :cx="g.x" :cy="g.y" r="1.4" fill="#1f1f1d" /></template>
       <template v-if="g.kind === 'plain'"><circle :cx="g.x" :cy="g.y" r="20" fill="#4a4a4b" /><circle :cx="g.x" :cy="g.y" r="17" fill="#303032" /></template>
       <circle v-if="g.kind === 'spokes'" :cx="g.x" :cy="g.y" r="3" fill="#1f1f1d" />
@@ -82,7 +105,9 @@ const u = (n: string) => `url(#${id}${n})`;
     <g :filter="u('ps')"><path class="bw-geardial__plate" :d="PLATE" :fill="u('pl')" fill-rule="evenodd" /></g>
     <path :d="PLATE" fill="none" :stroke="u('rm')" stroke-width="1" />
     <circle cx="85" cy="183" r="27" :fill="u('wl')" />
-    <rect x="209" y="119" width="25" height="25" rx="7" fill="#1f1f1f" :filter="u('gs')" />
+    <circle cx="85" cy="183" r="27" fill="none" stroke="#000" stroke-opacity=".5" stroke-width="1.2" /><!-- a well: its shadow falls inside, under the plate's lit edge -->
+    <path d="M59.6 174 A27 27 0 0 1 110.4 174" fill="none" stroke="#000" stroke-opacity=".35" stroke-width="2.5" />
+    <rect x="209" y="119" width="25" height="25" rx="7" fill="#262626" :filter="u('gs')" /><rect x="209" y="119" width="25" height="25" rx="7" :fill="u('sh')" />
     <ellipse v-for="i in 12" :key="'t' + i" cx="131" cy="20.5" rx="1.3" ry="3" fill="#a1a1a1" :transform="`rotate(${i * 30} 131 131)`" />
     <!-- the widget shows the movement dimmed, as if under smoked glass (measured: about 0.6 of the parts' own light) -->
     <circle cx="131" cy="131" r="118" fill="#000" fill-opacity=".38" />
@@ -92,8 +117,8 @@ const u = (n: string) => `url(#${id}${n})`;
     <text v-if="day" x="85" y="189" text-anchor="middle" font-size="16" fill="#cfcfcc" class="bw-geardial__t">{{ day }}</text>
     <text v-if="date !== ''" x="221.5" y="137.5" text-anchor="middle" font-size="16" fill="#f2f2f3" class="bw-geardial__t">{{ date }}</text>
     <g :filter="u('gs')">
-      <path d="M127.3 136 L126.2 70 L131 53 L135.8 70 L134.7 136 Z" :fill="u('hd')" :transform="`rotate(${hour} 131 131)`" />
-      <path d="M128.6 136 L128 34 L131 22 L134 34 L133.4 136 Z" :fill="u('hd')" :transform="`rotate(${min} 131 131)`" />
+      <path class="bw-geardial__hand" d="M127.3 136 L126.2 70 L131 53 L135.8 70 L134.7 136 Z" :fill="u('hd')" :transform="`rotate(${hour} 131 131)`" />
+      <path class="bw-geardial__hand" d="M128.6 136 L128 34 L131 22 L134 34 L133.4 136 Z" :fill="u('hd')" :transform="`rotate(${min} 131 131)`" />
       <line x1="131" y1="162" x2="131" y2="24" stroke="#d9d9db" stroke-width="1" :transform="`rotate(${sec} 131 131)`" />
     </g>
     <circle cx="131" cy="131" r="9" :fill="u('cp')" stroke="#3a3b3e" stroke-width=".6" />
