@@ -29,7 +29,7 @@ Legacy: `theme="light"` / `[data-hd-theme="light"]` = Hybrid, `theme="dark"` = D
 | Camera: on-screen text `$COLOR_INVERTED_FOREGROUND` | `camera-ui/style/camera-ui.css` | measured |
 | Gallery: `CommonInverted` button labels | `gallery/style/gallery.css` | measured |
 | Video: duration text `#c8c8c8` (= inverted secondary) on dark | `video/style/video.css` | measured |
-| Mail, Notes, Calendar (organiser), Settings (duicontrolpanel), device lock: no inverted styles at all, so they use the light blanco palette | `mail/`, `notes/`, `organiser/`, `duicontrolpanel/` styles | measured (absence) |
+| Mail, Notes, Calendar (organiser), device lock: no inverted styles at all, so they use the light blanco palette. Settings is black (owner's correction; the absence of styles in `duicontrolpanel/` misled this table) | `mail/`, `notes/`, `organiser/` styles | measured (absence) |
 | Calendar defines extra dark shades `COLOR_CALENDAR_SHADE6..9` (#333333, #262626, #1A1A1A, #808080) for month/agenda shading on its light page | `organiser/style/*.css` | measured |
 | Home (Events, Applications, Open applications) dark | not in the extracted theme (lipstick/meegotouchhome QML absent) | canon (device behaviour), not verified in files |
 | Music app dark; Contacts and Messaging light | no theme styles for music-suite, contacts or messaging-ui in the extracted files | canon, not verified in files |
@@ -42,14 +42,14 @@ header could not be confirmed from the extracted files and are marked canon/EXT.
 
 | Context | Surface token | Hybrid | Status |
 |---|---|---|---|
-| Content pages, lists, forms (Settings, Contacts, Messaging, Email, Calendar, Notes) | `--hd-surface-page` | light #E0E1E2 | measured |
+| Content pages, lists, forms (Contacts, Messaging, Email, Calendar, Notes) | `--hd-surface-page` | light #E0E1E2 | measured |
 | Cards, fields | `--hd-surface-card`, `--hd-surface-field` | white | extrapolated |
 | Toolbar, tab bar, sheet header | `--hd-surface-chrome` | dark gradient | measured (toolbar), EXT (sheet header) |
 | Status bar, lock screen, Home views | `--hd-surface-home` | black | measured (sysuid), canon (Home) |
 | Menus, query/selection dialogs, popups, tooltips | `--hd-surface-overlay` | dark 97% | measured |
 | Dialog scrim | `--hd-surface-scrim` | black 88% | measured (dark dialogs), value EXT |
 | Banners, notifications, toasts | `--hd-surface-banner` | dark 92% | measured (sysuid) |
-| Media apps (Music, Video, Gallery, Camera) | `--hd-surface-media` | black | measured (Camera, Gallery, Video), canon (Music) |
+| Media apps (Music, Video, Gallery, Camera) and Settings | `--hd-surface-media` | black | measured (Camera, Gallery, Video), canon (Music) |
 
 ## Derivation of Dark and Light (extrapolated)
 
