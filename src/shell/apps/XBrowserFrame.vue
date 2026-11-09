@@ -15,12 +15,14 @@ import { useChrome } from '../parts/chrome';
 import XBrowserTabs, { type BrowserTab } from './XBrowserTabs.vue';
 const props = withDefaults(defineProps<{
   address?: string; secure?: boolean; back?: boolean; forward?: boolean; loading?: number;
+  /** the page is bookmarked: the star is filled (its button emits `star`) */
+  starred?: boolean;
   /** the open tabs; `top`: a strip above the navigation row, `side`: a list on the left */
   tabs?: BrowserTab[]; current?: string; tabsAt?: 'top' | 'side'; max?: number;
   /** the tab picker (page thumbnails) starts open (Storybook) */
   pickerOpen?: boolean;
-}>(), { address: 'journal.example/tablet-swipe', secure: true, back: true, forward: false, tabs: () => [], tabsAt: 'top', pickerOpen: false });
-const emit = defineEmits<{ go: [address: string]; back: []; forward: []; reload: []; more: []; pick: [id: string]; close: [id: string]; add: [] }>();
+}>(), { address: 'journal.example/tablet-swipe', secure: true, back: true, forward: false, starred: false, tabs: () => [], tabsAt: 'top', pickerOpen: false });
+const emit = defineEmits<{ go: [address: string]; back: []; forward: []; reload: []; more: []; pick: [id: string]; close: [id: string]; add: []; star: [] }>();
 const picker = ref(props.pickerOpen);
 watch(() => props.pickerOpen, (v) => (picker.value = v));
 function choose(id: string) { picker.value = false; emit('pick', id); }
@@ -41,7 +43,7 @@ chrome.on('tab-add', () => emit('add'));
       <label class="x-bf__addr hd-sqm hd-focusable">
         <HdIcon :name="secure ? 'lock' : 'warning'" :size="16" :class="{ 'is-warn': !secure }" :aria-label="secure ? 'Secure connection' : 'Not secure'" />
         <input :value="address" aria-label="Address" spellcheck="false" @keydown.enter="$emit('go', ($event.target as HTMLInputElement).value)" />
-        <HdIcon name="star" :size="16" aria-label="Bookmark" />
+        <button type="button" class="x-bf__star hd-focusable" :class="{ 'is-on': starred }" :aria-pressed="starred ? 'true' : 'false'" :aria-label="starred ? 'Remove bookmark' : 'Bookmark'" @click.prevent="$emit('star')"><HdIcon name="star" :size="16" /></button>
       </label>
       <button v-if="tabs.length" type="button" class="x-bf__count hd-sq hd-focusable" :aria-label="`${tabs.length} tabs: show them as pages`" :aria-expanded="picker ? 'true' : 'false'" @click="picker = !picker">{{ tabs.length }}</button>
       <span class="x-bf__more"><HdToolIcon icon="more-vert" label="More: zoom, other devices, find in page" @click="$emit('more')" /><slot name="more" /></span>
@@ -75,6 +77,9 @@ chrome.on('tab-add', () => emit('add'));
 .x-bf__addr { flex: 1; min-width: 0; display: flex; align-items: center; gap: 8px; height: 32px; margin: 0 6px; padding: 0 14px; background: color-mix(in srgb, var(--hd-c-fg) 10%, transparent); color: var(--hd-c-fg-secondary); }
 .x-bf__addr input { flex: 1; min-width: 0; border: 0; background: none; color: var(--hd-c-fg); font: 400 var(--hd-font-size-small)/1 var(--hd-font-family-base); outline: none; }
 .x-bf__addr .is-warn { color: var(--hd-color-palette-warning); }
+.x-bf__star { display: inline-flex; padding: 0; border: 0; background: none; color: inherit; cursor: pointer; border-radius: 4px; }
+.x-bf__star.is-on { color: var(--hd-c-accent-text); }
+.x-bf__star.is-on :deep(path) { fill: currentColor; }
 .x-bf__load { position: absolute; left: 0; bottom: -1px; height: 2px; background: var(--hd-accent); }
 .x-bf .x-web__bar { display: none; }
 /* the tab count: a squircle-ish outlined square with the number, as mobile browsers */
