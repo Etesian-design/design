@@ -20,11 +20,12 @@ export const Frame: StoryObj<Args> = {
     setup: () => {
       const tabs = ref([{ id: 'a', title: 'A tablet for the swipe generation', thumb: photo(2) }, { id: 'b', title: 'Etesian design language', thumb: photo(4) }, { id: 'c', title: 'Weather · Helsinki', thumb: photo(6) }]);
       const cur = ref('a');
-      return { tabs, cur, args };
+      const starred = ref(true);
+      return { tabs, cur, args, starred };
     },
     template: `<div style="display:flex;gap:20px;align-items:flex-start;padding:20px;min-height:100vh;background:var(--hd-surface-home)">
       <div style="position:relative;width:1000px;height:600px"><XWindow title="Browser" icon="globe" color="#2EA8C7" :w="1000" :h="600" focused :resizable="false">
-        <XBrowserFrame :loading="60" :tabs="tabs" :current="cur" :tabs-at="args.tabsAt" :max="3" @pick="cur = $event"><XBrowser chrome="none" density="pointer" :hints="false" id-prefix="bf1" /></XBrowserFrame></XWindow></div>
+        <XBrowserFrame :loading="60" :starred="starred" @star="starred = !starred" :tabs="tabs" :current="cur" :tabs-at="args.tabsAt" :max="3" @pick="cur = $event"><XBrowser chrome="none" density="pointer" :hints="false" id-prefix="bf1" /></XBrowserFrame></XWindow></div>
       <div style="position:relative;width:400px;height:600px"><XWindow title="Browser" icon="globe" color="#2EA8C7" :w="400" :h="600" focused :resizable="false">
         <XBrowserFrame :secure="false" address="http://old.example" :tabs="tabs" :current="cur" :tabs-at="args.tabsAt" :max="3" :picker-open="args.picker" @pick="cur = $event"><XBrowser chrome="none" density="pointer" :hints="false" id-prefix="bf2" /></XBrowserFrame></XWindow></div>
     </div>`,
