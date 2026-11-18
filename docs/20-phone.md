@@ -11,8 +11,9 @@ Units: all sizes are in **dp**, and type is in **sp**.
 | Gesture | Result |
 |---|---|
 | **Swipe in from the left or right edge** | Minimises the app to home. The app shrinks away and the last home view shows. The app keeps running and appears in Open apps. |
-| **Swipe down from the top edge** | Closes the app (the N9 swipe-down close). |
-| **Swipe up from the bottom edge and hold** | Peeks the first row of the app grid over the app. Release on an icon to launch it; release elsewhere to cancel. |
+| **Swipe down from the top edge** | Closes the app (the N9 swipe-down close). The app **darkens the further it is pulled down** (up to 70% black at the bottom), the cue that letting go closes it. |
+| **Swipe up from the bottom edge** | Minimises the app, as from the sides. |
+| **Swipe up from the bottom edge and hold** (half a second still) | The first row of the app grid comes up **in front**: the app slides down by itself to rest just above the row and falls into **shadow** (55% black), so the icons are the foreground. Release on an icon to launch it; otherwise the app rests on the row until an icon or the app is tapped. **Not while the on-screen keyboard is up**: then the swipe only minimises. |
 | **Tap the status bar** | Opens the status menu (see below). It is never part of Events. |
 | **Swipe sideways on the lock screen** | Unlocks. There is no unlock button. |
 | **Pinch in Open apps** | Zooms between the levels: carousel (one card), 2, 3 and 4 per row. |
@@ -47,7 +48,7 @@ The system gesture areas belong to the OS. Apps never put interactive controls w
 - **App launch:** a loading ring runs on the tapped icon. When the app is ready, it slides in. There is **no splash screen**.
 - **Restore from Open apps:** the card is sucked away, then the app slides in from the side it was last swiped out to (swiped out to the right, it comes back from the right).
 - **Minimise (edge swipe):** the app slides off in the direction of the swipe and home is revealed underneath.
-- **Close (swipe down):** the app follows the finger down and fades out.
+- **Close (swipe down):** the app follows the finger down, darkening as it goes, and fades out.
 - **Open apps zoom (pinch):** cards reflow between carousel, 2, 3 and 4 per row. Cards keep their identity; there is no cross-fade.
 
 Durations and easings come from the motion tokens (see [07 Motion](07-motion.md)).
@@ -138,7 +139,8 @@ Thumbnails are 43–44dp squircles.
 - **Lighting:** keys are lit like the icons (06b): a lighter top rim, the gradient flat below 72%, off-white raised
   labels with a white top edge and their shadow. Letter keys #333333 → #141414, functional keys #5C5C5C → #3B3B3B.
 - **Pressed keys sink in:** darker (#0B0B0B → #1A1A1A), the gradient turned over, the top rim in shadow.
-- **Every key clicks** (08-sound-haptics), on by default.
+- **Every key clicks in and out** (08-sound-haptics), on by default: a lower click when the key goes down, a
+  higher one when it comes back up. Holding a key plays only the first.
 
 ### Messaging composer
 

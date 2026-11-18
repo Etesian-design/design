@@ -39,5 +39,7 @@ describe('HdKeyboard (matched to the ROM keyboard)', () => {
     expect(d).toContain('### Keyboard'); expect(d).toContain('Caps lock is a double tap on Shift');
     expect(d).toContain('### Messaging composer');
     expect(read('docs/08-sound-haptics.md')).toContain('## Keyboard click');
+    expect(d).toContain('Every key clicks in and out'); expect(d).toContain('Not while the on-screen keyboard is up');
+    expect(d).toContain('darkens the further it is pulled down');
   });
 });
