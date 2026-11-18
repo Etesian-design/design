@@ -46,6 +46,8 @@ export { default as HdTabButton } from './components/HdTabButton.vue';
 export { default as HdTable } from './components/HdTable.vue';
 export { default as HdTaskCard } from './components/HdTaskCard.vue';
 export { default as HdTaskEditBar } from './components/HdTaskEditBar.vue';
+export { default as HdKeyboard } from './components/HdKeyboard.vue';
+export type { HdKeyboardShift } from './components/HdKeyboard.vue';
 export { default as HdTimePicker } from './components/HdTimePicker.vue';
 export { default as HdTimeDial } from './components/HdTimeDial.vue';
 export { default as HdColorPicker } from './components/HdColorPicker.vue';

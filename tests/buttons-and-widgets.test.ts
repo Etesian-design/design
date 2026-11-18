@@ -209,7 +209,7 @@ describe('Messaging, Accounts, Store, tabs', () => {
   it('compose: sheet with Cancel + title, blue chip, counter, Send, keyboard, no toolbar', () => {
     const c = m.slice(m.indexOf('export const MessagingCompose'), m.indexOf('export const MessagingConversation'));
     for (const t of ['Cancel', 'New text message', 'xm-chip', '155<small>(1)</small>', 'xm-send', '${keyboard}']) expect(c).toContain(t);
-    expect(read('src/stories/parts/N9Keyboard.vue')).toContain('?123'); expect(m).toContain('<N9Keyboard />');
+    expect(read('src/components/HdKeyboard.vue')).toContain('?123'); expect(read('src/stories/parts/N9Keyboard.vue')).toContain('<HdKeyboard'); expect(m).toContain('<N9Keyboard />');
     expect(c).not.toContain('HdToolBar');
   });
   it('conversation as captured on the N9: received cyan on the right (tail top-right), sent white on the left (tail bottom-left), Send only in the keyboard strip', () => {
