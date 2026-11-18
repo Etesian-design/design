@@ -125,6 +125,26 @@ Thumbnails are 43–44dp squircles.
   - Above the keys sits the white N9 strip (emoticon, character counter, Send); in Messaging, a hardware keyboard gets the strip on its own.
   - There is **no system navigation strip under the keyboard**.
 
+### Keyboard
+
+`HdKeyboard` (stories: OS/Keyboard), matched to the ROM's LatinIME theme.
+
+- **Letters are lower case.** Shift once gives one capital, then the keyboard is lower case again.
+  A sentence starts with a capital the same way.
+- **Caps lock is a double tap on Shift.** The Shift key then turns **plain white**, without the lighting the other
+  keys have, with a black arrow. One more tap turns caps lock off.
+- **Bottom row:** ?123, comma, **globe**, space, full stop, Enter. The globe switches language; with only one
+  language it offers the languages and keyboards.
+- **Lighting:** keys are lit like the icons (06b): a lighter top rim, the gradient flat below 72%, off-white raised
+  labels with a white top edge and their shadow. Letter keys #333333 → #141414, functional keys #5C5C5C → #3B3B3B.
+- **Pressed keys sink in:** darker (#0B0B0B → #1A1A1A), the gradient turned over, the top rim in shadow.
+- **Every key clicks** (08-sound-haptics), on by default.
+
+### Messaging composer
+
+- The composer (service badge + "Write your message here") sits **directly under the conversation**, its own
+  1px top line between them. No gap, no band of window colour above it.
+
 ## 4. Settings
 
 - There is **no search button**.
