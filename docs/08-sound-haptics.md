@@ -13,10 +13,11 @@ play only when the user imports their own N9 files.
 
 ## Keyboard click
 
-Every key on the virtual keyboard clicks, **on by default** (the N9 clicked on every key; a keyboard without it
-felt dead). The click is short and crisp: a bright tick of a few milliseconds on a tiny wooden body that dies
-within ~15 ms. On the phone it is Etesian's own `vkb_popup_press` (sounds/tones.py), or the N9's original when the
-user imported their N9 files. It follows the ringer: silent mode silences it.
+Every key on the virtual keyboard clicks **in and out**, **on by default**, like a button: a lower click when the
+key goes down (~1.25 kHz body) and a higher one when it comes back up (~2.6 kHz). Holding a key plays only the
+first; the second comes when it is let go. Each is a bright tick of a few milliseconds on a tiny body that dies
+within ~10 ms. On the phone they are Etesian's own `vkb_press` / `vkb_release` (sounds/tones.py), or the N9's
+press and release sounds when the user imported their N9 files. They follow the ringer: silent mode silences them.
 
 ## Guidance (EXT)
 
