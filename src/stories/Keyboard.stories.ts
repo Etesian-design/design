@@ -6,6 +6,8 @@ const meta: Meta<typeof HdKeyboard> = {
   title: 'OS/Keyboard', component: HdKeyboard, tags: ['autodocs'],
   parameters: { docs: { description: { component: '**Canon** (matched to the ROM keyboard, see docs/20-phone.md § Keyboard): lower-case letters; Shift once gives one capital; a double tap on Shift is caps lock and turns the key plain white; the globe between the comma and the space bar switches language; keys are lit like the icons and sink in when pressed; every key clicks.' } } },
 };
+// A phone screen (or part of one): centred, as big as itself.
+meta.parameters = { ...meta.parameters, layout: 'centered' };
 export default meta;
 type S = StoryObj<typeof HdKeyboard>;
 const frame = (inner: string) => `<div style="width:360px;background:#000">${inner}</div>`;

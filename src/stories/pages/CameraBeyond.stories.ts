@@ -10,6 +10,8 @@ const meta: Meta = {
   tags: ['autodocs'],
   parameters: { docs: { description: { component: 'How a modern camera\'s features fit the N9 camera without adding chrome. The rules: **the picture stays the shutter**; the N9\'s four controls stay where they are (gallery, front/back, mode switch, settings strip); anything new is either a **gesture with a readout**, a **segment in the mode switch**, a **column in the settings**, or a **card that appears only when it has something to say**. The settings strip shows a value only when it differs from the default, so it grows only when the user changes things. Turning the device rotates only the contents of the controls (as the N9).' } } },
 };
+// A phone screen (or part of one): centred, as big as itself.
+meta.parameters = { ...meta.parameters, layout: 'centered' };
 export default meta;
 type S = StoryObj;
 

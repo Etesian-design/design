@@ -14,6 +14,8 @@ import XFit from '../shell/parts/XFit.vue';
 import XMiniApp from '../shell/parts/XMiniApp.vue';
 
 const meta: Meta = { title: 'OS/Home & lock screen', excludeStories: ['apps', 'lockItems'], tags: ['autodocs'], parameters: { docs: { description: { component: '**Canon** (matched to the ROM, see docs/20-phone.md): lock-screen cards and the default stacked carousel, Open applications (2 per row by default; pinch: carousel, 2, 3, 4) with edit mode and the carousel action row, the Applications grid (4 columns), and the black Events view.' } } } };
+// A phone screen (or part of one): centred, as big as itself.
+meta.parameters = { ...meta.parameters, layout: 'centered' };
 export default meta;
 type S = StoryObj;
 /** A story with its own controls (the args its render function reads). */

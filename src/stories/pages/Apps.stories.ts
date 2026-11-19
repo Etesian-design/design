@@ -12,6 +12,8 @@ const meta: Meta = {
   tags: ['autodocs'],
   parameters: { docs: { description: { component: 'The system apps as the N9 drew them: what every Etesian port of them aims for. **Dark apps** (Phone\'s dial pad header, Calculator, Camera, Gallery, Music) sit on black; **content apps** (Contacts, Calendar, Clock, Documents, Notes) are light grey with a coloured title bar or none. Every action is on the bottom toolbar; a few apps (Phone, Calendar) use it as **tabs**, the current one a lighter cell. Each story notes where the phone still differs.' } } },
 };
+// A phone screen (or part of one): centred, as big as itself.
+meta.parameters = { ...meta.parameters, layout: 'centered' };
 export default meta;
 type S = StoryObj;
 const comps = { HdToolBar, HdToolIcon, HdIcon, HdTabBar };
