@@ -21,6 +21,7 @@ export const tokens = {
     },
     "accent": {
       "default": "#4591FF",
+      "selected": "#268CE1",
       "phone": "#62B700",
       "maps": "#3D890C",
       "drive": "#347708",
@@ -350,6 +351,7 @@ export const tokenOrigins: Record<string, Origin> = {
   "color.palette.link-active": "n9",
   "color.palette.dialog-button-background": "n9",
   "color.accent.default": "n9",
+  "color.accent.selected": "n9",
   "color.accent.phone": "n9",
   "color.accent.maps": "n9",
   "color.accent.drive": "n9",

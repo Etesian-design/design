@@ -20,14 +20,15 @@ export { etesianIconSet, hdIcon, quasarExtraPaths, HdQSpinnerSquircle, quasarCov
 
 /** Quasar brand colours mapped to Etesian tokens (light "blanco"). */
 export const etesianBrand = {
-  primary: tokens.color.accent.default,
+  // 2026-11-19 (user): Quasar defaults to the N9's selection blue; the developer overrides it as usual.
+  primary: tokens.color.accent.selected,
   secondary: tokens.color.palette['link-active'],
   accent: tokens.color.accent.conversations,
   dark: tokens.theme.dark.surface,
   'dark-page': tokens.theme.dark.bg,
   positive: tokens.color.accent.phone,
   negative: tokens.color.palette.warning,
-  info: tokens.color.accent.default,
+  info: tokens.color.accent.selected,
   warning: tokens.color.palette.attention,
 } as const;
 

@@ -1,3 +1,5 @@
+/* The accent inside Quasar is its brand primary, so a developer's override reaches every Etesian part (segments too). */
+.hd-quasar { --hd-accent: var(--q-primary, #268CE1); }
 /*
  * Etesian Design Language theme for Quasar 2 (all built-in components).
  * Load AFTER quasar.css, tokens.css and base.css. Scoped to `.hd-quasar` (the plugin puts it on <body>;

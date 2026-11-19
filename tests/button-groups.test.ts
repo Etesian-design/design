@@ -77,3 +77,31 @@ describe('an icon in a segment is the N9 size', () => {
     expect(readFileSync(`${process.cwd()}/src/quasar/etesian-quasar.css`, 'utf8')).toContain('.hd-quasar .q-btn-toggle .q-btn-item .q-icon, .hd-quasar .q-btn-group > .q-btn-item .q-icon { font-size: 20px; }');
   });
 });
+
+// 2026-11-19 (user): on Quasar the default primary is the N9's selection blue #268CE1; a developer can override it,
+// and the override reaches every Etesian part through --hd-accent.
+describe('Quasar defaults to the N9 selection blue', () => {
+  it('primary and info are #268CE1, and --hd-accent follows --q-primary', async () => {
+    const { etesianBrand } = await import('../src/quasar/index');
+    expect(etesianBrand.primary.toUpperCase()).toBe('#268CE1');
+    expect(etesianBrand.info.toUpperCase()).toBe('#268CE1');
+    expect(readFileSync(`${process.cwd()}/src/quasar/etesian-quasar.css`, 'utf8')).toContain('.hd-quasar { --hd-accent: var(--q-primary, #268CE1); }');
+  });
+});
+
+// 2026-11-19 (user): add the N9 camera's on-picture switch, in our components and in Quasar alike.
+describe('the overlay switch (N9 camera photo/video)', () => {
+  const base = readFileSync(`${process.cwd()}/src/styles/base.css`, 'utf8');
+  it('is a see-through dark group with a light rim, the selected option a white squircle with a dark glyph', () => {
+    expect(base).toContain('.hd-overlay, .hd-quasar .q-btn-toggle.hd-overlay {');
+    expect(base).toMatch(/background: rgba\(0,0,0,\.6\) !important;\s+box-shadow: inset 0 0 0 1px rgba\(255,255,255,\.4\)/);
+    expect(base).toContain('.hd-overlay > .is-selected, .hd-quasar .q-btn-toggle.hd-overlay > [aria-pressed="true"] { background: linear-gradient(#FFFFFF, #E4E4E4) !important; color: #1A1A1A !important; }');
+  });
+  it('HdTabBar takes it as variant="overlay"', async () => {
+    const { mount } = await import('@vue/test-utils');
+    const HdTabBar = (await import('../src/components/HdTabBar.vue')).default;
+    const w = mount(HdTabBar, { props: { tabs: [{ id: 'photo', label: 'Photo', icon: 'camera' }, { id: 'video', label: 'Video', icon: 'record' }], modelValue: 'photo', variant: 'overlay' } });
+    expect(w.classes()).toContain('hd-overlay');
+    expect(w.find('[aria-selected="true"]').attributes('aria-label')).toBe('Photo');
+  });
+});
