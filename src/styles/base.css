@@ -263,8 +263,12 @@ a.hd-link, :where(.hd-root) a:where(:not([class])) { color: var(--hd-c-link); }
 /* The N9 camera's switch over a picture (2011, measured 2026-11-19): a group 115 x 56 n9px (77 x 37px) of a dark
    see-through face (#000 at 60%) and a 1px light rim (white at 40%); the selected option is a white squircle inset 2px,
    its glyph dark (#1A1A1A); the others' glyphs white. Icons 20px; each option 34 x 33px. For controls on photos and video. */
-.hd-overlay, .hd-quasar .q-btn-toggle.hd-overlay { display: inline-flex; gap: 2px; padding: 2px; border-radius: 12px; background: rgba(0,0,0,.6) !important;
-  box-shadow: inset 0 0 0 1px rgba(255,255,255,.4) !important; -webkit-mask: none !important; mask: none !important; }
-.hd-overlay > *, .hd-quasar .q-btn-toggle.hd-overlay > .q-btn-item { flex: 0 0 auto; min-width: 34px !important; min-height: 33px !important; padding: 0 7px !important; border: 0 !important;
-  border-radius: 10px !important; background: transparent !important; color: #fff !important; opacity: 1 !important; box-shadow: none !important; -webkit-mask: none !important; mask: none !important; }
+/* Measured 80 x 39px (120 x 59 n9px) for two options; squircle-half ends like a field, each option a squircle. */
+.hd-overlay, .hd-quasar .q-btn-toggle.hd-overlay { display: inline-flex; gap: 2px; padding: 2px; border-radius: 0 !important; background: rgba(0,0,0,.6) !important;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.4) !important;
+  -webkit-mask: var(--hd-sq-cap-l) left center / auto 100% no-repeat, var(--hd-sq-cap-r) right center / auto 100% no-repeat !important; -webkit-mask-composite: source-in !important;
+  mask: var(--hd-sq-cap-l) left center / auto 100% no-repeat, var(--hd-sq-cap-r) right center / auto 100% no-repeat !important; mask-composite: intersect !important; }
+.hd-overlay > *, .hd-quasar .q-btn-toggle.hd-overlay > .q-btn-item { flex: 0 0 auto; min-width: 37px !important; min-height: 35px !important; padding: 0 8px !important; border: 0 !important;
+  border-radius: 0 !important; background: transparent !important; color: #fff !important; opacity: 1 !important; box-shadow: none !important;
+  -webkit-mask: var(--hd-squircle-mask) center / 100% 100% no-repeat !important; mask: var(--hd-squircle-mask) center / 100% 100% no-repeat !important; }
 .hd-overlay > .is-selected, .hd-quasar .q-btn-toggle.hd-overlay > [aria-pressed="true"] { background: linear-gradient(#FFFFFF, #E4E4E4) !important; color: #1A1A1A !important; }
