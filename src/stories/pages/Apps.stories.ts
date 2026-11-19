@@ -81,6 +81,8 @@ const CSS = `<component is="style">
 .cw-day { flex: none; padding: 4px 0 4px 44px; font: 300 16px/1 var(--hd-font-family-light); background: #F4F4F6; }
 .cw-row { display: flex; height: 32px; border-top: 1px solid #fff; } .cw-row > span { width: 40px; font-size: 10px; color: #555; padding: 3px; background: #EDEDF0; }
 .cw-row > i { flex: 1; background: #D2D3D6; font-style: normal; } .cw-row > i.ev { background: #2A7AD6; color: #fff; font: 700 10px/1 var(--hd-font-family-base); padding: 4px; }
+.ag-bar { flex: none; padding: 9px 14px; background: #D8D9DB; color: #191919; font: 700 13px/1.2 var(--hd-font-family-base); text-align: right; }
+.ag-bar.ag-today { background: #F26F17; color: #fff; } .ag-none { flex: none; padding: 12px 14px; color: #6E6E6E; font-size: 13px; }
 .cw-row.now > * { background: #E8E0D6; } .cw-row.now > span { box-shadow: inset 3px 0 #E86A0C; }
 /* gallery, music, camera */
 .ga-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; }
@@ -213,6 +215,17 @@ export const CalendarWeek: S = {
     <div class="cw-h">Week 47 · November 2026</div><div class="cw-day">Thursday 19</div>
     <div class="ap-body">${['14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00', '23:00'].map((h, i) => `<div class="cw-row ${i === 9 ? 'now' : ''}"><span>${h}</span><i class="${i === 1 ? 'ev' : ''}">${i === 1 ? 'Meeting' : ''}</i></div>`).join('')}</div>
     ${tabs(['add', 'grid', 'calendar', 'list', 'menu'], 2)}`) }),
+};
+
+export const CalendarAgenda: S = {
+  name: 'Calendar: agenda',
+  parameters: { docs: { description: { story: 'The agenda has **no header at the top**: its first row is **today\'s orange bar** ("Today - Thursday, 19 November 2026", white bold, right-aligned), then today\'s events, or a grey line **No events for today**. Right under it, the **next day with events**, however far ahead (a quiet calendar can jump weeks): a **grey bar** of the same kind with its date, and its events. Nothing older than today, no "Touch to view events before / after" rows: newer days load as the list scrolls. With few days the list does not scroll, so **no fast scroll**: the rows take the full width. The ≡ opens the N9 menu (Today, Go to date, Search, Refresh, Import, Settings, About), not Android\'s list.\n\n**On the phone (fixed 2026-11-19):** Etar showed a cut-off date header with arrows at the top, the two "Touch to view" rows, a fast-scroll band with nothing to scroll and Android\'s overflow menu. Month and week keep a date bar with ◀ ▶, at the bottom above the toolbar.' } } },
+  render: () => ({ components: comps, template: app(`
+    <div class="ag-bar ag-today">Today - Thursday, 19 November 2026</div><div class="ag-none">No events for today</div>
+    <div class="ag-bar">Thursday, 3 December 2026</div>
+    <div class="ap-row"><span class="ap-t"><b>Dentist</b><small>17:00 – 17:45</small></span><span style="width:4px;height:16px;background:#2A7AD6"></span></div>
+    <div class="ap-body"></div>
+    ${tabs(['add', 'grid', 'calendar', 'list', 'menu'], 3)}`) }),
 };
 
 export const Gallery: S = {
