@@ -98,11 +98,15 @@ const CSS = `<component is="style">
 .cam-btn > span { width: 18px; height: 18px; border-radius: 6px; display: grid; place-items: center; } .cam-btn > span.on { background: #fff; color: #000; }
 .cam-focus { position: absolute; left: 50%; top: 50%; width: 64px; height: 92px; transform: translate(-50%, -50%); border: 1px solid #fff; clip-path: polygon(0 0, 22% 0, 22% 2%, 2% 2%, 2% 16%, 0 16%, 0 84%, 2% 84%, 2% 98%, 22% 98%, 22% 100%, 78% 100%, 78% 98%, 98% 98%, 98% 84%, 100% 84%, 100% 16%, 98% 16%, 98% 2%, 78% 2%, 78% 0, 100% 0, 100% 100%, 0 100%); }
 .cam-ind { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); height: 22px; border-radius: 8px; border: 1px solid #555; display: flex; gap: 10px; align-items: center; padding: 0 10px; font: 700 10px/1 var(--hd-font-family-base); }
-.cs { display: flex; gap: 10px; padding: 14px 8px; height: 100%; box-sizing: border-box; }
-.cs-col { display: flex; flex-direction: column; gap: 6px; width: 54px; } .cs-col h4 { margin: 0; font: 400 10px/1 var(--hd-font-family-base); color: #999; writing-mode: vertical-rl; transform: rotate(180deg); }
-.cs-seg { flex: 1; display: flex; flex-direction: column; border-radius: 9px; overflow: hidden; }
-.cs-seg span { flex: 1; display: grid; place-items: center; background: linear-gradient(90deg, #3A3A3A, #222); border-bottom: 1px solid #111; font: 700 11px/1 var(--hd-font-family-base); writing-mode: vertical-rl; transform: rotate(180deg); }
-.cs-seg span.on { background: #2A86D8; }
+.cs { display: flex; gap: 14px; padding: 14px 8px; height: 100%; box-sizing: border-box; }
+.cs-col { display: flex; gap: 6px; } .cs-col h4 { margin: 0; display: flex; align-items: center; gap: 6px; font: 700 10px/1 var(--hd-font-family-base); color: #8C8C8C; writing-mode: vertical-rl; transform: rotate(180deg); }
+.cs-col h4::after { content: ''; flex: 1; width: 1px; background: #353535; }
+/* Measured on the N9 (gsmarena camera settings, 2026-11-19): 50 n9px wide (38px at this frame's 0.75), #434343 -> #181818 across,
+   a groove between segments, the selected FLAT #268CE1, 14px bold white text, ends rounded a quarter of the width. */
+.cs-seg { width: 38px; display: flex; flex-direction: column; border-radius: 9px; overflow: hidden; background: #111; gap: 1px; }
+.cs-seg span { flex: 1; display: grid; place-items: center; background: linear-gradient(90deg, #434343, #181818); font: 700 14px/1 var(--hd-font-family-base); color: #fff; writing-mode: vertical-rl; transform: rotate(180deg); }
+.cs-seg span + span { box-shadow: inset 0 -1px 0 rgba(255,255,255,.14); }
+.cs-seg span.on { background: #268CE1; box-shadow: none; }
 /* browser */
 .br-sites div { padding: 4px 10px; border-bottom: 1px solid #E2E2E4; font: 700 34px/1.05 var(--hd-font-family-base); color: #111; }
 .br-sites div:nth-child(n+3) { font-weight: 300; font-size: 26px; } .br-sites b { color: #17428C; }
@@ -254,7 +258,7 @@ export const CameraSettings: S = {
   name: 'Camera: settings',
   parameters: { docs: { description: { story: 'Settings are **vertical segmented columns** read in landscape: each a label and its choices stacked, the current one **blue** (Light sensitivity, Aspect ratio, Resolution, Face detection as a switch). One tap sets it; ↓ goes back.' } } },
   render: () => ({ components: comps, template: app(`
-    <div class="ap-body"><div class="cs">${[['Light sensitivity', ['Automatic', 'ISO 100', 'ISO 200', 'ISO 400', 'ISO 800'], 1], ['Aspect ratio', ['16:9', '4:3', '3:2'], 1], ['Resolution', ['High 8 Mpx', 'Medium 6 Mpx', 'Low 3 Mpx'], 0]].map(([h, o, on]) => `<div class="cs-col"><h4>${h}</h4><div class="cs-seg">${(o as string[]).slice().reverse().map((x, i, a) => `<span class="${a.length - 1 - i === on ? 'on' : ''}">${x}</span>`).join('')}</div></div>`).join('')}</div></div>`, 'ap--dark') }),
+    <div class="ap-body"><div class="cs">${[['Light sensitivity', ['Automatic', 'ISO 100', 'ISO 200', 'ISO 400', 'ISO 800'], 1], ['Aspect ratio', ['16:9', '4:3', '3:2'], 1], ['Resolution', ['High 8 Mpx', 'Medium 6 Mpx', 'Low 3 Mpx'], 0]].map(([h, o, on]) => `<div class="cs-col"><h4>${h}</h4><div class="cs-seg" role="radiogroup" aria-label="${h}">${(o as string[]).slice().reverse().map((x, i, a) => `<span class="${a.length - 1 - i === on ? 'on' : ''}">${x}</span>`).join('')}</div></div>`).join('')}</div></div>`, 'ap--dark') }),
 };
 
 export const Browser: S = {

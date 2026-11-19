@@ -196,7 +196,7 @@ a.hd-link, :where(.hd-root) a:where(:not([class])) { color: var(--hd-c-link); }
 /* Button lighting (top-lit, like the icon tiles; see docs/06b-icon-lighting.md "Buttons").
  * Set --hd-btn-base; the fill is a vertical gradient (top ~10% lighter, darker bottom), a 1px rim that is
  * brightest along the top edge. Measured on the N9 dark buttons: #1C1C1C -> #101010 -> #080808, rim #393839. */
-.hd-button, .hd-tool-icon, .hd-quasar .q-btn, .hd-task-edit-bar__btn, .hd-tab-bar, .hd-btn-group-lit, .hd-quasar .q-btn-group {
+.hd-button, .hd-tool-icon, .hd-quasar .q-btn, .hd-task-edit-bar__btn, .hd-tab-bar, .hd-btn-group-lit, .hd-quasar .q-btn-group, .hd-quasar .q-tabs {
   --hd-btn-top: color-mix(in srgb, var(--hd-btn-base, #fff) 90%, #fff);
   --hd-btn-bot: color-mix(in srgb, var(--hd-btn-base, #fff) 88%, #000);
   --hd-btn-rim: color-mix(in srgb, var(--hd-btn-base, #fff) 70%, #000);
@@ -241,6 +241,12 @@ a.hd-link, :where(.hd-root) a:where(:not([class])) { color: var(--hd-c-link); }
   mask: var(--hd-cap-a) var(--hd-cap-pos-a) / var(--hd-cap-size) no-repeat, var(--hd-cap-b) var(--hd-cap-pos-b) / var(--hd-cap-size) no-repeat !important;
   mask-composite: intersect;
 }
+
+/* Dividers are the N9's groove (camera settings, 2011): the 1px dark gap, then a light line on the next segment's
+   leading edge. A selected (flat accent) segment has none. */
+.hd-btn-group-lit > * + *, .hd-quasar .q-btn-group > * + * { box-shadow: inset 1px 0 0 var(--hd-btn-rim-top) !important; }
+.hd-btn-group-lit.hd-tab-bar--vertical > * + *, .hd-btn-group-lit.hd-vertical > * + *, .hd-quasar .q-btn-group.column > * + *, .hd-quasar .q-btn-group.hd-vertical > * + * { box-shadow: inset 0 1px 0 var(--hd-btn-rim-top) !important; }
+.hd-btn-group-lit > .is-selected, .hd-quasar .q-btn-group > [aria-pressed="true"] { box-shadow: none !important; }
 
 /* Vertical groups: the ends are a button's height, not the column's width. Capping a narrow column with halves of a
    squircle as wide as the column made a stack of two (AM/PM) read as an eye (2026-11-05). Each corner is a quarter of
