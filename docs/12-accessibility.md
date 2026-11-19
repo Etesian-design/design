@@ -43,6 +43,11 @@ Target: **WCAG 2.2 AA**.
   sizes the target itself).
 - Gestures always have a visible alternative (Back button for edge swipe, close button in task-card edit mode).
 
+- Toolbar Back sits at the far left by default; users can move it to the far right (`HdToolBar backSide="end"`,
+  the phone's Etesian settings → N9 toolbar → Back button). Only Back moves.
+- See Guide / Building an OS, rules 23–29, for the OS-wide rules (a button for every gesture, labelled glyphs,
+  never colour alone, readable greys, handedness).
+
 ## Motion
 
 - `prefers-reduced-motion` disables transitions; spinners keep slow rotation.

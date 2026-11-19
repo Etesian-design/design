@@ -24,3 +24,11 @@ describe('HdStoryCard', () => {
     await w.trigger('click'); expect(w.emitted('open')).toHaveLength(1);
   });
 });
+
+import HdToolBar from '../src/components/HdToolBar.vue';
+describe('HdToolBar back side', () => {
+  const order = (backSide?: 'start' | 'end') => mount(HdToolBar, { props: { back: true, backSide }, slots: { right: '<button aria-label="Share">s</button>' } })
+    .findAll('button').map((b) => b.attributes('aria-label'));
+  it('Back is at the far left by default, as on the N9', () => expect(order()).toEqual(['Back', 'Share']));
+  it('the user can put it at the far right; the rest keep their order', () => expect(order('end')).toEqual(['Share', 'Back']));
+});

@@ -19,20 +19,20 @@ import { computed, useSlots } from 'vue';
 import HdSquircle from './HdSquircle.vue';
 import HdIcon from './HdIcon.vue';
 import HdToolIcon from './HdToolIcon.vue';
-const props = withDefaults(defineProps<{ back?: boolean; align?: 'start' | 'end'; owner?: { icon: string; color?: string; label: string }; menu?: boolean; label?: string; landscape?: boolean; fixed?: boolean; variant?: 'light' | 'dark' }>(), {
-  label: 'Toolbar', variant: 'light',
+const props = withDefaults(defineProps<{ back?: boolean; align?: 'start' | 'end'; owner?: { icon: string; color?: string; label: string }; menu?: boolean; /** Back at the far left (default, as on the N9) or, by the user's choice, the far right; the other items keep their order. */ backSide?: 'start' | 'end'; label?: string; landscape?: boolean; fixed?: boolean; variant?: 'light' | 'dark' }>(), {
+  label: 'Toolbar', variant: 'light', backSide: 'start',
 });
 defineEmits<{ back: []; menu: []; owner: [] }>();
 const slots = useSlots();
 const BACK_ARROW = BACK_ARROW_PATH;
 /** a lone Back / owner icon sits left without asking */
-const lone = computed(() => !slots.default && !slots.left && !slots.right && !props.menu && (props.back || !!props.owner));
+const lone = computed(() => props.backSide !== 'end' && !slots.default && !slots.left && !slots.right && !props.menu && (props.back || !!props.owner));
 const side = computed(() => props.align ?? (lone.value ? 'start' : undefined));
 </script>
 <template>
   <nav class="hd-toolbar" :class="[`hd-toolbar--${variant}`, side && `hd-toolbar--${side}`, { 'hd-toolbar--landscape': landscape, 'hd-toolbar--fixed': fixed }]" :aria-label="label">
     <div class="hd-toolbar__side">
-      <button v-if="back" type="button" class="hd-toolbar__back hd-sq hd-focusable" aria-label="Back" title="Back" @click="$emit('back')"><svg class="hd-toolbar__arrow" width="33" height="33" viewBox="0 0 24 24" aria-hidden="true"><path :d="BACK_ARROW" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" /></svg></button>
+      <button v-if="back && backSide === 'start'" type="button" class="hd-toolbar__back hd-sq hd-focusable" aria-label="Back" title="Back" @click="$emit('back')"><svg class="hd-toolbar__arrow" width="33" height="33" viewBox="0 0 24 24" aria-hidden="true"><path :d="BACK_ARROW" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" /></svg></button>
       <button v-if="owner && !back" type="button" class="hd-toolbar__owner hd-focusable" :aria-label="owner.label" :title="owner.label" @click="$emit('owner')"><HdSquircle :size="22" :color="owner.color ?? '#1C6FD1'" lighting="lit"><HdIcon :name="owner.icon" :size="14" lit /></HdSquircle></button>
       <slot name="left" />
     </div>
@@ -40,6 +40,7 @@ const side = computed(() => props.align ?? (lone.value ? 'start' : undefined));
     <div class="hd-toolbar__side hd-toolbar__side--end">
       <slot name="right" />
       <HdToolIcon v-if="menu" icon="more" label="Menu" aria-haspopup="menu" @click="$emit('menu')" />
+      <button v-if="back && backSide === 'end'" type="button" class="hd-toolbar__back hd-sq hd-focusable" aria-label="Back" title="Back" @click="$emit('back')"><svg class="hd-toolbar__arrow" width="33" height="33" viewBox="0 0 24 24" aria-hidden="true"><path :d="BACK_ARROW" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" /></svg></button>
     </div>
   </nav>
 </template>
