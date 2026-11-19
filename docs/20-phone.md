@@ -24,8 +24,8 @@ The system gesture areas belong to the OS. Apps never put interactive controls w
 ### Single hand mode
 
 The whole screen at **half its size, the same shape** (a zoom out: the resolution and the apps are unchanged, touch
-follows it), at the bottom in the middle, above the system toolbar, which stays full size. The space around it is
-dark, with "Tap here to move · Double tap for full screen".
+follows it), at the bottom in the middle. Everything shrinks with it, the bottom toolbar too; only the Breeze handle stays
+at the screen's edge. The space around it is dark, with "Tap here to move · Double tap for full screen" in it.
 
 - **Tap the empty space:** the small screen moves to that side (left, right; up, down).
 - **Double tap the empty space:** full screen again.
