@@ -1,9 +1,6 @@
-# Building an operating system the Etesian way
+# OS UI/UX rules
 
-The rules every part of an Etesian system follows: the shell, the system apps and any app made for it. They hold on
-any platform (a phone, a tablet, a desktop, a web desktop), not only on the Android ROM where most of them were first
-built; each one says why, so a new platform can apply it rather than copy a screen. The phone chapter (20) shows how
-each is built there.
+The shell, the system apps and any app built for Etesian follow these rules, on every device.
 
 ## Reach and controls
 
