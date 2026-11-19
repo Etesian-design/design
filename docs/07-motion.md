@@ -26,6 +26,22 @@
 - **App restore:** the task card zooms away fast and the app slides in from the left. (EXT) Etesian brings
   it back from the side it was swiped out to: swiped out to the right, it returns from the right.
 - **Lock screen:** swipe sideways to unlock.
+  Home comes out of the dark with the slide (as when an app is swiped away), and the whole lock screen,
+  status bar included, moves as one.
+- **One animation per gesture.** A minimise slides the app away once; home then appears with no second
+  window animation over it.
+- **Windows keep their rounded corners** the whole time they are being dragged.
+- **The close gesture's band:** a swipe down that starts just under the status bar still closes the app
+  (a thumb coming off the bezel is first seen there); a tap there still reaches the app. The app darkens as it
+  is pulled down (up to 70% black), the cue that letting go closes it.
+- **Back is a curve, not a drift:** a short move in from the edge, then mostly down. A slow minimise whose finger
+  drifts downward never shows the Back hint.
+- **Where you land** after swiping an app away is a setting per side (Open apps by default, or where you were,
+  Applications, Events, Widgets).
+- **New events slide in** under their section's label in the Events view, never drawing over it; elsewhere the
+  notification card drops from the top.
+- **Single hand mode** shrinks and moves the whole screen in 260 ms (InOutQuad); returning to full screen
+  is the same animation backwards.
 
 ## In-app transitions (N9)
 
@@ -33,6 +49,8 @@
 - Sheet: slides up from the bottom; dismisses down.
 - Dialog: fades in with a slight scale (from 0.9).
 - Menu: rises from the toolbar.
+- Folder: opens in place under its row; the rows below slide down to make room, and back up on close.
+- Rotation (Camera): the layout stays; the contents of each control turn a quarter, animated (260 ms).
 - Info banner: scales in from 0 (200ms OutQuad), out with InExpo.
 - Notification banner: drops from the top edge. (EXT) On Etesian phones a notification over an app is a
   floating card identical to the lock-screen card, just under the status bar; tap opens it, swipe up dismisses it.

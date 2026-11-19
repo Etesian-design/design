@@ -35,7 +35,7 @@ const CSS = `<component is="style">
 .ph-head { flex: none; height: 103px; background: linear-gradient(#2A2A2A, #111); color: #fff; padding: 0 8px; }
 .ph-sel { display: flex; justify-content: space-between; align-items: center; height: 40px; font: 300 19px/1 var(--hd-font-family-light); border-bottom: 1px solid #4A4A4A; }
 .ph-num { display: flex; justify-content: flex-end; align-items: center; gap: 16px; height: 60px; font: 300 48px/1 var(--hd-font-family-light); }
-.ph-num span:first-child { color: #9A9A9A; } .ph-num i { font-style: normal; font-size: 18px; color: #9A9A9A; }
+ .ph-num i { font-style: normal; font-size: 18px; color: #9A9A9A; }
 .ph-pad { flex: 1; display: grid; grid-template-columns: repeat(3, 1fr); align-content: space-evenly; background: linear-gradient(#D6D7DA, #C7C8CC); color: #2A2A2A; }
 .ph-pad > span { height: 48px; display: flex; flex-direction: column; align-items: center; justify-content: center; font: 700 28px/1 var(--hd-font-family-base); }
 .ph-pad small { font: 400 10px/1.2 var(--hd-font-family-base); color: #555; }
@@ -120,7 +120,7 @@ export const Phone: S = {
   name: 'Phone: dial pad',
   parameters: { docs: { description: { story: 'A **dark header** with the call type ("Mobile call" ⇕, an N9 selection dialog of the call services) over the number in large light type, then the pad on light grey: **no key boxes**, bold digits with small letters under them. A wide green **call pill** and a contact-add squircle. The toolbar is three **tabs**: Call log, Dial pad, Contacts.\n\n**On the phone:** Dialer draws key boxes, a small number and a round call button, and has five tabs (Favourites and Voicemail too).' } } },
   render: () => ({ components: comps, template: app(`
-    <div class="ph-head"><div class="ph-sel">Mobile call<span>⇕</span></div><div class="ph-num"><span>33</span>9<i>⌫</i></div></div>
+    <div class="ph-head"><div class="ph-sel">Mobile call<span>⇕</span></div><div class="ph-num"><span><span style="color:#9A9A9A">33</span>9</span><i>⌫</i></div></div>
     <div class="ph-pad">${[['1', 'oo'], ['2', 'ABC'], ['3', 'DEF'], ['4', 'GHI'], ['5', 'JKL'], ['6', 'MNO'], ['7', 'PQRS'], ['8', 'TUV'], ['9', 'WXYZ'], ['*', '+'], ['0', ''], ['#', '']].map(([d, l]) => `<span>${d}<small>${l}</small></span>`).join('')}</div>
     <div class="ph-act"><span class="ph-call"><HdIcon name="phone" :size="16" /></span><span class="ph-add"><HdIcon name="person" :size="16" /></span></div>
     ${tabs(['list', 'grid', 'person'], 1)}`) }),
@@ -244,7 +244,7 @@ export const NowPlaying: S = {
 
 export const Camera: S = {
   name: 'Camera',
-  parameters: { docs: { description: { story: 'The viewfinder is all picture. Three outlined controls: the gallery (top left), the **mode switch** photo/video (top right, the current one white), and at the bottom the **settings summary**: resolution, scene, flash, ISO, face detection; tapping it opens the settings. Capture is a tap anywhere (or the key); no shutter button, no toolbar.\n\n**On the phone:** Aperture has a Material control panel (shutter circle, mode tabs, zoom chips) and the system toolbar with Back.' } } },
+  parameters: { docs: { description: { story: 'The viewfinder is all picture. Three outlined controls: the gallery (top left), the **mode switch** photo/video (top right, the current one white), and at the bottom the **settings summary**: resolution, scene, flash, ISO, face detection; tapping it opens the settings. Capture is a tap anywhere (or the key); no shutter button, no toolbar.\n\n**Turning the device does not move anything.** The layout is the same in portrait and landscape; only the *contents* of each control (its icon, its text) turn, with an animated rotation, so they read upright. The controls themselves, and the settings columns, stay where they are.\n\n**On the phone:** Aperture has a Material control panel (shutter circle, mode tabs, zoom chips) and the system toolbar with Back.' } } },
   render: () => ({ components: comps, template: app(`
     <div class="ap-body" style="background:linear-gradient(#111,#222)"><div class="cam-top"><span class="cam-btn"><HdIcon name="photo" :size="14" /></span><span class="cam-btn"><span class="on"><HdIcon name="camera" :size="12" /></span><span><HdIcon name="record" :size="12" /></span></span></div>
     <span class="cam-focus"></span><span class="cam-ind"><span>8M</span><span>A</span><span>⚡A</span><span>ISO</span><span>☺</span></span></div>`, 'ap--dark') }),
@@ -277,3 +277,13 @@ export const Documents: S = {
       <div class="ap-row"><span class="dc-ic">TXT</span><span class="ap-t"><b>Notes for the trip</b><small>Text file</small></span><span class="dc-size">1 kB</span></div></div>
     <HdToolBar label="Documents toolbar"><template #right><HdToolIcon icon="menu" label="Menu" /></template></HdToolBar>`) }),
 };
+
+export const CameraTurned: S = {
+  name: 'Camera: device turned',
+  args: { turned: true },
+  argTypes: { turned: { control: 'boolean' } },
+  parameters: { docs: { description: { story: 'Toggle **turned**: nothing moves, only the icons and text inside each control turn a quarter, animated (260 ms), to read upright.' } } },
+  render: (args: { turned?: boolean }) => ({ components: comps, setup: () => ({ args }), template: `${CSS}<component is="style">.cam-r .cam-btn > *, .cam-r .cam-ind > span { display: inline-grid; transition: transform .26s ease-in-out; } .cam-r.is-turned .cam-btn > *, .cam-r.is-turned .cam-ind > span { transform: rotate(-90deg); }</component>
+    <div class="ap ap--dark cam-r" :class="{ 'is-turned': args.turned }"><div class="ap-body" style="background:linear-gradient(#111,#222)"><div class="cam-top"><span class="cam-btn"><span><HdIcon name="photo" :size="14" /></span></span><span class="cam-btn"><span class="on"><HdIcon name="camera" :size="12" /></span><span><HdIcon name="record" :size="12" /></span></span></div>
+    <span class="cam-focus"></span><span class="cam-ind"><span>8M</span><span>A</span><span>⚡A</span><span>ISO</span><span>☺</span></span></div></div>` }),
+} as S;
