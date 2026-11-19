@@ -8,7 +8,7 @@ export const icons: Record<string, string> = {
   'chevron-right': 'M9 5l7 7-7 7',
   'chevron-down': 'M5 9l7 7 7-7',
   'chevron-up': 'M5 15l7-7 7 7',
-  menu: 'M6 10l6 6 6-6',
+  menu: 'M4 7h16M4 12h16M4 17h16',
   more: 'M5 12h.01M12 12h.01M19 12h.01',
   'more-vert': 'M12 5h.01M12 12h.01M12 19h.01',
   add: 'M12 5v14M5 12h14',
