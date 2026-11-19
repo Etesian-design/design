@@ -98,3 +98,11 @@ export const Reader: S = {
     </div>
     <HdToolBar back label="Reader toolbar"><template #right><HdToolIcon icon="globe" label="Open in browser" /><HdToolIcon icon="share" label="Share" /><HdToolIcon icon="menu" label="Menu" /></template></HdToolBar>`) }),
 };
+
+export const ReaderBackRight: S = {
+  name: 'Reader: Back on the right (user setting)',
+  parameters: { docs: { description: { story: 'The same toolbar with **Back on the right**, the user\'s choice (Etesian settings → N9 toolbar → Back button). Only Back moves; the other items keep their order. The default, as on the N9, is the left.' } } },
+  render: () => ({ components: comps, template: phone(`
+    <div class="gl-site">worldservice.example</div><div class="gl-reader"><div class="gl-pad"><h1>Leaders meet on the summit sidelines</h1></div></div>
+    <HdToolBar back back-side="end" label="Reader toolbar"><template #right><HdToolIcon icon="globe" label="Open in browser" /><HdToolIcon icon="share" label="Share" /><HdToolIcon icon="menu" label="Menu" /></template></HdToolBar>`) }),
+};
