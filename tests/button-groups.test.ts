@@ -111,17 +111,24 @@ describe('the N9 switch', () => {
   const sw = readFileSync(`${process.cwd()}/src/components/HdSwitch.vue`, 'utf8');
   it('has the measured track, squircle ends, and a white squircle knob inset 3px', () => {
     expect(sw).toContain('width: 44px; height: 27px;');
-    expect(sw).toContain('background: #2D2E2D; box-shadow: inset 0 0 0 1px #181818;');
+    expect(sw).toContain('--hd-sw-fill: #2D2E2D; background: #181818;');
+    // the rim follows the squircle ends: a 1px smaller masked fill, never a (rectangular) inset shadow
+    expect(sw).toMatch(/hd-switch__track::before \{[^}]*inset: 1px; background: var\(--hd-sw-fill\);[^}]*--hd-sq-cap-l/);
+    expect(sw).not.toMatch(/hd-switch__track[^{]*\{[^}]*box-shadow: inset/);
     expect(sw).toMatch(/hd-switch__track \{[^}]*--hd-sq-cap-l/);
     expect(sw).toMatch(/hd-switch__knob \{[^}]*left: 3px; width: 20px; height: 20px; background: #fff;[^}]*--hd-squircle-mask/);
     expect(sw).toContain("[aria-checked='true'] .hd-switch__knob { transform: translateX(18px); }");
     expect(sw).not.toContain('border-radius: 999px');
+    // on: the N9's gradient (#4195DE to #107DD6), made from the accent so an override still reaches it; no white sheen
+    expect(sw).toContain("--hd-sw-fill: linear-gradient(color-mix(in srgb, var(--hd-accent) 82%, #fff), var(--hd-accent) 35%, color-mix(in srgb, var(--hd-accent) 95%, #000));");
+    expect(sw).not.toContain('rgba(255,255,255,.18)');
   });
 });
 describe('Quasar QToggle is the N9 switch too', () => {
   const q = readFileSync(`${process.cwd()}/src/quasar/etesian-quasar.css`, 'utf8');
   it('matches HdSwitch: 44 x 27 squircle-ended track, 20px squircle knob travelling 18px', () => {
-    expect(q).toMatch(/q-toggle__track \{[^}]*height: 27px; width: 44px;[^}]*background: #2D2E2D;[^}]*--hd-sq-cap-l/);
+    expect(q).toMatch(/q-toggle__track \{[^}]*height: 27px; width: 44px;[^}]*--hd-sw-fill: #2D2E2D; background: #181818;[^}]*--hd-sq-cap-l/);
+    expect(q).toMatch(/q-toggle__track::before \{[^}]*inset: 1px; background: var\(--hd-sw-fill\);[^}]*--hd-sq-cap-l/);
     expect(q).toMatch(/q-toggle__thumb::after \{[^}]*--hd-squircle-mask/);
     expect(q).toContain('.q-toggle__thumb { position: absolute; width: 20px; height: 20px; top: 12px; left: 13px; }');
     expect(q).toContain('.q-toggle__inner--truthy .q-toggle__thumb { left: 31px; }');
