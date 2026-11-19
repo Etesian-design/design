@@ -14,7 +14,9 @@ const props = withDefaults(defineProps<{
   image?: string;
   /** The first story of a section: a larger headline. */
   lead?: boolean;
-}>(), { age: '', outlets: 1, lead: false });
+  /** The news section it is filed under (Business, Sport), last in the meta line. */
+  section?: string;
+}>(), { age: '', outlets: 1, lead: false, section: '' });
 defineEmits<{ open: []; menu: [] }>();
 
 /** The outlet's colour: a hue from its name, so it is the same on every story and every visit. */
@@ -26,7 +28,7 @@ const tile = computed(() => {
 });
 const picture = computed(() => !props.image ? tile.value
   : /^(https?:|data:|\/)/.test(props.image) ? `center / cover no-repeat url("${props.image}")` : props.image);
-const meta = computed(() => [props.source, props.age, props.outlets > 1 ? `${props.outlets} outlets` : '']
+const meta = computed(() => [props.source, props.age, props.outlets > 1 ? `${props.outlets} outlets` : '', props.section]
   .filter(Boolean).join(' · '));
 </script>
 <template>
