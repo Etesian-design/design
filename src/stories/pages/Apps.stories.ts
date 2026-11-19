@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/vue3-vite';
 import HdToolBar from '../../components/HdToolBar.vue';
 import HdToolIcon from '../../components/HdToolIcon.vue';
+import HdTabBar from '../../components/HdTabBar.vue';
 import HdIcon from '../../components/HdIcon.vue';
 
 /* The N9's own apps, drawn from screenshots of a real N9 (PR1.0, 2011) at 480 × 854 n9px, shown here at 0.75 →
@@ -13,7 +14,7 @@ const meta: Meta = {
 };
 export default meta;
 type S = StoryObj;
-const comps = { HdToolBar, HdToolIcon, HdIcon };
+const comps = { HdToolBar, HdToolIcon, HdIcon, HdTabBar };
 
 const CSS = `<component is="style">
 .ap { width: 360px; height: 640px; display: flex; flex-direction: column; overflow: hidden; font-family: var(--hd-font-family-base); position: relative; }
@@ -96,6 +97,7 @@ const CSS = `<component is="style">
 .cam-top { position: absolute; top: 10px; left: 8px; right: 8px; display: flex; justify-content: space-between; align-items: center; }
 .cam-btn { height: 26px; border-radius: 9px; border: 1px solid #555; display: flex; align-items: center; gap: 6px; padding: 0 6px; font-size: 12px; }
 .cam-btn > span { width: 18px; height: 18px; border-radius: 6px; display: grid; place-items: center; } .cam-btn > span.on { background: #fff; color: #000; }
+.cam-btn--big { height: 44px; width: 52px; justify-content: center; border-radius: 14px; background: rgba(0,0,0,.6); border-color: rgba(255,255,255,.4); }
 .cam-focus { position: absolute; left: 50%; top: 50%; width: 64px; height: 92px; transform: translate(-50%, -50%); border: 1px solid #fff; clip-path: polygon(0 0, 22% 0, 22% 2%, 2% 2%, 2% 16%, 0 16%, 0 84%, 2% 84%, 2% 98%, 22% 98%, 22% 100%, 78% 100%, 78% 98%, 98% 98%, 98% 84%, 100% 84%, 100% 16%, 98% 16%, 98% 2%, 78% 2%, 78% 0, 100% 0, 100% 100%, 0 100%); }
 .cam-ind { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); height: 22px; border-radius: 8px; border: 1px solid #555; display: flex; gap: 10px; align-items: center; padding: 0 10px; font: 700 10px/1 var(--hd-font-family-base); }
 .cs { display: flex; gap: 14px; padding: 14px 8px; height: 100%; box-sizing: border-box; }
@@ -248,9 +250,9 @@ export const NowPlaying: S = {
 
 export const Camera: S = {
   name: 'Camera',
-  parameters: { docs: { description: { story: 'The viewfinder is all picture. Three outlined controls: the gallery (top left), the **mode switch** photo/video (top right, the current one white), and at the bottom the **settings summary**: resolution, scene, flash, ISO, face detection; tapping it opens the settings. Capture is a tap anywhere (or the key); no shutter button, no toolbar.\n\n**Turning the device does not move anything.** The layout is the same in portrait and landscape; only the *contents* of each control (its icon, its text) turn, with an animated rotation, so they read upright. The controls themselves, and the settings columns, stay where they are.\n\n**On the phone:** Aperture has a Material control panel (shutter circle, mode tabs, zoom chips) and the system toolbar with Back.' } } },
+  parameters: { docs: { description: { story: 'The viewfinder is all picture. Four controls: the gallery (top left), the **front/back camera** (top centre, larger), the **mode switch** photo/video (top right: `HdTabBar variant=\"overlay\"`, the current one a white squircle), and at the bottom the **settings summary**: resolution, scene, flash, ISO, face detection; tapping it opens the settings. Capture is a tap anywhere (or the key); no shutter button, no toolbar.\n\n**Turning the device does not move anything.** The layout is the same in portrait and landscape; only the *contents* of each control (its icon, its text) turn, with an animated rotation, so they read upright. The controls themselves, and the settings columns, stay where they are.\n\n**On the phone:** Aperture has a Material control panel (shutter circle, mode tabs, zoom chips) and the system toolbar with Back.' } } },
   render: () => ({ components: comps, template: app(`
-    <div class="ap-body" style="background:linear-gradient(#111,#222)"><div class="cam-top"><span class="cam-btn"><HdIcon name="photo" :size="14" /></span><span class="cam-btn"><span class="on"><HdIcon name="camera" :size="12" /></span><span><HdIcon name="record" :size="12" /></span></span></div>
+    <div class="ap-body" style="background:linear-gradient(#111,#222)"><div class="cam-top"><span class="cam-btn" aria-label="Gallery"><HdIcon name="photo" :size="14" /></span><span class="cam-btn cam-btn--big" aria-label="Front camera"><HdIcon name="camera" :size="20" /></span><HdTabBar variant="overlay" label="Mode" model-value="photo" :tabs="[{ id: 'photo', label: 'Photo', icon: 'camera' }, { id: 'video', label: 'Video', icon: 'record' }]" /></div>
     <span class="cam-focus"></span><span class="cam-ind"><span>8M</span><span>A</span><span>⚡A</span><span>ISO</span><span>☺</span></span></div>`, 'ap--dark') }),
 };
 

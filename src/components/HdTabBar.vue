@@ -6,7 +6,9 @@
 import { ref } from 'vue';
 import HdTabButton from './HdTabButton.vue';
 export interface HdTab { id: string; label: string; icon?: string }
-const props = withDefaults(defineProps<{ tabs: HdTab[]; modelValue: string; label?: string; idPrefix?: string; vertical?: boolean }>(), { label: 'Tabs', idPrefix: 'hd-tab', vertical: false });
+/** variant 'overlay': the N9 camera's switch over a picture (photo/video): a dark see-through group with a thin light rim,
+ *  the selected option a white squircle inside it, its icon dark. */
+const props = withDefaults(defineProps<{ tabs: HdTab[]; modelValue: string; label?: string; idPrefix?: string; vertical?: boolean; variant?: 'default' | 'overlay' }>(), { label: 'Tabs', idPrefix: 'hd-tab', vertical: false, variant: 'default' });
 const emit = defineEmits<{ 'update:modelValue': [id: string] }>();
 const bar = ref<HTMLElement>();
 function onKey(e: KeyboardEvent) {
@@ -24,7 +26,7 @@ function onKey(e: KeyboardEvent) {
 }
 </script>
 <template>
-  <div ref="bar" class="hd-tab-bar" :class="{ 'hd-tab-bar--segments hd-btn-group-lit': !tabs.some((t) => t.icon), 'hd-tab-bar--vertical': vertical }" role="tablist" :aria-label="label" :aria-orientation="vertical ? 'vertical' : undefined" @keydown="onKey">
+  <div ref="bar" class="hd-tab-bar" :class="{ 'hd-tab-bar--segments hd-btn-group-lit': variant !== 'overlay' && !tabs.some((t) => t.icon), 'hd-tab-bar--vertical': vertical, 'hd-overlay': variant === 'overlay' }" role="tablist" :aria-label="label" :aria-orientation="vertical ? 'vertical' : undefined" @keydown="onKey">
     <HdTabButton v-for="t in tabs" :key="t.id" :id="`${idPrefix}-${t.id}`" :controls="`${idPrefix}-${t.id}-panel`"
       :label="t.label" :icon="t.icon" :selected="t.id === modelValue" @click="emit('update:modelValue', t.id)" />
   </div>

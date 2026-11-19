@@ -41,7 +41,7 @@ describe('Quasar theme coverage', () => {
   });
   it('options map the brand to Etesian tokens', () => {
     const o = etesianQuasarOptions();
-    expect(o.config.brand.primary).toBe('#4591FF');
+    expect(o.config.brand.primary).toBe('#268CE1');
     expect(o.config.brand.negative).toBe('#DA201E');
     expect(o.iconSet.name).toBe('etesian');
   });

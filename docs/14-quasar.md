@@ -35,8 +35,8 @@ framework: {
   // iconSet/config come from etesianQuasarOptions(); in a boot file:
   //   import { boot } from 'quasar/wrappers'; import { EtesianQuasar } from '@etesian-design/quasar';
   //   export default boot(({ app }) => { app.use(EtesianQuasar); });
-  config: { brand: { primary: '#4591FF', secondary: '#1C51AF', accent: '#09A7CC', positive: '#62B700',
-    negative: '#DA201E', info: '#4591FF', warning: '#CC9900', dark: '#161616', 'dark-page': '#000000' },
+  config: { brand: { primary: '#268CE1', secondary: '#1C51AF', accent: '#09A7CC', positive: '#62B700',
+    negative: '#DA201E', info: '#268CE1', warning: '#CC9900', dark: '#161616', 'dark-page': '#000000' },
     dark: 'auto' },
 },
 css: ['etesian.css'],  // src/css/etesian.css: @import '@etesian-design/vue/style.css'; @import '@etesian-design/quasar/theme.css';
