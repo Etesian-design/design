@@ -18,6 +18,10 @@ describe('HdStoryCard', () => {
     expect(w.find('.hd-story__outlet').exists()).toBe(false);
     expect(w.find('.hd-story__meta').text()).toBe('S · 1 h · 3 outlets');
   });
+  it('the section, when there is one, ends the meta line', () => {
+    const w = mount(HdStoryCard, { props: { title: 'T', source: 'BBC', age: '38 min', outlets: 5, section: 'Business' } });
+    expect(w.find('.hd-story__meta').text()).toBe('BBC · 38 min · 5 outlets · Business');
+  });
   it('the card is the button: no buttons on it', async () => {
     const w = mount(HdStoryCard, { props: { title: 'T', source: 'S' } });
     expect(w.findAll('button')).toHaveLength(0);
