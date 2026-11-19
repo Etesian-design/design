@@ -9,7 +9,7 @@ import HdIcon from '../../components/HdIcon.vue';
 const meta: Meta = {
   title: 'OS/Single hand mode',
   tags: ['autodocs'],
-  parameters: { docs: { description: { component: '**Single hand mode**: everything on screen at half its size, the same shape, within reach of the thumb. Apps are not told; it only looks zoomed out, and touch follows it. **Tap the empty space** to move the small screen to that side (left, right, up, down); **double tap the empty space** for full screen. On from a toolbar or side-menu button, a gesture or the system app\'s shortcut. It ends when the device locks or turns, and never survives a restart. The system bottom bar stays full size at the bottom: it is already within reach.' } } },
+  parameters: { docs: { description: { component: '**Single hand mode**: everything on screen at half its size, the same shape, within reach of the thumb. Apps are not told; it only looks zoomed out, and touch follows it. **Tap the empty space** to move the small screen to that side (left, right, up, down); **double tap the empty space** for full screen. On from a toolbar or side-menu button, a gesture or the system app\'s shortcut. It ends when the device locks or turns, and never survives a restart. Everything shrinks with it, the bottom toolbar too, so the app stays whole.' } } },
   argTypes: { place: { control: 'select', options: ['bottom', 'bottom-left', 'bottom-right', 'top-left', 'top-right'] } },
 };
 export default meta;
@@ -17,7 +17,8 @@ type S = StoryObj<{ place: string }>;
 
 const CSS = `<component is="style">
 .sh-phone { position: relative; width: 360px; height: 640px; overflow: hidden; background: #101010; font-family: var(--hd-font-family-base); }
-.sh-area { position: absolute; left: 0; top: 0; right: 0; bottom: 56px; }
+.sh-area { position: absolute; inset: 0; }
+.sh-inner .hd-toolbar { margin-top: auto; }
 .sh-small { position: absolute; width: 180px; height: 320px; border-radius: 12px; overflow: hidden; transition: left .26s, top .26s; box-shadow: 0 0 0 1px #2A2A2A; }
 .sh-inner { width: 360px; height: 640px; transform: scale(.5); transform-origin: 0 0; background: #000; color: #F2F2F2; display: flex; flex-direction: column; }
 .sh-status { height: 24px; display: flex; justify-content: flex-end; align-items: center; padding: 0 10px; font-size: 13px; }
@@ -25,7 +26,7 @@ const CSS = `<component is="style">
 .sh-bar { position: absolute; left: 0; right: 0; bottom: 0; }
 </component>`;
 const POS: Record<string, [number, number]> = {
-  bottom: [90, 264], 'bottom-left': [0, 264], 'bottom-right': [180, 264], 'top-left': [0, 0], 'top-right': [180, 0],
+  bottom: [90, 320], 'bottom-left': [0, 320], 'bottom-right': [180, 320], 'top-left': [0, 0], 'top-right': [180, 0],
 };
 
 export const SingleHand: S = {
@@ -44,11 +45,10 @@ export const SingleHand: S = {
           <div class="sh-inner">
             <div class="sh-status">09:41</div>
             <HdStoryCard lead title="Leaders meet on the summit sidelines as talks on trade resume" source="World Service" age="27 min" :outlets="5" image="linear-gradient(160deg, #2C4A6E, #8FA7C0 45%, #3A2A1E)" />
-            <HdStoryCard title="Storm brings record rain to the coast" source="Coast Herald" age="1 h" image="linear-gradient(200deg, #0E3B5C, #1D7FB8 50%, #E0EEF5)" />
+            <HdToolBar back label="Reader toolbar"><template #right><HdToolIcon icon="globe" label="Open in browser" /><HdToolIcon icon="share" label="Share" /></template></HdToolBar>
           </div>
         </div>
       </div>
-      <div class="sh-bar"><HdToolBar back label="System toolbar"><template #right><HdToolIcon icon="menu" label="Menu" /></template></HdToolBar></div>
     </div>`,
   }),
 };
