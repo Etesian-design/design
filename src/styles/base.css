@@ -63,7 +63,7 @@
 .hd-sqf { --hd-sqf-h: var(--hd-size-field); --hd-sqf-edge: var(--hd-c-button-border); --hd-sqf-edge-w: 1px;
   --hd-sqf-fill: linear-gradient(rgba(0,0,0,.06), transparent 4px), var(--hd-c-surface); /* the N9's inset look */
   position: relative; isolation: isolate; }
-.hd-sqf::before, .hd-sqf::after { content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none; --h: var(--hd-sqf-h);
+.hd-sqf::before, .hd-sqf::after, .hd-quasar .q-notification::before, .hd-quasar .q-notification::after { content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none; --h: var(--hd-sqf-h);
   -webkit-mask: var(--hd-squircle-mask) left top / var(--h) var(--h) no-repeat, var(--hd-squircle-mask) right top / var(--h) var(--h) no-repeat,
     var(--hd-squircle-mask) left bottom / var(--h) var(--h) no-repeat, var(--hd-squircle-mask) right bottom / var(--h) var(--h) no-repeat,
     linear-gradient(#000 0 0) center / calc(100% - var(--h)) 100% no-repeat, linear-gradient(#000 0 0) center / 100% calc(100% - var(--h)) no-repeat;
@@ -71,8 +71,8 @@
     var(--hd-squircle-mask) left bottom / var(--h) var(--h) no-repeat, var(--hd-squircle-mask) right bottom / var(--h) var(--h) no-repeat,
     linear-gradient(#000 0 0) center / calc(100% - var(--h)) 100% no-repeat, linear-gradient(#000 0 0) center / 100% calc(100% - var(--h)) no-repeat;
   transition: background var(--hd-motion-duration-instant); }
-.hd-sqf::before { background: var(--hd-sqf-edge); }
-.hd-sqf::after { inset: var(--hd-sqf-edge-w); --h: calc(var(--hd-sqf-h) - 2 * var(--hd-sqf-edge-w));
+.hd-sqf::before, .hd-quasar .q-notification::before { background: var(--hd-sqf-edge); }
+.hd-sqf::after, .hd-quasar .q-notification::after { inset: var(--hd-sqf-edge-w); --h: calc(var(--hd-sqf-h) - 2 * var(--hd-sqf-edge-w));
   background: var(--hd-sqf-fill); }
 
 /* Squircle-half ends by masking the element itself: badges, count bubbles, tags, chips and other small filled shapes

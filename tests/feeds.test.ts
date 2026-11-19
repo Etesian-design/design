@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { mount } from '@vue/test-utils';
 import XFeedList from '../src/shell/apps/XFeedList.vue';
 import XFeedPosts from '../src/shell/apps/XFeedPosts.vue';
@@ -52,5 +52,24 @@ describe('Belle feeds widget with real posts', () => {
     expect(w.findAll('.bw-rss__row')).toHaveLength(2);
     await w.findAll('.bw-rss__row')[0]!.trigger('click');
     expect(w.emitted('post')).toEqual([['p1']]);
+  });
+});
+
+describe('list widget scrollbars', () => {
+  // user 2026-11-19: hidden until the pointer is over the list or it scrolls
+  it('shows the scrollbar while the list scrolls, then hides it a second later', async () => {
+    vi.useFakeTimers();
+    const w = mount(BelleWidget, { props: { kind: 'rss', posts, source: 'Hacker News', updated: '14:44' }, attachTo: document.body });
+    const list = w.find('.bw-scroll');
+    expect(list.classes()).not.toContain('is-scrolling');
+    list.element.dispatchEvent(new Event('scroll'));
+    expect(list.classes()).toContain('is-scrolling');
+    vi.advanceTimersByTime(600);
+    list.element.dispatchEvent(new Event('scroll'));
+    vi.advanceTimersByTime(600);
+    expect(list.classes()).toContain('is-scrolling');   // still scrolling: the second counts from the last scroll
+    vi.advanceTimersByTime(500);
+    expect(list.classes()).not.toContain('is-scrolling');
+    w.unmount(); vi.useRealTimers();
   });
 });

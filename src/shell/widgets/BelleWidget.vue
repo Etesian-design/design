@@ -64,6 +64,15 @@ const G: Record<string, string> = {
 const tick = ref(Date.now());
 let timer = 0;
 onMounted(() => { if (!props.at) timer = window.setInterval(() => (tick.value = Date.now()), 1000); });
+/** A list widget's scrollbar shows while it scrolls (and under the pointer, see .bw-scroll), then hides again. */
+const scrollTimers = new WeakMap<Element, number>();
+function scrolled(e: Event) {
+  const el = e.target as Element;
+  if (!el.classList?.contains('bw-scroll')) return;
+  el.classList.add('is-scrolling');
+  window.clearTimeout(scrollTimers.get(el));
+  scrollTimers.set(el, window.setTimeout(() => el.classList.remove('is-scrolling'), 1000));
+}
 onUnmounted(() => clearInterval(timer));
 const now = computed(() => {
   if (!props.at) return new Date(tick.value);
@@ -86,7 +95,7 @@ const dataOuter = squircleRectPath(80, 80, 2.7, 0, 0), dataInner = squircleRectP
 const wedge = (from: number, to: number) => { const p = (a: number) => `${40 + 60 * Math.sin(a * Math.PI * 2)} ${40 - 60 * Math.cos(a * Math.PI * 2)}`; let d = `M40 40L${p(from)}`; for (let a = from + 0.05; a < to; a += 0.05) d += `L${p(a)}`; return `${d}L${p(to)}Z`; };
 </script>
 <template>
-  <div class="bw" :class="[`bw--${kind}`, { 'bw--editing': editing }]" :style="box" :data-cells="`${c}x${r}`">
+  <div class="bw" :class="[`bw--${kind}`, { 'bw--editing': editing }]" :style="box" :data-cells="`${c}x${r}`" @scroll.capture="scrolled">
     <!-- ---- 1×1 switch: Belle's metal cap (BelleCap), up over a blue glow when on; a glyph or embossed word ---- -->
     <BelleCap v-if="kind === 'switch'" class="bw-sw" :on="on" role="switch" :aria-checked="!!on" :aria-label="word ?? glyph">
       <span v-if="word" class="bw-sw__word">{{ word }}</span>
@@ -345,9 +354,12 @@ const wedge = (from: number, to: number) => { const p = (a: number) => `${40 + 6
 .bw-rss__row { flex: none; min-height: 52px; padding: 8px 0; box-sizing: border-box; display: flex; align-items: center; gap: 12px; margin: 0 14px; font-size: 15px; }
 .bw-rss__row span { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
 .bw-dot.read { visibility: hidden; }
-/* the Belle list widgets scroll (Mail, feeds): a thin scrollbar that is always shown, so there is clearly more */
-.bw-scroll { overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: rgba(128,128,133,.5) transparent; }
-.bw-scroll::-webkit-scrollbar { width: 3px; } .bw-scroll::-webkit-scrollbar-thumb { background: rgba(128,128,133,.5); border-radius: 2px; }
+/* the list widgets scroll (agenda, mail, news feeds): a thin scrollbar, hidden until the pointer is over the list, the
+   list has the keyboard focus, or it is scrolling (then a second more) - user 2026-11-19 */
+.bw-scroll { overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: transparent transparent; }
+.bw-scroll:hover, .bw-scroll:focus-visible, .bw-scroll.is-scrolling { scrollbar-color: rgba(128,128,133,.5) transparent; }
+.bw-scroll::-webkit-scrollbar { width: 3px; } .bw-scroll::-webkit-scrollbar-thumb { background: transparent; border-radius: 2px; }
+.bw-scroll:hover::-webkit-scrollbar-thumb, .bw-scroll:focus-visible::-webkit-scrollbar-thumb, .bw-scroll.is-scrolling::-webkit-scrollbar-thumb { background: rgba(128,128,133,.5); }
 /* mail: blue header with the account centred and the unread count in a white disc; white rows, two lines each */
 .bw-mail { display: flex; flex-direction: column; filter: drop-shadow(0 2px 3px rgba(0,0,0,.5)); }
 .bw-mail__head { position: relative; display: flex; align-items: center; justify-content: center; height: 40px; border-radius: 10px 10px 0 0; background: linear-gradient(#4DB2F0, #0E6CB8); font-size: 18px; text-shadow: 0 1px 1px rgba(0,0,0,.5); }

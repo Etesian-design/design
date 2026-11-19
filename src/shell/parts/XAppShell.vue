@@ -89,7 +89,7 @@ function setTab(id: string) { tabValue.value = id; emit('update:tab', id); }
 .x-sidebar .hd-tab-button { flex: none; width: 48px; min-height: 48px; padding: 0; }
 /* pointer density: 32px rows, smaller targets (mouse) */
 .x-density-pointer { --hd-size-list-item: 32px; --hd-size-list-item-small: 32px; }
-.x-density-pointer .hd-list-item { padding-block: 0; gap: 8px; }
+.x-density-pointer .hd-list-item { padding: 5px 12px; gap: 10px; } /* room around the small avatars (they touched each other and the edge) */
 .x-density-pointer .hd-list-item__title { font-size: var(--hd-font-size-small); font-family: var(--hd-font-family-base); font-weight: 400; }
 .x-density-pointer .hd-list-item__text { flex-direction: row; align-items: baseline; gap: 8px; }
 .x-density-pointer .hd-list-item__title { flex: none; max-width: 60%; }

@@ -299,17 +299,30 @@ body.hd-quasar.body--dark, .hd-quasar .q-dark, .hd-quasar.q-dark { color: var(--
 /* ---------- selection controls ---------- */
 .hd-quasar .q-checkbox__inner, .hd-quasar .q-radio__inner, .hd-quasar .q-toggle__inner { color: var(--hd-c-fg-secondary); }
 .hd-quasar .q-checkbox__inner::before, .hd-quasar .q-radio__inner::before, .hd-quasar .q-toggle__inner::before { display: none; } /* no Material halo */
-.hd-quasar .q-checkbox__bg { border: 2px solid var(--hd-c-fg-secondary); border-radius: 5px; background: var(--hd-c-surface); }
-.hd-quasar .q-checkbox__inner--truthy .q-checkbox__bg, .hd-quasar .q-checkbox__inner--indet .q-checkbox__bg { background: var(--hd-accent); border-color: var(--hd-accent); }
+/* Check-squircles and squircle radios, as HdCheckBox / HdRadioButton: a squircle rim following the curve (the shape in
+   the rim colour, a 2px smaller copy in the fill), a squircle mark in the radio. */
+.hd-quasar .q-checkbox__bg { border: 0; border-radius: 0; background: none; --hd-ck-rim: var(--hd-c-fg-secondary); --hd-ck-fill: var(--hd-c-surface); }
+.hd-quasar .q-checkbox__bg::before, .hd-quasar .q-checkbox__bg::after { content: ''; position: absolute; -webkit-mask: var(--hd-squircle-mask) center / 100% 100% no-repeat; mask: var(--hd-squircle-mask) center / 100% 100% no-repeat; transition: background .22s; }
+.hd-quasar .q-checkbox__bg::before { inset: 0; background: var(--hd-ck-rim); }
+.hd-quasar .q-checkbox__bg::after { inset: 2px; background: var(--hd-ck-fill); }
+.hd-quasar .q-checkbox__bg > * { z-index: 1; }
+.hd-quasar .q-checkbox__inner--truthy .q-checkbox__bg, .hd-quasar .q-checkbox__inner--indet .q-checkbox__bg { background: none; --hd-ck-rim: var(--hd-accent); --hd-ck-fill: var(--hd-accent); }
 .hd-quasar .q-checkbox__svg { color: #fff; }
 .hd-quasar .q-checkbox__label, .hd-quasar .q-radio__label, .hd-quasar .q-toggle__label { font-size: var(--hd-font-size-default); color: var(--hd-c-fg); }
-.hd-quasar .q-radio__bg { color: var(--hd-c-fg-secondary); }
-.hd-quasar .q-radio__inner--truthy { color: var(--hd-accent); }
-.hd-quasar .q-radio__check { fill: var(--hd-accent); }
+/* Radio: the inner box's ::after is the rim, Quasar's svg (its paths hidden) the fill, ::before (Quasar's halo, off
+   elsewhere) the squircle mark on top. */
+.hd-quasar .q-radio__inner { --hd-rd-rim: var(--hd-c-fg-secondary); }
+.hd-quasar .q-radio__inner--truthy { color: var(--hd-accent); --hd-rd-rim: var(--hd-accent); }
+.hd-quasar .q-radio__inner::after { content: ''; position: absolute; top: 25%; left: 25%; width: 50%; height: 50%; background: var(--hd-rd-rim); -webkit-mask: var(--hd-squircle-mask) center / 100% 100% no-repeat; mask: var(--hd-squircle-mask) center / 100% 100% no-repeat; }
+.hd-quasar .q-radio__bg { z-index: 1; top: calc(25% + 2px); left: calc(25% + 2px); width: calc(50% - 4px); height: calc(50% - 4px); background: var(--hd-c-surface); -webkit-mask: var(--hd-squircle-mask) center / 100% 100% no-repeat; mask: var(--hd-squircle-mask) center / 100% 100% no-repeat; }
+.hd-quasar .q-radio__bg path { display: none; }
+.hd-quasar .q-radio .q-radio__inner::before { display: block !important; content: ''; position: absolute; z-index: 2; top: calc(50% - 6px); left: calc(50% - 6px); right: auto; bottom: auto; width: 12px; height: 12px; border-radius: 0; background: var(--hd-accent); opacity: 1 !important; transform: scale(0) !important; transition: transform .22s; -webkit-mask: var(--hd-squircle-mask) center / 100% 100% no-repeat; mask: var(--hd-squircle-mask) center / 100% 100% no-repeat; }
+/* Quasar scales its halo on hover and focus: only the selected state shows the mark */
+.hd-quasar .q-radio .q-radio__inner--truthy::before { transform: scale(1) !important; }
 /* QToggle = HdSwitch: 52x28 pill track, white knob */
 .hd-quasar .q-toggle__inner { width: 64px; min-width: 64px; height: 44px; padding: 0; font-size: 16px; }
 /* The N9 switch, as HdSwitch (measured on the N9): a 44 x 27 track with squircle ends, a white squircle knob 20px inset 3px. */
-.hd-quasar .q-toggle__track { position: absolute; height: 27px; width: 44px; left: 10px; top: 8.5px; border-radius: 0; opacity: 1 !important; --hd-sw-fill: #2D2E2D; background: #181818; border: 0;
+.hd-quasar .q-toggle__track { position: absolute; height: 26px; width: 44px; left: 10px; top: 9px; border-radius: 0; opacity: 1 !important; --hd-sw-fill: #2D2E2D; background: #181818; border: 0;
   -webkit-mask: var(--hd-sq-cap-l) left center / auto 100% no-repeat, var(--hd-sq-cap-r) right center / auto 100% no-repeat; -webkit-mask-composite: source-in;
   mask: var(--hd-sq-cap-l) left center / auto 100% no-repeat, var(--hd-sq-cap-r) right center / auto 100% no-repeat; mask-composite: intersect; }
 /* the rim follows the squircle ends (see HdSwitch): the track is the rim, ::before the fill 1px in */
@@ -633,7 +646,8 @@ body.hd-quasar.body--dark, .hd-quasar .q-dark, .hd-quasar.q-dark { color: var(--
 
 /* ---------- plugins ---------- */
 /* Notify = N9 InfoBanner: dark translucent rounded box near the top, light type */
-.hd-quasar .q-notification { background: var(--hd-surface-banner) !important; color: var(--hd-c-fg) !important; border-radius: var(--hd-radius-card); box-shadow: var(--hd-shadow-overlay); padding: var(--hd-space-double) var(--hd-space-xxlarge); min-height: 48px; font-size: var(--hd-font-size-default); }
+.hd-quasar .q-notification { background: none !important; color: var(--hd-c-fg) !important; border-radius: 0; box-shadow: none; filter: var(--hd-shadow-overlay-filter);
+  position: relative; isolation: isolate; --hd-sqf-h: var(--hd-size-card-corner); --hd-sqf-edge: transparent; --hd-sqf-edge-w: 0px; --hd-sqf-fill: var(--hd-surface-banner); padding: var(--hd-space-double) var(--hd-space-xxlarge); min-height: 48px; font-size: var(--hd-font-size-default); }
 .hd-quasar .q-notification__message { font-family: var(--hd-font-family-light); padding: var(--hd-space-double) 0; }
 .hd-quasar .q-notification__caption { color: var(--hd-c-fg-secondary); font-size: var(--hd-font-size-small); }
 .hd-quasar .q-notification__icon { font-size: 24px; }
@@ -641,7 +655,7 @@ body.hd-quasar.body--dark, .hd-quasar .q-dark, .hd-quasar.q-dark { color: var(--
 .hd-quasar .q-notification__actions .q-btn { color: var(--hd-c-accent-text) !important; min-height: 32px; padding: 0 var(--hd-space-double); }
 .hd-quasar .q-notification__progress { background: var(--hd-c-fg-secondary); opacity: .6; }
 .hd-quasar .q-notification__badge { background: var(--hd-color-palette-warning); border-radius: 999px; box-shadow: none; }
-.hd-quasar .q-notification--standard.bg-negative { box-shadow: inset 3px 0 0 var(--hd-color-palette-warning), var(--hd-shadow-overlay); }
+.hd-quasar .q-notification--standard.bg-negative { --hd-sqf-fill: linear-gradient(90deg, var(--hd-color-palette-warning) 3px, transparent 3px), var(--hd-surface-banner); }
 /* Loading = dark veil + squircle ring */
 .hd-quasar .q-loading__backdrop { background: rgba(0,0,0,.6); opacity: 1; }
 .hd-quasar .q-loading__box { background: var(--hd-surface-overlay); border-radius: var(--hd-radius-card); padding: var(--hd-space-xxlarge); color: var(--hd-c-fg); }

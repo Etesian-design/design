@@ -212,6 +212,8 @@ export const tokens = {
     "list-item-small": "43px",
     "button": "40px",
     "field": "40px",
+    "card-corner": "24px",
+    "chrome-blur": "16px",
     "button-width": "215px",
     "touch-target": "44px",
     "icon-xlarge": "43px",
@@ -258,10 +260,12 @@ export const tokens = {
     }
   },
   "opacity": {
-    "disabled": "0.5"
+    "disabled": "0.5",
+    "chrome": "0.6"
   },
   "shadow": {
-    "overlay": "0 8px 32px rgba(0,0,0,0.28)"
+    "overlay": "0 8px 32px rgba(0,0,0,0.28)",
+    "overlay-filter": "drop-shadow(0 8px 16px rgba(0,0,0,0.28))"
   },
   "z": {
     "toolbar": "100",
@@ -457,6 +461,8 @@ export const tokenOrigins: Record<string, Origin> = {
   "size.list-item-small": "n9",
   "size.button": "ext",
   "size.field": "ext",
+  "size.card-corner": "ext",
+  "size.chrome-blur": "ext",
   "size.button-width": "n9",
   "size.touch-target": "ext",
   "size.icon-xlarge": "n9",
@@ -490,7 +496,9 @@ export const tokenOrigins: Record<string, Origin> = {
   "motion.easing.in": "n9",
   "motion.easing.in-out": "n9",
   "opacity.disabled": "n9",
+  "opacity.chrome": "n9",
   "shadow.overlay": "ext",
+  "shadow.overlay-filter": "ext",
   "z.toolbar": "ext",
   "z.overlay": "ext",
   "z.banner": "ext",

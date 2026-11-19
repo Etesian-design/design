@@ -18,7 +18,7 @@ defineEmits<{ 'update:modelValue': [v: boolean] }>();
 <style>
 .hd-switch { display: inline-flex; align-items: center; gap: var(--hd-space-xlarge); cursor: pointer; }
 .hd-switch.is-disabled { opacity: var(--hd-opacity-disabled); cursor: default; }
-.hd-switch__track { position: relative; width: 44px; height: 27px; padding: 0; border: 0; border-radius: 0; --hd-sw-fill: #2D2E2D; background: #181818; cursor: inherit;
+.hd-switch__track { position: relative; width: 44px; height: 26px; padding: 0; border: 0; border-radius: 0; --hd-sw-fill: #2D2E2D; background: #181818; cursor: inherit;
   -webkit-mask: var(--hd-sq-cap-l) left center / auto 100% no-repeat, var(--hd-sq-cap-r) right center / auto 100% no-repeat; -webkit-mask-composite: source-in;
   mask: var(--hd-sq-cap-l) left center / auto 100% no-repeat, var(--hd-sq-cap-r) right center / auto 100% no-repeat; mask-composite: intersect;
   transition: background var(--hd-motion-duration-default) var(--hd-motion-easing-out); }
@@ -26,7 +26,7 @@ defineEmits<{ 'update:modelValue': [v: boolean] }>();
    would be a rectangle, cut away at the ends by the mask). */
 .hd-switch__track::before { content: ''; position: absolute; inset: 1px; background: var(--hd-sw-fill); -webkit-mask: var(--hd-sq-cap-l) left center / auto 100% no-repeat, var(--hd-sq-cap-r) right center / auto 100% no-repeat; -webkit-mask-composite: source-in;
   mask: var(--hd-sq-cap-l) left center / auto 100% no-repeat, var(--hd-sq-cap-r) right center / auto 100% no-repeat; mask-composite: intersect; }
-.hd-switch__knob { position: absolute; top: 3.5px; left: 3px; width: 20px; height: 20px; background: #fff;
+.hd-switch__knob { position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; background: #fff;
   -webkit-mask: var(--hd-squircle-mask) center / 100% 100% no-repeat; mask: var(--hd-squircle-mask) center / 100% 100% no-repeat;
   transition: transform var(--hd-motion-duration-default) var(--hd-motion-easing-out); }
 .hd-switch__track[aria-checked='true'] { background: color-mix(in srgb, var(--hd-accent) 90%, #000); --hd-sw-fill: linear-gradient(color-mix(in srgb, var(--hd-accent) 82%, #fff), var(--hd-accent) 35%, color-mix(in srgb, var(--hd-accent) 95%, #000)); }

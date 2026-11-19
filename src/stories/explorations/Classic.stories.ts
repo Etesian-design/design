@@ -7,7 +7,7 @@ import type { XAction } from '../../shell/parts/types';
 /** Web / Classic layout: one app at a time, the efficient single task (the desktop is the multitask place). */
 const meta: Meta = {
   title: 'Web/Classic layout',
-  parameters: { layout: 'fullscreen', docs: { description: { component: 'The classic layout of a web app such as Cloud Companion: a calm top bar in the page colours, an apps button that opens the app grid (recent first, with search) instead of a permanent sidebar, the app title as a menu of its views, and the actions by the same rule as a desktop window (as many as fit, the rest in ⋮; under 600 px a bottom toolbar). The page gets the full width; list and detail sit side by side when there is room.' } } },
+  parameters: { layout: 'fullscreen', docs: { description: { component: 'The classic layout of an Etesian web app (any app built on it can use it): a calm top bar in the page colours, an apps button that opens the app grid (recent first, with search) instead of a permanent sidebar, the app title as a menu of its views, and the actions by the same rule as a desktop window (as many as fit, the rest in ⋮; under 600 px a bottom toolbar). The page gets the full width; list and detail sit side by side when there is room.' } } },
 };
 export default meta;
 const APPS = [

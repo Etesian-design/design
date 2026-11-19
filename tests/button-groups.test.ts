@@ -110,7 +110,10 @@ describe('the overlay switch (N9 camera photo/video)', () => {
 describe('the N9 switch', () => {
   const sw = readFileSync(`${process.cwd()}/src/components/HdSwitch.vue`, 'utf8');
   it('has the measured track, squircle ends, and a white squircle knob inset 3px', () => {
-    expect(sw).toContain('width: 44px; height: 27px;');
+    // 26px (the N9's 41 n9px): an even height, so the 20px knob sits exactly 3px from the top and the bottom (27 left
+    // it a pixel low: 3.5px rounds to 4 at the top) - user 2026-11-19
+    expect(sw).toContain('width: 44px; height: 26px;');
+    expect(sw).toMatch(/hd-switch__knob \{[^}]*top: 3px;/);
     expect(sw).toContain('--hd-sw-fill: #2D2E2D; background: #181818;');
     // the rim follows the squircle ends: a 1px smaller masked fill, never a (rectangular) inset shadow
     expect(sw).toMatch(/hd-switch__track::before \{[^}]*inset: 1px; background: var\(--hd-sw-fill\);[^}]*--hd-sq-cap-l/);
@@ -126,8 +129,9 @@ describe('the N9 switch', () => {
 });
 describe('Quasar QToggle is the N9 switch too', () => {
   const q = readFileSync(`${process.cwd()}/src/quasar/etesian-quasar.css`, 'utf8');
-  it('matches HdSwitch: 44 x 27 squircle-ended track, 20px squircle knob travelling 18px', () => {
-    expect(q).toMatch(/q-toggle__track \{[^}]*height: 27px; width: 44px;[^}]*--hd-sw-fill: #2D2E2D; background: #181818;[^}]*--hd-sq-cap-l/);
+  it('matches HdSwitch: 44 x 26 squircle-ended track, 20px squircle knob travelling 18px, centred', () => {
+    // track top 9 + 3 = knob top 12; knob bottom 32 + 3 = track bottom 35
+    expect(q).toMatch(/q-toggle__track \{[^}]*height: 26px; width: 44px; left: 10px; top: 9px;[^}]*--hd-sw-fill: #2D2E2D; background: #181818;[^}]*--hd-sq-cap-l/);
     expect(q).toMatch(/q-toggle__track::before \{[^}]*inset: 1px; background: var\(--hd-sw-fill\);[^}]*--hd-sq-cap-l/);
     expect(q).toMatch(/q-toggle__thumb::after \{[^}]*--hd-squircle-mask/);
     expect(q).toContain('.q-toggle__thumb { position: absolute; width: 20px; height: 20px; top: 12px; left: 13px; }');
@@ -140,5 +144,38 @@ describe('the Quasar accent resolves (no variable cycle)', () => {
     expect(q).toContain('--q-primary: var(--hd-accent);');
     expect(q).not.toMatch(/--hd-accent:\s*var\(--q-primary/);
     expect(q).toContain('.hd-quasar { --hd-accent: var(--hd-color-accent-selected, #268CE1); }');
+  });
+});
+
+// 2026-11-19 (user): check-squircles and squircle radio buttons, in Etesian and in Quasar; the rim follows the curve.
+describe('squircle checkboxes and radio buttons', () => {
+  const rd = (f: string) => readFileSync(`${process.cwd()}/${f}`, 'utf8');
+  it('draws HdCheckBox and HdRadioButton as squircles with a 2px rim, never rounded rectangles', () => {
+    for (const f of ['src/components/HdCheckBox.vue', 'src/components/HdRadioButton.vue']) {
+      const c = rd(f);
+      expect(c, f).not.toMatch(/border-radius: (5px|50%)/);
+      expect(c, f).toMatch(/::before \{ inset: 0; background: var\(--hd-(ck|rd)-rim\); \}/);
+      expect(c, f).toMatch(/::after \{ inset: 2px; background: var\(--hd-(ck-fill|c-surface)\); \}/);
+      expect(c, f).toContain('--hd-squircle-mask');
+    }
+    expect(rd('src/components/HdRadioButton.vue')).toMatch(/hd-radio__mark \{[^}]*--hd-squircle-mask/);
+  });
+  it('gives Quasar QCheckbox and QRadio the same shapes', () => {
+    const q = rd('src/quasar/etesian-quasar.css');
+    expect(q).toMatch(/q-checkbox__bg \{ border: 0; border-radius: 0;/);
+    expect(q).toMatch(/q-checkbox__bg::after \{ inset: 2px;/);
+    expect(q).toMatch(/q-radio__inner::after \{[^}]*--hd-squircle-mask/);
+    expect(q).toMatch(/q-radio__inner::before \{[^}]*--hd-squircle-mask/);
+    expect(q).toContain('.q-radio .q-radio__inner--truthy::before { transform: scale(1) !important; }');
+    expect(q).toContain('.q-radio__bg path { display: none; }');
+  });
+  it('makes banners, toasts and notifications squircle cards whose shadow follows the shape', () => {
+    for (const f of ['src/components/HdInfoBanner.vue', 'src/components/HdToast.vue']) {
+      const c = rd(f);
+      expect(c, f).toContain('hd-sqf');
+      expect(c, f).toContain('filter: var(--hd-shadow-overlay-filter)');
+      expect(c, f).not.toContain('border-radius: var(--hd-radius-card)');
+    }
+    expect(rd('src/quasar/etesian-quasar.css')).toMatch(/\.q-notification \{[^}]*filter: var\(--hd-shadow-overlay-filter\)/);
   });
 });
