@@ -15,9 +15,15 @@ defineEmits<{ 'update:modelValue': [v: boolean] }>();
 .hd-check { display: inline-flex; align-items: center; gap: var(--hd-space-xlarge); cursor: pointer; min-height: var(--hd-size-touch-target); }
 .hd-check.is-disabled { opacity: var(--hd-opacity-disabled); cursor: default; }
 .hd-check__input { position: absolute; opacity: 0; width: 1px; height: 1px; }
-.hd-check__box { width: var(--hd-size-checkbox); height: var(--hd-size-checkbox); border-radius: 5px; border: 2px solid var(--hd-c-fg-secondary); background: var(--hd-c-surface); display: inline-flex; transition: background var(--hd-motion-duration-instant); }
-.hd-check__box svg { width: 100%; height: 100%; opacity: 0; transform: scale(.6); transition: all var(--hd-motion-duration-default) var(--hd-motion-easing-out); }
-.hd-check__input:checked + .hd-check__box { background: var(--hd-accent); border-color: var(--hd-accent); }
+.hd-check__box { position: relative; width: var(--hd-size-checkbox); height: var(--hd-size-checkbox); display: inline-flex; flex: none;
+  --hd-ck-rim: var(--hd-c-fg-secondary); --hd-ck-fill: var(--hd-c-surface); }
+/* A squircle (n = 2.8) with its rim following the curve: the rim is the whole shape, the fill a copy 2px smaller (a
+   border would be a rectangle, cut away at the corners by the mask). The box itself is not masked: its focus ring shows. */
+.hd-check__box::before, .hd-check__box::after { content: ''; position: absolute; -webkit-mask: var(--hd-squircle-mask) center / 100% 100% no-repeat; mask: var(--hd-squircle-mask) center / 100% 100% no-repeat; transition: background var(--hd-motion-duration-instant); }
+.hd-check__box::before { inset: 0; background: var(--hd-ck-rim); }
+.hd-check__box::after { inset: 2px; background: var(--hd-ck-fill); }
+.hd-check__box svg { position: relative; z-index: 1; width: 100%; height: 100%; opacity: 0; transform: scale(.6); transition: all var(--hd-motion-duration-default) var(--hd-motion-easing-out); }
+.hd-check__input:checked + .hd-check__box { --hd-ck-rim: var(--hd-accent); --hd-ck-fill: var(--hd-accent); }
 .hd-check__input:checked + .hd-check__box svg { opacity: 1; transform: none; }
 .hd-check__input:focus-visible + .hd-check__box { outline: 2px solid var(--hd-c-focus); outline-offset: 2px; }
 </style>

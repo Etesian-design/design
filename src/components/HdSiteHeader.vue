@@ -25,7 +25,7 @@ withDefaults(defineProps<{ brand: string; links: HdNavLink[]; brandHref?: string
   </header>
 </template>
 <style>
-.hd-site-header { background: var(--hd-c-bg); border-bottom: 1px solid var(--hd-c-divider); z-index: var(--hd-z-toolbar); }
+.hd-site-header { /* see-through, as the camera's bars: the page shows through, blurred (--hd-opacity-chrome) */ background: color-mix(in srgb, var(--hd-c-bg) calc(var(--hd-opacity-chrome) * 100%), transparent); -webkit-backdrop-filter: blur(var(--hd-size-chrome-blur)) saturate(1.4); backdrop-filter: blur(var(--hd-size-chrome-blur)) saturate(1.4); border-bottom: 1px solid var(--hd-c-divider); z-index: var(--hd-z-toolbar); }
 .hd-site-header.is-sticky { position: sticky; top: 0; }
 .hd-site-header__skip { position: absolute; left: 8px; top: 8px; padding: 8px 12px; background: var(--hd-c-fg); color: var(--hd-c-bg); border-radius: 6px; z-index: 2;
   /* Hidden until focused with the keyboard (not just moved off-screen, which can peek out). */
@@ -42,7 +42,7 @@ withDefaults(defineProps<{ brand: string; links: HdNavLink[]; brandHref?: string
 /* By the window, not a container: a container would also become the bottom bar's frame. */
 @media (max-width: 599.98px) {
   .hd-site-header__nav { position: fixed; left: 0; right: 0; bottom: 0; height: var(--hd-size-toolbar); justify-content: space-around; gap: 0;
-    background: var(--hd-surface-chrome); padding-bottom: env(safe-area-inset-bottom); }
+    background: color-mix(in srgb, var(--hd-surface-chrome) calc(var(--hd-opacity-chrome) * 100%), transparent); -webkit-backdrop-filter: blur(var(--hd-size-chrome-blur)) saturate(1.4); backdrop-filter: blur(var(--hd-size-chrome-blur)) saturate(1.4); padding-bottom: env(safe-area-inset-bottom); }
   .hd-site-header__link { flex-direction: column; justify-content: center; gap: 2px; padding: 0 8px; color: var(--hd-surface-chrome-fg); font-size: 11px; opacity: .7; min-height: 48px; }
   .hd-site-header__link:hover { background: var(--hd-c-pressed); }
   .hd-site-header__link[aria-current='page'] { color: var(--hd-surface-chrome-fg); opacity: 1; }
@@ -51,7 +51,7 @@ withDefaults(defineProps<{ brand: string; links: HdNavLink[]; brandHref?: string
   .hd-site-header__actions .hd-button { min-height: 36px; padding: 0 14px; font-size: var(--hd-font-size-small); }
 }
 /* the dark toolbar version */
-.hd-site-header--chrome { background: var(--hd-surface-chrome); color: var(--hd-surface-chrome-fg); border-bottom-color: rgba(255,255,255,.08); color-scheme: dark; }
+.hd-site-header--chrome { background: color-mix(in srgb, var(--hd-surface-chrome) calc(var(--hd-opacity-chrome) * 100%), transparent); color: var(--hd-surface-chrome-fg); border-bottom-color: rgba(255,255,255,.08); color-scheme: dark; }
 .hd-site-header--chrome .hd-site-header__link { color: var(--hd-surface-chrome-fg-secondary); }
 .hd-site-header--chrome .hd-site-header__link:hover { background: rgba(255,255,255,.1); color: var(--hd-surface-chrome-fg); }
 .hd-site-header--chrome .hd-site-header__link[aria-current='page'] { color: var(--hd-surface-chrome-fg); }

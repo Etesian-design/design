@@ -1,7 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/vue3-vite';
 import { ref, computed } from 'vue';
 import XChoice from './parts/XChoice.vue';
-import XStage from './parts/XStage.vue';
 import PhoneV2 from './phone2/PhoneV2.vue';
 import XMerge from './phone2/XMerge.vue';
 import XGhost from './phone2/XGhost.vue';
@@ -17,16 +16,35 @@ const meta: Meta = {
 export default meta;
 const tabs = (ids: readonly P2State[]) => ids.map((id) => ({ id, label: STATES[id].tab }));
 
-export const Tour: StoryObj<{ state: P2State }> = {
+/** All features on one page (user 2026-11-19: no drop-down menus): the top 10, then the smaller gaps, each a scaled phone mock with what it is, what you get and what you give up. */
+const FIG = `<figure v-for="s in ids" :key="s" class="pf-fig">
+  <div class="pf-phone"><div class="pf-scale"><PhoneV2 :state="s" /></div></div>
+  <figcaption><b>{{ STATES[s].title }}</b>
+    <span class="pf-meta">#{{ STATES[s].gaps.join(', #') }} · {{ STATES[s].pri }} · {{ STATES[s].effort }} · <b>{{ STATUS_LABEL[STATUS[s][0]] }}</b></span>
+    <span>{{ STATES[s].idea }}<template v-if="STATES[s].note"> {{ STATES[s].note }}</template></span>
+    <span v-if="STATES[s].gain"><b>You get</b> {{ STATES[s].gain }}</span>
+    <span v-if="STATES[s].cost"><b>You give up</b> {{ STATES[s].cost }}</span></figcaption>
+</figure>`;
+const PF_CSS = `<component is="style">
+.pf { padding: 20px; background: var(--hd-c-bg); color: var(--hd-c-fg); }
+.pf h2 { font: 300 26px/1.2 var(--hd-font-family-light); margin: 8px 0 14px; }
+.pf-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(252px, 1fr)); gap: 28px 20px; margin-bottom: 28px; }
+.pf-fig { margin: 0; min-width: 0; }
+/* the 360 x 640 mock at 70%: the box is the scaled size, so the grid lays it out at the size it shows */
+.pf-phone { width: 252px; height: 448px; overflow: hidden; }
+.pf-scale { width: 360px; height: 640px; transform: scale(.7); transform-origin: 0 0; }
+.pf-fig figcaption { display: flex; flex-direction: column; gap: 4px; margin-top: 8px; max-width: 320px; font-size: 13px; line-height: 1.4; }
+.pf-meta { color: var(--hd-c-fg-secondary); }
+</component>`;
+export const Tour: StoryObj = {
   name: 'All features',
-  args: { state: 'status-more' },
-  argTypes: { state: { control: { type: 'select' }, options: [...CORE, ...SMALL] } },
-  render: (args) => ({
-    components: { XStage, XChoice, PhoneV2 },
-    setup: () => { const s = ref<P2State>(args.state); return { s, info: computed(() => STATES[s.value]), CT: tabs(CORE), ST: tabs(SMALL) }; },
-    template: `<XStage :title="info.title + ' (gap ' + info.gaps.map((g) => '#' + g).join(', ') + ', ' + info.pri + ', ' + info.effort + ')'" :idea="info.idea + (info.note ? ' ' + info.note : '')" :gain="info.gain" :cost="info.cost"><template #controls>
-        <XChoice v-model="s" :tabs="CT" label="Top 10" id-prefix="p2c" /><XChoice v-model="s" :tabs="ST" label="Smaller gaps" id-prefix="p2s" />
-      </template><PhoneV2 :key="s" :state="s" /></XStage>`,
+  parameters: { layout: 'fullscreen' },
+  render: () => ({
+    components: { PhoneV2 },
+    setup: () => ({ CORE, SMALL, STATES, STATUS, STATUS_LABEL }),
+    template: `<div class="pf">${PF_CSS}
+      <h2>Top 10</h2><div class="pf-grid"><template v-for="ids in [CORE]">${FIG}</template></div>
+      <h2>Smaller gaps</h2><div class="pf-grid"><template v-for="ids in [SMALL]">${FIG}</template></div></div>`,
   }),
 };
 export const one = (state: P2State): StoryObj => ({
@@ -68,14 +86,6 @@ export const Pinning = one('pinning');
 export const LiveUpdate = one('live-update');
 export const LockGlance = one('lock-glance');
 export const Extras = one('extras');
-export const Gallery: StoryObj = {
-  name: 'Gallery: smaller gaps',
-  parameters: { layout: 'fullscreen' },
-  render: () => ({ components: { PhoneV2 }, setup: () => ({ SMALL, STATES, STATUS, STATUS_LABEL }), template: `<div style="display:flex;flex-wrap:wrap;gap:20px;padding:16px;background:var(--hd-c-bg);color:var(--hd-c-fg)">
-    <figure v-for="s in SMALL" :key="s" style="margin:0;width:252px"><div style="width:252px;height:448px;overflow:hidden"><div style="transform:scale(.7);transform-origin:0 0"><PhoneV2 :state="s" /></div></div>
-      <figcaption style="font-size:12px;line-height:1.35;margin-top:6px"><b>{{ STATES[s].title }}</b><br>#{{ STATES[s].gaps.join(', #') }} · {{ STATES[s].pri }} · {{ STATES[s].effort }} · <b>{{ STATUS_LABEL[STATUS[s][0]] }}</b></figcaption></figure></div>` }),
-};
-
 /** Interactive: try the two-finger split. Touch: one finger on each card. Mouse: drag a card towards its neighbour. */
 export const TwoFingerSplit: StoryObj<{ autoplay: boolean; at?: number }> = {
   name: 'Try it: two-finger split',

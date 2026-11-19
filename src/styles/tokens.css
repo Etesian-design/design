@@ -123,6 +123,8 @@
   --hd-size-list-item-small: 43px;
   --hd-size-button: 40px; /* extrapolated */
   --hd-size-field: 40px; /* extrapolated */
+  --hd-size-card-corner: 24px; /* extrapolated */
+  --hd-size-chrome-blur: 16px; /* extrapolated */
   --hd-size-button-width: 215px;
   --hd-size-touch-target: 44px; /* extrapolated */
   --hd-size-icon-xlarge: 43px;
@@ -156,7 +158,9 @@
   --hd-motion-easing-in: cubic-bezier(0.95, 0.05, 0.795, 0.035);
   --hd-motion-easing-in-out: cubic-bezier(0.455, 0.03, 0.515, 0.955);
   --hd-opacity-disabled: 0.5;
+  --hd-opacity-chrome: 0.6;
   --hd-shadow-overlay: 0 8px 32px rgba(0,0,0,0.28); /* extrapolated */
+  --hd-shadow-overlay-filter: drop-shadow(0 8px 16px rgba(0,0,0,0.28)); /* extrapolated */
   --hd-z-toolbar: 100; /* extrapolated */
   --hd-z-overlay: 1000; /* extrapolated */
   --hd-z-banner: 1100; /* extrapolated */

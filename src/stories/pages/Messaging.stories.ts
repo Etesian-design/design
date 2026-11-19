@@ -38,7 +38,8 @@ const CSS = `<component is="style">
 .xm-cancel { width: 117px; height: 30px; --hd-sqf-h: 30px; --hd-sqf-edge: #B5B4B8; --hd-sqf-fill: linear-gradient(#FFFFFF, #ECECEE 50%, #DDDDE0); border: 0; background: none; font: 700 15px/1 var(--hd-font-family-base); color: #111; }
 .xm-sheet h2 { margin: 0; font: 300 18px/1 var(--hd-font-family-light); color: #333; }
 .xm-to { flex: none; height: 46px; display: flex; align-items: center; gap: 12px; padding: 0 12px; background: #D9DFE5; font-size: 16px; color: #666; }
-.xm-chip { padding: 3px 6px; background: #1C6BC8; color: #fff; font-size: 17px; }
+.xm-chip { padding: 3px 6px; color: #fff; font-size: 17px; /* the N9 recipient box: lit like its buttons, brighter at the top */
+  background: linear-gradient(color-mix(in srgb, #1C6BC8 70%, #fff), #1C6BC8 50%, color-mix(in srgb, #1C6BC8 88%, #000)); box-shadow: inset 0 1px 0 rgba(255,255,255,.35); }
 .xm-body { flex: 1; padding: 10px 12px; font-size: 16px; color: #111; } .xm-body u { text-decoration-color: #555; }
 .xm-strip { flex: none; height: 42px; display: flex; align-items: center; gap: 8px; padding: 0 10px; background: #fff; border-top: 1px solid #E2E2E4; }
 .xm-strip__sp { flex: 1; } .xm-count { font: 700 16px/1 var(--hd-font-family-base); color: #444; } .xm-count small { font-weight: 400; font-size: 14px; }
@@ -54,10 +55,10 @@ const CSS = `<component is="style">
 .xm-bub small { display: block; margin-top: 3px; font-size: 11px; }
 .xm-bub--in { align-self: flex-end; text-align: right; border-top-right-radius: 0; background: linear-gradient(#31B6D5, #08A5CD 12px); color: #fff; box-shadow: inset 0 0 0 1px rgba(0,80,110,.25); }
 .xm-bub--in small { color: rgba(255,255,255,.7); }
-.xm-bub--in::after { content: ''; position: absolute; top: 0; right: -7px; border-style: solid; border-width: 0 0 8px 8px; border-color: transparent transparent transparent #31B6D5; }
+.xm-bub--in::after { content: ''; position: absolute; top: 0; right: -8px; width: 9px; height: 9px; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 9 9'%3E%3Cpath d='M0 0H9L0 9Z' fill='%2331B6D5'/%3E%3Cpath d='M0 .5H7.8L.4 7.9' fill='none' stroke='%2300506E' stroke-opacity='.25'/%3E%3C/svg%3E") 0 0 / 100% 100%; } /* the tail, outlined like the bubble (it joins the bubble's edge: 1px over it) */
 .xm-bub--out { align-self: flex-start; border-bottom-left-radius: 0; background: linear-gradient(#FFFAFF, #F6F6F6); color: #111; box-shadow: inset 0 0 0 1px #A9ABAD; }
 .xm-bub--out small { color: #8A8A8E; }
-.xm-bub--out::after { content: ''; position: absolute; bottom: 0; left: -7px; border-style: solid; border-width: 8px 0 0 8px; border-color: transparent transparent transparent transparent; border-right: 8px solid #F6F6F6; border-left: 0; }
+.xm-bub--out::after { content: ''; position: absolute; bottom: 0; left: -8px; width: 9px; height: 9px; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 9 9'%3E%3Cpath d='M9 0V9H0Z' fill='%23F6F6F6'/%3E%3Cpath d='M8.6 .4 1.2 8.5H9' fill='none' stroke='%23A9ABAD'/%3E%3C/svg%3E") 0 0 / 100% 100%; }
 /* Group: received on the left next to the sender's picture, the tail pointing at it; what you sent on the right. */
 .xm-grow { display: flex; align-items: flex-start; gap: 4px; } .xm-grow--me { flex-direction: row-reverse; }
 .xm-grow > .xm-bub { align-self: auto; }

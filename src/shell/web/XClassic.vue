@@ -21,7 +21,7 @@ const props = withDefaults(defineProps<{
   recent?: string[]; status?: string; online?: boolean;
   /** Storybook: the apps menu or ⋮ starts open */
   gridOpen?: boolean; moreOpen?: boolean;
-}>(), { brand: 'Cloud Companion', tools: () => [], recent: () => [], online: true, gridOpen: false, moreOpen: false });
+}>(), { brand: 'Etesian', tools: () => [], recent: () => [], online: true, gridOpen: false, moreOpen: false });
 const emit = defineEmits<{ open: [id: string]; back: []; view: [v: string]; tool: [label: string] }>();
 const root = ref<HTMLElement>();
 const w = ref(1200);

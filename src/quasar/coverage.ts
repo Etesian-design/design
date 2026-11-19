@@ -71,7 +71,7 @@ export const quasarCoverage: Record<string, Coverage> = {
   QPopupEdit: s('.q-popup-edit'),
   QPopupProxy: none('renders a QMenu or QDialog, both themed'),
   QPullToRefresh: s('.q-pull-to-refresh__puller'),
-  QRadio: s('.q-radio__bg', '.q-radio__check'),
+  QRadio: s('.q-radio__bg', '.q-radio__inner--truthy'),
   QRange: s('.q-range'),
   QRating: s('.q-rating'),
   QResizeObserver: none('invisible observer'),

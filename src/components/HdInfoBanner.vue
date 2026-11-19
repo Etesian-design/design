@@ -11,7 +11,7 @@ onBeforeUnmount(() => clearTimeout(t));
 <template>
   <div class="hd-info-banner-region" :class="{ 'is-inline': inline }" role="status" aria-live="polite">
     <Transition name="hd-info">
-      <div v-if="open" class="hd-info-banner hd-on-banner" @click="emit('update:open', false)">
+      <div v-if="open" class="hd-info-banner hd-sqf hd-on-banner" @click="emit('update:open', false)">
         <HdIcon v-if="icon" :name="icon" :size="24" />
         <span>{{ text }}</span>
       </div>
@@ -21,7 +21,9 @@ onBeforeUnmount(() => clearTimeout(t));
 <style>
 .hd-info-banner-region { position: fixed; top: 32px; left: 8px; right: 8px; z-index: var(--hd-z-banner); display: flex; justify-content: center; pointer-events: none; }
 .hd-info-banner-region.is-inline { position: relative; top: 0; left: 0; right: 0; }
-.hd-info-banner { pointer-events: auto; display: flex; align-items: center; gap: var(--hd-space-xlarge); max-width: 460px; width: 100%; padding: var(--hd-space-xlarge) var(--hd-space-xxlarge); border-radius: var(--hd-radius-card); background: var(--hd-surface-banner); color: var(--hd-c-fg); font-size: var(--hd-font-size-default); box-shadow: var(--hd-shadow-overlay); }
+.hd-info-banner { pointer-events: auto; display: flex; align-items: center; gap: var(--hd-space-xlarge); max-width: 460px; width: 100%; padding: var(--hd-space-xlarge) var(--hd-space-xxlarge); background: none; color: var(--hd-c-fg); font-size: var(--hd-font-size-default);
+  /* squircle corners (.hd-sqf, no edge); the shadow as a filter, so it follows the shape */
+  --hd-sqf-h: var(--hd-size-card-corner); --hd-sqf-edge: transparent; --hd-sqf-edge-w: 0px; --hd-sqf-fill: var(--hd-surface-banner); filter: var(--hd-shadow-overlay-filter); }
 .hd-info-enter-active { transition: transform var(--hd-motion-duration-default) var(--hd-motion-easing-out), opacity var(--hd-motion-duration-default); }
 .hd-info-leave-active { transition: transform var(--hd-motion-duration-default) var(--hd-motion-easing-in), opacity var(--hd-motion-duration-default); }
 .hd-info-enter-from, .hd-info-leave-to { transform: scale(0); opacity: 0; }
