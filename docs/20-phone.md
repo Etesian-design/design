@@ -238,7 +238,7 @@ Accent and negative buttons use the same structure with their base colour.
 7. **The ✕ on the wrong side.** The Open apps close button is at the **top-right**.
 8. **Per-card action buttons repeated on every card.** Use one shared action row for the centred card.
 9. **Buttons at the top of a screen** (settings gear in a header, Back top left). Actions go on the bottom toolbar.
-10. **Back on the right of the toolbar.** Back is always at the far left.
+10. **Back on the right of the toolbar by default.** Back is at the far left unless the user moves it (Back button setting).
 11. **A menu button that is not ≡.** The N9's toolbar menu is three bars (≡), in every app; not ⋮, not ⌄.
 12. **A text-only card in a picture feed.** Give it the source's colour tile.
 13. (Desktop) **Squircle window thumbnails.** Thumbnails keep the window's aspect ratio and the card radius; only the app badge is a squircle.
