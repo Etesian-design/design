@@ -21,6 +21,19 @@ Units: all sizes are in **dp**, and type is in **sp**.
 
 The system gesture areas belong to the OS. Apps never put interactive controls within the edge-swipe zone, and nothing in an app may imitate an edge swipe.
 
+### Single hand mode
+
+The whole screen at **half its size, the same shape** (a zoom out: the resolution and the apps are unchanged, touch
+follows it), at the bottom in the middle, above the system toolbar, which stays full size. The space around it is
+dark, with "Tap here to move · Double tap for full screen".
+
+- **Tap the empty space:** the small screen moves to that side (left, right; up, down).
+- **Double tap the empty space:** full screen again.
+- **On from:** a toolbar or Breeze button ("Single hand mode" among the system buttons), a Breeze gesture, a macro step,
+  or the shortcut on Etesian settings' icon.
+- **Ends** when the phone locks or turns; it is always off after a restart. Story: OS / Single hand mode.
+  Device test: `single_hand.sh`.
+
 ### Status menu
 
 - **Profile strip.** Silent and Beep are fixed segments. The Ringing segment and the grey after it are one control, the ringer volume slider: its blue fill runs into the grey in proportion to ring volume (drag along it to set the level; full = all the way across). A strip without a volume (e.g. the Mode strip) has no grey remainder: its segments fill the width.
@@ -113,12 +126,17 @@ Thumbnails are 43–44dp squircles.
 
 ## 3. The bottom toolbar
 
+Every action of every screen is here, never at the top (16, rule 1): the bottom is within the thumb's reach.
+
 - **Contents:**
-  - Back sits on the left as a lit squircle icon button.
+  - Back sits **alone at the far left** as a lit squircle icon button, in every app, whatever the screen.
   - App actions and tabs follow it.
   - The selected tab is a squircle highlight.
 - **Style:** light N9 grey by default. An app may ask for the dark style (Settings does).
   - Within one flow the style never flips. Settings and its search use the same toolbar.
+- **Apps put their own actions on it** (the toolbar library): Glance's Refresh and Settings, the reader's Open in
+  browser, Share and menu. Their menus open as the N9 sheet. When the system bar is off, or on another phone, the app
+  draws the same bar itself at the bottom.
 - **Apps can hide it.** The Settings main page has no toolbar; its sub-pages show one with Back.
 - **Keyboard behaviour:**
   - The toolbar **hides while the keyboard is up**.
@@ -146,6 +164,18 @@ Thumbnails are 43–44dp squircles.
 
 - The composer (service badge + "Write your message here") sits **directly under the conversation**, its own
   1px top line between them. No gap, no band of window colour above it.
+
+### Glance: news and search everything
+
+A separate app, also a home view (News) and the source of the Applications search's other results.
+
+- **One screen:** the search bar on top, then Top stories and For you. Stories are **picture cards** (`HdStoryCard`):
+  the picture edge to edge at 16:9, the headline, source · age · outlets. Every card has a picture (rule 16).
+- **Search everything:** sections Applications, then by match (Shortcuts, Contacts, Messages, Notifications,
+  Settings, Files, News), Web last.
+- **Reader:** stories open as the article alone (Readability, as in Firefox's Reader View); the site on top, the
+  actions (Open in browser, Share, menu) on the bottom bar, "Read the original on …" at the end.
+- Stories: Examples / Glance. Device test: `glance.sh`.
 
 ## 4. Settings
 
@@ -207,7 +237,10 @@ Accent and negative buttons use the same structure with their base colour.
 6. **A toolbar style flipping between screens of one flow** (Settings in dark, its search in light). Keep one style per flow.
 7. **The ✕ on the wrong side.** The Open apps close button is at the **top-right**.
 8. **Per-card action buttons repeated on every card.** Use one shared action row for the centred card.
-9. (Desktop) **Squircle window thumbnails.** Thumbnails keep the window's aspect ratio and the card radius; only the app badge is a squircle.
+9. **Buttons at the top of a screen** (settings gear in a header, Back top left). Actions go on the bottom toolbar.
+10. **Back on the right of the toolbar.** Back is always at the far left.
+11. **A text-only card in a picture feed.** Give it the source's colour tile.
+12. (Desktop) **Squircle window thumbnails.** Thumbnails keep the window's aspect ratio and the card radius; only the app badge is a squircle.
 
 ## Exact values (from the phone)
 

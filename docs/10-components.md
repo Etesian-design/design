@@ -42,6 +42,7 @@ Light), follow WAI-ARIA patterns and show a visible focus ring for keyboard user
 | `HdLockScreenNotificationCard` | lock screen | no buttons |
 | `HdLockScreenStack` | lock screen | the lock-screen notifications: stacked carousel (default) or the N9 "More" label |
 | `HdTaskCard` | Open applications | `editing` shows close buttons |
+| `HdStoryCard` | News story card | picture edge to edge at 16:9 (or the outlet's colour tile with its name), headline, source · age · outlets; the card is the button, long press for the menu sheet |
 | `HdKeyboard` | Virtual keyboard | lower case, Shift once / double-tap caps lock (white key), globe between comma and space, lit keys that sink in when pressed |
 | `HdTaskEditBar` | Open applications edit mode | the black bar with lit "Done" and "Close all" |
 | `HdAppGrid` | Applications view | 4 columns or auto |
