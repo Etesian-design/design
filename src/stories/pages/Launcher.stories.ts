@@ -9,6 +9,8 @@ const meta: Meta = {
   tags: ['autodocs'],
   parameters: { docs: { description: { component: 'Folders in the Applications grid, as on the N9. A folder is an icon like any other: a dark squircle showing its **first four apps** small (2 × 2), or a plain folder glyph when empty, named "Folder" until renamed. **Opening it does not cover the grid**: the rows below slide down and the folder opens **in place**, under its row, a band of black between two thin lines with a notch pointing at the folder icon; its name in light type, then its apps. Tap outside or the folder again to close. **Long press** (on an icon or empty space) is edit mode: the open folder\'s name becomes a field, its apps get the red ✕ (takes them out, back to the grid), everything else dims, and the bar at the bottom offers **Done** and **New folder**.' } } },
 };
+// A phone screen (or part of one): centred, as big as itself.
+meta.parameters = { ...meta.parameters, layout: 'centered' };
 export default meta;
 type S = StoryObj;
 

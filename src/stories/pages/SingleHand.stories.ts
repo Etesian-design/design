@@ -12,6 +12,8 @@ const meta: Meta = {
   parameters: { docs: { description: { component: '**Single hand mode**: everything on screen smaller, the same shape, within reach of the thumb. **The size is the user\'s**: a slider (50 to 90% of the width, 70% by default) under a live preview; half suits only very large phones. Apps are not told; it only looks zoomed out, and touch follows it. It always sits in a **corner**: **tap the empty space** and it moves to the corner nearest the tap; **double tap the empty space** for full screen. On from a toolbar or side-menu button, a gesture or the system app\'s shortcut. It ends when the device locks or turns, and never survives a restart. Everything shrinks with it, the bottom toolbar too, so the app stays whole.' } } },
   argTypes: { place: { control: 'select', options: ['bottom-right', 'bottom-left', 'top-right', 'top-left'] }, size: { control: { type: 'range', min: 50, max: 90, step: 5 } } },
 };
+// A phone screen (or part of one): centred, as big as itself.
+meta.parameters = { ...meta.parameters, layout: 'centered' };
 export default meta;
 type S = StoryObj<{ place: string; size: number }>;
 

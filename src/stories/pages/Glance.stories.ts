@@ -13,6 +13,8 @@ const meta: Meta = {
   tags: ['autodocs'],
   parameters: { docs: { description: { component: 'Glance: **news and search everything** on one screen. Typing in the search bar replaces the news with results from the whole device (apps, contacts, messages, notifications, settings, files, the news) and the web; clearing it brings the news back. Stories open in the **reader**: just the article, in the system\'s type and colours, the original a tap away. Every action is on the **bottom toolbar** (see Guide / The phone, 3).' } } },
 };
+// A phone screen (or part of one): centred, as big as itself.
+meta.parameters = { ...meta.parameters, layout: 'centered' };
 export default meta;
 type S = StoryObj;
 const comps = { HdStoryCard, HdToolBar, HdToolIcon, HdIcon, HdSquircle };

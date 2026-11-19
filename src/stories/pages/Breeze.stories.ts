@@ -9,6 +9,8 @@ const meta: Meta = {
   tags: ['autodocs'],
   parameters: { docs: { description: { component: '**Breeze** is Etesian\'s side menu: a thick handle on one edge of the screen (clear of the curved edge\'s grip strip). A tap opens its menu, sliding out of Breeze\'s side, flush with it, its top level with it: a **strip of lit squircle buttons** (the user\'s: Back, Home, Open apps, the menu, a toggle, an app) and optional widgets (search). The screen behind dims and does not react: a tap outside only closes the menu. Held still, the handle picks up and drags: away from an edge it becomes a **floating button**, back at an edge a handle again. Every Breeze gesture vibrates. Hidden on the lock screen; light or dark.\n\nThe **Widgets** view holds Belle widgets in a column; long press is edit mode: each widget gets the red ✕ and three blue resize handles (the ✕ takes the fourth corner), with Done and Add widget at the bottom. The **Today** strip is an optional section at the top of Events.' } } },
 };
+// A phone screen (or part of one): centred, as big as itself.
+meta.parameters = { ...meta.parameters, layout: 'centered' };
 export default meta;
 type S = StoryObj;
 

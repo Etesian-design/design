@@ -39,11 +39,13 @@ const preview: Preview = {
       setup: () => ({ mode: ctx.globals.mode ?? 'hybrid', accent: ctx.globals.accent || undefined, full: ctx.parameters.layout === 'fullscreen', fv: fontVars(ctx.globals.font || ETESIAN_FONT) }),
       template: `<div v-if="mode === 'all'" style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));min-height:100%">
           <HdTheme v-for="m in ['hybrid','dark','light']" :key="m" :mode="m" :accent="accent" :style="[fv, 'padding:16px;position:relative;overflow:hidden']"><div style="font:700 11px/1 sans-serif;opacity:.6;margin-bottom:8px;text-transform:uppercase">{{ m }}</div><story /></HdTheme></div>
-        <HdTheme v-else :mode="mode" :accent="accent" :style="[fv, full ? 'min-height:100vh;position:relative' : 'padding:24px;position:relative;min-height:120px']"><story /></HdTheme>`,
+        <HdTheme v-else :mode="mode" :accent="accent" :style="[fv, full ? 'min-height:100vh;position:relative' : 'padding:16px;position:relative']"><story /></HdTheme>`,
     }),
   ],
   parameters: {
-    layout: 'fullscreen',
+    // Each story at its own size: the theme box fits what it shows. Padded (full width, its own height) by default;
+    // a phone screen, keyboard or dialog is centred and as big as itself; whole desktops and tablets ask for fullscreen.
+    layout: 'padded',
     controls: { matchers: { color: /(background|color|accent)$/i } },
     options: { storySort: { order: ['Guide', ['Introduction', 'Principles', 'Colour', 'Colour modes', 'Typography', 'Font alternatives', 'Spacing & sizing', 'Shape (squircle)', 'Iconography', 'Icon lighting', 'Motion', 'Sound & haptics', 'Layout & grids', 'Components', 'Patterns', 'Accessibility', 'The desktop', 'The phone', 'Home widgets', 'Contributing & gaps'], 'OS', 'Controls', 'Overlays', 'Web', 'Examples', 'Quasar', ['Using with Quasar', 'Examples', 'Components'], 'Desktop', ['The desktop', 'Try it'], 'Phone', 'Explorations', ['Tablet']] } },
   },

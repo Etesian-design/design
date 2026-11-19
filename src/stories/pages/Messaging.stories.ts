@@ -15,6 +15,8 @@ const meta: Meta = {
   tags: ['autodocs'],
   parameters: { docs: { description: { component: '**N9** Messaging (first run, compose, conversation), Accounts (opened from Messaging) and Store, at phone size. Service icons and names are generic samples. The conversation is measured from the N9 (2026-11-05): received messages cyan on the right, sent ones white on the left.' } } },
 };
+// A phone screen (or part of one): centred, as big as itself.
+meta.parameters = { ...meta.parameters, layout: 'centered' };
 export default meta;
 type S = StoryObj;
 const phone = (inner: string, bg = '#fff', land = false) => `<div class="xm-phone${land ? ' xm-phone--land' : ''}" style="background:${bg}">${inner}</div>`;
