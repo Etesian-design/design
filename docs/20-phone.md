@@ -23,11 +23,14 @@ The system gesture areas belong to the OS. Apps never put interactive controls w
 
 ### Single hand mode
 
-The whole screen at **half its size, the same shape** (a zoom out: the resolution and the apps are unchanged, touch
-follows it), at the bottom in the middle. Everything shrinks with it, the bottom toolbar too; only the Breeze handle stays
+The whole screen smaller, **the same shape** (a zoom out: the resolution and the apps are unchanged, touch follows
+it), in the **bottom-right corner** the first time, then wherever it was last. Its size is the user's: Etesian settings >
+Gestures > Single hand mode, a **Size** slider (50 to 90% of the width, 70% by default) under a live preview of the
+phone with the small screen; a change applies at once, also while it is on. Everything shrinks with it, the bottom toolbar too; only the Breeze handle stays
 at the screen's edge. The space around it is dark, with "Tap here to move · Double tap for full screen" in it.
 
-- **Tap the empty space:** the small screen moves to that side (left, right; up, down).
+- **Tap the empty space:** the small screen moves to the **corner nearest the tap**. It is always in a corner, never the
+  middle.
 - **Double tap the empty space:** full screen again.
 - **On from:** a toolbar or Breeze button ("Single hand mode" among the system buttons), a Breeze gesture, a macro step,
   or the shortcut on Etesian settings' icon.
