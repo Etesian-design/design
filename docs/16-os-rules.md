@@ -19,9 +19,11 @@ each is built there.
 3. **Fields may sit at the top.** A search field is where reading starts, not an action; its clear (✕) stays inside it.
 4. **An app that runs elsewhere draws the same bar itself, at the bottom.** When the system toolbar is not there (another
    system, or the user turned it off), the app's own bar takes its place with the same items in the same order.
-5. **Single hand mode** shrinks the whole screen to half its size (the same shape, a zoom out: apps are not told) at the
-   bottom, within reach. Tapping the empty space moves it to that side; a double tap there returns to full screen. It
-   ends when the device locks or turns. Any system with a tall screen should offer it.
+5. **Single hand mode** shrinks the whole screen (the same shape, a zoom out: apps are not told) into a corner, within
+   reach. **Its size is the user's**, a slider with a live preview (50 to 90% of the width, 70% by default: half suits
+   only very large devices). It always sits in a **corner**, never the middle; a tap in the empty space moves it to the
+   corner nearest the tap, and a double tap there returns to full screen. It ends when the device locks or turns. Any
+   system with a tall screen should offer it.
 
 ## Menus, choices and editing
 
@@ -81,7 +83,7 @@ The N9 was not designed for every user; where it falls short, Etesian keeps the 
     top sites), which may wrap but never clip.
 28. **Sound and motion are the user's to turn down**: key clicks and UI sounds have their own switch, and reduced
     motion swaps slides and wobbles for fades.
-29. **Handedness is a setting, not a design**: Back left or right (rule 2), single hand mode at either side (rule 5).
+29. **Handedness is a setting, not a design**: Back left or right (rule 2), single hand mode in any corner and at the user's size (rule 5).
 
 ## Shape
 
