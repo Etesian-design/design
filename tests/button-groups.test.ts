@@ -81,11 +81,11 @@ describe('an icon in a segment is the N9 size', () => {
 // 2026-11-19 (user): on Quasar the default primary is the N9's selection blue #268CE1; a developer can override it,
 // and the override reaches every Etesian part through --hd-accent.
 describe('Quasar defaults to the N9 selection blue', () => {
-  it('primary and info are #268CE1, and --hd-accent follows --q-primary', async () => {
+  it('primary and info are #268CE1, and the accent inside Quasar defaults to it', async () => {
     const { etesianBrand } = await import('../src/quasar/index');
     expect(etesianBrand.primary.toUpperCase()).toBe('#268CE1');
     expect(etesianBrand.info.toUpperCase()).toBe('#268CE1');
-    expect(readFileSync(`${process.cwd()}/src/quasar/etesian-quasar.css`, 'utf8')).toContain('.hd-quasar { --hd-accent: var(--q-primary, #268CE1); }');
+    expect(readFileSync(`${process.cwd()}/src/quasar/etesian-quasar.css`, 'utf8')).toContain('.hd-quasar { --hd-accent: var(--hd-color-accent-selected, #268CE1); }');
   });
 });
 
@@ -103,5 +103,35 @@ describe('the overlay switch (N9 camera photo/video)', () => {
     const w = mount(HdTabBar, { props: { tabs: [{ id: 'photo', label: 'Photo', icon: 'camera' }, { id: 'video', label: 'Video', icon: 'record' }], modelValue: 'photo', variant: 'overlay' } });
     expect(w.classes()).toContain('hd-overlay');
     expect(w.find('[aria-selected="true"]').attributes('aria-label')).toBe('Photo');
+  });
+});
+
+// 2026-11-19 (user): adopt the N9 switch everywhere. Measured on the user's N9 (camera settings).
+describe('the N9 switch', () => {
+  const sw = readFileSync(`${process.cwd()}/src/components/HdSwitch.vue`, 'utf8');
+  it('has the measured track, squircle ends, and a white squircle knob inset 3px', () => {
+    expect(sw).toContain('width: 44px; height: 27px;');
+    expect(sw).toContain('background: #2D2E2D; box-shadow: inset 0 0 0 1px #181818;');
+    expect(sw).toMatch(/hd-switch__track \{[^}]*--hd-sq-cap-l/);
+    expect(sw).toMatch(/hd-switch__knob \{[^}]*left: 3px; width: 20px; height: 20px; background: #fff;[^}]*--hd-squircle-mask/);
+    expect(sw).toContain("[aria-checked='true'] .hd-switch__knob { transform: translateX(18px); }");
+    expect(sw).not.toContain('border-radius: 999px');
+  });
+});
+describe('Quasar QToggle is the N9 switch too', () => {
+  const q = readFileSync(`${process.cwd()}/src/quasar/etesian-quasar.css`, 'utf8');
+  it('matches HdSwitch: 44 x 27 squircle-ended track, 20px squircle knob travelling 18px', () => {
+    expect(q).toMatch(/q-toggle__track \{[^}]*height: 27px; width: 44px;[^}]*background: #2D2E2D;[^}]*--hd-sq-cap-l/);
+    expect(q).toMatch(/q-toggle__thumb::after \{[^}]*--hd-squircle-mask/);
+    expect(q).toContain('.q-toggle__thumb { position: absolute; width: 20px; height: 20px; top: 12px; left: 13px; }');
+    expect(q).toContain('.q-toggle__inner--truthy .q-toggle__thumb { left: 31px; }');
+  });
+});
+describe('the Quasar accent resolves (no variable cycle)', () => {
+  const q = readFileSync(`${process.cwd()}/src/quasar/etesian-quasar.css`, 'utf8');
+  it('never points --hd-accent at --q-primary, which points back at it', () => {
+    expect(q).toContain('--q-primary: var(--hd-accent);');
+    expect(q).not.toMatch(/--hd-accent:\s*var\(--q-primary/);
+    expect(q).toContain('.hd-quasar { --hd-accent: var(--hd-color-accent-selected, #268CE1); }');
   });
 });

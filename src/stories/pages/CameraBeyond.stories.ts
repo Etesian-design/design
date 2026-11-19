@@ -16,9 +16,11 @@ type S = StoryObj;
 const CSS = `<component is="style">
 .cb { width: 360px; height: 640px; position: relative; overflow: hidden; background: linear-gradient(160deg, #2B3540, #46505A 40%, #1E2226); color: #fff; font-family: var(--hd-font-family-base); }
 .cb-top { position: absolute; top: 12px; left: 10px; right: 10px; display: flex; justify-content: space-between; align-items: center; }
-.cb-btn { width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; background: rgba(0,0,0,.6); box-shadow: inset 0 0 0 1px rgba(255,255,255,.4); }
-.cb-btn--big { width: 52px; height: 44px; border-radius: 14px; }
-.cb-strip { position: absolute; bottom: 14px; left: 50%; transform: translateX(-50%); height: 30px; border-radius: 10px; display: flex; gap: 12px; align-items: center; padding: 0 12px; background: rgba(0,0,0,.6); box-shadow: inset 0 0 0 1px rgba(255,255,255,.4); font: 700 11px/1 var(--hd-font-family-base); white-space: nowrap; }
+/* Measured on the N9 (2026-11-19), in CSS px: gallery 39, the camera switch 55 x 59, the mode switch 80 x 39, the strip 44 tall.
+   Squares are n = 2.8 squircles; long shapes have squircle-half ends (a field's). */
+.cb-btn { width: 39px; height: 39px; display: grid; place-items: center; background: rgba(0,0,0,.6); box-shadow: inset 0 0 0 1px rgba(255,255,255,.4); -webkit-mask: var(--hd-squircle-mask) center / 100% 100% no-repeat; mask: var(--hd-squircle-mask) center / 100% 100% no-repeat; }
+.cb-btn--big { width: 55px; height: 59px; }
+.cb-strip { position: absolute; bottom: 14px; left: 50%; transform: translateX(-50%); height: 44px; -webkit-mask: var(--hd-sq-cap-l) left center / auto 100% no-repeat, var(--hd-sq-cap-r) right center / auto 100% no-repeat; -webkit-mask-composite: source-in; mask: var(--hd-sq-cap-l) left center / auto 100% no-repeat, var(--hd-sq-cap-r) right center / auto 100% no-repeat; mask-composite: intersect; padding: 0 18px !important; font-size: 13px !important; display: flex; gap: 12px; align-items: center; padding: 0 12px; background: rgba(0,0,0,.6); box-shadow: inset 0 0 0 1px rgba(255,255,255,.4); font: 700 11px/1 var(--hd-font-family-base); white-space: nowrap; }
 .cb-read { position: absolute; left: 50%; top: 46%; transform: translate(-50%, -50%); padding: 6px 12px; border-radius: 10px; background: rgba(0,0,0,.6); font: 300 22px/1 var(--hd-font-family-light); }
 .cb-card { position: absolute; left: 14px; right: 14px; bottom: 58px; border-radius: 12px; background: rgba(20,20,20,.9); box-shadow: inset 0 0 0 1px rgba(255,255,255,.25); padding: 10px 12px; display: flex; gap: 10px; align-items: center; font-size: 13px; }
 .cb-card b { display: block; font-size: 14px; } .cb-card small { color: #BDBDBD; }
@@ -35,8 +37,8 @@ const CSS = `<component is="style">
 </component>`;
 const comps = { HdIcon, HdTabBar };
 const MODES2 = `[{ id: 'photo', label: 'Photo', icon: 'camera' }, { id: 'video', label: 'Video', icon: 'record' }]`;
-const top = (mode = 'photo', tabs = MODES2, centre = '<span class="cb-btn cb-btn--big" aria-label="Front camera"><HdIcon name="camera" :size="20" /></span>') =>
-  `<div class="cb-top"><span class="cb-btn" aria-label="Gallery"><HdIcon name="photo" :size="18" /></span>${centre}<HdTabBar variant="overlay" label="Mode" model-value="${mode}" :tabs="${tabs.replace(/"/g, "'")}" /></div>`;
+const top = (mode = 'photo', tabs = MODES2, centre = '<span class="cb-btn cb-btn--big" aria-label="Front camera"><HdIcon name="camera" :size="28" /></span>') =>
+  `<div class="cb-top"><span class="cb-btn" aria-label="Gallery"><HdIcon name="photo" :size="22" /></span>${centre}<HdTabBar variant="overlay" label="Mode" model-value="${mode}" :tabs="${tabs.replace(/"/g, "'")}" /></div>`;
 const strip = (items = '<span>8M</span><span>⚡A</span>') => `<span class="cb-strip" aria-label="Settings">${items}</span>`;
 const story = (name: string, text: string, inner: string): S => ({ name, parameters: { docs: { description: { story: text } } }, render: () => ({ components: comps, template: `${CSS}<div class="cb">${inner}</div>` }) });
 
