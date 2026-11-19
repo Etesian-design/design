@@ -139,7 +139,9 @@ describe('N9 fast scroll and Settings main page', () => {
   const secs = [{ letter: 'A', top: 14 }, { letter: 'K', top: 300 }, { letter: 'L', top: 600 }];
   it('wide translucent band on the right with section letters inside it', () => {
     expect(fs).toMatch(/--hd-fast-scroll-width: 47px;/);
-    expect(fs).toMatch(/\.hd-fast-scroll__band \{[^}]*right: 0; width: var\(--hd-fast-scroll-width\); overflow: hidden; background: rgba\(184,184,188,\.7\);/);
+    // 2026-11-19 (user): the app's colour at rest, grey (smoothly) only while touched
+    expect(fs).toMatch(/\.hd-fast-scroll__band \{[^}]*right: 0; width: var\(--hd-fast-scroll-width\); overflow: hidden; background: rgba\(184,184,188,0\); transition: background-color \.3s/);
+    expect(fs).toContain('.hd-fast-scroll.is-touched .hd-fast-scroll__band { background: rgba(184,184,188,.7); }');
     const w = mount(HdFastScroll, { props: { sections: secs, position: .2 } });
     expect(w.findAll('.hd-fast-scroll__sec').map((x) => x.text())).toEqual(['A', 'K', 'L']);
     expect(w.find('.hd-fast-scroll__dot').exists()).toBe(true);
@@ -147,6 +149,25 @@ describe('N9 fast scroll and Settings main page', () => {
   it('finger on the bar: dark band across the list up to the scroll band, big light letter at the left', () => {
     expect(fs).toMatch(/\.hd-fast-scroll__finger \{ position: absolute; left: 0; right: var\(--hd-fast-scroll-width\); height: var\(--hd-fast-scroll-finger, 120px\);[^}]*background: rgba\(26,26,26,\.85\);/);
     expect(fs).toMatch(/\.hd-fast-scroll__letter \{[^}]*color: #fff; font: 200 72px/);
+  });
+  it('only when the list scrolls: scrollable=false draws nothing (the list takes its full width)', () => {
+    expect(mount(HdFastScroll, { props: { sections: secs, scrollable: false } }).find('.hd-fast-scroll').exists()).toBe(false);
+  });
+  it('a touch turns the band grey; the letters come only once the finger moves', async () => {
+    const w = mount(HdFastScroll, { props: { sections: secs }, attachTo: document.body });
+    const band = w.find('.hd-fast-scroll__band');
+    (band.element as HTMLElement).getBoundingClientRect = () => ({ top: 0, height: 300, left: 0, right: 47, bottom: 300, width: 47, x: 0, y: 0, toJSON: () => ({}) });
+    const fire = async (type: string, clientY = 0) => { band.element.dispatchEvent(new MouseEvent(type, { clientY, bubbles: true })); await w.vm.$nextTick(); };
+    expect(w.find('.hd-fast-scroll').classes()).not.toContain('is-touched');
+    await fire('pointerdown', 150);
+    expect(w.find('.hd-fast-scroll').classes()).toContain('is-touched');
+    expect(w.find('.hd-fast-scroll__finger').exists()).toBe(false);
+    await fire('pointermove', 152);
+    expect(w.find('.hd-fast-scroll__finger').exists()).toBe(false);
+    await fire('pointermove', 170);
+    expect(w.find('.hd-fast-scroll__letter').text()).toBe('K');
+    await fire('pointerup');
+    w.unmount();
   });
   it('dragging snaps section by section and emits one jump per section', async () => {
     const w = mount(HdFastScroll, { props: { sections: secs }, attachTo: document.body });
@@ -163,6 +184,7 @@ describe('N9 fast scroll and Settings main page', () => {
     expect(w.find('.hd-fast-scroll__dot').exists()).toBe(false);
     await fire('pointerup');
     expect(w.find('.hd-fast-scroll__finger').exists()).toBe(false);
+    expect(w.find('.hd-fast-scroll').classes()).not.toContain('is-touched');
     w.unmount();
   });
   it('contacts: brand header, search, dark squircle initials, + left and ≡ right, no Back; list snaps to the section', () => {
