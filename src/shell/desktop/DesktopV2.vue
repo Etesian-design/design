@@ -157,7 +157,7 @@ const hints = computed<[string, string][]>(() => {
 </script>
 <template>
   <XDesktop :label="info.title">
-    <XMenuBar :app="barApp" :label="barLabel" :active="events ? 'events' : status ? 'status' : null" @events="st = events ? 'desktop' : 'events'" @status="st = status ? 'desktop' : 'status'" />
+    <XMenuBar :app="barApp" :label="barLabel" date="Sat 24 Oct" time="12:45" :active="events ? 'events' : status ? 'status' : null" @events="st = events ? 'desktop' : 'events'" @status="st = status ? 'desktop' : 'status'" />
     <div class="x-desktop__area x-v2" :class="`x-v2--${st}`">
       <!-- idea: widgets on the wallpaper, under the windows -->
       <XWidgets v-if="widgets" :editing="st === 'idea-widgets-edit'" :left="area.x" />

@@ -25,7 +25,6 @@ import { ref, reactive, computed, watch, nextTick, onMounted, onBeforeUnmount, p
 import HdIcon from '../../components/HdIcon.vue';
 import HdAppIcon from '../../components/HdAppIcon.vue';
 import HdSquircle from '../../components/HdSquircle.vue';
-import HdCountBubble from '../../components/HdCountBubble.vue';
 import XContextMenu from '../parts/XContextMenu.vue';
 import XLayoutPicker from './XLayoutPicker.vue';
 import XDockSettings from './XDockSettings.vue';
@@ -215,10 +214,6 @@ const menus = computed<ShellMenu[]>(() => [
   { label: 'Window', items: [...winItems(wm.focusedWin.value), ...wm.recent.value.filter(known).map((w, i) => ({ id: `w:show:${w.id}`, label: byId.value[w.id]!.title + (w.min ? ' (minimised)' : ''), divider: i === 0 }))] },
 ]);
 const openMenu = ref<string | null>(null);
-/* with a menu open, moving onto another opens that one; the click that follows must not close it again */
-let hoverAt = 0;
-function hoverMenu(label: string) { if (openMenu.value && openMenu.value !== label) { openMenu.value = label; hoverAt = Date.now(); } }
-function clickMenu(label: string) { if (openMenu.value === label && Date.now() - hoverAt < 400) return; openMenu.value = openMenu.value === label ? null : label; }
 function winAct(id: string, w?: WmWin) {
   if (!w) return;
   if (id === 'w:minimise') { if (w.min) open(w.id); else minimise(w.id); } else if (id === 'w:maximise') wm.toggleMax(w.id); else if (id === 'w:close') close(w.id);
@@ -226,7 +221,6 @@ function winAct(id: string, w?: WmWin) {
   else if (id === 'w:layouts') { wm.focus(w.id); picker.value = { layout: null, drag: false }; }
 }
 function onMenu(id: string) {
-  openMenu.value = null;
   if (id.startsWith('w:show:')) open(id.slice(7));
   else if (id.startsWith('w:')) winAct(id, wm.focusedWin.value);
   else if (id === 'v:overview') toggle('overview'); else if (id === 'v:windows') wm.switchStep(false, false); else if (id === 'v:search') toggle('launcher');
@@ -293,26 +287,12 @@ const tone = (id: string): IconTone | undefined => byId.value[id]?.tone;
   <div class="x-desktop x-desk hd-on-home" :class="`x-shell--dock-${dock.pos}`">
     <a href="#x-shell-area" class="x-shell__skip" @click.prevent="focusControls">Skip to the windows</a>
     <!-- menu bar -->
-    <header class="x-mbar hd-on-home x-shell__mbar" role="menubar" :aria-label="`${barApp} menu bar`">
-      <span v-if="$slots.mark" class="x-shell__mark"><slot name="mark" /></span>
-      <span class="x-mbar__app">{{ barApp }}</span>
-      <span v-for="m in menus" :key="m.label" class="x-mbar__m">
-        <button type="button" role="menuitem" class="x-mbar__menu hd-focusable" :class="{ 'is-open': openMenu === m.label }" :aria-expanded="openMenu === m.label ? 'true' : 'false'" aria-haspopup="menu"
-          @click="clickMenu(m.label)" @mouseenter="hoverMenu(m.label)">{{ m.label }}</button>
-        <span v-if="openMenu === m.label" class="x-mbar__drop x-shell__drop"><XContextMenu :open="true" :items="m.items" :label="m.label" @select="onMenu" @update:open="openMenu = null" /></span>
-      </span>
-      <span class="x-mbar__sp"></span>
-      <span class="x-mbar__status" aria-label="Status">
-        <slot name="indicators" />
-        <button v-if="eventsCount !== undefined" type="button" class="x-mbar__events hd-focusable" :class="{ 'is-active': events }" :aria-label="`Events: ${eventsCount} new`" title="Events" @click="toggle('events')"><HdCountBubble :value="eventsCount" /></button>
-        <button v-if="$slots.status" type="button" class="x-mbar__sicons hd-focusable" :class="{ 'is-active': status }" aria-label="Status menu" :aria-expanded="status ? 'true' : 'false'" @click="toggle('status')">
-          <slot name="status-icons"><HdIcon name="wifi" :size="15" /><HdIcon name="bluetooth" :size="15" /><HdIcon name="battery" :size="17" /></slot>
-        </button>
-        <button type="button" class="x-mbar__clock x-shell__clock hd-focusable" :class="{ 'is-active': events }" :aria-label="`${date}, ${time}, Events`" :aria-expanded="events ? 'true' : 'false'" title="Events" @click="toggle('events')">
-          <span>{{ date }}</span><b>{{ time }}</b></button>
-      </span>
-    </header>
-    <div v-if="openMenu" class="x-shell__scrim" @pointerdown="openMenu = null"></div>
+    <XMenuBar v-model:open-menu="openMenu" class="x-shell__mbar" :app="barApp" :menus="menus" :count="eventsCount ?? null" :hints="false" :status-button="!!$slots.status"
+      :active="events ? 'events' : status ? 'status' : null" :date="date" :time="time" @select="onMenu" @events="toggle('events')" @status="toggle('status')">
+      <template v-if="$slots.mark" #mark><slot name="mark" /></template>
+      <template #indicators><slot name="indicators" /></template>
+      <template #status-icons><slot name="status-icons"><HdIcon name="wifi" :size="15" /><HdIcon name="bluetooth" :size="15" /><HdIcon name="battery" :size="17" /></slot></template>
+    </XMenuBar>
 
     <div id="x-shell-area" ref="areaEl" tabindex="-1" class="x-desktop__area x-v2 x-shell__area" :class="{ 'x-v2--dock-edit': dockEdit }"
       @contextmenu="onContext" @pointermove="onMove" @pointerup="onUp" @pointercancel="onUp">
@@ -402,11 +382,6 @@ const tone = (id: string): IconTone | undefined => byId.value[id]?.tone;
 .x-shell__area { position: relative; flex: 1; min-height: 0; outline: none; }
 .x-shell__skip { position: absolute; z-index: 100; left: 8px; top: -60px; padding: 8px 12px; border-radius: 6px; background: var(--hd-surface-overlay); color: var(--hd-c-fg); }
 .x-shell__skip:focus { top: 34px; }
-.x-shell__mark { display: inline-flex; margin-right: 8px; }
-.x-shell__clock { border: 0; background: none; color: inherit; font: inherit; cursor: pointer; border-radius: 4px; }
-.x-shell__clock.is-active, .x-shell__clock:hover { background: var(--hd-c-pressed); }
-.x-shell__scrim { position: fixed; inset: 0; z-index: 59; }
-.x-shell__drop { z-index: 61; }
 html.x-shell-grab, html.x-shell-grab * { user-select: none !important; -webkit-user-select: none !important; }
 /* the Overview: Events | the windows (as cards) | the apps */
 .x-shell-ov { position: absolute; inset: 0; z-index: 8000; display: grid; grid-template-columns: 380px 1fr 380px; background: var(--hd-surface-home); }
