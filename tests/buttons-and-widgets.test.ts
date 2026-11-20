@@ -619,7 +619,7 @@ describe('hardware keyboard + dictionary', () => {
     for (const st of [M.MessagingConversationHw, M.MessagingComposeHw, M.MessagingConversationHwLandscape, M.MessagingComposeHwLandscape]) {
       const w = mount(st());
       expect(w.find('.xm-kb').exists()).toBe(false);
-      expect(w.find('.xm-phone').element.lastElementChild?.classList.contains('xm-strip')).toBe(true);
+      expect(w.find('.xm-win').element.lastElementChild?.classList.contains('xm-strip')).toBe(true);
       expect(w.find('.xm-strip .xm-send').exists()).toBe(true);
     }
     expect(mount(M.MessagingComposeHwLandscape()).find('.xm-phone--land').exists()).toBe(true);
