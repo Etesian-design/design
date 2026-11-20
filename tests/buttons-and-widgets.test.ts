@@ -164,7 +164,7 @@ describe('N9 fast scroll and Settings main page', () => {
     expect(w.find('[role=scrollbar]').attributes('aria-valuenow')).toBe('50');
   });
   it('finger on the bar: dark band across the list up to the scroll band, big light letter at the left', () => {
-    expect(fs).toMatch(/\.hd-fast-scroll__finger \{ position: absolute; left: 0; right: var\(--hd-fast-scroll-width\); height: var\(--hd-fast-scroll-finger, 120px\);[^}]*background: rgba\(26,26,26,\.85\);/);
+    expect(fs).toMatch(/\.hd-fast-scroll__finger \{ position: absolute; left: 0; right: 0; z-index: 1; height: var\(--hd-fast-scroll-finger, 100px\);[^}]*background: rgba\(26,26,26,\.85\);/);
     expect(fs).toMatch(/\.hd-fast-scroll__letter \{[^}]*color: #fff; font: 200 72px/);
   });
   it('only when the list scrolls: scrollable=false draws nothing (the list takes its full width)', () => {
