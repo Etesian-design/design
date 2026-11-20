@@ -137,14 +137,31 @@ describe('follow-ups', () => {
 describe('N9 fast scroll and Settings main page', () => {
   const fs = read('src/components/HdFastScroll.vue');
   const secs = [{ letter: 'A', top: 14 }, { letter: 'K', top: 300 }, { letter: 'L', top: 600 }];
-  it('wide translucent band on the right with section letters inside it', () => {
+  it('idle: only the section letters on the right; swipe-scrolling adds the dimmed bar with the dot on top', () => {
+    // 2026-11-20 (user): letters whenever the list scrolls; the bar and dot only while it moves; never drawn transparent
     expect(fs).toMatch(/--hd-fast-scroll-width: 47px;/);
-    // 2026-11-19 (user): the app's colour at rest, grey (smoothly) only while touched
-    expect(fs).toMatch(/\.hd-fast-scroll__band \{[^}]*right: 0; width: var\(--hd-fast-scroll-width\); overflow: hidden; background: rgba\(184,184,188,0\); transition: background-color \.3s/);
-    expect(fs).toContain('.hd-fast-scroll.is-touched .hd-fast-scroll__band { background: rgba(184,184,188,.7); }');
+    expect(fs).toContain('.hd-fast-scroll__bar { position: absolute; inset: 0; background: rgba(184,184,188,.7);');
+    expect(fs).not.toMatch(/rgba\(184,184,188,0\)/);
     const w = mount(HdFastScroll, { props: { sections: secs, position: .2 } });
     expect(w.findAll('.hd-fast-scroll__sec').map((x) => x.text())).toEqual(['A', 'K', 'L']);
+    expect(w.find('.hd-fast-scroll__bar').exists()).toBe(false);
+    expect(w.find('.hd-fast-scroll__dot').exists()).toBe(false);
+    const s = mount(HdFastScroll, { props: { sections: secs, position: .2, scrolling: true } });
+    expect(s.find('.hd-fast-scroll__bar .hd-fast-scroll__dot').exists()).toBe(true);
+    expect(s.find('.hd-fast-scroll__finger').exists()).toBe(false);
+  });
+  it('detects overflow from the container: no fast scroll when the list does not scroll; its scroll shows the bar', async () => {
+    const el = document.createElement('div');
+    Object.defineProperty(el, 'clientHeight', { value: 300 });
+    let sh = 200; Object.defineProperty(el, 'scrollHeight', { get: () => sh });
+    expect(mount(HdFastScroll, { props: { sections: secs, container: el } }).find('.hd-fast-scroll').exists()).toBe(false);
+    sh = 900;
+    const w = mount(HdFastScroll, { props: { sections: secs, container: el } });
+    expect(w.find('.hd-fast-scroll__sec').exists()).toBe(true);
+    expect(w.find('.hd-fast-scroll__bar').exists()).toBe(false);
+    el.scrollTop = 300; el.dispatchEvent(new Event('scroll')); await w.vm.$nextTick();
     expect(w.find('.hd-fast-scroll__dot').exists()).toBe(true);
+    expect(w.find('[role=scrollbar]').attributes('aria-valuenow')).toBe('50');
   });
   it('finger on the bar: dark band across the list up to the scroll band, big light letter at the left', () => {
     expect(fs).toMatch(/\.hd-fast-scroll__finger \{ position: absolute; left: 0; right: var\(--hd-fast-scroll-width\); height: var\(--hd-fast-scroll-finger, 120px\);[^}]*background: rgba\(26,26,26,\.85\);/);
@@ -153,7 +170,7 @@ describe('N9 fast scroll and Settings main page', () => {
   it('only when the list scrolls: scrollable=false draws nothing (the list takes its full width)', () => {
     expect(mount(HdFastScroll, { props: { sections: secs, scrollable: false } }).find('.hd-fast-scroll').exists()).toBe(false);
   });
-  it('a touch turns the band grey; the letters come only once the finger moves', async () => {
+  it('a touch brings the bar; the letters come only once the finger moves', async () => {
     const w = mount(HdFastScroll, { props: { sections: secs }, attachTo: document.body });
     const band = w.find('.hd-fast-scroll__band');
     (band.element as HTMLElement).getBoundingClientRect = () => ({ top: 0, height: 300, left: 0, right: 47, bottom: 300, width: 47, x: 0, y: 0, toJSON: () => ({}) });
@@ -412,8 +429,7 @@ describe('Phone: Android features', () => {
     const mdx = read('src/stories/guide/Phone.mdx');
     for (const k of ['storyId(s)', 'STATUS_LABEL[STATUS[s][0]]', 'LEAVE_OUT.map', 'QUESTIONS.map', 'NO_MOCK.map']) expect(mdx).toContain(k);
     expect(mdx).toContain('<Meta title="Guide/The phone" />'); expect(mdx).not.toMatch(/v2/); expect(mdx).not.toMatch(/[Pp]roposal|Roadmap/);
-    expect(storyId('banner')).toBe('phone-android-features--banner');
-    expect(storyId('history' as P2State)).toBe('phone-android-features--gallery'); // not a state: falls back to the gallery
+    expect(storyId('banner')).toBe('phone-android-features--all-features'); // one page story holds every state
     expect(LEAVE_OUT.map((l) => l[0])).toEqual(expect.arrayContaining(['One-handed mode', 'Bubbles', 'App pairs']));
     expect(QUESTIONS.length).toBe(2); // the rest were answered by building them
   });
