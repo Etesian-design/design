@@ -190,6 +190,58 @@ export const CSS = `<component is="style">
 .st-track { flex: 1; height: 8px; position: relative; background: #2A2A2A; box-shadow: inset 0 1px #111; }
 .st-track::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 52%; background: linear-gradient(#3A92E6, #1F72CC); }
 .st-knob { position: absolute; left: 52%; top: 50%; width: 42px; height: 42px; margin: -21px 0 0 -21px; background: linear-gradient(#FFFFFF, #DADADA); }
+/* toolbar glyphs are filled and embossed, as the N9 drew them: dark with a white lip on the light bar, light with a dark lip on the dark one */
+.n9-tb:not(.n9-tb--dark) svg { filter: drop-shadow(0 1.5px 0 rgba(255,255,255,.9)); }
+.n9-tb--dark svg { filter: drop-shadow(0 -1px 0 rgba(0,0,0,.7)); }
+/* contact editor keyboard: the N9 portrait keyboard is 320px, not HdKeyboard's 360 (story-local) */
+.ce-kb .hd-kb.hd-kb { height: 213.333px; }
+/* FM radio (no N9 app: the port's dark media look, N9 blue #00A5E5) */
+.fm-freq { margin-top: 44px; text-align: center; font: 200 150px/1 var(--hd-font-family-light); color: #fff; letter-spacing: -.02em; }
+.fm-freq small { font: 300 34px/1 var(--hd-font-family-light); color: #8C8C8C; margin-left: 8px; letter-spacing: 0; }
+.fm-name { margin-top: 14px; text-align: center; font: 600 26px/1 var(--hd-font-family-base); color: #00A5E5; } .fm-rds { margin-top: 10px; text-align: center; font: 400 20px/1 var(--hd-font-family-base); color: #8C8C8C; }
+.fm-dial { position: relative; height: 80px; margin: 36px 0 0; background: repeating-linear-gradient(90deg, #6A6A6A 0 2px, transparent 2px 96px) -1px 30px / 100% 34px no-repeat, repeating-linear-gradient(90deg, #3A3A3A 0 1px, transparent 1px 9.6px) 0 44px / 100% 20px no-repeat; }
+.fm-dial span { position: absolute; top: 4px; font: 400 18px/1 var(--hd-font-family-base); color: #8C8C8C; transform: translateX(-50%); }
+.fm-dial::after { content: ''; position: absolute; left: 50%; top: 26px; bottom: 6px; width: 4px; margin-left: -2px; background: #00A5E5; box-shadow: 0 0 8px rgba(0,165,229,.7); }
+.fm-ctl { display: flex; justify-content: center; gap: 22px; margin-top: 30px; }
+.fm-btn { width: 96px; height: 96px; display: grid; place-items: center; color: #fff; background: linear-gradient(#3A3A3A, #2A2A2A); box-shadow: inset 0 1px #5A5A5A; }
+.fm-btn.on { color: #00A5E5; }
+.fm-fav { display: flex; gap: 12px; padding: 0 16px; margin-top: 8px; }
+.fm-fav span { flex: 1; height: 74px; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 6px; background: linear-gradient(#2E2E2E, #1E1E1E); box-shadow: inset 0 1px #4A4A4A; font: 300 28px/1 var(--hd-font-family-light); color: #fff; }
+.fm-fav span small { font: 400 16px/1 var(--hd-font-family-base); color: #8C8C8C; } .fm-fav span.on { color: #00A5E5; }
+/* recorder (light, the ROM's static palette) */
+.ap-win.rc { background: #E9E9E9; }
+.rc-state { margin-top: 60px; text-align: center; font: 300 30px/1 var(--hd-font-family-light); color: #8C8C8C; }
+.rc-time { margin-top: 18px; text-align: center; font: 200 110px/1 var(--hd-font-family-light); color: #191919; }
+.rc-wave { display: flex; align-items: center; justify-content: center; gap: 4px; height: 150px; margin: 34px 16px 0; border-top: 1px solid #D6D6D6; border-bottom: 1px solid #D6D6D6; box-shadow: 0 1px #fff, inset 0 1px #fff; }
+.rc-wave i { width: 5px; background: #00A5E5; }
+.rc-ctl { display: flex; justify-content: center; align-items: center; gap: 46px; margin-top: 58px; }
+.rc-rec { width: 120px; height: 120px; display: grid; place-items: center; background: linear-gradient(#E4504C, #D42D2A 55%, #BC2220); box-shadow: inset 0 1px rgba(255,255,255,.45), 0 2px 4px rgba(0,0,0,.25); }
+.rc-sm { width: 76px; height: 76px; display: grid; place-items: center; color: #00A5E5; background: linear-gradient(#FFFFFF, #E4E4E6); box-shadow: inset 0 0 0 1px #C3C3C6, 0 1px 2px rgba(0,0,0,.2); }
+/* AudioFX (black, N9 blue accent, #2A2A2A controls) */
+.fx-head { display: flex; justify-content: space-between; align-items: center; height: 84px; margin: 0 16px; border-bottom: 1px solid #3A3A3A; font: 300 32px/1 var(--hd-font-family-light); color: #fff; }
+.fx-dev { display: flex; justify-content: space-between; align-items: center; height: 72px; margin: 14px 16px 0; padding: 0 16px; background: #2A2A2A; font: 600 24px/1 var(--hd-font-family-base); color: #fff; }
+.fx-dev small { color: #8C8C8C; font-weight: 400; font-size: 20px; }
+.fx-pre { display: flex; justify-content: space-between; align-items: center; height: 60px; margin: 18px 16px 0; font: 600 22px/1 var(--hd-font-family-base); color: #8C8C8C; } .fx-pre b { font: 300 30px/1 var(--hd-font-family-light); color: #fff; }
+.fx-eq { position: relative; display: flex; justify-content: space-around; height: 250px; margin: 6px 16px 0; padding: 0 6px; background: repeating-linear-gradient(#1A1A1A 0 1px, transparent 1px 50px); border-top: 1px solid #1A1A1A; }
+.fx-eq > span { position: relative; width: 56px; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; }
+.fx-eq > span i { width: 46px; background: linear-gradient(rgba(0,165,229,.95), rgba(0,165,229,.55)); box-shadow: inset 0 3px #6CCEF4; }
+.fx-eq > span small { position: absolute; bottom: -30px; font: 400 17px/1 var(--hd-font-family-base); color: #8C8C8C; }
+.fx-knobs { display: flex; justify-content: space-around; margin-top: 58px; }
+.fx-knob { display: flex; flex-direction: column; align-items: center; gap: 10px; font: 400 19px/1 var(--hd-font-family-base); color: #C8C8C8; }
+/* permission prompt (packages_modules_Permission: a 90% black backdrop, a lit green squircle, stacked 280dp N9 buttons) */
+.pm { position: absolute; inset: 0; z-index: 5; background: rgba(0,0,0,.9); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0 30px; text-align: center; }
+.pm-ic { width: 118px; height: 118px; display: grid; place-items: center; color: #fff; background: linear-gradient(#9BDB1C, #3A9A00); }
+.pm h2 { margin: 22px 0 0; font: 300 35px/1.25 var(--hd-font-family-light); color: #fff; }
+.pm-btns { display: flex; flex-direction: column; gap: 19px; margin-top: 38px; }
+.pm-b { width: 374px; height: 70px; --hd-sqf-h: 70px; --hd-sqf-edge: #4A4A4C; --hd-sqf-fill: linear-gradient(#3A3A3C, #232325 50%, #1A1A1C); display: grid; place-items: center; font: 700 24px/1 var(--hd-font-family-base); color: #fff; }
+.pm-b.allow { --hd-sqf-edge: #2E64C0; --hd-sqf-fill: linear-gradient(#5AA0FF, #3A7BE0); }
+/* Files (DocumentsUI): opens on Documents, every document on the phone */
+.ap-win.fl { background: #F4F4F4; }
+.fl-title { flex: none; height: 72px; display: flex; align-items: center; padding: 0 17px 2px; background: #F26F17; color: #fff; font: 300 32px/1 var(--hd-font-family-light); }
+.fl-pill { margin: 14px 16px 6px; height: 46px; display: flex; align-items: center; gap: 12px; padding: 0 16px; border-radius: 23px; background: #E6E6E6; border: 1px solid #D6D6D6; font: 300 22px/1 var(--hd-font-family-light); color: #8C8C8C; }
+.fl-row { display: flex; align-items: center; gap: 18px; height: 88px; padding: 0 16px; border-bottom: 1px solid #D6D6D6; box-shadow: 0 1px #fff; }
+.fl-row .t { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 8px; } .fl-row b { font: 600 25px/1.1 var(--hd-font-family-base); color: #191919; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .fl-row small { font: 400 19px/1 var(--hd-font-family-base); color: #8C8C8C; }
+.fl-ic { flex: none; width: 64px; height: 64px; display: grid; place-items: center; background: #fff; box-shadow: inset 0 0 0 1px #D6D6D6; }
 </component>`;
 
 /* ---- glyphs ---- */
@@ -217,6 +269,30 @@ const G = {
   pause: '<svg width="22" height="26" viewBox="0 0 22 26" aria-hidden="true"><rect x="2" y="1" width="6" height="24" fill="currentColor"/><rect x="14" y="1" width="6" height="24" fill="currentColor"/></svg>',
   shuffle: '<svg width="34" height="28" viewBox="0 0 34 28" aria-hidden="true"><path d="M2 7h7c8 0 8 14 16 14h5M2 21h7c3 0 4.5-2 6-4.5M19 10.5C20.5 8.5 22 7 25 7h5M26 2l5 5-5 5M26 16l5 5-5 5" fill="none" stroke="currentColor" stroke-width="3"/></svg>',
   bag: '<svg width="26" height="34" viewBox="0 0 26 34" aria-hidden="true"><path d="M8 9V6a5 5 0 0 1 10 0v3" fill="none" stroke="#fff" stroke-width="2.4"/><path d="M1 9h24v24H1z" fill="#fff"/><path d="M15 15v10.5a3 3 0 1 1-2-2.8V15h5v3h-3" fill="#111"/></svg>',
+};
+
+/** A filled five-point star path, centred in a w x w box. */
+const starPath = (w: number) => { const c = w / 2; return Array.from({ length: 10 }, (_, i) => { const r = i % 2 ? c * 0.42 : c * 0.98; const a = -Math.PI / 2 + i * Math.PI / 5; return `${i ? 'L' : 'M'}${(c + r * Math.cos(a)).toFixed(1)} ${(c + 1 + r * Math.sin(a)).toFixed(1)}`; }).join('') + 'z'; };
+/** Filled N9 toolbar glyphs (currentColor): the N9 drew every toolbar glyph as a solid shape, never a thin outline. */
+const F = {
+  star: `<svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true"><path d="${starPath(34)}" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>`,
+  pictures: '<svg width="38" height="32" viewBox="0 0 38 32" aria-hidden="true"><path fill-rule="evenodd" fill="currentColor" d="M1 3h36v26H1zM5 25h28l-9-11-6 7-4-4zM11 7a4 4 0 1 0 0 8 4 4 0 0 0 0-8z"/></svg>',
+  share: '<svg width="32" height="34" viewBox="0 0 32 34" aria-hidden="true"><path fill="currentColor" d="M16 1 26 11h-6.5v12h-7V11H6zM2 19h6v8h16v-8h6v14H2z"/></svg>',
+  delete: '<svg width="30" height="34" viewBox="0 0 30 34" aria-hidden="true"><path fill="currentColor" d="M10 1h10v3h9v5H1V4h9zM3 11h24l-2 22H5z"/></svg>',
+  back: '<svg width="36" height="32" viewBox="0 0 36 32" aria-hidden="true"><path fill="currentColor" d="M1 16 16 1v9h19v12H16v9z"/></svg>',
+  list: '<svg width="34" height="30" viewBox="0 0 34 30" aria-hidden="true"><path fill="currentColor" d="M1 2h6v6H1zM11 2h22v6H11zM1 12h6v6H1zM11 12h22v6H11zM1 22h6v6H1zM11 22h22v6H11z"/></svg>',
+  grid: '<svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><path fill="currentColor" d="M1 1h13v13H1zM18 1h13v13H18zM1 18h13v13H1zM18 18h13v13H18z"/></svg>',
+  search: '<svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true"><circle cx="14" cy="14" r="10" fill="none" stroke="currentColor" stroke-width="5"/><path d="M21 21l10 10" stroke="currentColor" stroke-width="6" stroke-linecap="round"/></svg>',
+  folder: '<svg width="38" height="32" viewBox="0 0 38 32" aria-hidden="true"><path fill="currentColor" d="M1 3h13l4 4h19v24H1z"/></svg>',
+  newFolder: '<svg width="38" height="32" viewBox="0 0 38 32" aria-hidden="true"><path fill="currentColor" fill-rule="evenodd" d="M1 3h13l4 4h19v24H1zM17 12v5h-5v4h5v5h4v-5h5v-4h-5v-5z"/></svg>',
+  sort: '<svg width="34" height="32" viewBox="0 0 34 32" aria-hidden="true"><path fill="currentColor" d="M8 1l8 9h-5.5v21h-5V10H0zM26 31l8-9h-5.5V1h-5v21H18z"/></svg>',
+  mic: '<svg width="28" height="36" viewBox="0 0 28 36" aria-hidden="true"><rect x="7" y="1" width="14" height="22" rx="7" fill="currentColor"/><path d="M2 16c0 7 5 12 12 12s12-5 12-12" fill="none" stroke="currentColor" stroke-width="3.5"/><path fill="currentColor" d="M12 27h4v6h6v3H6v-3h6z"/></svg>',
+  record: '<svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true"><circle cx="17" cy="17" r="14" fill="currentColor"/></svg>',
+  speaker: '<svg width="36" height="32" viewBox="0 0 36 32" aria-hidden="true"><path fill="currentColor" d="M1 10h7l10-9v30L8 22H1z"/><path d="M23 9c3 4 3 10 0 14M28 5c5 6 5 16 0 22" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/></svg>',
+  power: '<svg width="40" height="40" viewBox="0 0 40 40" aria-hidden="true"><path d="M13 9a14 14 0 1 0 14 0" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"/><path d="M20 3v17" stroke="currentColor" stroke-width="5" stroke-linecap="round"/></svg>',
+  location: '<svg width="28" height="34" viewBox="0 0 28 34" aria-hidden="true"><path fill="currentColor" fill-rule="evenodd" d="M14 33C5 22 1 16 1 13a13 13 0 0 1 26 0c0 3-4 9-13 20zM14 8a5 5 0 1 0 0 10 5 5 0 0 0 0-10z"/></svg>',
+  camera: '<svg width="36" height="32" viewBox="0 0 34 32" aria-hidden="true"><path fill="currentColor" fill-rule="evenodd" d="M1 8h7l3-5h12l3 5h7v22H1zM17 11a7.5 7.5 0 1 0 0 15 7.5 7.5 0 0 0 0-15z"/></svg>',
+  stop: '<svg width="40" height="40" viewBox="0 0 40 40" aria-hidden="true"><rect x="5" y="5" width="30" height="30" rx="5" fill="currentColor"/></svg>',
 };
 
 /* ---- shells ---- */
@@ -262,6 +338,11 @@ export const DOCS = {
   browser: 'The address field "Go to web address or search" (48px, squircle ends) is the only thing on top, on a light band. Then **Top sites** as huge type in 87px rows on white, each site its name set large (the brand bold and blue, the rest light), then the history on light grey grouped by date: a globe squircle, the title semibold and the address. On a page, the N9 browser put Back, the address and its menu in a bar at the top that scrolls away: **Etesian moves those to the bottom toolbar** (rule 1); the toolbar hides as you scroll down and comes back as you scroll up.',
   documents: 'An **orange title bar** (72px), then every document, newest first, grouped by **age** ("Today", "Yesterday", "5 years ago" at the right end of a line) on #EEF0F1. Each 80px row: a light squircle with the file\'s glyph and type, the name semibold, the kind under it, the size at the bottom right. No folders, no tabs. Toolbar: the menu only.',
   settings: 'The N9 Settings main list (n9-settings-main.png) on black, with the ROM\'s entries: "Settings" light 32px over a rule, **Flight mode** with an (i) squircle and the dark N9 switch, Network and internet ›, Mobile network ›, a rule, **Brightness** with its slider (blue fill, a white squircle knob, a sun at each end), a rule, then the sections as 80px rows: a 62px dark **squircle** with a white glyph, the name semibold 26px, ›. No title bar, no toolbar.',
+  fmRadio: '**No N9 reference**: the N9 shipped no FM radio, so this follows the port\'s N9 media look (packages_apps_FMRadio patch): black window, white text, secondary grey #8C8C8C, the N9 blue #00A5E5 as the only accent. "FM Radio" light 32px over a rule, the frequency in huge light type with MHz in grey, the station and its RDS text; a tuning strip with a glowing blue needle; the round FAB becomes **dark squircle buttons** (#3A3A3A → #2A2A2A): seek back, power (blue when on), seek on; favourites as dark squircle tiles, the tuned one blue. Dark toolbar, filled glyphs: speaker / headset output, record, menu.',
+  recorder: '**No N9 reference** (the N9 had no sound recorder app); the packages_apps_Recorder patch pins a static light palette: window #E9E9E9, text #191919, secondary #8C8C8C, rules #D6D6D6 with a white lip. While recording: "Recording" in grey light type, the elapsed time 110px light, the level bars in N9 blue, then the record button turned **red** (#D42D2A, a white stop square; blue #00A5E5 with a mic when ready) between two light squircles (pause, discard). Light toolbar, filled glyphs: recordings list, menu.',
+  audioFx: '**No N9 reference**; the packages_apps_AudioFX patch makes it black with the N9 blue: the output (speaker) on a #2A2A2A row with the N9 switch, the preset (popup #2A2A2A, 4dp corners), the equaliser bands as **blue bars** (#00A5E5, the old white bars recoloured), and the Bass / Virtualizer / Reverb knobs with a #2A2A2A track and a blue arc. etesian-text everywhere. Dark toolbar: back and menu.',
+  permission: 'The runtime permission prompt as packages_modules_Permission styles it (an N9 QueryDialog, mock 15): the dialog fills the screen over a **90% black backdrop** (no card, no dim), the permission\'s glyph in white on a **lit green squircle** (88dp, n = 2.8, #9BDB1C → #3A9A00), the question centred in large **light** type (no bold app name), then **stacked** 280dp N9 buttons, 52dp, 7dp apart: **Allow** blue (#5AA0FF → #3A7BE0), Only this time and Don\'t allow dark (#3A3A3C → #1A1A1C); bold 18sp, not all caps. "Allow" grants while in use, as the stock foreground button did.',
+  files: 'Files (DocumentsUI) as the ROM ships it: it **opens on Documents**, every document on the phone (default_root_uri = documents_root), as the N9\'s Documents did, not on a folder. The N9 Documents **orange title bar** (#F26F17, white light title), a grey rounded search pill, then flat rows on #F4F4F4: a white squircle icon tile with a hairline edge, the name bold #191919, "size | date" in grey #8C8C8C, an engraved rule (grey + white). The options menu is mirrored on the **Etesian toolbar**, filled glyphs: locations, search, new folder, sort, grid (list when in grid).',
 };
 
 export const phone = () => app(`
@@ -293,7 +374,7 @@ export const contactEditor = () => app(`
       <div class="ce-f"><u>Home:</u> <i>Add email address</i></div>
       <div class="ce-more"><span class="hd-sqf">▼</span></div>
     </div>
-    <div style="flex:none;zoom:1.5;width:320px"><HdKeyboard /></div>`);
+    <div class="ce-kb" style="flex:none;zoom:1.5;width:320px"><HdKeyboard /></div>`);
 
 export const calculator = () => app(`
     <div class="ca-out">0<span class="ca-bs">✕</span></div><div class="ca-line"></div>
@@ -343,11 +424,11 @@ export const calendarMenu = () => app(`${agendaBody}${tabs(CAL_TABS, 3)}
 
 export const gallery = () => ({ components: comps, setup: () => ({ pic }), template: app(`
     <div class="ap-body"><div class="ga-grid"><i v-for="i in 15" :key="i" :style="{ background: pic(i) }"><small v-if="i < 3">00:{{ i === 1 ? '01' : '19' }}</small></i></div>
-    <div class="ga-tb">${tabs(['star', 'photo', 'star', 'person', 'menu'], 0, true)}</div></div>`, 'ap--dark', false) });
+    <div class="ga-tb">${tabs([F.pictures, F.camera, F.star, G.person, G.menu], 0, true)}</div></div>`, 'ap--dark', false) });
 
 export const photo = () => app(`
     <div class="ap-body" style="background:${pic(1)}"><div class="ga-info"><b>IMG_0412</b><div><span>9 May 2026 10:56</span><span>Athens, Greece</span></div></div></div>
-    ${toolbar(ico('back', 36), `${ico('star', 32)}&emsp;&emsp;${ico('share', 32)}&emsp;&emsp;${ico('delete', 32)}&emsp;&emsp;${ico('menu', 32)}`, true)}`, 'ap--dark');
+    ${toolbar(F.back, `${F.star}&emsp;&emsp;${F.share}&emsp;&emsp;${F.delete}&emsp;&emsp;${G.menu}`, true)}`, 'ap--dark');
 
 export const music = () => app(`
     <div class="ap-body"><div class="mu-wall">
@@ -360,7 +441,7 @@ export const nowPlaying = () => app(`
     <div class="ap-body"><div style="height:480px;display:flex"><i class="cv big" style="flex:1;font-size:64px;word-break:normal;background:${COVERS[3].bg};color:${COVERS[3].fg};font-style:normal">Northern rocks</i></div>
       <div class="mu-now"><b>Episode 264 (The Best Of 2013)<span>2/3</span></b><p>Sample artist<br>Sample album<i class="${SQ}">···</i></p></div>
       <div class="mu-ctl">${G.prev}${G.pause}<span style="transform:scaleX(-1);display:inline-grid">${G.prev}</span></div><div class="mu-prog"></div><div class="mu-t"><span>43:39</span><span>2:00:00</span></div></div>
-    <div class="n9-tb n9-tb--dark" style="padding:1px 16px 0 10px"><span class="mu-back ${SQ}">${ico('back', 34)}</span>${ico('star', 32)}<span style="opacity:.35">${G.shuffle}</span>${ico('restart', 32)}${G.menu}</div>`, 'ap--dark');
+    <div class="n9-tb n9-tb--dark" style="padding:1px 16px 0 10px"><span class="mu-back ${SQ}">${F.back}</span>${ico('star', 32)}<span style="opacity:.35">${G.shuffle}</span>${ico('restart', 32)}${G.menu}</div>`, 'ap--dark');
 
 export const browser = () => app(`
     <div class="br-top"><div class="n9-field hd-sqf">Go to web address or search</div></div>
@@ -393,3 +474,48 @@ export const settings = () => app(`
       <div class="st-rule"></div>
       ${[['bluetooth', 'Connected devices'], ['grid', 'Apps'], ['info', 'Notifications'], ['speaker', 'Sound and vibration'], ['photo', 'Display and wallpaper'], ['battery', 'Battery']].map(([i, n]) => `<div class="st-row ic">${stIc(i)}<span class="n">${n}</span>${chev('#fff')}</div>`).join('')}
     </div>`, 'ap--dark');
+
+export const fmRadio = () => app(`
+    <div class="st-h">FM Radio</div>
+    <div class="ap-body">
+      <div class="fm-freq">98.5<small>MHz</small></div><div class="fm-name">Radio Etesian</div><div class="fm-rds">Morning show - news at 9</div>
+      <div class="fm-dial">${[['97', 20], ['98', 40], ['99', 60], ['100', 80]].map(([f, x]) => `<span style="left:${x}%">${f}</span>`).join('')}</div>
+      <div class="fm-ctl"><span class="fm-btn ${SQ}">${G.prev}</span><span class="fm-btn on ${SQ}">${F.power}</span><span class="fm-btn ${SQ}"><span style="transform:scaleX(-1);display:inline-grid">${G.prev}</span></span></div>
+      <div class="st-h" style="font-size:26px;margin-top:28px;padding:10px 0;border:0;color:#8C8C8C">Favourites</div>
+      <div class="fm-fav">${[['91.3', 'Classic'], ['98.5', 'Etesian'], ['102.1', 'Jazz'], ['105.8', 'News']].map(([f, n]) => `<span class="${SQ} ${f === '98.5' ? 'on' : ''}">${f}<small>${n}</small></span>`).join('')}</div>
+    </div>
+    ${toolbar(F.speaker, `${F.record}&emsp;&emsp;&emsp;${G.menu}`, true)}`, 'ap--dark');
+
+export const recorder = () => app(`
+    <div class="n9-title" style="background:linear-gradient(#1AAFEA,#00A0E0)">Recorder</div>
+    <div class="ap-body"><div class="rc-state">Recording</div><div class="rc-time">0:42</div>
+      <div class="rc-wave">${[18, 34, 60, 42, 88, 120, 96, 70, 104, 132, 90, 54, 76, 110, 84, 46, 62, 98, 72, 40, 28, 52, 80, 64, 36, 22, 14, 10, 8, 6].map((h, i) => `<i style="height:${h}px;opacity:${i > 25 ? .35 : 1}"></i>`).join('')}</div>
+      <div class="rc-ctl"><span class="rc-sm ${SQ}">${G.pause}</span><span class="rc-rec ${SQ}"><span style="color:#fff;display:inline-grid">${F.stop}</span></span><span class="rc-sm ${SQ}" style="color:#8C8C8C">${F.delete}</span></div></div>
+    ${toolbar(F.list, G.menu)}`, 'ap--light', true, 'rc');
+
+/** The N9 switch turned on: a blue track, the knob at the right. */
+const swOn = `<svg class="n9-sw" viewBox="0 0 64 40" aria-hidden="true"><path d="${squircleRectPath(64, 40, 3.6)}" fill="#00A5E5" stroke="#0088C0" stroke-width="1"/><path d="${squircleRectPath(32, 32, 2.8, 28, 4)}" fill="#F2F2F4"/></svg>`;
+const knob = (label: string, v: number) => { const r = 44, c = 2 * Math.PI * r, arc = 0.75 * c; return `<span class="fx-knob"><svg width="116" height="116" viewBox="0 0 116 116" aria-hidden="true"><g transform="rotate(135 58 58)"><circle cx="58" cy="58" r="${r}" fill="none" stroke="#2A2A2A" stroke-width="10" stroke-dasharray="${arc} ${c}"/><circle cx="58" cy="58" r="${r}" fill="none" stroke="#00A5E5" stroke-width="10" stroke-dasharray="${arc * v} ${c}"/></g><circle cx="58" cy="58" r="30" fill="#1E1E1E" stroke="#3A3A3A"/><text x="58" y="65" fill="#fff" font-size="20" text-anchor="middle" font-family="sans-serif">${Math.round(v * 100)}%</text></svg>${label}</span>`; };
+export const audioFx = () => app(`
+    <div class="fx-head">AudioFX${swOn}</div>
+    <div class="ap-body">
+      <div class="fx-dev">Speaker<small>Effects on</small></div>
+      <div class="fx-pre">Preset<b>Rock ▾</b></div>
+      <div class="fx-eq">${[['60', 150], ['230', 110], ['910', 70], ['3.6k', 120], ['14k', 170]].map(([f, h]) => `<span><i style="height:${h}px"></i><small>${f} Hz</small></span>`).join('')}</div>
+      <div class="fx-knobs">${knob('Bass', 0.6)}${knob('Virtualizer', 0.35)}${knob('Reverb', 0.15)}</div>
+    </div>
+    ${toolbar(F.back, G.menu, true)}`, 'ap--dark');
+
+/** The permission prompt over the app that asked (Recorder, dimmed by the 90% backdrop). */
+export const permission = () => app(`
+    <div class="n9-title" style="background:linear-gradient(#1AAFEA,#00A0E0)">Recorder</div><div class="ap-body" style="background:#E9E9E9"></div>${toolbar(F.list, G.menu)}
+    <div class="pm"><span class="pm-ic ${SQ}"><svg width="54" height="62" viewBox="0 0 28 36" aria-hidden="true"><rect x="7" y="1" width="14" height="22" rx="7" fill="#fff"/><path d="M2 16c0 7 5 12 12 12s12-5 12-12" fill="none" stroke="#fff" stroke-width="3.5"/><path fill="#fff" d="M12 27h4v6h6v3H6v-3h6z"/></svg></span>
+      <h2>Allow Recorder to record audio?</h2>
+      <div class="pm-btns"><span class="pm-b allow hd-sqf">Allow</span><span class="pm-b hd-sqf">Only this time</span><span class="pm-b hd-sqf">Don't allow</span></div></div>`);
+
+const flIc = (t: string, c: string) => `<span class="fl-ic ${SQ}"><svg width="30" height="38" viewBox="0 0 26 34" aria-hidden="true"><path d="M1 1h16l8 8v24H1z" fill="${c}"/><path d="M17 1v8h8" fill="rgba(255,255,255,.5)"/><text x="13" y="27" fill="#fff" font-size="8" font-weight="700" text-anchor="middle" font-family="sans-serif">${t}</text></svg></span>`;
+export const files = () => app(`
+    <div class="fl-title">Documents</div>
+    <div class="ap-body"><div class="fl-pill">${F.search.replace('width="34" height="34"', 'width="24" height="24"')}Search documents</div>
+      ${[['PDF', '#D42D2A', 'Report 2026.pdf', '139 kB | 18:02'], ['XLS', '#2E8B3A', 'Budget.xlsx', '22 kB | 12:40'], ['PDF', '#D42D2A', 'Tickets.pdf', '10.3 MB | 09:15'], ['TXT', '#5A5A5A', 'Notes for the trip.txt', '1 kB | Yesterday'], ['DOC', '#2A6BD0', 'Letter.docx', '48 kB | 2 Nov'], ['PDF', '#D42D2A', 'Manual.pdf', '2.2 MB | 2021']].map(([t, c, n, m]) => `<div class="fl-row">${flIc(t, c)}<span class="t"><b>${n}</b><small>${m}</small></span></div>`).join('')}</div>
+    <div class="n9-tb">${[F.location, F.search, F.newFolder, F.sort, F.grid].map((g) => `<span>${g}</span>`).join('')}</div>`, 'ap--light', true, 'fl');

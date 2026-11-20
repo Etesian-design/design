@@ -48,6 +48,16 @@ export const Documents: S = { name: 'Documents', parameters: { docs: { descripti
 
 export const Settings: S = { name: 'Settings', parameters: { docs: { description: { story: N9.DOCS.settings } } }, render: () => ({ components: comps, template: N9.settings() }) };
 
+export const Files: S = { name: 'Files: opens on documents', parameters: { docs: { description: { story: N9.DOCS.files } } }, render: () => ({ components: comps, template: N9.files() }) };
+
+export const FmRadio: S = { name: 'FM Radio', parameters: { docs: { description: { story: N9.DOCS.fmRadio } } }, render: () => ({ components: comps, template: N9.fmRadio() }) };
+
+export const Recorder: S = { name: 'Recorder', parameters: { docs: { description: { story: N9.DOCS.recorder } } }, render: () => ({ components: comps, template: N9.recorder() }) };
+
+export const AudioFx: S = { name: 'AudioFX', parameters: { docs: { description: { story: N9.DOCS.audioFx } } }, render: () => ({ components: comps, template: N9.audioFx() }) };
+
+export const Permission: S = { name: 'Permission prompt', parameters: { docs: { description: { story: N9.DOCS.permission } } }, render: () => ({ components: comps, template: N9.permission() }) };
+
 /* ---- Camera (PR1.3), measured from the user's own N9 captures (n9-ref/camera, SPEC.md), in N9 px. ----
    Every control is drawn as an SVG n = 2.8 squircle (pills: squircle-half ends), dark see-through with a thin light
    outline; glyphs are Etesian's own (the same paths as the Aperture patch's vector drawables). */
