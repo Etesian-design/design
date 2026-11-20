@@ -24,22 +24,23 @@ const CSS = `<component is="style">
 .gl-body { flex: 1; overflow: hidden; }
 .gl-sb { flex: none; height: 24px; display: flex; align-items: center; gap: 6px; padding: 0 8px; color: #E6E2E6; font: 700 13px/1 var(--hd-font-family-base); }
 .gl-sb .t { margin-left: auto; } .gl-sb .bat { width: 20px; height: 10px; border: 1.5px solid currentColor; border-radius: 2px; }
-.gl-sug { display: flex; align-items: center; gap: 14px; padding: 9px 16px 9px 25px; font-size: 16px; }
-.gl-search { margin: 10px 12px 8px; height: 46px; display: flex; align-items: center; gap: 10px; padding: 0 14px; border-radius: 23px; background: #1C1C1C; border: 1px solid #333; color: #9A9A9A; font-size: 16px; }
-.gl-search b { flex: 1; color: #F2F2F2; font-weight: 400; } .gl-search .gl-x { color: #9A9A9A; }
-.gl-head { padding: 16px 16px 6px; font: 700 13px/1 var(--hd-font-family-base); letter-spacing: .06em; text-transform: uppercase; color: #00A5E5; }
+.gl-sug { display: flex; align-items: center; gap: 14px; padding: 8px 16px; font-size: 16px; } .gl-sug > span { flex: none; width: 40px; height: 40px; display: grid; place-items: center; color: #9A9A9A; } /* a bare glyph, inset 10 in the 40 dp icon box */
+.gl-search { margin: 10px 12px 8px; height: 48px; display: flex; align-items: center; gap: 10px; padding: 0 4px 0 14px; border-radius: 24px; background: #1C1C1C; border: 1px solid #333; color: #9A9A9A; font-size: 17px; }
+.gl-search b { flex: 1; color: #F2F2F2; font-weight: 400; } .gl-search .gl-x { flex: none; width: 44px; height: 44px; display: grid; place-items: center; color: #9A9A9A; }
+.gl-head { padding: 18px 16px 6px; font: 700 13px/1 var(--hd-font-family-base); letter-spacing: .06em; text-transform: uppercase; color: #00A5E5; }
 .gl-row { display: flex; align-items: center; gap: 14px; padding: 8px 16px; }
 .gl-row > .gl-t { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
 .gl-row b { font: 400 16px/1.2 var(--hd-font-family-base); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .gl-row small { font-size: 13.5px; color: #9A9A9A; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.gl-letter { color: #fff; font: 700 20px/1 var(--hd-font-family-base); }
 .gl-row i { font-style: normal; font-size: 12px; color: #9A9A9A; }
 .gl-site { flex: none; padding: 10px 20px; font-size: 14px; color: #9A9A9A; }
-.gl-reader { flex: 1; overflow: hidden; font: 17px/1.6 "Noto Serif", Georgia, serif; }
-.gl-reader .gl-hero { aspect-ratio: 16 / 9; }
-.gl-reader .gl-pad { padding: 4px 20px; }
+.gl-reader { flex: 1; overflow: hidden; padding-top: 8px; font: 19px/1.6 "Noto Serif", Georgia, serif; }
+.gl-reader .gl-hero { aspect-ratio: 16 / 9; margin-bottom: 18px; }
+.gl-reader .gl-pad { padding: 0 20px; }
 .gl-reader .gl-kicker { margin: 12px 0 6px; font: 600 13px/1.4 var(--hd-font-family-base); letter-spacing: .06em; text-transform: uppercase; color: #00A5E5; }
-.gl-reader h1 { margin: 0 0 10px; font: 700 26px/1.25 var(--hd-font-family-base); }
-.gl-reader .gl-by { margin-bottom: 14px; font: 14px/1.4 var(--hd-font-family-base); color: #9A9A9A; }
+.gl-reader h1 { margin: 0 0 10px; font: 700 1.55em/1.25 var(--hd-font-family-base); }
+.gl-reader .gl-by { margin-bottom: 18px; font: 14px/1.4 var(--hd-font-family-base); color: #9A9A9A; }
 .gl-reader p { margin: 0 0 1em; } .gl-reader a { color: #00A5E5; text-decoration: none; }
 </component>`;
 const phone = (inner: string) => `${CSS}<div class="gl-phone"><div class="gl-sb"><span class="bat"></span><HdIcon name="wifi" :size="14" /><span class="t">19:17</span></div>${inner}</div>`;
@@ -53,7 +54,7 @@ export const News: S = {
   name: 'News: picture cards',
   parameters: { docs: { description: { story: 'The front page: a search bar on top (a field, not a button: fields stay where the eye starts), then **Top stories** and **For you**. Every story is a card with its picture edge to edge at 16:9, the headline, and where it is from. The actions (Refresh, Settings) are on the bottom toolbar; the screen has no Back because it is the app\'s first screen.' } } },
   render: () => ({ components: comps, setup: () => ({ PHOTO }), template: phone(`
-    <div class="gl-search"><HdIcon name="search" :size="20" /><span>Search your phone and the web</span></div>
+    <div class="gl-search"><HdIcon name="search" :size="22" /><span>Search your phone and the web</span></div>
     <div class="gl-body">
       <div class="gl-head">Top stories</div>
       <HdStoryCard lead title="Leaders meet on the summit sidelines as talks on trade resume" source="World Service" age="27 min" :outlets="5" section="World" :image="PHOTO[0]" />
@@ -77,13 +78,13 @@ export const Search: S = {
   name: 'Search everything',
   parameters: { docs: { description: { story: 'Typing replaces the news with results, in sections: **Applications first**, the web last, the rest by how well they match (contacts, messages, notifications — even ones already dismissed —, settings pages, files, the news). The web section ends with the search engine\'s suggestions. Matching is by the start of a name or any of its words, or initials (“gm” → Maps by G…). Enter opens the first result. The ✕ in the field clears it; Back clears it too before leaving. The launcher shows the same results under the apps in its own search.' } } },
   render: () => ({ components: comps, template: phone(`
-    <div class="gl-search"><HdIcon name="search" :size="20" /><b>ann</b><span class="gl-x">✕</span></div>
+    <div class="gl-search"><HdIcon name="search" :size="22" /><b>ann</b><span class="gl-x" role="button" aria-label="Clear"><HdIcon name="close" :size="22" /></span></div>
     <div class="gl-body">
       <div class="gl-head">Applications</div>${row('calendar', '#E8483F', 'Anniversary planner')}
-      <div class="gl-head">Contacts</div>${row('person', '#1C6FD1', 'Anna Petrou', 'Mobile')}
+      <div class="gl-head">Contacts</div><div class="gl-row"><HdSquircle :size="40" color="#00A5E5"><b class="gl-letter">A</b></HdSquircle><span class="gl-t"><b>Anna Petrou</b><small>+30 694 123 4567</small></span></div>
       <div class="gl-head">Messages</div>${row('message', '#09A7CC', 'Anna Petrou', 'See you at seven by the lake', '2 h')}
-      <div class="gl-head">Settings</div>${row('settings', '#5C5C5C', 'Announcements', 'Accessibility')}
-      <div class="gl-head">Web</div>${row('search', '#3A3A3A', 'Search the web for “ann”')}${['ann widdecombe', 'ann taylor', 'anne frank'].map((q) => `<div class="gl-sug"><HdIcon name="search" :size="20" />${q}</div>`).join('')}
+      <div class="gl-head">Settings</div>${row('settings', '#5C5C5C', 'Announcements', 'Settings')}
+      <div class="gl-head">Web</div>${row('search', '#3A3A3A', 'Search the web for “ann”')}${['ann widdecombe', 'ann taylor', 'anne frank'].map((q) => `<div class="gl-sug"><span><HdIcon name="search" :size="20" /></span>${q}</div>`).join('')}
     </div>${NEWS_BAR}`) }),
 };
 
