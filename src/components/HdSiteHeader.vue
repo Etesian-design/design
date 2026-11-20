@@ -7,11 +7,23 @@
  * The `logo` slot goes before the brand name. An app bar (XClassic) uses the same header: `layout="app"` spans the full
  * width, tighter; `start` goes before the brand (the apps button), `nav` replaces the links (the app's title and actions),
  * `actions` stays at the right end. An empty `brand` hides the brand; `brand-href` null makes it plain text.
+ * The bottom bar holds what an N9 ToolBar holds (at most 5 items): with more links the first 4 stay and the rest go in a
+ * "More" item that opens the Menu (as XClassic's ⋮). Items are even squircle cells inset from the edges; the pressed and the
+ * current one light up as a squircle (as a ToolIcon's is-active). A current page in the overflow marks More.
  */
+import { computed, ref } from 'vue';
 import HdIcon from './HdIcon.vue';
+import HdMenu from './HdMenu.vue';
 export interface HdNavLink { label: string; href: string; icon?: string; current?: boolean }
-withDefaults(defineProps<{ brand?: string; links?: HdNavLink[]; brandHref?: string | null; sticky?: boolean; tone?: 'page' | 'chrome'; layout?: 'site' | 'app' }>(),
+const props = withDefaults(defineProps<{ brand?: string; links?: HdNavLink[]; brandHref?: string | null; sticky?: boolean; tone?: 'page' | 'chrome'; layout?: 'site' | 'app' }>(),
   { brand: '', links: () => [], brandHref: '#', sticky: true, tone: 'page', layout: 'site' });
+/** the most a bottom ToolBar holds; more links keep MOBILE_KEEP and put the rest under More */
+const MOBILE_MAX = 5, MOBILE_KEEP = 4;
+const overflow = computed(() => (props.links.length > MOBILE_MAX ? props.links.slice(MOBILE_KEEP) : []));
+const overflowCurrent = computed(() => overflow.value.find((l) => l.current));
+const moreOpen = ref(false);
+const menuItems = computed(() => overflow.value.map((l) => ({ id: l.href, label: l.current ? `${l.label} (current page)` : l.label })));
+function go(href: string) { if (typeof window !== 'undefined') window.location.assign(href); }
 </script>
 <template>
   <header class="hd-site-header" :class="{ 'is-sticky': sticky, 'hd-site-header--chrome': tone === 'chrome', 'hd-site-header--app': layout === 'app' }">
@@ -24,10 +36,15 @@ withDefaults(defineProps<{ brand?: string; links?: HdNavLink[]; brandHref?: stri
       </template>
       <slot v-if="$slots.nav" name="nav" />
       <nav v-else class="hd-site-header__nav hd-inverted-mobile" aria-label="Main">
-        <a v-for="l in links" :key="l.href" :href="l.href" class="hd-site-header__link hd-focusable" :aria-current="l.current ? 'page' : undefined">
+        <a v-for="(l, i) in links" :key="l.href" :href="l.href" class="hd-site-header__link hd-focusable" :class="{ 'is-overflow': overflow.length && i >= MOBILE_KEEP }" :aria-current="l.current ? 'page' : undefined">
           <HdIcon :name="l.icon ?? 'chevron-right'" :size="22" class="hd-site-header__icon" /><span>{{ l.label }}</span>
         </a>
+        <button v-if="overflow.length" type="button" class="hd-site-header__link hd-site-header__more hd-focusable" :class="{ 'is-current': overflowCurrent }" aria-haspopup="menu" :aria-expanded="moreOpen ? 'true' : 'false'"
+          :aria-label="overflowCurrent ? `More, current page: ${overflowCurrent.label}` : 'More'" @click="moreOpen = true">
+          <HdIcon name="more" :size="22" class="hd-site-header__icon" /><span>More</span>
+        </button>
       </nav>
+      <HdMenu v-if="overflow.length" v-model:open="moreOpen" :items="menuItems" label="More pages" @select="go" />
       <div class="hd-site-header__actions"><slot name="actions" /></div>
     </div>
   </header>
@@ -46,14 +63,29 @@ withDefaults(defineProps<{ brand?: string; links?: HdNavLink[]; brandHref?: stri
 .hd-site-header__link:hover { background: var(--hd-c-pressed); }
 .hd-site-header__link[aria-current='page'] { color: var(--hd-c-accent-text); font-weight: 700; }
 .hd-site-header__icon { display: none; }
+.hd-site-header__more { display: none; }
 .hd-site-header__actions { display: flex; gap: 8px; margin-left: auto; }
 /* By the window, not a container: a container would also become the bottom bar's frame. */
 @media (max-width: 599.98px) {
-  .hd-site-header__nav { position: fixed; left: 0; right: 0; bottom: 0; height: var(--hd-size-toolbar); justify-content: space-around; gap: 0;
-    background: color-mix(in srgb, var(--hd-surface-chrome) calc(var(--hd-opacity-chrome) * 100%), transparent); -webkit-backdrop-filter: blur(var(--hd-size-chrome-blur)) saturate(1.4); backdrop-filter: blur(var(--hd-size-chrome-blur)) saturate(1.4); padding-bottom: env(safe-area-inset-bottom); }
-  .hd-site-header__link { flex-direction: column; justify-content: center; gap: 2px; padding: 0 8px; color: var(--hd-surface-chrome-fg); font-size: 11px; opacity: .7; min-height: 48px; }
-  .hd-site-header__link:hover { background: var(--hd-c-pressed); }
-  .hd-site-header__link[aria-current='page'] { color: var(--hd-surface-chrome-fg); opacity: 1; }
+  /* a backdrop-filter on the header would make it the containing block of the fixed bottom bar (which then sat at the top):
+     the blur moves to a layer behind the bar */
+  .hd-site-header { -webkit-backdrop-filter: none; backdrop-filter: none; }
+  .hd-site-header:not(.is-sticky) { position: relative; }
+  .hd-site-header::before { content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none; -webkit-backdrop-filter: blur(var(--hd-size-chrome-blur)) saturate(1.4); backdrop-filter: blur(var(--hd-size-chrome-blur)) saturate(1.4); }
+  /* the N9 ToolBar: even cells inset from the edges (first/last centre ~29px in, as HdToolBar), never touching */
+  .hd-site-header__nav { position: fixed; left: 0; right: 0; bottom: 0; height: var(--hd-size-toolbar); box-sizing: content-box; align-items: center; justify-content: space-around; gap: 4px; padding: 0 calc(88px / 3 - 28px) env(safe-area-inset-bottom); overflow: visible; isolation: isolate; background: none;
+    -webkit-backdrop-filter: blur(var(--hd-size-chrome-blur)) saturate(1.4); backdrop-filter: blur(var(--hd-size-chrome-blur)) saturate(1.4); box-shadow: inset 0 1px 0 rgba(255,255,255,.08); }
+  /* --hd-surface-chrome is a gradient (color-mix() of it is invalid and left the bar transparent): drawn on a layer, see-through, but half as much as --hd-opacity-chrome so the labels stay readable over light pages */
+  .hd-site-header__nav::before { content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none; background: var(--hd-surface-chrome); opacity: calc((var(--hd-opacity-chrome) + 1) / 2); }
+  .hd-site-header__link { flex: 1 1 0; min-width: 0; max-width: 76px; height: 44px; min-height: 0; flex-direction: column; justify-content: center; gap: 2px; padding: 0 4px; border: 0; background: transparent; font: inherit; font-size: 11px; line-height: 1.1; cursor: pointer;
+    color: var(--hd-surface-chrome-fg); opacity: .7; }
+  .hd-site-header__link > span { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .hd-site-header__link.is-overflow { display: none; }
+  .hd-site-header__more { display: inline-flex; }
+  .hd-site-header__link:hover, .hd-site-header--chrome .hd-site-header__link:hover { background: color-mix(in srgb, var(--hd-surface-chrome-fg) 10%, transparent); color: var(--hd-surface-chrome-fg); }
+  .hd-site-header__link:active { background: color-mix(in srgb, var(--hd-surface-chrome-fg) 24%, transparent); }
+  /* current page (or More holding it): lit as the dark ToolBar's active ToolIcon */
+  .hd-site-header__link[aria-current='page'], .hd-site-header__more.is-current, .hd-site-header--chrome .hd-site-header__link[aria-current='page'] { color: var(--hd-surface-chrome-fg); opacity: 1; font-weight: 700; background: color-mix(in srgb, var(--hd-surface-chrome-fg) 18%, transparent); }
   .hd-site-header__icon { display: block; }
   .hd-site-header__bar { gap: 12px; }
   .hd-site-header__actions .hd-button { min-height: 36px; padding: 0 14px; font-size: var(--hd-font-size-small); }
