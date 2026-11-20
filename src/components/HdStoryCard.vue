@@ -22,9 +22,10 @@ defineEmits<{ open: []; menu: [] }>();
 /** The outlet's colour: a hue from its name, so it is the same on every story and every visit. */
 const tile = computed(() => {
   let h = 0;
-  for (const c of props.source || props.title || '') h = (h * 31 + c.charCodeAt(0)) >>> 0;
-  const hue = h % 360;
-  return `linear-gradient(135deg, hsl(${hue} 50% 38%), hsl(${(hue + 40) % 360} 60% 20%))`;
+  for (const c of props.source || props.title || '') h = (Math.imul(h, 31) + c.charCodeAt(0)) | 0;
+  const hue = (h & 0x7fffffff) % 360; // Java's String.hashCode, as the phone's Tile: the same colour there and here
+  // The phone's HSV(hue, .55, .55) to HSV(hue + 40, .6, .3), corner to corner, in HSL.
+  return `linear-gradient(to bottom right, hsl(${hue} 38% 40%), hsl(${(hue + 40) % 360} 43% 21%))`;
 });
 const picture = computed(() => !props.image ? tile.value
   : /^(https?:|data:|\/)/.test(props.image) ? `center / cover no-repeat url("${props.image}")` : props.image);
