@@ -3,6 +3,7 @@ import { ref, computed } from 'vue';
 import XChoice from './parts/XChoice.vue';
 import XStage from './parts/XStage.vue';
 import DesktopV2 from '../../shell/desktop/DesktopV2.vue';
+import XMenuBar from '../../shell/desktop/XMenuBar.vue';
 import { STATES, CORE, type V2State } from '../../shell/desktop/states';
 
 /** Desktop / The desktop: the agreed Etesian desktop, every state live. Built from @etesian-design/shell. */
@@ -28,5 +29,21 @@ export const Tour: StoryObj<{ state: V2State }> = {
         <XChoice v-model="s" :tabs="CT" label="State" id-prefix="v2c" />
       </template>
       <DesktopV2 :key="s" :state="s" /></XStage>`,
+  }),
+};
+
+/** The one menu bar every desktop uses (XShell, the website's, the cloud companion's): a mark, the host's menus, its indicators. */
+export const MenuBar: StoryObj = {
+  name: 'Menu bar',
+  render: () => ({
+    components: { XMenuBar },
+    setup: () => ({
+      menus: [{ label: 'Go', items: [{ id: 'about', label: 'About Etesian', icon: 'star' }, { id: 'web', label: 'Back to the website', icon: 'globe', divider: true }] },
+        { label: 'View', items: [{ id: 'overview', label: 'Overview', icon: 'grid', keys: 'Super' }, { id: 'events', label: 'Events', icon: 'calendar', keys: 'Super+N' }] }],
+    }),
+    template: `<div style="height:260px;background:var(--hd-surface-home)"><XMenuBar app="Etesian" :menus="menus" :count="3" :hints="false" open-menu="View" date="Sat 24 Oct" time="12:45">
+      <template #mark><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><rect width="24" height="24" rx="7" fill="#4591FF"/></svg></template>
+      <template #indicators><a href="#" class="hd-sqm" style="color:inherit;text-decoration:none">Back to the website</a></template>
+    </XMenuBar></div>`,
   }),
 };

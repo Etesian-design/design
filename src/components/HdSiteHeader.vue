@@ -4,18 +4,26 @@
  * < 600px: the links collapse into an N9-style dark bottom ToolBar (icons + tiny labels), one-handed; the brand and the
  * actions stay in the top bar (the actions as compact buttons), so it is never an empty strip.
  * tone="chrome": the N9 dark toolbar colour instead of the page's, to run into a dark hero below it.
- * The `logo` slot goes before the brand name.
+ * The `logo` slot goes before the brand name. An app bar (XClassic) uses the same header: `layout="app"` spans the full
+ * width, tighter; `start` goes before the brand (the apps button), `nav` replaces the links (the app's title and actions),
+ * `actions` stays at the right end. An empty `brand` hides the brand; `brand-href` null makes it plain text.
  */
 import HdIcon from './HdIcon.vue';
 export interface HdNavLink { label: string; href: string; icon?: string; current?: boolean }
-withDefaults(defineProps<{ brand: string; links: HdNavLink[]; brandHref?: string; sticky?: boolean; tone?: 'page' | 'chrome' }>(), { brandHref: '#', sticky: true, tone: 'page' });
+withDefaults(defineProps<{ brand?: string; links?: HdNavLink[]; brandHref?: string | null; sticky?: boolean; tone?: 'page' | 'chrome'; layout?: 'site' | 'app' }>(),
+  { brand: '', links: () => [], brandHref: '#', sticky: true, tone: 'page', layout: 'site' });
 </script>
 <template>
-  <header class="hd-site-header" :class="{ 'is-sticky': sticky, 'hd-site-header--chrome': tone === 'chrome' }">
+  <header class="hd-site-header" :class="{ 'is-sticky': sticky, 'hd-site-header--chrome': tone === 'chrome', 'hd-site-header--app': layout === 'app' }">
     <a class="hd-site-header__skip" href="#main">Skip to content</a>
     <div class="hd-site-header__bar">
-      <a class="hd-site-header__brand hd-focusable" :href="brandHref"><slot name="logo" />{{ brand }}</a>
-      <nav class="hd-site-header__nav hd-inverted-mobile" aria-label="Main">
+      <slot name="start" />
+      <template v-if="brand">
+        <a v-if="brandHref !== null" class="hd-site-header__brand hd-focusable" :href="brandHref"><slot name="logo" />{{ brand }}</a>
+        <span v-else class="hd-site-header__brand"><slot name="logo" />{{ brand }}</span>
+      </template>
+      <slot v-if="$slots.nav" name="nav" />
+      <nav v-else class="hd-site-header__nav hd-inverted-mobile" aria-label="Main">
         <a v-for="l in links" :key="l.href" :href="l.href" class="hd-site-header__link hd-focusable" :aria-current="l.current ? 'page' : undefined">
           <HdIcon :name="l.icon ?? 'chevron-right'" :size="22" class="hd-site-header__icon" /><span>{{ l.label }}</span>
         </a>
@@ -50,6 +58,10 @@ withDefaults(defineProps<{ brand: string; links: HdNavLink[]; brandHref?: string
   .hd-site-header__bar { gap: 12px; }
   .hd-site-header__actions .hd-button { min-height: 36px; padding: 0 14px; font-size: var(--hd-font-size-small); }
 }
+/* the app bar: full width, tighter (XClassic) */
+.hd-site-header--app .hd-site-header__bar { max-width: none; gap: 6px; padding: 0 12px; }
+.hd-site-header--app .hd-site-header__brand { margin-left: 4px; white-space: nowrap; }
+.hd-site-header--app .hd-site-header__actions { margin-left: 0; gap: 0; align-items: center; }
 /* the dark toolbar version */
 .hd-site-header--chrome { background: color-mix(in srgb, var(--hd-surface-chrome) calc(var(--hd-opacity-chrome) * 100%), transparent); color: var(--hd-surface-chrome-fg); border-bottom-color: rgba(255,255,255,.08); color-scheme: dark; }
 .hd-site-header--chrome .hd-site-header__link { color: var(--hd-surface-chrome-fg-secondary); }

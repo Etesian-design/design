@@ -1,7 +1,8 @@
 <script setup lang="ts">
 /**
  * The classic layout: one app at a time, as a calm web app, for doing one thing fast. The desktop is the place for many
- * windows; this is the efficient single task. A top bar in the page's own colours (the web styling): the apps button (an
+ * windows; this is the efficient single task. The top bar is the website's header (HdSiteHeader, layout="app": see-through,
+ * the page blurred behind it, --hd-opacity-chrome) in the page's own colours: the apps button (an
  * app grid in a dropdown, recent apps first, with search: no permanent sidebar), the app's squircle and title (a menu of
  * its views when it has them), its actions by the same rule as a desktop window (as many as fit, the rest in ⋮), and the
  * status at the right. Under 600 px the phone pattern: Back and the first three actions in a bottom toolbar, the rest in ⋮.
@@ -12,12 +13,13 @@ import HdSquircle from '../../components/HdSquircle.vue';
 import HdToolIcon from '../../components/HdToolIcon.vue';
 import HdToolBar from '../../components/HdToolBar.vue';
 import HdSearchField from '../../components/HdSearchField.vue';
+import HdSiteHeader from '../../components/HdSiteHeader.vue';
 import type { XAction } from '../parts/types';
 import { provideChromeHost } from '../parts/chrome';
 import XBrowserTabs from '../apps/XBrowserTabs.vue';
 export interface ClassicApp { id: string; title: string; icon: string; color: string }
 const props = withDefaults(defineProps<{
-  brand?: string; apps: ClassicApp[]; app: string; title?: string; views?: string[]; view?: string; back?: boolean; tools?: XAction[];
+  brand?: string; /** where the brand links to; without it the brand is plain text */ brandHref?: string; apps: ClassicApp[]; app: string; title?: string; views?: string[]; view?: string; back?: boolean; tools?: XAction[];
   recent?: string[]; status?: string; online?: boolean;
   /** Storybook: the apps menu or ⋮ starts open */
   gridOpen?: boolean; moreOpen?: boolean;
@@ -60,23 +62,27 @@ function pickView(v: string) { viewMenu.value = false; emit('view', v); host.emi
 </script>
 <template>
   <div ref="root" class="x-cl" :class="{ 'is-narrow': narrow }">
-    <header class="x-cl__bar">
-      <button type="button" class="x-cl__apps hd-sq hd-focusable" aria-label="Apps" :aria-expanded="grid ? 'true' : 'false'" @click="grid = !grid"><HdIcon name="grid" :size="22" /></button>
-      <span v-if="w >= 900" class="x-cl__brand"><slot name="logo" />{{ brand }}</span>
-      <span class="x-cl__sep" aria-hidden="true"></span>
-      <HdToolIcon v-if="back && !narrow" icon="back" label="Back" @click="goBack" />
-      <HdSquircle v-else-if="cur" :size="28" :color="cur.color" lighting="lit"><HdIcon :name="cur.icon" :size="16" lit /></HdSquircle>
-      <XBrowserTabs v-if="tabs" class="x-cl__tabs" :tabs="tabs.list" :current="tabs.current" :max="tabs.max"
-        @pick="host.emit('tab', $event)" @close="host.emit('tab-close', $event)" @add="host.emit('tab-add')" />
-      <button v-else-if="views?.length" type="button" class="x-cl__title is-menu hd-sqh hd-focusable" :aria-expanded="viewMenu ? 'true' : 'false'" aria-haspopup="listbox" @click="viewMenu = !viewMenu">{{ shownTitle }}<HdIcon name="chevron-down" :size="16" /></button>
-      <h1 v-else class="x-cl__title">{{ shownTitle }}</h1>
-      <span class="x-cl__gap"></span>
-      <span v-if="!narrow" class="x-cl__actions" role="toolbar" :aria-label="`${shownTitle} actions`">
-        <HdToolIcon v-for="t in shown" :key="t.label" :icon="t.icon" :label="t.label" @click="tool(t.label)" />
-        <HdToolIcon v-if="folded.length" icon="more-vert" label="More" @click.stop="more = !more" />
-      </span>
-      <span v-if="status && w >= 760" class="x-cl__status" :class="{ 'is-off': !online }"><HdIcon :name="online ? 'check' : 'warning'" :size="16" />{{ status }}</span>
-    </header>
+    <HdSiteHeader class="x-cl__bar" layout="app" :sticky="false" :brand="w >= 900 ? brand : ''" :brand-href="brandHref ?? null">
+      <template #start><button type="button" class="x-cl__apps hd-sq hd-focusable" aria-label="Apps" :aria-expanded="grid ? 'true' : 'false'" @click="grid = !grid"><HdIcon name="grid" :size="22" /></button></template>
+      <template #logo><slot name="logo" /></template>
+      <template #nav>
+        <span class="x-cl__sep" aria-hidden="true"></span>
+        <HdToolIcon v-if="back && !narrow" icon="back" label="Back" @click="goBack" />
+        <HdSquircle v-else-if="cur" :size="28" :color="cur.color" lighting="lit"><HdIcon :name="cur.icon" :size="16" lit /></HdSquircle>
+        <XBrowserTabs v-if="tabs" class="x-cl__tabs" :tabs="tabs.list" :current="tabs.current" :max="tabs.max"
+          @pick="host.emit('tab', $event)" @close="host.emit('tab-close', $event)" @add="host.emit('tab-add')" />
+        <button v-else-if="views?.length" type="button" class="x-cl__title is-menu hd-sqh hd-focusable" :aria-expanded="viewMenu ? 'true' : 'false'" aria-haspopup="listbox" @click="viewMenu = !viewMenu">{{ shownTitle }}<HdIcon name="chevron-down" :size="16" /></button>
+        <h1 v-else class="x-cl__title">{{ shownTitle }}</h1>
+        <span class="x-cl__gap"></span>
+      </template>
+      <template #actions>
+        <span v-if="!narrow" class="x-cl__actions" role="toolbar" :aria-label="`${shownTitle} actions`">
+          <HdToolIcon v-for="t in shown" :key="t.label" :icon="t.icon" :label="t.label" @click="tool(t.label)" />
+          <HdToolIcon v-if="folded.length" icon="more-vert" label="More" @click.stop="more = !more" />
+        </span>
+        <span v-if="status && w >= 760" class="x-cl__status" :class="{ 'is-off': !online }"><HdIcon :name="online ? 'check' : 'warning'" :size="16" />{{ status }}</span>
+      </template>
+    </HdSiteHeader>
     <div v-if="viewMenu && views?.length" class="x-cl__pop x-cl__views hd-on-overlay" role="listbox">
       <button v-for="v in views" :key="v" type="button" role="option" class="x-cl__item hd-focusable" :aria-selected="v === shownTitle ? 'true' : 'false'" @click="pickView(v)">
         <span class="x-cl__mark hd-sq" :class="{ 'is-on': v === shownTitle }"><HdIcon v-if="v === shownTitle" name="check" :size="14" /></span>{{ v }}</button>
@@ -100,10 +106,9 @@ function pickView(v: string) { viewMenu.value = false; emit('view', v); host.emi
 </template>
 <style>
 .x-cl { position: relative; display: flex; flex-direction: column; height: 100%; min-height: 0; background: var(--hd-c-bg); color: var(--hd-c-fg); }
-.x-cl__bar { flex: none; display: flex; align-items: center; gap: 6px; height: 56px; padding: 0 12px; border-bottom: 1px solid var(--hd-c-divider); background: var(--hd-c-bg); }
+.x-cl__bar { flex: none; }
 .x-cl__apps { position: relative; flex: none; display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; border: 0; color: inherit; cursor: pointer; --hd-sq-size: 40px; }
 .x-cl__apps:hover, .x-cl__apps[aria-expanded=true] { --hd-sq-fill: var(--hd-c-pressed); }
-.x-cl__brand { display: inline-flex; align-items: center; gap: 8px; margin-left: 4px; font: 700 var(--hd-font-size-default)/1 var(--hd-font-family-base); white-space: nowrap; }
 .x-cl__sep { flex: none; width: 1px; height: 24px; margin: 0 8px; background: var(--hd-c-divider); }
 .x-cl__title { min-width: 0; margin: 0 4px; padding: 0; border: 0; background: none; color: inherit; font: var(--hd-font-weight-light) 24px/1 var(--hd-font-family-light); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .x-cl__title.is-menu { display: inline-flex; align-items: center; gap: 4px; height: 38px; padding: 0 10px; border-radius: 19px; cursor: pointer; }
