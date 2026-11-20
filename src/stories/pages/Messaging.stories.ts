@@ -19,9 +19,16 @@ const meta: Meta = {
 meta.parameters = { ...meta.parameters, layout: 'centered' };
 export default meta;
 type S = StoryObj;
-const phone = (inner: string, bg = '#fff', land = false) => `<div class="xm-phone${land ? ' xm-phone--land' : ''}" style="background:${bg}">${inner}</div>`;
+/* A screen: the black status bar (27px here, the N9's 36 at 3/4), then the window, its top corners squircle quarters. */
+const phone = (inner: string, bg = '#fff', land = false) => `<div class="xm-phone${land ? ' xm-phone--land' : ''}"><div class="xm-sb"><span class="xm-sb__bat"></span><HdIcon name="wifi" :size="16" /><span class="xm-sb__t">18:21</span></div><div class="xm-win" style="background:${bg}">${inner}</div></div>`;
 const CSS = `<component is="style">
-.xm-phone { width: 360px; height: 640px; display: flex; flex-direction: column; overflow: hidden; border-radius: 7px 7px 0 0; font-family: var(--hd-font-family-base); }
+.xm-phone { width: 360px; height: 640px; display: flex; flex-direction: column; overflow: hidden; background: #000; font-family: var(--hd-font-family-base); }
+.xm-sb { flex: none; height: 27px; display: flex; align-items: center; gap: 8px; padding: 0 6px; color: #E6E2E6; font: 400 16px/1 var(--hd-font-family-base); }
+.xm-sb__bat { width: 22px; height: 12px; border: 1.5px solid currentColor; border-radius: 2px; position: relative; } .xm-sb__bat::before { content: ''; position: absolute; left: 1.5px; top: 1.5px; bottom: 1.5px; width: 14px; background: currentColor; }
+.xm-sb__t { margin-left: auto; }
+.xm-win { flex: 1; min-height: 0; display: flex; flex-direction: column; overflow: hidden; --c: 18px;
+  -webkit-mask: var(--hd-squircle-mask) left top / var(--c) var(--c) no-repeat, var(--hd-squircle-mask) right top / var(--c) var(--c) no-repeat, linear-gradient(#000 0 0) center top / calc(100% - var(--c) + 2px) 11px no-repeat, linear-gradient(#000 0 0) left 0 top 8px / 100% calc(100% - 8px) no-repeat;
+  mask: var(--hd-squircle-mask) left top / var(--c) var(--c) no-repeat, var(--hd-squircle-mask) right top / var(--c) var(--c) no-repeat, linear-gradient(#000 0 0) center top / calc(100% - var(--c) + 2px) 11px no-repeat, linear-gradient(#000 0 0) left 0 top 8px / 100% calc(100% - 8px) no-repeat; }
 .xm-phone--land { width: 640px; height: 360px; }
 .xm-lh { flex: none; display: flex; align-items: center; justify-content: space-between; height: 52px; padding: 0 14px; background: #09A7CC; color: #fff; font: 300 26px/1 var(--hd-font-family-light); }
 .xm-list { flex: 1; overflow: hidden; background: #E6E6E8; color: #111; }
