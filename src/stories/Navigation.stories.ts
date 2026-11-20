@@ -52,23 +52,38 @@ export const DrillDown: S = {
       </template></HdPageStack></div>` }),
 };
 
-const fsSecs = ['A', 'E', 'H', 'J', 'K', 'L', 'M', 'S', 'T'].map((letter, i) => ({ letter, top: 14 + i * 60 }));
+/* a contacts-style list: per letter a header line (24px) then 48px rows; section tops follow the list as it scrolls */
+const fsNames: Record<string, string[]> = { A: ['Alex Jones', 'Anna Berg', 'Arto Niemi'], E: ['Eleni Pappa', 'Erik Lund'], H: ['Hanna Koski', 'Harri Salo', 'Helen Wu'],
+  J: ['Jaakko Aho', 'Johanna Laine'], K: ['Kalika Mehta', 'Karen DeCenzo', 'Katerina Boboti', 'Kiran Kulkarni'], L: ['Linzi Jayne', 'Lisa Taylor'],
+  M: ['Maria Nieto', 'Mikko Virta', 'Minna Oja'], S: ['Sanna Rinne', 'Sofia Karra'], T: ['Tapio Heino', 'Tuula Mäki'] };
+const FS_HEAD = 24, FS_ROW = 48;
+const fsGroups = Object.entries(fsNames).map(([letter, names]) => ({ letter, names }));
+const fsTops: { letter: string; top: number }[] = [];
+fsGroups.reduce((y, g) => { fsTops.push({ letter: g.letter, top: y + FS_HEAD / 2 }); return y + FS_HEAD + g.names.length * FS_ROW; }, 0);
+const fsSecs = fsTops; // list at the top
+const fsAt = (off: number) => fsTops.map((x) => ({ ...x, top: x.top - off }));
+const fsInit = (n: string) => n.split(' ').map((w) => w[0]).join('');
+const fsList = `<div :style="{ position: 'absolute', left: 0, right: 0, top: -off + 'px' }">
+  <template v-for="g in groups" :key="g.letter"><div style="height:24px;display:flex;align-items:center;padding:0 47px 0 8px"><hr style="flex:1;border:0;border-top:1px solid #FFF;margin:0" /></div>
+  <div v-for="n in g.names" :key="n" style="height:48px;display:flex;align-items:center;gap:10px;padding:0 55px 0 10px;font:600 15px/1 var(--hd-font-family-base)">
+  <span style="width:38px;height:38px;border-radius:11px;background:#1C1C1E;color:#fff;display:grid;place-items:center;font:700 15px/1 var(--hd-font-family-base)">{{ init(n) }}</span>{{ n }}</div></template></div>`;
 const fsPanel = 'position:relative;width:240px;height:480px;background:#DDE1E5;color:#111;overflow:hidden';
 const fsCap = 'margin:0 0 6px;font:13px/1.2 var(--hd-font-family-base);color:var(--hd-c-fg-secondary)';
+const FsList = { props: { off: { type: Number, default: 0 } }, setup: () => ({ groups: fsGroups, init: fsInit }), template: fsList };
 export const FastScroll: StoryObj<typeof HdFastScroll> = {
   name: 'FastScroll (idle letters, swipe bar, finger on the strip, no scroll)',
   parameters: { docs: { description: { story: '**N9** (n9-contacts-fastscroll*.png). Every list that scrolls shows its section letters down the right edge, moving or not. Swipe-scrolling the list puts a dimmed bar with a dot (the position in the data) on top of the letters. A finger on that strip scrolls fast, section by section, with a dark band and the big LIGHT letter on the other side. A list that does not scroll has no fast scroll at all, and no space is kept for one. The last panel is live: scroll it, or drag the strip.' } } },
-  render: () => ({ components: { HdFastScroll }, setup: () => {
+  render: () => ({ components: { HdFastScroll, FsList }, setup: () => {
     const live = ref<HTMLElement | null>(null);
     const names = fsSecs.flatMap((s) => [1, 2, 3, 4].map((n) => `${s.letter}${'abcdefgh'[n]}name ${n}`));
     const liveSecs = fsSecs.map((s, i) => ({ letter: s.letter, top: 14 + i * 56 }));
     const short = ref<HTMLElement | null>(null);
     const jump = (i: number) => live.value?.scrollTo({ top: i * 4 * 40 });
-    return { secs: fsSecs, live, short, names, liveSecs, jump, panel: fsPanel, cap: fsCap };
+    return { secs: fsSecs, at: fsAt, live, short, names, liveSecs, jump, panel: fsPanel, cap: fsCap };
   }, template: `<div style="display:flex;flex-wrap:wrap;gap:16px;padding:16px">
-    <div><p :style="cap">Idle: letters only</p><div :style="panel"><HdFastScroll :sections="secs" :position="0.2" /></div></div>
-    <div><p :style="cap">Swipe-scrolling: bar + dot</p><div :style="panel"><HdFastScroll :sections="secs" :position="0.45" scrolling /></div></div>
-    <div><p :style="cap">Finger on the strip</p><div :style="panel"><HdFastScroll :sections="secs" :position="0.45" active letter="K" /></div></div>
+    <div><p :style="cap">Idle: letters only</p><div :style="panel"><FsList :off="0" /><HdFastScroll :sections="at(0)" :position="0" /></div></div>
+    <div><p :style="cap">Swipe-scrolling: bar + dot</p><div :style="panel"><FsList :off="380" /><HdFastScroll :sections="at(380)" :position="0.41" scrolling /></div></div>
+    <div><p :style="cap">Finger on the strip</p><div :style="panel"><FsList :off="380" /><HdFastScroll :sections="at(380)" :position="0.41" active letter="K" /></div></div>
     <div><p :style="cap">Not scrolling: nothing</p><div :style="panel"><div ref="short" style="height:100%;overflow:auto"><p v-for="n in 5" :key="n" style="margin:0;padding:10px 12px;border-bottom:1px solid #C4C8CC">Item {{ n }}</p></div>
       <HdFastScroll :sections="secs.slice(0, 1)" :container="short" /></div></div>
     <div><p :style="cap">Live (scroll or drag)</p><div :style="panel"><div ref="live" style="height:100%;overflow:auto">
