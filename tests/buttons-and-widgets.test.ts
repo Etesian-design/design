@@ -260,7 +260,7 @@ describe('Messaging, Accounts, Store, tabs', () => {
   it('group conversation: received on the left by the sender\'s picture, tail top-left pointing at it; sent on the right', () => {
     expect(m).toContain("name: 'Messaging: group conversation'");
     expect(m).toMatch(/\.xm-grow > \.xm-bub--in \{[^}]*border-top-left-radius: 0/);
-    expect(m).toMatch(/\.xm-grow > \.xm-bub--in::after \{[^}]*left: -7px/);
+    expect(m).toMatch(/\.xm-grow > \.xm-bub--in::after \{[^}]*left: -8px; transform: scaleX\(-1\)/); // the outlined tail, mirrored
     expect(m).toContain('.xm-grow--me { flex-direction: row-reverse; }');
   });
   it('page owned by another app: owner icon instead of Back', () => {
