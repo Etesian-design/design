@@ -114,6 +114,7 @@ let cTop = 0;
 const cSecs = cGroups.map(([letter, ps]) => { const top = cTop + SEC / 2; cTop += SEC + ps.length * ROW; return { letter, top }; });
 export const ContactsApp = qs(CSS + row(
   contactsList('<HdFastScroll :position="0.3" :sections="secs" label="Fast scroll (drag: snaps section by section)" @jump="(i) => (at = secs[i].top - 14)" />'),
+  contactsList('<HdFastScroll :position="0.78" scrolling :sections="secs.map((x) => ({ ...x, top: x.top - mTop }))" label="Fast scroll (swipe-scrolling: dimmed bar, dot over the letters)" />', 'mTop'),
   contactsList('<HdFastScroll :position="0.16" active letter="K" :sections="secs.map((x) => ({ ...x, top: x.top - kTop }))" label="Fast scroll (finger on the bar)" />', 'kTop'),
   phone(`${footer(tool('edit', 'Edit') + tool('star', 'Favourite') + tool('share', 'Share'), { menu: true })}
   <q-page-container><q-page class="q-pa-md">
@@ -128,7 +129,7 @@ export const ContactsApp = qs(CSS + row(
       <q-item-label header>Email</q-item-label>
       <q-item clickable><q-item-section><q-item-label class="hd-q-t">anna@example.com</q-item-label><q-item-label caption>Work</q-item-label></q-item-section></q-item>
     </q-list>
-  </q-page></q-page-container>`)), () => ({ initials, groups: cGroups, secs: cSecs, at: ref(0), kTop: cSecs.find((x) => x.letter === 'K')!.top - SEC / 2 }), { name: 'Contacts app (fast scroll idle / finger on the bar, detail)' }, { HdFastScroll });
+  </q-page></q-page-container>`)), () => ({ initials, groups: cGroups, secs: cSecs, at: ref(0), kTop: cSecs.find((x) => x.letter === 'K')!.top - SEC / 2, mTop: cSecs.find((x) => x.letter === 'L')!.top - SEC / 2 }), { name: 'Contacts app (fast scroll idle / swipe-scrolling / finger on the bar, detail)' }, { HdFastScroll });
 export const ContactsCompact = qs(CSS + row(
   phone(`${footer(tool('edit', 'Edit') + tool('star', 'Favourite') + tool('share', 'Share'), { menu: true })}
   <q-page-container><q-page class="q-pa-md">
