@@ -35,11 +35,21 @@ describe('site header bottom bar on the phone follows the N9 ToolBar', () => {
     expect(items).toEqual(['L4', 'L5', 'L6 (current page)']);
     w.unmount();
   });
+  it('icon-only like a ToolIcon: 24px icon, the label kept for screen readers and as the title', () => {
+    const w = mount(HdSiteHeader, { props: { links: mk(7, 6) } });
+    const a = w.get('a.hd-site-header__link');
+    expect(a.attributes('title')).toBe('L0');
+    expect(a.attributes('aria-label')).toBe('L0');
+    expect(a.get('.hd-site-header__label').text()).toBe('L0');
+    expect(a.get('svg').attributes('width')).toBe('24px');
+    expect(w.get('.hd-site-header__more').attributes('title')).toBe('More');
+  });
   it('cells are inset, evenly spaced, and the current one gets a squircle fill; More is hidden on desktop', () => {
     expect(css).toMatch(/\.hd-site-header__more \{ display: none; \}/);
-    expect(css).toMatch(/\.hd-site-header__nav \{ position: fixed;[^}]*gap: 4px; padding: 0 calc\(88px \/ 3 - 28px\)/);
-    expect(css).toMatch(/\.hd-site-header__link \{ flex: 1 1 0;[^}]*height: 44px;/);
-    expect(css).toMatch(/\.hd-site-header__more\.is-current[^{]*\{[^}]*background: color-mix\(in srgb, var\(--hd-surface-chrome-fg\) 18%, transparent\)/);
+    expect(css).toMatch(/\.hd-site-header__nav \{ position: fixed;[^}]*justify-content: space-between; gap: 0; padding: 0 calc\(88px \/ 3 - 20px\)/);
+    expect(css).toMatch(/\.hd-site-header \.hd-site-header__nav > \.hd-site-header__link \{ flex: none; width: 40px; height: 40px;/);
+    expect(css).toMatch(/\.hd-site-header__label \{ display: none; \}/);
+    expect(css).toMatch(/\.hd-site-header__nav > \.hd-site-header__more\.is-current[^{]*\{[^}]*background: color-mix\(in srgb, var\(--hd-surface-chrome-fg\) 18%, transparent\)/);
     expect(css).toMatch(/\.hd-site-header__nav::before \{[^}]*background: var\(--hd-surface-chrome\);/);
     expect(css).toMatch(/@media[^{]*\{\s*\/\*[^*]*\*\/\s*\.hd-site-header \{ -webkit-backdrop-filter: none; backdrop-filter: none; \}/);
     expect(css).toMatch(/\.hd-site-header__link\.is-overflow \{ display: none; \}/);

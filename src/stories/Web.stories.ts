@@ -1,6 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/vue3-vite';
 import { ref } from 'vue';
 import HdSiteHeader from '../components/HdSiteHeader.vue';
+import HdToolBar from '../components/HdToolBar.vue';
+import HdToolIcon from '../components/HdToolIcon.vue';
 import HdFooter from '../components/HdFooter.vue';
 import HdHero from '../components/HdHero.vue';
 import HdCard from '../components/HdCard.vue';
@@ -23,6 +25,8 @@ const mobileTpl = (l: string) => `<HdSiteHeader brand="Etesian" tone="chrome" :l
 export const SiteHeaderMobileFew: S = { name: 'Site header, phone, few links', parameters: mobile, render: () => ({ components: { HdSiteHeader, HdButton }, setup: () => ({ links }), template: mobileTpl('links') }) };
 export const SiteHeaderMobileMany: S = { name: 'Site header, phone, many links (More)', parameters: mobile, render: () => ({ components: { HdSiteHeader, HdButton }, setup: () => ({ l: manyLinks.map((x, i) => ({ ...x, current: i === 1 })) }), template: mobileTpl('l') }) };
 export const SiteHeaderMobileOverflowCurrent: S = { name: 'Site header, phone, current page under More', parameters: mobile, render: () => ({ components: { HdSiteHeader, HdButton }, setup: () => ({ l: manyLinks.map((x, i) => ({ ...x, current: i === 6 })) }), template: mobileTpl('l') }) };
+export const SiteHeaderMobileVsToolBar: S = { name: 'Site header, phone, next to the N9 ToolBar', parameters: mobile, render: () => ({ components: { HdSiteHeader, HdButton, HdToolBar, HdToolIcon }, setup: () => ({ l: manyLinks.map((x, i) => ({ ...x, current: i === 1 })) }),
+  template: `<div style="position:fixed;left:0;right:0;bottom:56px"><HdToolBar variant="dark" label="N9 ToolBar"><HdToolIcon icon="phone" label="Phone" /><HdToolIcon icon="star" label="Glance" active /><HdToolIcon icon="globe" label="Plasma" /><HdToolIcon icon="edit" label="Design" /><HdToolIcon icon="more" label="More" /></HdToolBar></div>` + mobileTpl('l') }) };
 export const Hero: S = { render: () => ({ components: { HdHero, HdButton }, template: '<HdHero eyebrow="Design language" title="The content is the interface." lead="Calm, light, gesture-first design from the Nokia N9, rebuilt for the web."><template #actions><HdButton variant="accent">Read the guide</HdButton><HdButton>Components</HdButton></template></HdHero>' }) };
 export const HeroColored: S = { render: () => ({ components: { HdHero, HdButton }, template: '<HdHero colored accent="#0067BC" title="Mail, made calm." lead="One inbox for every account."><template #actions><HdButton>Download</HdButton></template></HdHero>' }) };
 export const Cards: S = { render: () => ({ components: { HdCard, HdGrid, HdButton }, template: `<HdGrid min="240px">
