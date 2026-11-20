@@ -202,8 +202,5 @@ export const STATUS: Record<P2State, [P2Status, string]> = {
   'medical-a2': built('emergency_info'), 'medical-a3': ['declined', 'Needs an action before the information shows.'],
   'medical-bar': ['declined', 'Rejected in favour of the owner block (A2).'], 'medical-card': built('emergency_info'),
 };
-/** the story that shows each state (core: its own story; small ones: the Gallery) */
-const EXPORT: Partial<Record<P2State, string>> = { 'status-more': 'status-more', 'status-ring-low': 'status-ring-low', 'status-more-open': 'status-more-open', 'status-brightness': 'status-brightness', 'status-edit': 'status-edit', 'status-edit-empty': 'status-edit-empty', 'toggles-editor': 'toggles-editor', 'status-no-strip': 'status-no-strip', 'status-two-rows': 'status-two-rows', 'status-settings': 'status-settings', 'events-sheet': 'events-sheet',
-  'events-reply': 'events-reply', 'events-reply-hw': 'events-reply-hw', 'events-reply-hw-land': 'events-reply-hw-land', 'dictionary-tracker': 'dictionary-tracker', 'dictionary-list': 'dictionary-list', 'dictionary-hwkb': 'dictionary-hwkb', 'lock-music': 'lock-music', 'status-music': 'status-music', 'status-music-output': 'status-music-output', banner: 'banner', profiles: 'profiles', 'mode-detail': 'mode-detail', share: 'share', 'share-filter': 'share-filter', 'share-people': 'share-people',
-  privacy: 'privacy', screenshot: 'screenshot', power: 'power', permission: 'permission', pinning: 'pinning', 'live-update': 'live-update', 'lock-glance': 'lock-glance', extras: 'extras' };
-export const storyId = (s: P2State) => `phone-android-features--${EXPORT[s] ?? 'gallery'}`;
+/** every state is a section of the one page story (anchor = state id) */
+export const storyId = (_s: P2State) => 'phone-android-features--all-features';
