@@ -53,9 +53,9 @@ const CSS = `<component is="style">
 .xm-conv { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; gap: 12px; padding: 14px 12px; background: #DEE2E6; }
 .xm-bub { position: relative; max-width: 78%; padding: 7px 10px 6px; border-radius: 10px; font-size: 17px; line-height: 1.3; }
 .xm-bub small { display: block; margin-top: 3px; font-size: 11px; }
-.xm-bub--in { align-self: flex-end; text-align: right; border-top-right-radius: 0; background: linear-gradient(#31B6D5, #08A5CD 12px); color: #fff; box-shadow: inset 0 0 0 1px rgba(0,80,110,.25); }
+.xm-bub--in { align-self: flex-end; text-align: right; border-top-right-radius: 0; background: linear-gradient(#31B6D5, #08A5CD 12px); color: #fff; box-shadow: inset 0 0 0 1px #0A8DB2; }
 .xm-bub--in small { color: rgba(255,255,255,.7); }
-.xm-bub--in::after { content: ''; position: absolute; top: 0; right: -8px; width: 9px; height: 9px; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 9 9'%3E%3Cpath d='M0 0H9L0 9Z' fill='%2331B6D5'/%3E%3Cpath d='M0 .5H7.8L.4 7.9' fill='none' stroke='%2300506E' stroke-opacity='.25'/%3E%3C/svg%3E") 0 0 / 100% 100%; } /* the tail, outlined like the bubble (it joins the bubble's edge: 1px over it) */
+.xm-bub--in::after { content: ''; position: absolute; top: 0; right: -8px; width: 9px; height: 9px; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 9 9'%3E%3Cpath d='M0 0H9L0 9Z' fill='%2331B6D5'/%3E%3Cpath d='M0 .5H7.8L.4 7.9' fill='none' stroke='%230A8DB2'/%3E%3C/svg%3E") 0 0 / 100% 100%; } /* the tail, outlined like the bubble (it joins the bubble's edge: 1px over it) */
 .xm-bub--out { align-self: flex-start; border-bottom-left-radius: 0; background: linear-gradient(#FFFAFF, #F6F6F6); color: #111; box-shadow: inset 0 0 0 1px #A9ABAD; }
 .xm-bub--out small { color: #8A8A8E; }
 .xm-bub--out::after { content: ''; position: absolute; bottom: 0; left: -8px; width: 9px; height: 9px; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 9 9'%3E%3Cpath d='M9 0V9H0Z' fill='%23F6F6F6'/%3E%3Cpath d='M8.6 .4 1.2 8.5H9' fill='none' stroke='%23A9ABAD'/%3E%3C/svg%3E") 0 0 / 100% 100%; }
@@ -63,9 +63,9 @@ const CSS = `<component is="style">
 .xm-grow { display: flex; align-items: flex-start; gap: 4px; } .xm-grow--me { flex-direction: row-reverse; }
 .xm-grow > .xm-bub { align-self: auto; }
 .xm-grow > .xm-bub--in { text-align: left; border-top-right-radius: 10px; border-top-left-radius: 0; margin-left: 7px; }
-.xm-grow > .xm-bub--in::after { right: auto; left: -7px; border-width: 0 8px 8px 0; border-color: transparent #31B6D5 transparent transparent; }
+.xm-grow > .xm-bub--in::after { right: auto; left: -8px; transform: scaleX(-1); } /* the same outlined tail, mirrored */
 .xm-grow > .xm-bub--out { border-bottom-left-radius: 10px; border-bottom-right-radius: 0; margin-right: 7px; }
-.xm-grow > .xm-bub--out::after { left: auto; right: -7px; border-width: 8px 8px 0 0; border-color: transparent; border-right: 0; border-left: 8px solid #F6F6F6; border-top: 8px solid transparent; }
+.xm-grow > .xm-bub--out::after { left: auto; right: -8px; transform: scaleX(-1); }
 .xm-grow__who { display: block; font-size: 11px; color: rgba(255,255,255,.8); }
 .xm-compose { flex: none; display: flex; align-items: center; gap: 10px; height: 48px; padding: 0 10px; background: #fff; border-top: 1px solid #D0D3D6; }
 .xm-compose input { flex: 1; min-width: 0; border: 0; outline: 0; font: 400 16px/1 var(--hd-font-family-base); color: #111; } .xm-compose input::placeholder { color: #9A9A9E; } .xm-typed { flex: 1; font-size: 16px; color: #111; }
