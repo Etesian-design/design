@@ -1,0 +1,33 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Guide/N9 and the port" />
+
+# N9 and the port
+
+Etesian is the N9 on an Android phone. Where it looks or works differently from the N9, it is on purpose: Android
+needs it, the hardware differs, or the N9 had no answer. Every difference has a setting; the default is the N9
+wherever the N9 had one, and every addition is a switch that starts **off** (a fresh phone is the pure N9).
+The settings named here are drawn in **OS / Etesian settings**.
+
+## Defaults that differ from the N9
+
+<table><thead><tr><th>Where</th><th>N9</th><th>Port default</th><th>Why</th><th>Setting (alternatives)</th></tr></thead><tbody><tr><td>Lock screen, more than 3 notifications</td><td>a &quot;More&quot; label</td><td>stacked cards, slide up to see all</td><td>Android apps post far more notifications</td><td>Lock screen → More notifications: <i>Stacked cards</i> / <i>&quot;More&quot; label (N9)</i></td></tr><tr><td>App and menu backgrounds</td><td>N9 light / black</td><td>the wallpaper, behind apps and black screens</td><td>wallpapers are content the user chose</td><td>Wallpapers & backgrounds → Apps: <i>N9 light</i>, <i>True black</i>, <i>Dark grey</i>, <i>Wallpaper</i>; effect: <i>None</i>, <i>Blur</i>, <i>Dim</i>, <i>Ambience</i></td></tr><tr><td>Fonts</td><td>the N9 typeface</td><td>free fonts (see Guide / Font alternatives)</td><td>the N9 typeface cannot be shipped</td><td>none</td></tr></tbody></table>
+
+## Kept as the N9 by default, with an Android alternative
+
+<table><thead><tr><th>Where</th><th>N9 (default)</th><th>Alternative</th><th>Setting</th></tr></thead><tbody><tr><td>Leaving an app</td><td>swipe from any edge to Open applications, at 50% of the screen</td><td>40% / 30% / 20%; Android gestures</td><td>Gestures → Gesture system (<i>N9 swipe</i> / <i>Android</i>), Swipe distance</td></tr><tr><td>Where a swiped-away app goes</td><td>Open applications</td><td>Where you were, Applications, Events, Widgets, per edge</td><td>Gestures → After swiping an app away</td></tr><tr><td>Back</td><td>Back button on the bottom toolbar, <b>left</b></td><td>toolbar Back on the <b>right</b>; Back by swiping in from the left or right side (an edge swipe then no longer leaves the app)</td><td>Toolbar → Back button (<i>Left</i> / <i>Right</i>); Gestures → Back by swiping in</td></tr><tr><td>Bottom toolbar</td><td>N9 light bar</td><td>Symbian Belle dark; your own buttons and macros, per app</td><td>Toolbar → Toolbar theme, Toolbar buttons</td></tr><tr><td>Notifications over apps</td><td>discreet N9 banner</td><td>Strip (Belle), Card, Colour, Android</td><td>Events and notifications → Over apps</td></tr><tr><td>Lock screen notifications in full</td><td>3</td><td>1 to 5</td><td>Lock screen → Notifications shown in full</td></tr><tr><td>Status menu</td><td>Profile, Volume, then rows</td><td>toggle strip, extra sliders, fewer visible rows, music, Modes strip (Silent / Beep / Ringing stays the profile control)</td><td>Status menu → Your own layout, Music, Modes</td></tr><tr><td>Open applications</td><td>cards only</td><td>actions under the card, app pinning, two-finger split</td><td>Open applications → Carousel, Split screen</td></tr><tr><td>Icon shape</td><td>N9 squircle</td><td>system shape, superellipse, rounded square; icon packs</td><td>Applications → Icon shape, Icon pack</td></tr><tr><td>Home views</td><td>Events, Applications, Open applications</td><td>Widgets and News views</td><td>Home screen → Home screen views</td></tr></tbody></table>
+
+## Additions the N9 never had (all off by default)
+
+Single hand mode (Gestures → Single hand mode, size 50 to 90%), Breeze edge bar or floating button (Breeze),
+the Standby screen editor (Lock screen → Standby screen), glance line and weather under the clock, emergency
+information on the lock screen, inline reply, actions and snooze, live updates, priority people, ghost rows for
+dismissed notifications, Today in Events, the "Copied" bubble, the N9 share sheet and suggested people, sharing a
+Wi-Fi network by QR code, private space, privacy indicators, pull down to search and search everything.
+Each is mocked in **Phone / Android features** or the **OS** pages.
+
+## Hardware
+
+The phone (F(x)tec Pro1-X) has a slide-out keyboard and a curved screen edge. With the keyboard out, only the white
+keyboard strip shows on screen; still fingers within the curved grip zone are ignored by the touch firmware, so edge
+controls (Breeze handle, edge swipes) start a little further in than on the N9.
