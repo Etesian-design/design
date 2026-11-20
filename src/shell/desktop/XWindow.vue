@@ -135,7 +135,7 @@ const style = computed(() => {
     </HdToolBar>
     <div v-if="more && folded.length" class="x-moremenu hd-on-overlay" :class="{ 'is-below': narrow }" role="menu" :aria-label="`${title} more actions`">
       <button v-for="t in folded" :key="t.label" type="button" role="menuitem" class="x-viewmenu__item hd-focusable" @click="tool(t.label)">
-        <HdIcon :name="t.icon" :size="20" /><span>{{ t.label }}</span>
+        <HdIcon :name="t.icon" :size="18" /><span>{{ t.label }}</span>
       </button>
     </div>
     <div v-if="menu && views?.length" class="x-viewmenu hd-on-overlay" role="listbox" :aria-label="`${title} views`">
@@ -199,6 +199,10 @@ const style = computed(() => {
 .x-win__rz.is-ne { top: -4px; right: -4px; cursor: nesw-resize; } .x-win__rz.is-sw { bottom: -4px; left: -4px; cursor: nesw-resize; }
 .x-win__rz.is-nw { top: -4px; left: -4px; cursor: nwse-resize; } .x-win__rz.is-se { bottom: -4px; right: -4px; cursor: nwse-resize; }
 .x-moremenu { position: absolute; z-index: 5; top: 42px; right: 140px; min-width: 220px; padding: 6px 0; border-radius: var(--hd-radius-card); background: var(--hd-surface-overlay); color: var(--hd-c-fg); box-shadow: var(--hd-shadow-overlay), 0 0 0 1px var(--hd-c-divider); }
+/* N9 menu spacing: tall rows with generous padding, small icons, left-aligned text */
+.x-moremenu { padding: 8px 0; }
+.x-moremenu .x-viewmenu__item { height: 52px; gap: 16px; padding: 0 24px 0 20px; }
+.x-moremenu .x-viewmenu__item .hd-icon { color: var(--hd-c-fg-secondary); }
 .x-moremenu.is-below { top: auto; bottom: 60px; right: 8px; }
 .x-win__bottom { flex: none; border-radius: 0 0 var(--hd-radius-card) var(--hd-radius-card); }
 .x-win:has(.x-win__bottom) .x-win__body { border-radius: 0; }
