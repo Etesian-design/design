@@ -78,7 +78,7 @@ export const FastScroll: StoryObj<typeof HdFastScroll> = {
     const names = fsSecs.flatMap((s) => [1, 2, 3, 4].map((n) => `${s.letter}${'abcdefgh'[n]}name ${n}`));
     const liveSecs = fsSecs.map((s, i) => ({ letter: s.letter, top: 14 + i * 56 }));
     const short = ref<HTMLElement | null>(null);
-    const jump = (i: number) => live.value?.scrollTo({ top: i * 4 * 40 });
+    const jump = (i: number) => live.value?.scrollTo({ top: i * (24 + 4 * 40) });
     return { secs: fsSecs, at: fsAt, live, short, names, liveSecs, jump, panel: fsPanel, cap: fsCap };
   }, template: `<div style="display:flex;flex-wrap:wrap;gap:16px;padding:16px">
     <div><p :style="cap">Idle: letters only</p><div :style="panel"><FsList :off="0" /><HdFastScroll :sections="at(0)" :position="0" /></div></div>
@@ -87,6 +87,7 @@ export const FastScroll: StoryObj<typeof HdFastScroll> = {
     <div><p :style="cap">Not scrolling: nothing</p><div :style="panel"><div ref="short" style="height:100%;overflow:auto"><p v-for="n in 5" :key="n" style="margin:0;padding:10px 12px;border-bottom:1px solid #C4C8CC">Item {{ n }}</p></div>
       <HdFastScroll :sections="secs.slice(0, 1)" :container="short" /></div></div>
     <div><p :style="cap">Live (scroll or drag)</p><div :style="panel"><div ref="live" style="height:100%;overflow:auto">
-      <p v-for="n in names" :key="n" style="margin:0;height:40px;box-sizing:border-box;padding:10px 12px;border-bottom:1px solid #C4C8CC">{{ n }}</p></div>
+      <template v-for="s in secs" :key="s.letter"><div :data-fs-letter="s.letter" style="height:24px;display:flex;align-items:center;padding:0 47px 0 8px"><hr style="flex:1;border:0;border-top:1px solid #FFF;margin:0" /></div>
+      <p v-for="n in names.filter((x) => x[0] === s.letter)" :key="n" style="margin:0;height:40px;box-sizing:border-box;padding:10px 12px">{{ n }}</p></template></div>
       <HdFastScroll :sections="liveSecs" :container="live" @jump="jump" /></div></div></div>` }),
 };
