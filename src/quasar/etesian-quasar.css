@@ -319,20 +319,20 @@ body.hd-quasar.body--dark, .hd-quasar .q-dark, .hd-quasar.q-dark { color: var(--
 .hd-quasar .q-radio .q-radio__inner::before { display: block !important; content: ''; position: absolute; z-index: 2; top: calc(50% - 6px); left: calc(50% - 6px); right: auto; bottom: auto; width: 12px; height: 12px; border-radius: 0; background: var(--hd-accent); opacity: 1 !important; transform: scale(0) !important; transition: transform .22s; -webkit-mask: var(--hd-squircle-mask) center / 100% 100% no-repeat; mask: var(--hd-squircle-mask) center / 100% 100% no-repeat; }
 /* Quasar scales its halo on hover and focus: only the selected state shows the mark */
 .hd-quasar .q-radio .q-radio__inner--truthy::before { transform: scale(1) !important; }
-/* QToggle = HdSwitch: 52x28 pill track, white knob */
+/* QToggle = HdSwitch */
 .hd-quasar .q-toggle__inner { width: 64px; min-width: 64px; height: 44px; padding: 0; font-size: 16px; }
-/* The N9 switch, as HdSwitch (measured on the N9): a 44 x 27 track with squircle ends, a white squircle knob 20px inset 3px. */
-.hd-quasar .q-toggle__track { position: absolute; height: 26px; width: 44px; left: 10px; top: 9px; border-radius: 0; opacity: 1 !important; --hd-sw-fill: #2D2E2D; background: #181818; border: 0;
+/* The N9 switch, as HdSwitch (measured on the N9): a 42 x 26 track with squircle ends, a white squircle knob 18px inset 3px at the ends, centred. */
+.hd-quasar .q-toggle__track { position: absolute; height: 26px; width: 42px; left: 11px; top: 9px; border-radius: 0; opacity: 1 !important; --hd-sw-fill: #2D2E2D; background: #181818; border: 0;
   -webkit-mask: var(--hd-sq-cap-l) left center / auto 100% no-repeat, var(--hd-sq-cap-r) right center / auto 100% no-repeat; -webkit-mask-composite: source-in;
   mask: var(--hd-sq-cap-l) left center / auto 100% no-repeat, var(--hd-sq-cap-r) right center / auto 100% no-repeat; mask-composite: intersect; }
 /* the rim follows the squircle ends (see HdSwitch): the track is the rim, ::before the fill 1px in */
 .hd-quasar .q-toggle__track::before { content: ''; position: absolute; inset: 1px; background: var(--hd-sw-fill); -webkit-mask: var(--hd-sq-cap-l) left center / auto 100% no-repeat, var(--hd-sq-cap-r) right center / auto 100% no-repeat; -webkit-mask-composite: source-in;
   mask: var(--hd-sq-cap-l) left center / auto 100% no-repeat, var(--hd-sq-cap-r) right center / auto 100% no-repeat; mask-composite: intersect; }
 .hd-quasar .q-toggle__inner--truthy .q-toggle__track { background: color-mix(in srgb, var(--hd-accent) 90%, #000); --hd-sw-fill: linear-gradient(color-mix(in srgb, var(--hd-accent) 82%, #fff), var(--hd-accent) 35%, color-mix(in srgb, var(--hd-accent) 95%, #000)); }
-.hd-quasar .q-toggle__thumb { position: absolute; width: 20px; height: 20px; top: 12px; left: 13px; }
+.hd-quasar .q-toggle__thumb { position: absolute; width: 18px; height: 18px; top: 13px; left: 14px; }
 .hd-quasar .q-toggle__thumb::after { background: #fff !important; box-shadow: none; border-radius: 0; -webkit-mask: var(--hd-squircle-mask) center / 100% 100% no-repeat; mask: var(--hd-squircle-mask) center / 100% 100% no-repeat; }
 .hd-quasar .q-toggle__thumb::before { display: none; }
-.hd-quasar .q-toggle__inner--truthy .q-toggle__thumb { left: 31px; }
+.hd-quasar .q-toggle__inner--truthy .q-toggle__thumb { left: 32px; }
 .hd-quasar .q-toggle__inner--truthy .q-toggle__thumb .q-icon { color: var(--hd-accent); }
 .hd-quasar .q-toggle__label { padding-left: var(--hd-space-double); }
 .hd-quasar .q-option-group .q-checkbox, .hd-quasar .q-option-group .q-radio, .hd-quasar .q-option-group .q-toggle { min-height: var(--hd-size-touch-target); }

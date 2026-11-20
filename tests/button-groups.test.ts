@@ -112,14 +112,15 @@ describe('the N9 switch', () => {
   it('has the measured track, squircle ends, and a white squircle knob inset 3px', () => {
     // 26px (the N9's 41 n9px): an even height, so the 20px knob sits exactly 3px from the top and the bottom (27 left
     // it a pixel low: 3.5px rounds to 4 at the top) - user 2026-11-19
-    expect(sw).toContain('width: 44px; height: 26px;');
-    expect(sw).toMatch(/hd-switch__knob \{[^}]*top: 3px;/);
+    // 2026-11-20 (user): exact N9 measure, track 42 x 26, knob 18-19 inset 3: 18 keeps it on whole pixels (4 top/bottom)
+    expect(sw).toContain('width: 42px; height: 26px;');
+    expect(sw).toMatch(/hd-switch__knob \{[^}]*top: 4px;/);
     expect(sw).toContain('--hd-sw-fill: #2D2E2D; background: #181818;');
     // the rim follows the squircle ends: a 1px smaller masked fill, never a (rectangular) inset shadow
     expect(sw).toMatch(/hd-switch__track::before \{[^}]*inset: 1px; background: var\(--hd-sw-fill\);[^}]*--hd-sq-cap-l/);
     expect(sw).not.toMatch(/hd-switch__track[^{]*\{[^}]*box-shadow: inset/);
     expect(sw).toMatch(/hd-switch__track \{[^}]*--hd-sq-cap-l/);
-    expect(sw).toMatch(/hd-switch__knob \{[^}]*left: 3px; width: 20px; height: 20px; background: #fff;[^}]*--hd-squircle-mask/);
+    expect(sw).toMatch(/hd-switch__knob \{[^}]*left: 3px; width: 18px; height: 18px; background: #fff;[^}]*--hd-squircle-mask/);
     expect(sw).toContain("[aria-checked='true'] .hd-switch__knob { transform: translateX(18px); }");
     expect(sw).not.toContain('border-radius: 999px');
     // on: the N9's gradient (#4195DE to #107DD6), made from the accent so an override still reaches it; no white sheen
@@ -129,13 +130,13 @@ describe('the N9 switch', () => {
 });
 describe('Quasar QToggle is the N9 switch too', () => {
   const q = readFileSync(`${process.cwd()}/src/quasar/etesian-quasar.css`, 'utf8');
-  it('matches HdSwitch: 44 x 26 squircle-ended track, 20px squircle knob travelling 18px, centred', () => {
+  it('matches HdSwitch: 42 x 26 squircle-ended track, 18px squircle knob travelling 18px, centred', () => {
     // track top 9 + 3 = knob top 12; knob bottom 32 + 3 = track bottom 35
-    expect(q).toMatch(/q-toggle__track \{[^}]*height: 26px; width: 44px; left: 10px; top: 9px;[^}]*--hd-sw-fill: #2D2E2D; background: #181818;[^}]*--hd-sq-cap-l/);
+    expect(q).toMatch(/q-toggle__track \{[^}]*height: 26px; width: 42px; left: 11px; top: 9px;[^}]*--hd-sw-fill: #2D2E2D; background: #181818;[^}]*--hd-sq-cap-l/);
     expect(q).toMatch(/q-toggle__track::before \{[^}]*inset: 1px; background: var\(--hd-sw-fill\);[^}]*--hd-sq-cap-l/);
     expect(q).toMatch(/q-toggle__thumb::after \{[^}]*--hd-squircle-mask/);
-    expect(q).toContain('.q-toggle__thumb { position: absolute; width: 20px; height: 20px; top: 12px; left: 13px; }');
-    expect(q).toContain('.q-toggle__inner--truthy .q-toggle__thumb { left: 31px; }');
+    expect(q).toContain('.q-toggle__thumb { position: absolute; width: 18px; height: 18px; top: 13px; left: 14px; }');
+    expect(q).toContain('.q-toggle__inner--truthy .q-toggle__thumb { left: 32px; }');
   });
 });
 describe('the Quasar accent resolves (no variable cycle)', () => {
