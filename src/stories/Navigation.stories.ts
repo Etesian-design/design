@@ -53,11 +53,25 @@ export const DrillDown: S = {
 };
 
 const fsSecs = ['A', 'E', 'H', 'J', 'K', 'L', 'M', 'S', 'T'].map((letter, i) => ({ letter, top: 14 + i * 60 }));
+const fsPanel = 'position:relative;width:240px;height:480px;background:#DDE1E5;color:#111;overflow:hidden';
+const fsCap = 'margin:0 0 6px;font:13px/1.2 var(--hd-font-family-base);color:var(--hd-c-fg-secondary)';
 export const FastScroll: StoryObj<typeof HdFastScroll> = {
-  name: 'FastScroll (drag the band: snaps section by section)',
-  parameters: { docs: { description: { story: '**N9** (n9-contacts-fastscroll*.png): idle, a wide translucent band with the section letters and a small dot. Finger on the band: the dot hides, a dark band with the big LIGHT letter runs across the list, and every small move jumps to the next / previous letter section (no smooth pixel scrolling); the list snaps to that section\'s start.' } } },
-  render: () => ({ components: { HdFastScroll }, setup: () => ({ secs: fsSecs, cur: ref('A') }), template: `<div style="display:flex;gap:16px">
-    <div style="position:relative;width:300px;height:540px;background:#DDE1E5;color:#111"><HdFastScroll :sections="secs" :position="0.2" @jump="(i, l) => (cur = l)" />
-      <p style="margin:0;padding:12px 60px 0 12px;font:700 15px/1.3 var(--hd-font-family-base)">Section: {{ cur }}</p></div>
-    <div style="position:relative;width:300px;height:540px;background:#DDE1E5"><HdFastScroll :sections="secs" :position="0.45" active letter="K" /></div></div>` }),
+  name: 'FastScroll (idle letters, swipe bar, finger on the strip, no scroll)',
+  parameters: { docs: { description: { story: '**N9** (n9-contacts-fastscroll*.png). Every list that scrolls shows its section letters down the right edge, moving or not. Swipe-scrolling the list puts a dimmed bar with a dot (the position in the data) on top of the letters. A finger on that strip scrolls fast, section by section, with a dark band and the big LIGHT letter on the other side. A list that does not scroll has no fast scroll at all, and no space is kept for one. The last panel is live: scroll it, or drag the strip.' } } },
+  render: () => ({ components: { HdFastScroll }, setup: () => {
+    const live = ref<HTMLElement | null>(null);
+    const names = fsSecs.flatMap((s) => [1, 2, 3, 4].map((n) => `${s.letter}${'abcdefgh'[n]}name ${n}`));
+    const liveSecs = fsSecs.map((s, i) => ({ letter: s.letter, top: 14 + i * 56 }));
+    const short = ref<HTMLElement | null>(null);
+    const jump = (i: number) => live.value?.scrollTo({ top: i * 4 * 40 });
+    return { secs: fsSecs, live, short, names, liveSecs, jump, panel: fsPanel, cap: fsCap };
+  }, template: `<div style="display:flex;flex-wrap:wrap;gap:16px;padding:16px">
+    <div><p :style="cap">Idle: letters only</p><div :style="panel"><HdFastScroll :sections="secs" :position="0.2" /></div></div>
+    <div><p :style="cap">Swipe-scrolling: bar + dot</p><div :style="panel"><HdFastScroll :sections="secs" :position="0.45" scrolling /></div></div>
+    <div><p :style="cap">Finger on the strip</p><div :style="panel"><HdFastScroll :sections="secs" :position="0.45" active letter="K" /></div></div>
+    <div><p :style="cap">Not scrolling: nothing</p><div :style="panel"><div ref="short" style="height:100%;overflow:auto"><p v-for="n in 5" :key="n" style="margin:0;padding:10px 12px;border-bottom:1px solid #C4C8CC">Item {{ n }}</p></div>
+      <HdFastScroll :sections="secs.slice(0, 1)" :container="short" /></div></div>
+    <div><p :style="cap">Live (scroll or drag)</p><div :style="panel"><div ref="live" style="height:100%;overflow:auto">
+      <p v-for="n in names" :key="n" style="margin:0;height:40px;box-sizing:border-box;padding:10px 12px;border-bottom:1px solid #C4C8CC">{{ n }}</p></div>
+      <HdFastScroll :sections="liveSecs" :container="live" @jump="jump" /></div></div></div>` }),
 };
