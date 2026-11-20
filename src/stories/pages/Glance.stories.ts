@@ -72,8 +72,12 @@ export const NoPicture: S = {
     </div>${NEWS_BAR}`) }),
 };
 
-const row = (icon: string, color: string, title: string, sub = '', time = '') =>
-  `<div class="gl-row"><HdSquircle :size="40" color="${color}" lighting="lit"><HdIcon name="${icon}" :size="22" lit /></HdSquircle><span class="gl-t"><b>${title}</b>${sub ? `<small>${sub}</small>` : ''}</span>${time ? `<i>${time}</i>` : ''}</div>`;
+/* A result that belongs to an app shows that app's own launcher icon (Result.pkg → the package's icon), drawn as
+ * HdAppIcon draws it: same squircle, colour and glyph at half the icon size. Messages: as in Home / Squircle stories. */
+const MESSAGES_APP = { icon: 'message', color: '#09A7CC' };
+const appRow = (app: { icon: string; color: string }, title: string, sub = '', time = '') => row(app.icon, app.color, title, sub, time, 20);
+const row = (icon: string, color: string, title: string, sub = '', time = '', glyph = 22) =>
+  `<div class="gl-row"><HdSquircle :size="40" color="${color}" lighting="lit"><HdIcon name="${icon}" :size="${glyph}" lit /></HdSquircle><span class="gl-t"><b>${title}</b>${sub ? `<small>${sub}</small>` : ''}</span>${time ? `<i>${time}</i>` : ''}</div>`;
 export const Search: S = {
   name: 'Search everything',
   parameters: { docs: { description: { story: 'Typing replaces the news with results, in sections: **Applications first**, the web last, the rest by how well they match (contacts, messages, notifications — even ones already dismissed —, settings pages, files, the news). The web section ends with the search engine\'s suggestions. Matching is by the start of a name or any of its words, or initials (“gm” → Maps by G…). Enter opens the first result. The ✕ in the field clears it; Back clears it too before leaving. The launcher shows the same results under the apps in its own search.' } } },
@@ -82,7 +86,7 @@ export const Search: S = {
     <div class="gl-body">
       <div class="gl-head">Applications</div>${row('calendar', '#E8483F', 'Anniversary planner')}
       <div class="gl-head">Contacts</div><div class="gl-row"><HdSquircle :size="40" color="#00A5E5"><b class="gl-letter">A</b></HdSquircle><span class="gl-t"><b>Anna Petrou</b><small>+30 694 123 4567</small></span></div>
-      <div class="gl-head">Messages</div>${row('message', '#09A7CC', 'Anna Petrou', 'See you at seven by the lake', '2 h')}
+      <div class="gl-head">Messages</div>${appRow(MESSAGES_APP, 'Anna Petrou', 'See you at seven by the lake', '2 h')}
       <div class="gl-head">Settings</div>${row('settings', '#5C5C5C', 'Announcements', 'Settings')}
       <div class="gl-head">Web</div>${row('search', '#3A3A3A', 'Search the web for “ann”')}${['ann widdecombe', 'ann taylor', 'anne frank'].map((q) => `<div class="gl-sug"><span><HdIcon name="search" :size="20" /></span>${q}</div>`).join('')}
     </div>${NEWS_BAR}`) }),
