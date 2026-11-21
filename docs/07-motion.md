@@ -5,7 +5,7 @@
 | Token | Value | Use | Origin |
 | --- | --- | --- | --- |
 | `--hd-motion-duration-instant` | 100ms | hover/press feedback | EXT |
-| `--hd-motion-duration-fast` | 130ms | app slide-in after launch, card restore | N9 (canon) |
+| `--hd-motion-duration-fast` | 130ms | short UI motion (cards, windows) | unverified |
 | `--hd-motion-duration-default` | 200ms | banners, toggles, dialogs | N9 (InfoBanner) |
 | `--hd-motion-duration-slow` | 350ms | page stack, sheets | N9 |
 | `--hd-motion-duration-banner` | 3000ms | InfoBanner visible time | N9 |
@@ -13,19 +13,25 @@
 | `--hd-motion-easing-in` | InExpo | dismissing | N9 |
 | `--hd-motion-easing-in-out` | InOutQuad | moving | N9 |
 
+App slide-in after launch and card restore take **300 ms** on the phone (after a 110 ms card shrink; see
+[23](23-phone-behaviour.md)). That is the value to use. The 130 ms once given as the N9's has no known source; it can be
+revisited by timing an N9 against the phones.
+
 ## System gestures (N9, canon)
 
 - **Swipe in from a side edge** minimises the app to Home. The window follows the finger (pure
   slide, no zoom). Home is behind it, starting ~25% lit and slightly zoomed out; it brightens and
   zooms in as the window leaves.
 - **Swipe down from the top edge** closes the app.
-- Commit threshold: ~50% of the screen. Reversing direction before release cancels.
-- **Home** has three horizontal views: Events, Applications, Open applications. Swiping moves between them.
+- Commit threshold: 50% of the screen (a setting: 50, 40, 30, 20%), or a flick past 900 dp/s. Reversing direction
+  before release cancels. Every value: [23 Phone behaviour](23-phone-behaviour.md).
+- **Home** has three horizontal views, as on the N9: Events, Applications, Open applications. Swiping moves between
+  them. Etesian extends this; see [20 Phone](20-phone.md#2-home-views).
 - **App launch:** a loading ring runs around the tapped icon's squircle edge until the app has
   drawn, then the app slides in (~130ms).
 - **App restore:** the task card zooms away fast and the app slides in from the left. (EXT) Etesian brings
   it back from the side it was swiped out to: swiped out to the right, it returns from the right.
-- **Lock screen:** swipe sideways to unlock.
+- **Lock screen:** swipe sideways to unlock (the ROM takes a drag in any direction, past 35%).
   Home comes out of the dark with the slide (as when an app is swiped away), and the whole lock screen,
   status bar included, moves as one.
 - **One animation per gesture.** A minimise slides the app away once; home then appears with no second
@@ -34,13 +40,13 @@
 - **The close gesture's band:** a swipe down that starts just under the status bar still closes the app
   (a thumb coming off the bezel is first seen there); a tap there still reaches the app. The app darkens as it
   is pulled down (up to 70% black), the cue that letting go closes it.
-- **Back is a curve, not a drift:** a short move in from the edge, then mostly down. A slow minimise whose finger
-  drifts downward never shows the Back hint.
+- **Back** is off by default. A side can be set as Back instead of minimise (Settings → Gestures); then a chevron
+  follows the swipe and Back fires past 40 dp. (The older "curve" Back, in and then down, was removed.)
 - **Where you land** after swiping an app away is a setting per side (Open apps by default, or where you were,
   Applications, Events, Widgets).
 - **New events slide in** under their section's label in the Events view, never drawing over it; elsewhere the
   notification card drops from the top.
-- **Single hand mode** shrinks and moves the whole screen in 260 ms (InOutQuad); returning to full screen
+- **Single hand mode** shrinks and moves the whole screen in 260 ms (Decelerate, as the ROM does); returning to full screen
   is the same animation backwards.
 
 ## In-app transitions (N9)

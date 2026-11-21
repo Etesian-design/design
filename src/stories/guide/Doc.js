@@ -17,7 +17,7 @@ const PAGES = {
   '07-motion.md': 'guide-motion', '08-sound-haptics.md': 'guide-sound-haptics', '09-layout.md': 'guide-layout-grids',
   '10-components.md': 'guide-components', '11-patterns.md': 'guide-patterns', '12-accessibility.md': 'guide-accessibility',
   '13-contributing.md': 'guide-contributing-gaps', '14-quasar.md': 'quasar-using-with-quasar', '15-colour-modes.md': 'guide-colour-modes',
-  '20-phone.md': 'guide-the-phone', '21-desktop.md': 'guide-the-desktop', '22-home-widgets.md': 'guide-home-widgets',
+  '20-phone.md': 'guide-the-phone', '21-desktop.md': 'guide-the-desktop', '22-home-widgets.md': 'guide-home-widgets', '23-phone-behaviour.md': 'guide-phone-behaviour',
 };
 
 const COLOUR = /#(?:[0-9a-fA-F]{8}|[0-9a-fA-F]{6}|[0-9a-fA-F]{3})\b|rgba?\([^)]*\)/g;

@@ -1,0 +1,14 @@
+import { Meta, Canvas } from '@storybook/addon-docs/blocks';
+import md from '../../../docs/23-phone-behaviour.md?raw';
+import { Doc } from './Doc';
+import * as G from '../pages/Gestures.stories';
+
+<Meta title="Guide/Phone behaviour" />
+
+<Doc md={md} />
+
+## Try it
+
+Drag on the phone: swipe in from the edges of the app, hold a swipe up from the bottom, swipe between the home views, lock it and swipe the lock screen away.
+
+<Canvas of={G.OverAnApp} sourceState="none" />

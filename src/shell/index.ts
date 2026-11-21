@@ -48,6 +48,8 @@ export { default as XKey } from './parts/XKey.vue';
 export { default as XMiniApp } from './parts/XMiniApp.vue';
 export { default as XOpenApps } from './parts/XOpenApps.vue';
 export { default as XOverview } from './parts/XOverview.vue';
+export { default as XPhoneGestures } from './parts/XPhoneGestures.vue';
+export * from './parts/gestures';
 export { default as BelleCap } from './widgets/BelleCap.vue';
 export { default as BelleDial } from './widgets/BelleDial.vue';
 export { default as BelleGearDial } from './widgets/BelleGearDial.vue';

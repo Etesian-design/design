@@ -73,7 +73,18 @@ Durations and easings come from the motion tokens (see [07 Motion](07-motion.md)
 
 ## 2. Home views
 
-There are three horizontal views. Swiping moves between them, with page dots.
+There are three horizontal views, as on the N9: Events, Applications, Open apps. Swiping moves between them, in a circle.
+
+**Etesian's extension.** The three N9 views are the default; the owner can add to them and shape them in the
+launcher's settings (Home screen views):
+
+- **Widgets**: an extra view left of Events, one scrolling list or 1 to 5 fixed screens.
+- **News**: Glance's news, furthest left.
+- **Events** can be turned off.
+- **Page dots**: hidden (the N9 default), at the top or at the bottom.
+
+Whatever is on, the order stays News, Widgets, Events, Applications, Open apps, and home opens on Applications. A new
+view goes into this order; it never replaces one of the N9's three. Timings: [23 Phone behaviour](23-phone-behaviour.md).
 
 ### Events
 
