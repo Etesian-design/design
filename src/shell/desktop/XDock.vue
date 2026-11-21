@@ -11,6 +11,7 @@
 import { computed } from 'vue';
 import HdSquircle from '../../components/HdSquircle.vue';
 import HdIcon from '../../components/HdIcon.vue';
+import HdAppArt from '../../components/HdAppArt.vue';
 import HdTooltip from '../../components/HdTooltip.vue';
 import XMiniApp from '../parts/XMiniApp.vue';
 import { app as appOf } from '../parts/data';
@@ -49,7 +50,7 @@ const thumb = (n: string, box = props.size + 8) => { const o = shape(n); return 
     <span v-for="n in items" :key="n" class="x-dock__slot" :class="{ 'is-running': running.includes(n), 'is-active': active === n }">
       <HdTooltip :text="running.includes(n) ? `${n} · running` : n" :placement="tipPlace">
         <button type="button" class="x-dock__item hd-sq hd-focusable" :aria-label="n" @click="emit('open', n)">
-          <HdSquircle :size="size" :color="appOf(n).color" lighting="lit" :tone="appOf(n).tone"><HdIcon :name="appOf(n).icon" :size="Math.round(size * 0.5)" :lit="appOf(n).tone === 'light' ? 'dark' : true" /></HdSquircle>
+          <HdSquircle :size="size" :color="appOf(n).color" lighting="lit" :tone="appOf(n).tone"><HdAppArt v-if="appOf(n).art" :name="appOf(n).art!" :size="size" :color="appOf(n).color" :tone="appOf(n).tone" /><HdIcon v-else :name="appOf(n).icon" :size="Math.round(size * 0.5)" :lit="appOf(n).tone === 'light' ? 'dark' : true" /></HdSquircle>
         </button>
       </HdTooltip>
       <span v-if="running.includes(n)" class="x-dock__run" aria-hidden="true"></span>

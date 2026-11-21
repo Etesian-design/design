@@ -238,7 +238,7 @@ function stateOf(w: WmWin) {
 const dockItems = computed<ShellDockItem[]>(() => {
   const pinned = props.apps.filter((a) => a.pinned !== false && !dock.removed.includes(a.id));
   const running = wm.wins.filter((w) => known(w) && !pinned.some((a) => a.id === w.id)).map((w) => byId.value[w.id]!);
-  return [...pinned, ...running].map((a) => { const w = wm.get(a.id); return { id: a.id, title: a.title, icon: a.icon, color: a.color, tone: a.tone, running: !!w, active: !!w && !w.min && wm.focused.value === a.id, min: !!w?.min, state: w ? stateOf(w) : '' }; });
+  return [...pinned, ...running].map((a) => { const w = wm.get(a.id); return { id: a.id, title: a.title, icon: a.icon, ...(a.art ? { art: a.art } : {}), color: a.color, tone: a.tone, running: !!w, active: !!w && !w.min && wm.focused.value === a.id, min: !!w?.min, state: w ? stateOf(w) : '' }; });
 });
 function dockRemove(id: string) { if (id === 'launcher' || id === 'trash') dock[id] = false; else if (wm.get(id)) close(id); else dock.removed.push(id); }
 
@@ -306,7 +306,7 @@ const tone = (id: string): IconTone | undefined => byId.value[id]?.tone;
         <section class="x-shell-ov__apps" aria-label="Apps">
           <label class="x-shell-search"><HdIcon name="search" :size="20" /><input ref="searchEl" v-model="query" type="search" placeholder="Type to search" aria-label="Search apps" @keydown.enter="openFirst" /></label>
           <div class="x-shell-grid">
-            <HdAppIcon v-for="a in found" :key="a.id" :label="a.title" :icon="a.icon" :color="a.color" :tone="a.tone" lighting="lit" :size="54" @click="open(a.id)" />
+            <HdAppIcon v-for="a in found" :key="a.id" :label="a.title" :icon="a.icon" :art="a.art" :color="a.color" :tone="a.tone" lighting="lit" :size="54" @click="open(a.id)" />
             <p v-if="!found.length" class="x-shell-none">Nothing matches “{{ query }}”.</p>
           </div>
         </section>
@@ -353,7 +353,7 @@ const tone = (id: string): IconTone | undefined => byId.value[id]?.tone;
         <div class="x-shell-search-panel hd-on-overlay" role="dialog" aria-label="Search">
           <label class="x-shell-search"><HdIcon name="search" :size="20" /><input ref="searchEl" v-model="query" type="search" placeholder="Type to search" aria-label="Search apps" @keydown.enter="openFirst" /></label>
           <div class="x-shell-grid">
-            <HdAppIcon v-for="a in found" :key="a.id" :label="a.title" :icon="a.icon" :color="a.color" :tone="a.tone" lighting="lit" :size="54" @click="open(a.id)" />
+            <HdAppIcon v-for="a in found" :key="a.id" :label="a.title" :icon="a.icon" :art="a.art" :color="a.color" :tone="a.tone" lighting="lit" :size="54" @click="open(a.id)" />
             <p v-if="!found.length" class="x-shell-none">Nothing matches “{{ query }}”.</p>
           </div>
         </div>

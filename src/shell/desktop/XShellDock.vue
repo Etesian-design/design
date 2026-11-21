@@ -11,11 +11,12 @@
 import { ref, computed, watch, nextTick, onBeforeUnmount, useSlots } from 'vue';
 import HdSquircle from '../../components/HdSquircle.vue';
 import HdIcon from '../../components/HdIcon.vue';
+import HdAppArt from '../../components/HdAppArt.vue';
 import HdTooltip from '../../components/HdTooltip.vue';
 import { GAP, dockThickness, type DockPos } from './geometry';
 import type { IconTone } from '../../lighting';
 
-export interface ShellDockItem { id: string; title: string; icon: string; color: string; tone?: IconTone; running: boolean; active: boolean; min: boolean; state: string }
+export interface ShellDockItem { id: string; title: string; icon: string; art?: string; color: string; tone?: IconTone; running: boolean; active: boolean; min: boolean; state: string }
 const props = withDefaults(defineProps<{
   items: ShellDockItem[]; overviewOpen?: boolean; position?: DockPos; size?: number; autoHide?: boolean; panel?: boolean; editing?: boolean;
   launcher?: boolean; trash?: boolean; preview?: boolean;
@@ -105,7 +106,7 @@ function moveUp(e: PointerEvent) {
     <span v-if="items.length && launcher" class="x-dock__div" aria-hidden="true"></span>
     <span v-for="i in items" :key="i.id" class="x-dock__slot" :class="{ 'is-running': i.running, 'is-active': i.active }" @pointerenter="enter(i, $event)" @pointerleave="leave">
       <button type="button" class="x-dock__item hd-sq hd-focusable" :aria-label="i.running ? `${i.title}, ${i.state}` : i.title" :title="i.running ? undefined : i.title" @click="emit('item', i.id)">
-        <HdSquircle :size="size" :color="i.color" lighting="lit" :tone="i.tone"><HdIcon :name="i.icon" :size="Math.round(size / 2)" :lit="i.tone === 'light' ? 'dark' : true" /></HdSquircle></button>
+        <HdSquircle :size="size" :color="i.color" lighting="lit" :tone="i.tone"><HdAppArt v-if="i.art" :name="i.art" :size="size" :color="i.color" :tone="i.tone" /><HdIcon v-else :name="i.icon" :size="Math.round(size / 2)" :lit="i.tone === 'light' ? 'dark' : true" /></HdSquircle></button>
       <span v-if="i.running" class="x-dock__run" aria-hidden="true"></span>
       <button v-if="editing" type="button" class="x-dock__rm hd-sq x-shell-dock__rm" :aria-label="`Remove ${i.title}`" @click="emit('remove', i.id)">×</button>
     </span>

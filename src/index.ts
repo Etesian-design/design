@@ -2,6 +2,8 @@ import './styles/tokens.css';
 import './styles/base.css';
 export { default as HdAppGrid } from './components/HdAppGrid.vue';
 export { default as HdAppIcon } from './components/HdAppIcon.vue';
+export { default as HdAppArt } from './components/HdAppArt.vue';
+export { APP_ART, APP_ART_NAMES, ART_ACCENTS, appArtFragment, type ArtPaint } from './components/app-art';
 export { default as HdAvatar } from './components/HdAvatar.vue';
 export { default as HdBusyIndicator } from './components/HdBusyIndicator.vue';
 export { default as HdButton } from './components/HdButton.vue';

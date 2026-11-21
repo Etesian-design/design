@@ -12,7 +12,7 @@ const list = computed(() => (props.apps ?? APPS).filter((a) => !props.query || a
   <div class="x-apps">
     <HdAppGrid :columns="columns" class="x-apps__grid">
       <li v-for="a in list" :key="a.name">
-        <HdAppIcon :label="a.name" :icon="a.icon" :color="a.color" :tone="a.tone" :size="size" :loading="loading === a.name"
+        <HdAppIcon :label="a.name" :icon="a.icon" :art="a.art" :color="a.color" :tone="a.tone" :size="size" :loading="loading === a.name"
           :badge="a.name === 'Messages' ? 2 : a.name === 'Mail' ? 3 : undefined" @click="emit('open', a.name)" />
       </li>
     </HdAppGrid>
