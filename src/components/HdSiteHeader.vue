@@ -10,16 +10,22 @@
  * The bottom bar holds what an N9 ToolBar holds (at most 5 items): with more links the first 4 stay and the rest go in a
  * "More" item that opens the Menu (as XClassic's ⋮). Items are even squircle cells inset from the edges; the pressed and the
  * current one light up as a squircle (as a ToolIcon's is-active). A current page in the overflow marks More.
+ * On the phone the top bar (and its brand link) can be hidden, so when the brand links somewhere the bottom bar starts with
+ * a Home cell to it (`home-current` lights it on that page); it counts toward the 5, and >= 600px the brand does its job.
  */
 import { computed, ref } from 'vue';
 import HdIcon from './HdIcon.vue';
 import HdMenu from './HdMenu.vue';
 export interface HdNavLink { label: string; href: string; icon?: string; current?: boolean }
-const props = withDefaults(defineProps<{ brand?: string; links?: HdNavLink[]; brandHref?: string | null; sticky?: boolean; tone?: 'page' | 'chrome'; layout?: 'site' | 'app' }>(),
-  { brand: '', links: () => [], brandHref: '#', sticky: true, tone: 'page', layout: 'site' });
+const props = withDefaults(defineProps<{ brand?: string; links?: HdNavLink[]; brandHref?: string | null; homeCurrent?: boolean; sticky?: boolean; tone?: 'page' | 'chrome'; layout?: 'site' | 'app' }>(),
+  { brand: '', links: () => [], brandHref: '#', homeCurrent: false, sticky: true, tone: 'page', layout: 'site' });
 /** the most a bottom ToolBar holds; more links keep MOBILE_KEEP and put the rest under More */
 const MOBILE_MAX = 5, MOBILE_KEEP = 4;
-const overflow = computed(() => (props.links.length > MOBILE_MAX ? props.links.slice(MOBILE_KEEP) : []));
+/** a Home cell (phone only) when the brand links home and this is a site bar, not an app bar */
+const hasHome = computed(() => props.layout === 'site' && !!props.brand && props.brandHref !== null);
+const room = computed(() => MOBILE_MAX - (hasHome.value ? 1 : 0));
+const keep = computed(() => MOBILE_KEEP - (hasHome.value ? 1 : 0));
+const overflow = computed(() => (props.links.length > room.value ? props.links.slice(keep.value) : []));
 const overflowCurrent = computed(() => overflow.value.find((l) => l.current));
 const moreOpen = ref(false);
 const menuItems = computed(() => overflow.value.map((l) => ({ id: l.href, label: l.current ? `${l.label} (current page)` : l.label })));
@@ -36,7 +42,10 @@ function go(href: string) { if (typeof window !== 'undefined') window.location.a
       </template>
       <slot v-if="$slots.nav" name="nav" />
       <nav v-else class="hd-site-header__nav hd-inverted-mobile" aria-label="Main">
-        <a v-for="(l, i) in links" :key="l.href" :href="l.href" class="hd-site-header__link hd-focusable" :class="{ 'is-overflow': overflow.length && i >= MOBILE_KEEP }" :aria-current="l.current ? 'page' : undefined" :aria-label="l.label" :title="l.label">
+        <a v-if="hasHome" :href="brandHref!" class="hd-site-header__link hd-site-header__home hd-focusable" :aria-current="homeCurrent ? 'page' : undefined" aria-label="Home" title="Home">
+          <HdIcon name="home" :size="24" class="hd-site-header__icon" /><span class="hd-site-header__label">Home</span>
+        </a>
+        <a v-for="(l, i) in links" :key="l.href" :href="l.href" class="hd-site-header__link hd-focusable" :class="{ 'is-overflow': overflow.length && i >= keep }" :aria-current="l.current ? 'page' : undefined" :aria-label="l.label" :title="l.label">
           <HdIcon :name="l.icon ?? 'chevron-right'" :size="24" class="hd-site-header__icon" /><span class="hd-site-header__label">{{ l.label }}</span>
         </a>
         <button v-if="overflow.length" type="button" class="hd-site-header__link hd-site-header__more hd-focusable" :class="{ 'is-current': overflowCurrent }" aria-haspopup="menu" :aria-expanded="moreOpen ? 'true' : 'false'"
@@ -64,6 +73,7 @@ function go(href: string) { if (typeof window !== 'undefined') window.location.a
 .hd-site-header__link[aria-current='page'] { color: var(--hd-c-accent-text); font-weight: 700; }
 .hd-site-header__icon { display: none; }
 .hd-site-header__more { display: none; }
+.hd-site-header .hd-site-header__nav > .hd-site-header__home { display: none; }
 .hd-site-header__actions { display: flex; gap: 8px; margin-left: auto; }
 /* By the window, not a container: a container would also become the bottom bar's frame. */
 @media (max-width: 599.98px) {
@@ -83,6 +93,7 @@ function go(href: string) { if (typeof window !== 'undefined') window.location.a
   .hd-site-header__label { display: none; }
   .hd-site-header__link.is-overflow { display: none; }
   .hd-site-header__more { display: inline-flex; }
+  .hd-site-header .hd-site-header__nav > .hd-site-header__home { display: inline-flex; }
   .hd-site-header .hd-site-header__nav > .hd-site-header__link:hover { background: color-mix(in srgb, var(--hd-surface-chrome-fg) 10%, transparent); color: var(--hd-surface-chrome-fg); }
   .hd-site-header .hd-site-header__nav > .hd-site-header__link:active { background: color-mix(in srgb, var(--hd-surface-chrome-fg) 24%, transparent); }
   /* current page (or More holding it): lit as the dark ToolBar's active ToolIcon */

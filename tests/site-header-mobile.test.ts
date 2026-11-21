@@ -55,3 +55,28 @@ describe('site header bottom bar on the phone follows the N9 ToolBar', () => {
     expect(css).toMatch(/\.hd-site-header__link\.is-overflow \{ display: none; \}/);
   });
 });
+
+// 2026-11-21: on the phone the site's top bar is hidden, so nothing led back to the home page.
+describe('site header bottom bar on the phone has a Home cell', () => {
+  it('a linked brand adds Home first; it counts toward the five, so seven links keep three plus More', () => {
+    const w = mount(HdSiteHeader, { props: { brand: 'Site', brandHref: '/', links: mk(7) } });
+    const cells = w.findAll('.hd-site-header__nav > a');
+    expect(cells[0].classes()).toContain('hd-site-header__home');
+    expect(cells[0].attributes('href')).toBe('/');
+    expect(cells[0].attributes('aria-label')).toBe('Home');
+    expect(w.findAll('a.is-overflow').map((a) => a.text())).toEqual(['L3', 'L4', 'L5', 'L6']);
+  });
+  it('four links plus Home fit without More', () => {
+    const w = mount(HdSiteHeader, { props: { brand: 'Site', brandHref: '/', links: mk(4) } });
+    expect(w.find('.hd-site-header__more').exists()).toBe(false);
+  });
+  it('home-current lights Home; no Home without a linked brand or in an app bar', () => {
+    expect(mount(HdSiteHeader, { props: { brand: 'Site', brandHref: '/', homeCurrent: true, links: mk(3) } }).get('.hd-site-header__home').attributes('aria-current')).toBe('page');
+    expect(mount(HdSiteHeader, { props: { brand: 'Site', brandHref: null, links: mk(3) } }).find('.hd-site-header__home').exists()).toBe(false);
+    expect(mount(HdSiteHeader, { props: { brand: 'Site', layout: 'app', links: mk(3) } }).find('.hd-site-header__home').exists()).toBe(false);
+  });
+  it('Home shows only on the phone', () => {
+    expect(css).toMatch(/\.hd-site-header \.hd-site-header__nav > \.hd-site-header__home \{ display: none; \}/);
+    expect(css).toMatch(/@media \(max-width: 599\.98px\) \{[\s\S]*\.hd-site-header__nav > \.hd-site-header__home \{ display: inline-flex; \}/);
+  });
+});
