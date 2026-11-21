@@ -1,15 +1,15 @@
 /** Shared mock data for the Explorations (tablet / desktop) mockups. All content is invented. */
-export interface XApp { name: string; icon: string; color: string; tone?: 'colour' | 'light' }
+export interface XApp { name: string; icon: string; color: string; tone?: 'colour' | 'light'; /** the icon's drawing (app-art.ts) */ art?: string }
 export const APPS: XApp[] = [
-  { name: 'Phone', icon: 'phone', color: '#62B700' }, { name: 'Messages', icon: 'message', color: '#09A7CC' },
-  { name: 'Contacts', icon: 'person', color: '#007DC9' }, { name: 'Mail', icon: 'mail', color: '#0067BC' },
-  { name: 'Browser', icon: 'globe', color: '#2EA8C7' }, { name: 'Gallery', icon: 'photo', color: '#821DDE' },
-  { name: 'Music', icon: 'music', color: '#CC09BA' }, { name: 'Calendar', icon: 'calendar', color: '#EF5500' },
-  { name: 'Clock', icon: 'clock', color: '#FFFFFF', tone: 'light' }, { name: 'Feeds', icon: 'share', color: '#FF8500' },
-  { name: 'Notes', icon: 'edit', color: '#F2B111' }, { name: 'Videos', icon: 'play', color: '#D9001E' },
-  { name: 'Maps', icon: 'home', color: '#60AD00' }, { name: 'Store', icon: 'star', color: '#1C51AF' },
-  { name: 'Files', icon: 'info', color: '#7B7B7B' }, { name: 'Sharing', icon: 'bluetooth', color: '#0093D0' },
-  { name: 'Security', icon: 'lock', color: '#505050' }, { name: 'Settings', icon: 'settings', color: '#505050' },
+  { name: 'Phone', icon: 'phone', art: 'phone', color: '#62B700' }, { name: 'Messages', icon: 'message', art: 'message', color: '#09A7CC' },
+  { name: 'Contacts', icon: 'person', art: 'person', color: '#007DC9' }, { name: 'Mail', icon: 'mail', art: 'mail', color: '#0067BC' },
+  { name: 'Browser', icon: 'globe', art: 'globe', color: '#2EA8C7' }, { name: 'Gallery', icon: 'photo', art: 'photo', color: '#821DDE' },
+  { name: 'Music', icon: 'music', art: 'music', color: '#CC09BA' }, { name: 'Calendar', icon: 'calendar', art: 'calendar', color: '#EF5500' },
+  { name: 'Clock', icon: 'clock', art: 'clock', color: '#FFFFFF', tone: 'light' }, { name: 'Feeds', icon: 'share', art: 'feeds', color: '#FF8500' },
+  { name: 'Notes', icon: 'edit', art: 'notes', color: '#F2B111' }, { name: 'Videos', icon: 'play', art: 'videos', color: '#D9001E' },
+  { name: 'Maps', icon: 'home', art: 'maps', color: '#60AD00' }, { name: 'Store', icon: 'star', art: 'store', color: '#1C51AF' },
+  { name: 'Files', icon: 'info', art: 'files', color: '#7B7B7B' }, { name: 'Sharing', icon: 'bluetooth', art: 'sharing', color: '#0093D0' },
+  { name: 'Security', icon: 'lock', art: 'security', color: '#505050' }, { name: 'Settings', icon: 'settings', art: 'settings', color: '#505050' },
 ];
 export const app = (name: string): XApp => APPS.find((a) => a.name === name) ?? APPS[0]!;
 export const FAVOURITES = ['Phone', 'Messages', 'Mail', 'Browser', 'Gallery', 'Music', 'Calendar', 'Settings'];
