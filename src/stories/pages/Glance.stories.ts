@@ -25,6 +25,11 @@ const CSS = `<component is="style">
 .gl-sb { flex: none; height: 24px; display: flex; align-items: center; gap: 6px; padding: 0 8px; color: #E6E2E6; font: 700 13px/1 var(--hd-font-family-base); }
 .gl-sb .t { margin-left: auto; } .gl-sb .bat { width: 20px; height: 10px; border: 1.5px solid currentColor; border-radius: 2px; }
 .gl-sug { display: flex; align-items: center; gap: 14px; padding: 8px 16px; font-size: 16px; } .gl-sug > span { flex: none; width: 40px; height: 40px; display: grid; place-items: center; color: #9A9A9A; } /* a bare glyph, inset 10 in the 40 dp icon box */
+.gl-top { display: flex; align-items: center; gap: 2px; margin: 10px 4px 8px 12px; }
+.gl-top .gl-search { flex: 1; margin: 0; min-width: 0; } .gl-top .gl-search span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.gl-act { flex: none; width: 44px; height: 44px; display: grid; place-items: center; color: #F2F2F2; }
+.gl-pull { height: 64px; display: grid; place-items: center; font-size: 15px; color: #9A9A9A; }
+.gl-pull + .gl-body { margin-top: 0; }
 .gl-search { margin: 10px 12px 8px; height: 48px; display: flex; align-items: center; gap: 10px; padding: 0 4px 0 14px; border-radius: 24px; background: #1C1C1C; border: 1px solid #333; color: #9A9A9A; font-size: 17px; }
 .gl-search b { flex: 1; color: #F2F2F2; font-weight: 400; } .gl-search .gl-x { flex: none; width: 44px; height: 44px; display: grid; place-items: center; color: #9A9A9A; }
 .gl-head { padding: 18px 16px 6px; font: 700 13px/1 var(--hd-font-family-base); letter-spacing: .06em; text-transform: uppercase; color: #00A5E5; }
@@ -48,18 +53,34 @@ const PHOTO = [
   'linear-gradient(160deg, #2C4A6E, #8FA7C0 45%, #3A2A1E)', 'linear-gradient(200deg, #0E3B5C, #1D7FB8 50%, #E0EEF5)',
   'linear-gradient(170deg, #3E5B2C, #A9C27A 50%, #2B2B1A)', 'linear-gradient(150deg, #5A1E22, #C8504A 50%, #20120F)',
 ];
-const NEWS_BAR = `<HdToolBar variant="dark" label="Glance toolbar"><template #left><HdToolIcon icon="refresh" label="Refresh" /></template><template #right><HdToolIcon icon="settings" label="Settings" /></template></HdToolBar>`;
+/* The story list has no bottom bar (2026-11-22): Refresh and Settings sit beside the search bar at the top right, as on
+ * the home screen's Glance page; the reader and Settings keep the bar. */
+const ACTIONS = `<span class="gl-act" role="button" aria-label="Refresh"><HdIcon name="refresh" :size="24" /></span><span class="gl-act" role="button" aria-label="Settings"><HdIcon name="settings" :size="24" /></span>`;
+const top = (field: string) => `<div class="gl-top"><div class="gl-search">${field}</div>${ACTIONS}</div>`;
+const FIELD = `<HdIcon name="search" :size="22" /><span>Search your phone and the web</span>`;
 
 export const News: S = {
   name: 'News: picture cards',
   parameters: { docs: { description: { story: 'The front page: a search bar on top (a field, not a button: fields stay where the eye starts), then **Top stories** and **For you**. Every story is a card with its picture edge to edge at 16:9, the headline, and where it is from. The actions (Refresh, Settings) are on the bottom toolbar; the screen has no Back because it is the app\'s first screen.' } } },
   render: () => ({ components: comps, setup: () => ({ PHOTO }), template: phone(`
-    <div class="gl-search"><HdIcon name="search" :size="22" /><span>Search your phone and the web</span></div>
+    ${top(FIELD)}
     <div class="gl-body">
       <div class="gl-head">Top stories</div>
       <HdStoryCard lead title="Leaders meet on the summit sidelines as talks on trade resume" source="World Service" age="27 min" :outlets="5" section="World" :image="PHOTO[0]" />
       <HdStoryCard title="Storm brings record rain to the coast; thousands without power" source="Coast Herald" age="1 h" :outlets="3" :image="PHOTO[1]" />
-    </div>${NEWS_BAR}`) }),
+    </div>`) }),
+};
+
+export const PullToRefresh: S = {
+  name: 'News: pull down to refresh',
+  parameters: { docs: { description: { story: 'At the top of the list, **pulling down** draws the stories down (heavier than the finger) and a line of text says what letting go does: *Pull down to refresh*, then *Release to refresh*. No Android circle. The same on the home screen\'s Glance page.' } } },
+  render: () => ({ components: comps, setup: () => ({ PHOTO }), template: phone(`
+    ${top(FIELD)}
+    <div class="gl-pull" role="status">Release to refresh</div>
+    <div class="gl-body">
+      <div class="gl-head">Top stories</div>
+      <HdStoryCard lead title="Leaders meet on the summit sidelines as talks on trade resume" source="World Service" age="27 min" :outlets="5" section="World" :image="PHOTO[0]" />
+    </div>`) }),
 };
 
 export const NoPicture: S = {
@@ -69,7 +90,7 @@ export const NoPicture: S = {
     <div class="gl-body">
       <HdStoryCard title="Council approves the new tram line after a decade of planning" source="City Times" age="3 h" />
       <HdStoryCard title="Researchers map the deep ocean floor with autonomous gliders" source="Science Weekly" age="5 h" :outlets="2" :image="PHOTO[2]" />
-    </div>${NEWS_BAR}`) }),
+    </div>`) }),
 };
 
 /* A result that belongs to an app shows that app's own launcher icon (Result.pkg → the package's icon), drawn as
@@ -82,14 +103,14 @@ export const Search: S = {
   name: 'Search everything',
   parameters: { docs: { description: { story: 'Typing replaces the news with results, in sections: **Applications first**, the web last, the rest by how well they match (contacts, messages, notifications — even ones already dismissed —, settings pages, files, the news). The web section ends with the search engine\'s suggestions. Matching is by the start of a name or any of its words, or initials (“gm” → Maps by G…). Enter opens the first result. The ✕ in the field clears it; Back clears it too before leaving. The launcher shows the same results under the apps in its own search.' } } },
   render: () => ({ components: comps, template: phone(`
-    <div class="gl-search"><HdIcon name="search" :size="22" /><b>ann</b><span class="gl-x" role="button" aria-label="Clear"><HdIcon name="close" :size="22" /></span></div>
+    ${top('<HdIcon name="search" :size="22" /><b>ann</b><span class="gl-x" role="button" aria-label="Clear"><HdIcon name="close" :size="22" /></span>')}
     <div class="gl-body">
       <div class="gl-head">Applications</div>${row('calendar', '#E8483F', 'Anniversary planner')}
       <div class="gl-head">Contacts</div><div class="gl-row"><HdSquircle :size="40" color="#00A5E5"><b class="gl-letter">A</b></HdSquircle><span class="gl-t"><b>Anna Petrou</b><small>+30 694 123 4567</small></span></div>
       <div class="gl-head">Messages</div>${appRow(MESSAGES_APP, 'Anna Petrou', 'See you at seven by the lake', '2 h')}
       <div class="gl-head">Settings</div>${row('settings', '#5C5C5C', 'Announcements', 'Settings')}
       <div class="gl-head">Web</div>${row('search', '#3A3A3A', 'Search the web for “ann”')}${['ann widdecombe', 'ann taylor', 'anne frank'].map((q) => `<div class="gl-sug"><span><HdIcon name="search" :size="20" /></span>${q}</div>`).join('')}
-    </div>${NEWS_BAR}`) }),
+    </div>`) }),
 };
 
 export const Reader: S = {
