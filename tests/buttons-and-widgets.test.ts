@@ -364,7 +364,8 @@ describe('Phone: Android features', () => {
     expect(c.find('button.p2-handle-line').attributes('aria-label')).toBe('Show 3 more rows');
     expect(c.find('.p2-handle-line').classes()).not.toContain('p2-row');
     expect(c.find('.p2-tg').element.previousElementSibling?.className).toBe('p2-fill');
-    expect(c.findAll('.p2-tg [role=switch] .hd-squircle').length).toBe(6);
+    // Belle toggle caps (2026-11-22), as the ROM's status menu: six, each a BelleCap that slides between off and on.
+    expect(c.findAll('.p2-tg [role=switch] .bcap').length).toBe(6);
     expect(c.find('[aria-label=Flashlight] .hd-icon').html() + c.find('[aria-label="Mobile data"] .hd-icon').html()).not.toMatch(/M12 2l3|phone/);
     expect(read('src/stories/explorations/phone2/PhoneV2.vue')).toMatch(/\['torch', 'Flashlight'[\s\S]*\['data', 'Mobile data'/);
     const o = m('status-more-open');
