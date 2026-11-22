@@ -55,7 +55,11 @@ export const SECTIONS: Page[] = [
   { key: 'gestures', icon: 'drag', title: 'Gestures', summary: 'Swipes, back', groups: [
     ['Gestures', [{ t: 'Gesture system', v: 'N9 swipe' }, { t: 'Swipe distance to leave an app', v: '50% of the screen (N9)' }, { t: 'Back by swiping in', v: 'Disabled' }]],
     ['Single hand mode', [{ t: '', pv: 'singlehand' }, { t: 'Size', s: 'The small screen\'s width; it always sits in a corner, and a tap moves it to the nearest one', sl: 0.5 }]],
-    ['After swiping an app away', [{ t: 'From the left side', v: 'Open applications (N9)' }, { t: 'From the right side', v: 'Open applications (N9)' }, { t: 'From the bottom', v: 'Open applications (N9)' }]]] },
+    // "Only from …" (2026-11-22): the edge's view leaves the row of home views and comes in only from that edge; for a
+    // view (not Open applications), the bottom and one side only, so the row always keeps views to swipe between.
+    ['After swiping an app away', [{ t: 'From the left side', v: 'Open applications (N9)' }, { t: 'Only from the left side', s: 'For a view: Applications, Events, Widgets or News', on: false, off: true },
+      { t: 'From the right side', v: 'Open applications (N9)' }, { t: 'Only from the right side', s: 'For a view: Applications, Events, Widgets or News', on: false, off: true },
+      { t: 'From the bottom', v: 'Applications' }, { t: 'Only from the bottom', s: 'Takes this view out of the home screen\'s views; it comes in from this edge', on: true }]]] },
   { key: 'sidesense', icon: 'menu', title: 'Breeze', summary: 'The edge bar or floating button: taps, flicks, its menu', groups: [
     [null, [{ t: 'Breeze', s: 'A handle on the screen edge, or a floating button. Long-press it and drag it to move it', on: false }, { t: 'Place', v: 'Right edge' }, { t: 'Theme', v: 'Same as the toolbar' },
       { t: 'Handle thickness', s: '12 dp', sl: 6 / 22 }, { t: 'Handle height', s: '140 dp', sl: 0.35 }, { t: 'Floating button size', s: '56 dp', sl: 0.05 }]],
